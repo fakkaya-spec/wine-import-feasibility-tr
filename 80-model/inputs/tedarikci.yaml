@@ -3,20 +3,29 @@
 #
 # KURAL: evidence_id'si olmayan sayı modele GİREMEZ.
 # KURAL: EXW fiyati L0, FOB fiyati L1 katmanidir. KARISTIRILMAZ.
-# Bu turda tüm değerler null / UNKNOWN'dır. UYDURMA.
+#
+# TUR 1 SONU DURUMU:
+#   Bu turda HICBIR URETICIDEN TEKLIF ALINMAMISTIR.
+#   Bu nedenle `secili_tedarikci` ve `fiyat` bloklarinin TAMAMI null/UNKNOWN'dir.
+#   Asagidaki `arastirma_bulgulari` blogu, kanit kimligi olan PIYASA GOZLEMLERIDIR;
+#   bunlar TEKLIF DEGILDIR ve tek basina fiyat girdisi olarak kullanilamaz.
 
 meta:
   dosya: tedarikci.yaml
   son_guncelleme: 2026-08-09
-  tur: "TUR 0 — kurulum"
-  durum: BOS_ISKELET
+  tur: "TUR 1 — global-sourcing-kasifi kesfi"
+  durum: KISMI_DOLU_TEKLIF_YOK
+  teklif_alindi_mi: false
+  havuz_dosyasi: "50-sourcing/tedarikci-havuzu.csv"
+  dogrulanmis_tedarikci_sayisi: 11
+  rfq_sablonu: "50-sourcing/rfq-template.md (v2.0, READY_TO_SEND, GONDERILMEDI)"
 
 secili_tedarikci:
   supplier_id:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "50-sourcing/tedarikci-havuzu.csv referansi"
+    notes: "Tedarikci SECILMEDI. Havuzda 11 aday var (SUP-401..SUP-411), teklif yok."
 
   supplier_name:
     value: null
@@ -32,7 +41,11 @@ secili_tedarikci:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "EXISTING_BRAND_DISTRIBUTION | PRIVATE_LABEL — charter'da ikisi de esit oncelikli"
+    notes: >-
+      EXISTING_BRAND_DISTRIBUTION | PRIVATE_LABEL — charter'da ikisi de esit oncelikli.
+      TUR 1'de KARAR VERILMEDI. Model B'nin havuzda daha cok temsil edilmesi bir
+      arama yanliligidir (private label saglayicilari web'de aranabilir, marka
+      sahipleri fuar/dogrudan temas ile calisir). Bkz. 50-sourcing/ulke-karsilastirma.md §3.3.
 
 fiyat:
   # L0 — EXW
@@ -43,7 +56,7 @@ fiyat:
     status: UNKNOWN
     evidence_id: null
     katman: L0
-    notes: "EXW = fabrika/mahzen cikisi. FOB ile KARISTIRMA."
+    notes: "EXW = fabrika/mahzen cikisi. Bu turda HICBIR ULKE icin EXW BILINMIYOR. Uydurulmadi."
 
   # L1 — FOB
   fob_per_sise:
@@ -54,19 +67,23 @@ fiyat:
     evidence_id: null
     katman: L1
     yukleme_limani: null
-    notes: "FOB = yukleme limani bordasi. EXW ile KARISTIRMA."
+    notes: "FOB = yukleme limani bordasi. Gercek FOB teklifi YOK. Gosterge bant icin bkz. arastirma_bulgulari.fob_gosterge_bandi."
 
   incoterm:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "Belirsizse UNKNOWN. Tahmin edilmez."
+    notes: >-
+      Belirsizse UNKNOWN. Tahmin edilmez.
+      Tek gozlem: bir Italyan uretici (SUP-403) EXW/FOB/CIF/DAP'in dordunu de
+      gorusme secenegi olarak listeliyor (EV-2026-08-09-417) — bu, Incoterm'in
+      MUZAKERE EDILEBILIR oldugunu gosterir, hangisinin uygulanacagini degil.
 
   quote_type:
-    value: null
-    status: UNKNOWN
+    value: NONE_YET
+    status: FACT
     evidence_id: null
-    notes: "INDICATIVE | FIRM_OFFER | PROFORMA — sadece FIRM_OFFER/PROFORMA gercek tekliftir"
+    notes: "Bu turda hicbir INDICATIVE veya FIRM_OFFER teklif ALINMADI. Web sitesi beyanlari teklif sayilmaz."
 
   quote_valid_until:
     value: null
@@ -74,26 +91,11 @@ fiyat:
     evidence_id: null
 
   hacim_bazli_fiyat_kirilimi:
-    5000:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
-    10000:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
-    25000:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
-    50000:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
-    100000:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
+    5000:  { value: null, status: UNKNOWN, evidence_id: null }
+    10000: { value: null, status: UNKNOWN, evidence_id: null }
+    25000: { value: null, status: UNKNOWN, evidence_id: null }
+    50000: { value: null, status: UNKNOWN, evidence_id: null }
+    100000: { value: null, status: UNKNOWN, evidence_id: null }
 
 siparis_kosullari:
   moq_sise:
@@ -101,20 +103,25 @@ siparis_kosullari:
     unit: adet
     status: UNKNOWN
     evidence_id: null
-    notes: "KRITIK: MOQ pilot hacmi imkansiz kiliyorsa pilot mantigi bozulur. seytanin-avukati vektoru."
+    notes: >-
+      Secili tedarikci olmadigi icin null. Ancak PIYASA GOZLEMI olarak
+      dogrulanmis en dusuk private label MOQ'lari 3000-3600 sisedir
+      (arastirma_bulgulari.private_label_moq). CRITICAL: MOQ pilot hacmini
+      imkansiz kiliyorsa pilot mantigi bozulur — seytanin-avukati vektoru.
 
   moq_konteyner:
     value: null
     unit: adet
     status: UNKNOWN
     evidence_id: null
+    notes: "Bazi ureticiler MOQ'yu konteyner bazinda tanimliyor (EV-2026-08-09-409). Yapisal fark, ortalama degil."
 
   lead_time_gun:
     value: null
     unit: gun
     status: UNKNOWN
     evidence_id: null
-    notes: "PO'dan yuklemeye kadar. Isletme sermayesi hesabina girer."
+    notes: "Secili tedarikci yok. Gozlem: 28-42 gun (FR, EV-410) ve ~28 gun (ZA, EV-411) — uretim suresi; NAVLUN HARIC."
 
   yillik_kapasite_sise:
     value: null
@@ -127,38 +134,52 @@ odeme:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "TT_PESIN | TT_VADELI | AKREDITIF | ACIK_HESAP — KKDF etkisi icin gumruk-vergi-uzmani'na ipucu birak"
+    notes: >-
+      TT_PESIN | TT_VADELI | AKREDITIF | ACIK_HESAP.
+      Gercek vade UNKNOWN. Sektor rehberi (EV-2026-08-09-420) yeni ihracatci-alici
+      iliskisinde acik hesabi 'unsustainable risk' olarak tanimliyor — bu bir
+      TEDARIKCI TAAHHUDU DEGIL, sektor beklentisidir.
+      KKDF etkisi icin gumruk-vergi-uzmani'na T-404 acildi.
 
   vade_gun:
     value: null
     unit: gun
     status: UNKNOWN
     evidence_id: null
-    notes: "Cash conversion cycle girdisi. Tedarikci vadesi CCC'yi kisaltir."
+    notes: "Cash conversion cycle girdisi. Tedarikci vadesi CCC'yi kisaltir. Bu turda BILINMIYOR."
 
   kkdf_dogar_mi:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "gumruk-vergi-uzmani dolduracak. Bu ajan doldurmaz."
+    notes: "gumruk-vergi-uzmani dolduracak. Bu ajan doldurmaz. (T-404)"
 
 private_label:
   mumkun_mu:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: true
+    status: FACT
+    evidence_id: "EV-2026-08-09-408, EV-2026-08-09-409, EV-2026-08-09-410, EV-2026-08-09-411, EV-2026-08-09-412, EV-2026-08-09-413, EV-2026-08-09-414, EV-2026-08-09-415, EV-2026-08-09-416, EV-2026-08-09-417"
+    notes: >-
+      GENEL PIYASA SEVIYESINDE dogrulandi: 10 ureticinin kendi kurumsal sitesinde
+      private label hizmeti ilan ettigi teyit edildi (ES, FR, IT, CL x2, ZA x2, AU, US).
+      SECILI BIR TEDARIKCI icin dogrulanmadi (secili tedarikci yok).
 
   min_siparis_sise:
     value: null
     unit: adet
     status: UNKNOWN
     evidence_id: null
+    notes: "Secili tedarikci yok. Piyasa araligi icin arastirma_bulgulari.private_label_moq."
 
   etiket_tasarim_maliyeti:
     value: null
     currency: null
     status: UNKNOWN
     evidence_id: null
+    notes: >-
+      Bir uretici (SUP-401) tasarim destegini 'ek ucret olmadan' sundugunu beyan ediyor
+      (EV-2026-08-09-408). Bu bir FIYAT TEYIDI DEGILDIR; kalip/klise maliyeti ayrica
+      cikabilir (RFQ 4.7 ile sorulacak).
 
   ek_lead_time_gun:
     value: null
@@ -170,14 +191,21 @@ private_label:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "Menside uygulanabiliyorsa Turkiye'de etiketleme operasyonu ortadan kalkar. Onemli maliyet kalemi."
+    notes: >-
+      HICBIR URETICI icin dogrulanmadi. Menside uygulanabiliyorsa Turkiye'de
+      etiketleme operasyonu ortadan kalkar — onemli maliyet kalemi.
+      Etiketin ICERIGI mevzuat-ruhsat-uzmani alanidir (T-403). RFQ 4.6.
 
 belgeler:
   mense_ispat_belgesi:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "EUR.1 | FATURA_BEYANI | REX | YOK — tercihli tarife icin kritik. Oran gumruk-vergi-uzmani'nin alani."
+    notes: >-
+      EUR.1 | FATURA_BEYANI | REX | A.TR | YOK.
+      HICBIR ulke ve HICBIR uretici icin dogrulanmadi. Tercihli tarife icin kritik.
+      Hangi ulkenin hangi belgeyi verebilecegi ve oranin ne oldugu
+      gumruk-vergi-uzmani'nin alanidir (T-401). RFQ 6.1.
 
   analiz_sertifikasi:
     value: null
@@ -189,10 +217,182 @@ risk:
     value: null
     status: UNKNOWN
     evidence_id: null
+    notes: >-
+      URETICI duzeyinde UNKNOWN — hicbir aday firma Turkiye'yi ihracat pazarlari
+      arasinda listelemiyor. ULKE duzeyinde veri var (EV-2026-08-09-405/406):
+      Italya, Fransa, Ispanya, Moldova, Gurcistan, Bulgaristan, Sili, Portekiz
+      hatlari calisiyor; ABD, Avustralya, G.Afrika, Arjantin hatlari <100 bin litre/yil.
 
   alternatif_tedarikci_sayisi:
-    value: null
+    value: 0
     unit: adet
-    status: UNKNOWN
+    status: FACT
     evidence_id: null
-    notes: "Supplier dependency riski. seytanin-avukati bu alani sorgulayacak."
+    notes: >-
+      DIKKAT: Havuzda 11 DOGRULANMIS ADAY var, ancak hicbirinden fiyat/MOQ/vade
+      teklifi alinmadigi icin GERCEK ALTERNATIF SAYISI 0'dir.
+      '11 aday' ile '11 alternatif' ayni sey degildir. seytanin-avukati bu ayrimi
+      sorgulayacaktir ve sorgulamakta haklidir.
+
+# ---------------------------------------------------------------------------
+# ARASTIRMA BULGULARI — TEKLIF DEGILDIR, PIYASA GOZLEMIDIR
+# Modelde YALNIZCA duyarlilik araligi sinirlari olarak kullanilabilir.
+# Tek bir fiyat girdisi olarak KULLANILAMAZ.
+# ---------------------------------------------------------------------------
+arastirma_bulgulari:
+
+  private_label_moq:
+    dogrulanmis_en_dusuk:
+      value: 3000
+      unit: sise
+      status: FACT
+      tier: T4
+      evidence_id: "EV-2026-08-09-408"
+      notes: "Interbrosa (ES), 4 palet / sarap. SKU bazli MOQ."
+    dogrulanmis_ikinci:
+      value: 3600
+      unit: sise
+      status: FACT
+      tier: T4
+      evidence_id: "EV-2026-08-09-410"
+      notes: "The Wine Factory (FR). SKU bazli MOQ."
+    konteyner_bazli_ornek:
+      value: "1 x 20ft mixed (2 SKU)"
+      unit: konteyner
+      status: FACT
+      tier: T4
+      evidence_id: "EV-2026-08-09-409"
+      notes: "Vina Maria (ES). Konteynerin kac sise aldigi UNKNOWN — navlun-lojistik-uzmani (T-402)."
+    celiskili_iddia:
+      value: "300-1200"
+      unit: sise
+      status: CONFLICT
+      tier: T5
+      evidence_id: "EV-2026-08-09-424"
+      conflict_id: "C-401"
+      notes: "Agregator icerigi. Dogrulanmis uretici beyanlariyla celisiyor. Modelde KULLANILAMAZ."
+    pilot_uyumu:
+      value: true
+      status: ESTIMATE
+      evidence_id: "EV-2026-08-09-408, EV-2026-08-09-410"
+      notes: >-
+        Charter pilot hacmi 5000 sise. Dogrulanmis en dusuk MOQ 3000-3600 sise.
+        Yani private label pilot olcekte TEKNIK OLARAK uygulanabilir gorunuyor.
+        Bu bir FIYAT veya KARLILIK ifadesi DEGILDIR.
+
+  uretim_lead_time_gun:
+    aralik:
+      value: "28-42"
+      unit: gun
+      status: ESTIMATE
+      tier: T4
+      evidence_id: "EV-2026-08-09-410, EV-2026-08-09-411"
+      notes: >-
+        Yalnizca URETIM/SISELEME suresi. NAVLUN, gumruk ve ic lojistik HARICTIR.
+        Iki uretici beyanindan turetilmistir (FR 4-6 hafta, ZA ~4 hafta) — n=2.
+
+  fob_gosterge_bandi:
+    katman: L1
+    alt_sinir_sivi_maliyeti:
+      value: 0.56
+      unit: EUR
+      per: "750 ml"
+      status: ESTIMATE
+      tier: T3
+      evidence_id: "EV-2026-08-09-402"
+      notes: >-
+        Dunya dokme sarap ort. ihracat fiyati 0.75 EUR/l x 0.75 l.
+        YALNIZCA SIVI. Kuru malzeme + sisleme + uretici marji UNKNOWN ve BU RAKAMIN UZERINE eklenir.
+        Gercek EXW her zaman bunun UZERINDEDIR. Bu bir TABAN, tahmin degildir.
+    ust_sinir_cif_tavani:
+      value: "1.85 - 2.40"
+      unit: USD
+      per: "750 ml"
+      status: ESTIMATE
+      tier: T3
+      evidence_id: "EV-2026-08-09-405"
+      katman_uyarisi: "BU BIR L2 (CIF) SAYISIDIR. FOB tanim geregi bunun ALTINDADIR."
+      notes: >-
+        Turkiye'ye 2025'te fiilen giren en ucuz menseilerin CIF birim degerleri
+        (Moldova 1.85 / Gurcistan 1.93 / Ispanya 2.03 / Sili 2.17 / Portekiz 2.40).
+        CIF'ten navlun DUSULMEMISTIR — navlun tutari navlun-lojistik-uzmani alanidir.
+    ara_dogrulama:
+      value: 1.98
+      unit: USD
+      per: "sise (750 ml VARSAYILDI)"
+      status: FACT
+      tier: T4
+      evidence_id: "EV-2026-08-09-419"
+      notes: "Moldova siselenmis sakin sarap ort. ihracat fiyati, 8A2025, ONVV. Bant icinde ve tutarli."
+    kullanim_kurali:
+      value: "SENSITIVITY_BOUNDS_ONLY"
+      status: FACT
+      notes: >-
+        Bu bant modelde TEK BASINA FIYAT GIRDISI OLARAK KULLANILAMAZ.
+        Yalnizca duyarlilik analizinin alt/ust sinirlarini belirlemek icin kullanilabilir.
+        EUR ve USD BILINCLI OLARAK BIRLESTIRILMEMISTIR; kur donusumu yalnizca
+        makro.yaml'daki kanitli kurla, modelde yapilir.
+
+  ulke_gosterge_birim_degerleri:
+    katman_L1_ihracat_ort_EUR_per_litre:
+      status: ESTIMATE
+      tier: T3
+      evidence_id: "EV-2026-08-09-404"
+      uyari: "ULKE ORTALAMASI — fiyat/performans segmenti bunun ALTINDADIR."
+      degerler:
+        sili: 2.68
+        guney_afrika: 2.72
+        ispanya: 2.87
+        portekiz: 3.43
+        arjantin: 3.75
+        italya: 4.39
+        avustralya: 4.99
+        fransa: 7.79
+        abd: 7.89
+    katman_L2_turkiye_cif_USD_per_litre_2025:
+      status: FACT
+      tier: T3
+      evidence_id: "EV-2026-08-09-405"
+      uyari: "CIF (L2). FOB veya EXW YERINE KULLANILAMAZ. Hacmi <100 bin litre olan menseiler temsili DEGILDIR."
+      degerler:
+        moldova: 2.46
+        gurcistan: 2.57
+        ispanya: 2.71
+        sili: 2.89
+        portekiz: 3.20
+        italya: 3.65
+        bulgaristan: 3.89
+        fransa: 6.27
+        guney_afrika_TEMSILI_DEGIL: 7.03
+        avustralya_TEMSILI_DEGIL: 7.33
+        arjantin_TEMSILI_DEGIL: 13.87
+
+  pazar_ortami:
+    dunya_uretim_mhl:
+      value: 227
+      status: FACT
+      tier: T3
+      evidence_id: "EV-2026-08-09-425"
+    dunya_tuketim_mhl:
+      value: 208
+      status: FACT
+      tier: T3
+      evidence_id: "EV-2026-08-09-425"
+    yorum:
+      value: "ALICI LEHINE OLCULU KALDIRAC"
+      status: ESTIMATE
+      evidence_id: "EV-2026-08-09-425"
+      notes: >-
+        Talep zayifligi + stok baskisi var, ancak uretim de dusuk. OIV, dusuk uretimin
+        'genis capli kitlik degil, kademeli stok rahatlamasi' yaratmasini bekliyor.
+        Bu bir 'distilasyon krizi firsati' DEGILDIR.
+
+  bulk_hipotezi:
+    durum: "HYPOTHESIS — NOT INVESTIGATED"
+    kapsam: "00-charter/kapsam.md uyarinca KAPSAM DISI"
+    turkiye_bulk_ithalati_2025_litre:
+      value: 628
+      status: FACT
+      tier: T3
+      evidence_id: "EV-2026-08-09-407"
+      notes: "GTIP 2204.29. Ayni yil siselenmis ithalat 17.848.518 litre. Nedeni bu ajanin alani degildir."
