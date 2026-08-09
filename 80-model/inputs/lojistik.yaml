@@ -3,97 +3,471 @@
 #
 # KURAL: evidence_id'si olmayan sayı modele GİREMEZ.
 # KURAL: Navlun CIF'e giriyorsa AYRICA lojistik gideri olarak sayilmaz (cift sayim).
-# Bu turda tüm değerler null / UNKNOWN'dır. UYDURMA.
+#
+# TUR 1 UYARISI:
+#   - Hicbir navlun rakami FACT degildir. Tumu ESTIMATE veya UNKNOWN'dir.
+#   - Navlun rakamlari ARALIKTIR. Model tek noktaya kilitlenmemelidir.
+#   - Spot navlun ttl = 14d -> 2026-08-23 sonrasi STALE.
+#   - Detay ve hesap adimlari: 40-lojistik/konteyner-kapasitesi.md
+#                              40-lojistik/navlun-araliklari.md
 
 meta:
   dosya: lojistik.yaml
   son_guncelleme: 2026-08-09
-  tur: "TUR 0 — kurulum"
-  durum: BOS_ISKELET
+  tur: "TUR 1 — navlun-lojistik-uzmani ilk dolum"
+  durum: KISMI_DOLU
+  rapor: 40-lojistik/rapor-tur1-navlun-lojistik.md
+  acik_ticketlar: [T-301, T-302, T-303, T-304, T-305]
+  acik_celiskiler: [C-301, C-302, C-303]
 
+# =====================================================================
+# URUN FIZIKSEL PARAMETRELERI (kapasite hesabinin girdisi)
+# =====================================================================
+urun_fizik:
+  sise_hacmi_ml:
+    value: 750
+    unit: ml
+    status: FACT
+    evidence_id: null
+    notes: "Charter tarafindan tanimli format (00-charter/kapsam.md). Kanit karti gerekmez."
+
+  dolu_sise_brut_agirlik_kg:
+    value: null
+    band: [1.16, 1.32]
+    unit: kg
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-305
+    notes: "Sarap 0,743 kg + cam 400-550 g + kapak/etiket ~12 g. Tek nokta YOK, band kullan."
+
+  bos_cam_agirlik_g:
+    value: null
+    band: [420, 550]
+    unit: g
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-304
+    notes: "Durgun sarap tipik. Hafifletilmis cam 300-420 g. Tedarikci teyidi gerekli (T-302)."
+
+  paketli_sise_agirlik_kg:
+    value: 1.26
+    band: [1.21, 1.38]
+    unit: kg
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-307
+    notes: "Koli+bolme payi dahil. Cellwind palet spec'inden geri hesap; 6'li ve 12'li format birbirini dogruluyor."
+
+  paketli_sise_hacim_m3:
+    value: null
+    band: [0.00223, 0.00239]
+    unit: m3
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-307
+    notes: "12'li koli 0,00223; 6'li koli 0,00239. Burgundy formu sise 0,0036'ya cikar -> kapasite %38 duser (KRITIK duyarlilik)."
+
+  sise_boyutlari_mm:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Cap ve yukseklik dogrulanamadi. Tedarikciden alinmali (T-302)."
+
+  koli_formati:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "6'li | 12'li. AB pratigi 6'li, ABD pratigi 12'li. 12'li hacimsel olarak ~%7 daha verimli. Tedarikci belirler (T-302)."
+
+  koli_brut_agirlik_kg:
+    alti_li:
+      value: 7.59
+      unit: kg
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-307
+    on_iki_li:
+      value: 15.1
+      band: [13.6, 18.0]
+      unit: kg
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-306
+
+  palet_basina_sise:
+    std_palet_12li_4katman:
+      value: 720
+      unit: adet
+      status: FACT
+      evidence_id: EV-2026-08-09-307
+    std_palet_6li_4katman:
+      value: 672
+      unit: adet
+      status: FACT
+      evidence_id: EV-2026-08-09-307
+    euro_palet_12li_4katman:
+      value: 576
+      unit: adet
+      status: FACT
+      evidence_id: EV-2026-08-09-307
+    euro_palet_6li_4katman:
+      value: 600
+      unit: adet
+      status: FACT
+      evidence_id: EV-2026-08-09-307
+
+  yuklu_palet_brut_kg:
+    std_palet_12li_4katman:
+      value: 927
+      unit: kg
+      status: FACT
+      evidence_id: EV-2026-08-09-307
+
+  yuklu_palet_yukseklik_mm:
+    value: 1480
+    unit: mm
+    status: FACT
+    evidence_id: EV-2026-08-09-307
+    notes: "4 katman. 5 katman = 1818 mm, Hillebrand'in 1,7 m tavsiyesini asar (EV-2026-08-09-308)."
+
+# =====================================================================
+# KONTEYNER
+# =====================================================================
 konteyner:
   tip:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "20DV | 40HC"
+    notes: "20DV | 40HC. Karar navlun oranina bagli (bkz. 40-lojistik/konteyner-kapasitesi.md §4). RFQ gerekli (T-304)."
 
-  sise_kapasitesi_hacim_kisitli:
-    value: null
-    unit: adet
-    status: UNKNOWN
-    evidence_id: null
-    notes: "Sadece hacim kisitina gore hesaplanan kapasite"
+  spec_20dv:
+    ic_hacim_m3:
+      value: 33.2
+      unit: m3
+      status: FACT
+      evidence_id: EV-2026-08-09-302
+    ic_olcu_m:
+      value: "5.90 x 2.35 x 2.39"
+      status: FACT
+      evidence_id: EV-2026-08-09-301
+    dara_kg:
+      value: 2300
+      unit: kg
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-301
+    azami_payload_kg:
+      value: 28300
+      unit: kg
+      status: FACT
+      evidence_id: EV-2026-08-09-302
+      notes: "iContainers 28.200 diyor -> C-303 (ihmal edilebilir fark)."
 
-  sise_kapasitesi_agirlik_kisitli:
-    value: null
-    unit: adet
-    status: UNKNOWN
-    evidence_id: null
-    notes: "Sadece payload agirlik limitine gore hesaplanan kapasite"
-
-  baglayici_kisit:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
-    notes: "HACIM | AGIRLIK — hangisi once dolarsa o baglayicidir. Sarapta genellikle agirlik, ama DOGRULA."
-
-  pratik_sise_kapasitesi:
-    value: null
-    unit: adet
-    status: UNKNOWN
-    evidence_id: null
-    notes: "min(hacim_kisitli, agirlik_kisitli). Hesap gosterilmeden yazilmaz."
+  spec_40hc:
+    ic_hacim_m3:
+      value: 76.4
+      unit: m3
+      status: FACT
+      evidence_id: EV-2026-08-09-302
+    ic_olcu_m:
+      value: "~12.03 x 2.35 x 2.69"
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-303
+    dara_kg:
+      value: 3900
+      unit: kg
+      status: ASSUMPTION
+      evidence_id: null
+      notes: "Kanit BULUNAMADI. 40HC darasi tipik 3.700-4.000 kg. Karayolu tavani hesabinda kullanildi -> duyarlilik gerekli."
+    azami_payload_kg:
+      value: 28690
+      unit: kg
+      status: FACT
+      evidence_id: EV-2026-08-09-302
 
   palet_sayisi:
-    value: null
-    unit: adet
-    status: UNKNOWN
-    evidence_id: null
+    dv20_std_palet:
+      value: null
+      band: [9, 10]
+      unit: adet
+      status: CONFLICT
+      evidence_id: EV-2026-08-09-308
+      conflict_id: C-301
+    dv20_euro_palet:
+      value: null
+      band: [10, 11]
+      unit: adet
+      status: CONFLICT
+      evidence_id: EV-2026-08-09-308
+      conflict_id: C-301
+    hc40_std_palet:
+      value: null
+      band: [20, 21]
+      unit: adet
+      status: CONFLICT
+      evidence_id: EV-2026-08-09-308
+      conflict_id: C-301
+    hc40_euro_palet:
+      value: null
+      band: [23, 24]
+      unit: adet
+      status: CONFLICT
+      evidence_id: EV-2026-08-09-308
+      conflict_id: C-301
+
+  # --- 20DV KAPASITE ---
+  dv20:
+    sise_kapasitesi_hacim_kisitli_paletli:
+      value: null
+      band: [6480, 7200]
+      unit: adet
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-320
+    sise_kapasitesi_hacim_kisitli_paletsiz:
+      value: null
+      band: [11800, 13700]
+      unit: adet
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-320
+    sise_kapasitesi_agirlik_kisitli:
+      value: null
+      band: [20400, 22400]
+      unit: adet
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-320
+    baglayici_kisit:
+      value: HACIM
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-320
+      notes: "Paletli 20DV'de payload'in yalnizca %30-33'u kullanilir. 'Sarap agir, agirliktan dolar' sezgisi bu formatta YANLIS."
+    pratik_sise_kapasitesi_paletli:
+      value: null
+      band: [6480, 7200]
+      unit: adet
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-320
+    pratik_sise_kapasitesi_paletsiz:
+      value: null
+      band: [11800, 13700]
+      unit: adet
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-320
+
+  # --- 40HC KAPASITE ---
+  hc40:
+    sise_kapasitesi_hacim_kisitli_paletli:
+      value: null
+      band: [14400, 15120]
+      unit: adet
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-321
+    sise_kapasitesi_hacim_kisitli_paletsiz:
+      value: null
+      band: [27100, 31400]
+      unit: adet
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-321
+    sise_kapasitesi_agirlik_kisitli:
+      value: null
+      band: [19100, 21500]
+      unit: adet
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-321
+      notes: "Baglayici olan konteyner payload'i (22.770 sise) DEGIL, Turkiye karayolu 44 t GVW limiti."
+    baglayici_kisit:
+      value: AGIRLIK
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-321
+    pratik_sise_kapasitesi_paletli:
+      value: null
+      band: [14400, 15120]
+      unit: adet
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-321
+    pratik_sise_kapasitesi_paletsiz:
+      value: null
+      band: [19100, 21500]
+      unit: adet
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-321
 
   floor_loaded_mumkun_mu:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: true
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-311
+    notes: "Mumkun ve kapasiteyi 20DV'de +%64...+%90 artirir. Bedeli: manuel bosaltma (terminal ic bosaltim 275-350 USD), kirilma riski, antrepoda yeniden paletleme. NET fark UNKNOWN."
 
+  iki_20dv_vs_bir_40hc:
+    value: "2 x 20DV = 23.600-27.400 sise > 1 x 40HC = 19.100-21.500 sise"
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-322
+    notes: "Agirlik limiti ARAC basina uygulandigi icin. Ekonomik sonuc navlun_40HC/navlun_20DV oranina bagli; esik 1,54. Oran UNKNOWN."
+
+# =====================================================================
+# TURKIYE KARAYOLU AGIRLIK LIMITI
+# =====================================================================
+karayolu_agirlik:
+  iso_konteyner_azami_yuklu_agirlik_ton:
+    value: 44
+    unit: ton
+    status: FACT
+    evidence_id: EV-2026-08-09-310
+    notes: "Karayollari Trafik Yonetmeligi Md.128 - ISO Konteynerli 3-S2/3. T2 kaynak."
+  genel_katar_azami_ton:
+    value: 40
+    unit: ton
+    status: FACT
+    evidence_id: EV-2026-08-09-310
+  tarti_toleransi_pct:
+    value: 5
+    unit: "%"
+    status: FACT
+    evidence_id: EV-2026-08-09-310
+  cekici_sasi_darasi_kg:
+    value: null
+    band: [13000, 16000]
+    unit: kg
+    status: ASSUMPTION
+    evidence_id: null
+    notes: "KANIT YOK. 40HC kargo tavanini dogrudan belirler -> KRITIK duyarlilik. Gercek dara nakliyeciden alinmali (T-304)."
+  kargo_tavani_20dv_kg:
+    value: null
+    band: [25700, 28300]
+    unit: kg
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-310
+  kargo_tavani_40hc_kg:
+    value: null
+    band: [24100, 27100]
+    unit: kg
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-310
+    notes: "Konteynerin kendi payload'indan (28.690 kg) DUSUK. 40HC'de baglayici kisit budur."
+
+# =====================================================================
+# NAVLUN
+# =====================================================================
 navlun:
   mod:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "FCL | LCL"
+    notes: "FCL | LCL. Yillik hacme bagli. 25.000 sise/yil ustu net FCL."
 
   lcl_fcl_kirilma_noktasi_sise:
     value: null
+    band: [5000, 7000]
+    band_genis: [1600, 9900]
     unit: adet
-    status: UNKNOWN
-    evidence_id: null
-    notes: "Bu adetten sonra FCL ucuzlar"
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-323
+    ttl: 14d
+    notes: "Sevkiyat BASINA. Band genis cunku FCL navlunu UNKNOWN. Capraz kontrol: 15 m3 kurali (EV-2026-08-09-325) ~6.735 sise."
+
+  sarap_yogunlugu_ton_m3:
+    value: 0.57
+    unit: ton/m3
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-323
+    notes: "< 1 ton/m3 -> LCL w/m hesabinda CBM baglayicidir, agirlik degil."
+
+  cbm_basina_sise:
+    value: 449
+    unit: adet
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-323
 
   rota:
     yukleme_limani:
       value: null
       status: UNKNOWN
       evidence_id: null
+      notes: "Sourcing kararina bagli. Aday: Valencia/Barcelona (ES), Genova/La Spezia (IT), Marseille/Fos (FR), Oakland/LA (US), San Antonio (CL), Cape Town (ZA)."
     varis_limani:
       value: null
       status: UNKNOWN
       evidence_id: null
-      notes: "Ambarli | Mersin | Izmir | diger"
+      notes: "Ambarli | Mersin | Izmir. Bandrol antrepolari Istanbul/Izmir/Mersin'de oldugu icin (EV-2026-08-09-380, DOGRULANMADI) uc liman da uygun."
 
   ocean_freight_per_konteyner:
     value: null
     currency: null
     status: UNKNOWN
     evidence_id: null
-    ttl: null
-    notes: "KRITIK: all-in mi base mi? Neyin dahil oldugu yazilmadan gecersizdir. Spot/kontrat ayrimi zorunlu."
+    ttl: 14d
+    notes: >
+      HICBIR ROTAMIZ ICIN DOGRULANMIS NAVLUN YOKTUR. Asagidaki bantlar
+      YALNIZCA duyarlilik icindir, merkezi varsayim olarak KULLANILAMAZ.
+      Detay: 40-lojistik/navlun-araliklari.md
+
+  gosterge_bantlar:
+    ispanya_turkiye_20dv:
+      value: null
+      band: [1200, 2500]
+      currency: EUR
+      status: ESTIMATE
+      confidence: LOW
+      tier: T5
+      evidence_id: EV-2026-08-09-333
+      ttl: 14d
+      notes: "ALL-IN MI BASE MI BILINMIYOR. Modele merkezi varsayim olarak GIREMEZ."
+    ispanya_turkiye_40hc:
+      value: null
+      band: [2000, 4600]
+      currency: EUR
+      status: ESTIMATE
+      confidence: LOW
+      tier: T5
+      evidence_id: EV-2026-08-09-333
+      ttl: 14d
+    abd_dogu_turkiye_20dv:
+      value: 2550
+      currency: USD
+      status: ESTIMATE
+      confidence: LOW
+      tier: T5
+      evidence_id: EV-2026-08-09-333
+      ttl: 14d
+    california_turkiye:
+      value: null
+      status: UNKNOWN
+      evidence_id: EV-2026-08-09-329
+      notes: "KRITIK: benchmark urunu (Gold Country, California) tam bu rotadan gelir."
+    italya_turkiye:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    fransa_turkiye:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    sili_turkiye:
+      value: null
+      status: UNKNOWN
+      evidence_id: EV-2026-08-09-328
+    guney_afrika_turkiye:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+
+  piyasa_capalari_bizim_rota_degil:
+    drewry_wci_kompozit:
+      value: 4297
+      currency: USD
+      unit: USD/FEU
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-09-330
+      effective_date: 2026-08-06
+      ttl: 14d
+    fbx13_cin_akdeniz:
+      value: 6066.80
+      currency: USD
+      unit: USD/FEU
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-09-331
+      ttl: 14d
+      notes: "Endeksin varis limanlari arasinda Ambarli ve Izmit var, ama MENSE Cin -> bizim rotamiz DEGIL."
 
   navlun_tipi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
-    notes: "ALL_IN | BASE_ONLY | SPOT | CONTRACT"
+    value: SPOT
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-330
+    notes: "Tum gosterge rakamlar SPOT. Kontrat orani UNKNOWN. Ikisi karistirilmamalidir."
 
   ek_masraflar:
     thc_origin:
@@ -102,15 +476,19 @@ navlun:
       status: UNKNOWN
       evidence_id: null
     thc_destination:
-      value: null
-      currency: null
-      status: UNKNOWN
-      evidence_id: null
+      value: 113
+      currency: USD
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-09-340
+      ttl: 90d
+      notes: "Kapi cikis/terminal elleclleme, 20ft ve 40ft standart konteyner ayni. Reefer 119 USD."
     baf_caf:
       value: null
       currency: null
       status: UNKNOWN
       evidence_id: null
+      notes: "Ispanya-Turkiye rotasinda BAF/PSS/PCS uygulandigi teyitli (EV-2026-08-09-325) ama TUTAR UNKNOWN."
     isps:
       value: null
       currency: null
@@ -121,110 +499,334 @@ navlun:
       currency: null
       status: UNKNOWN
       evidence_id: null
+    ordino:
+      value: null
+      currency: null
+      status: UNKNOWN
+      evidence_id: null
 
+  lcl_maliyet_yapisi:
+    okyanus_per_cbm:
+      value: null
+      band: [40, 180]
+      currency: USD
+      status: ESTIMATE
+      confidence: LOW
+      evidence_id: EV-2026-08-09-324
+      ttl: 30d
+    cfs_per_cbm_iki_taraf:
+      value: null
+      band: [30, 80]
+      currency: USD
+      status: ESTIMATE
+      confidence: LOW
+      evidence_id: EV-2026-08-09-324
+    varis_sabit_masraf:
+      value: null
+      band: [200, 500]
+      currency: USD
+      status: ESTIMATE
+      confidence: LOW
+      evidence_id: EV-2026-08-09-324
+    dokuman:
+      value: null
+      band: [50, 100]
+      currency: USD
+      status: ESTIMATE
+      confidence: LOW
+      evidence_id: EV-2026-08-09-324
+    minimum_ucret_cbm:
+      value: 1
+      unit: m3
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-324
+    lcl_kirilma_orani_pct:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+      notes: "LCL'de ekstra elleclleme -> cam kirilma riski. Oran UNKNOWN. Bu, LCL'in en buyuk GIZLI maliyetidir."
+
+# =====================================================================
+# SIGORTA
+# =====================================================================
 sigorta:
   prim_orani_pct:
     value: null
+    band: [0.3, 0.6]
+    band_genis: [0.1, 1.5]
     unit: "%"
-    status: UNKNOWN
-    evidence_id: null
+    status: ESTIMATE
+    confidence: LOW
+    evidence_id: EV-2026-08-09-360
+    notes: "Sarap kirilgan yuk -> bandin ust ucu beklenir. Turk sigortacidan gercek kotasyon UNKNOWN (T-304)."
+
+  teminat_degeri_esasi:
+    value: "CIF + %10"
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-360
 
   kapsam:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
-    notes: "Kirilma ve sicaklik teminati dahil mi?"
+    value: "ICC (A) all risks + kirilma + termal sok / wine spoilage teminati GEREKLI"
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-361
+    notes: "UYARI: ICC (C) kirilmayi KAPSAMAZ. CIF Incoterms 2020'de saticinin asgari yukumlulugu ICC (C)'dir."
+
+  tasiyici_sinirli_sorumluluk_usd_kg:
+    value: 3
+    currency: USD
+    unit: USD/kg
+    status: FACT
+    evidence_id: EV-2026-08-09-361
+    notes: "1,26 kg'lik dolu sise icin ~3,8 USD. Fiyat/performans sarabinda yeterli olabilir, ama kirilma toplu olursa degil."
 
   muafiyet:
     value: null
     status: UNKNOWN
     evidence_id: null
 
+  cift_sayim_uyarisi:
+    value: "CIF terimiyle alimda navlun+sigorta tedarikci fiyatinin icindedir; AYRICA lojistik gideri yazilamaz."
+    status: FACT
+    evidence_id: null
+
+# =====================================================================
+# LIMAN / GUMRUKLEME
+# =====================================================================
 liman_ve_gumrukleme:
   ordino:
     value: null
     currency: null
     status: UNKNOWN
     evidence_id: null
-  terminal_elleclleme:
-    value: null
-    currency: null
-    status: UNKNOWN
-    evidence_id: null
-  ardiye_gunluk:
-    value: null
-    currency: null
-    status: UNKNOWN
-    evidence_id: null
-  gumruk_musavirligi:
-    value: null
-    currency: null
-    status: UNKNOWN
-    evidence_id: null
 
+  terminal_elleclleme:
+    value: 113
+    currency: USD
+    status: FACT
+    tier: T4
+    evidence_id: EV-2026-08-09-340
+    ttl: 90d
+
+  ardiye_gunluk_20ft:
+    value: null
+    band: [33, 52]
+    currency: USD
+    unit: USD/gun
+    status: FACT
+    tier: T4
+    evidence_id: EV-2026-08-09-340
+    ttl: 90d
+    notes: "Kademeli: 0-5. gun 33-37, 6-10. gun 37-43, 11+ gun 43-52."
+
+  ardiye_gunluk_40ft:
+    value: null
+    band: [58, 90]
+    currency: USD
+    unit: USD/gun
+    status: FACT
+    tier: T4
+    evidence_id: EV-2026-08-09-340
+    ttl: 90d
+
+  ardiye_free_time_gun:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Terminal ardiye free time'i tarifelerden cikarilamadi. Demurrage senaryosunda 0 kabul edildi (muhafazakar)."
+
+  ic_bosaltim_devanning:
+    value_20ft: 275
+    value_40ft: 350
+    currency: USD
+    status: FACT
+    tier: T4
+    evidence_id: EV-2026-08-09-341
+    notes: "+ KDV. Floor-loaded (paletsiz) konteynerde bu kalem cikar."
+
+  muayene_tam:
+    value_20ft: 2322
+    value_40ft: 3249
+    currency: TRY
+    status: FACT
+    tier: T4
+    evidence_id: EV-2026-08-09-341
+    notes: "+ KDV. Alkollu ickide muayene/numune olasiligi yuksek -> butcelenmeli."
+
+  gumruk_musavirligi_ithalat_deniz:
+    value: 4670
+    currency: TRY
+    status: FACT
+    tier: T3
+    evidence_id: EV-2026-08-09-342
+    effective_date: 2026-01-01
+    ttl: 1y
+    notes: "ITH-2, beyanname basina, 2026 ASGARI tarife."
+
+  gumruk_musavirligi_cif_kademesi:
+    value: "CIF 15.001-225.000 USD icin asan kismin %0,3'u; 225.001-2.000.000 USD icin asan kismin %0,1'i"
+    status: FACT
+    tier: T3
+    evidence_id: EV-2026-08-09-342
+
+  gumruk_musavirligi_ek_konteyner:
+    value: 1350
+    currency: TRY
+    status: FACT
+    tier: T3
+    evidence_id: EV-2026-08-09-342
+    notes: "ITH-14. 40HC yerine 2x20DV secilirse bu kalem tekrarlar."
+
+  antrepo_beyannamesi:
+    value: 1350
+    currency: TRY
+    status: FACT
+    tier: T3
+    evidence_id: EV-2026-08-09-342
+    notes: "ANT-1, CIF 0-15.000 USD. + 15.001 USD ustu icin asan kismin %0,1'i. Alkolde ANT-1 VE ITH-2 birlikte cikar (iki beyanname)."
+
+  laboratuvar_ekspertiz_islem:
+    value: 940
+    currency: TRY
+    status: FACT
+    tier: T3
+    evidence_id: EV-2026-08-09-342
+    notes: "OZ-4, her islem icin."
+
+# =====================================================================
+# DEMURRAGE / DETENTION
+# =====================================================================
 demurrage_detention:
   free_time_gun:
-    value: null
+    value: 7
     unit: gun
-    status: UNKNOWN
-    evidence_id: null
-  demurrage_gunluk:
+    status: FACT
+    tier: T3
+    evidence_id: EV-2026-08-09-343
+    effective_date: 2025-09-15
+    ttl: 90d
+    notes: "Maersk Turkiye ITHALAT. Takvim gunu (resmi tatiller dahil). Diger hatlar farkli olabilir; sektor pratigi 7-14 gun."
+
+  dd_gunluk_20ft:
     value: null
-    currency: null
-    status: UNKNOWN
-    evidence_id: null
-  detention_gunluk:
+    kademe: {"8-12": 60, "13-17": 80, "18+": 100}
+    currency: USD
+    unit: USD/gun
+    status: FACT
+    tier: T3
+    evidence_id: EV-2026-08-09-343
+
+  dd_gunluk_40ft:
     value: null
-    currency: null
-    status: UNKNOWN
-    evidence_id: null
+    kademe: {"8-12": 75, "13-17": 115, "18+": 150}
+    currency: USD
+    unit: USD/gun
+    status: FACT
+    tier: T3
+    evidence_id: EV-2026-08-09-343
+
+  ardiye_ayri_faturalanir_mi:
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-343
+    notes: "KRITIK: Turkiye ithalatta terminal ardiyesi armator degil TERMINAL tarafindan ayrica kesilir -> gecikmede IKI SAYAC calisir."
+
+  gecikme_maliyeti_20dv_21gun:
+    value: 2072
+    currency: USD
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-344
+    notes: "~0,157 USD/sise (13.200 siseye bolunmus)."
+
+  gecikme_maliyeti_20dv_60gun:
+    value: 8000
+    currency: USD
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-344
+    notes: "~0,61 USD/sise."
+
   beklenen_gecikme_gun:
     value: null
     unit: gun
     status: UNKNOWN
     evidence_id: null
-    notes: "Ruhsat/analiz/bandrol beklemesi kaynakli. mevzuat-ruhsat-uzmani takviminden turetilir."
+    notes: "Ruhsat/analiz/bandrol beklemesi kaynakli. mevzuat-ruhsat-uzmani takviminden turetilecek -> T-301 (CRITICAL)."
 
+  azaltma_stratejisi:
+    value: "Konteyneri free time icinde ANTREPOYA cek, bosalt, bos konteyneri iade et -> detention ve ardiye durur."
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-344
+    notes: "Limanda 60 gun ~8.000 USD vs antrepoda 60 gun ~210 EUR + beyanname + elleclleme. Fark ~30-35 kat."
+
+# =====================================================================
+# ANTREPO
+# =====================================================================
 antrepo:
   depolama_ucreti_palet_gun:
-    value: null
-    currency: null
-    status: UNKNOWN
-    evidence_id: null
+    value: 0.35
+    currency: EUR
+    unit: EUR/palet/gun
+    status: ESTIMATE
+    confidence: LOW
+    tier: T5
+    evidence_id: EV-2026-08-09-350
+    ttl: 90d
+    notes: "T5 ticari blog. Gercek teklif gerekli (T-304)."
+
   giris_cikis_ellecleme:
     value: null
     currency: null
     status: UNKNOWN
     evidence_id: null
+
   ortalama_kalis_gun:
     value: null
     unit: gun
     status: UNKNOWN
     evidence_id: null
+    notes: "Bandrol + analiz + uygunluk suresine bagli -> T-301."
 
+  alkol_icin_ozel_antrepo_yetkisi_gerekli_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "mevzuat-ruhsat-uzmani alani. Capraz ipucu birakildi."
+
+# =====================================================================
+# BANDROLLEME OPERASYONU
+# =====================================================================
 bandrolleme_operasyonu:
   birim_maliyet_per_sise:
     value: null
     currency: null
     status: UNKNOWN
     evidence_id: null
-    notes: "OPERASYON maliyeti. Bandrolun MEVZUAT tarafi mevzuat-ruhsat-uzmani'nda."
+    notes: "OPERASYON maliyeti (iscilik/hizmet). Bandrolun MEVZUAT tarafi ve BANDROL UCRETI mevzuat-ruhsat-uzmani'nda."
+
   kapasite_sise_gun:
     value: null
     unit: adet/gun
     status: UNKNOWN
     evidence_id: null
-  yapildigi_yer:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    notes: "OPERASYONEL DARBOGAZ ADAYI. 100.000 sise/yil senaryosunda kritik olabilir."
 
+  yapildigi_yer:
+    value: "Yabanci uretim tesisi VEYA Turkiye'de antrepo (Istanbul/Izmir/Mersin)"
+    status: UNKNOWN
+    tier: T5
+    evidence_id: EV-2026-08-09-380
+    notes: "T5 - DOGRULANMADI. mevzuat-ruhsat-uzmani teyit etmeli (T-301). Menseide bandrollenirse antrepo dwell suresi cok kisalir -> lead time ve demurrage riski duser."
+
+# =====================================================================
+# IC LOJISTIK / DEPOLAMA
+# =====================================================================
 ic_lojistik:
   limandan_depoya:
     value: null
     currency: null
     status: UNKNOWN
-    evidence_id: null
+    evidence_id: EV-2026-08-09-351
+    notes: "Bulunan band (3.000-30.000 TL) modele girecek kadar dar degil."
+
   depodan_kanala_dagitim_per_sise:
     value: null
     currency: null
@@ -237,55 +839,167 @@ depolama:
     currency: null
     status: UNKNOWN
     evidence_id: null
+
   minimum_taahhut:
     value: null
     status: UNKNOWN
     evidence_id: null
+
   alkol_uyumlu_depo_gerekli_mi:
     value: null
     status: UNKNOWN
     evidence_id: null
+    notes: "Fiziksel gereklilik (sicaklik/nem) + mevzuat gerekliligi ayri. Mevzuat tarafi mevzuat-ruhsat-uzmani'nda."
 
+# =====================================================================
+# SICAKLIK RISKI
+# =====================================================================
 sicaklik_riski:
+  hasar_esigi_c:
+    value: 20
+    unit: C
+    status: ESTIMATE
+    confidence: LOW
+    tier: T5
+    evidence_id: EV-2026-08-09-370
+    notes: "20 C ustu oksidasyon hizlanir; isi genlesmesi mantari iter -> leakage."
+
   yaz_sevkiyati_riskli_mi:
+    value: true
+    status: ESTIMATE
+    confidence: LOW
+    evidence_id: EV-2026-08-09-370
+    notes: "Kuru konteyner kullananlar tipik olarak yaz sevkiyatindan kacinir. Risk transit suresiyle artar: Akdeniz 5-10 gun DUSUK; Sili/G.Afrika/California 26-45 gun YUKSEK."
+
+  konteyner_ici_olculmus_sicaklik:
     value: null
     status: UNKNOWN
     evidence_id: null
-  reefer_ek_maliyet:
+
+  reefer_ek_maliyet_pct:
     value: null
-    currency: null
-    status: UNKNOWN
-    evidence_id: null
+    band: [20, 50]
+    unit: "%"
+    status: ESTIMATE
+    confidence: LOW
+    tier: T5
+    evidence_id: EV-2026-08-09-372
+    ttl: 90d
+    notes: "Okyanus navlunu primi. AYRICA reefer terminal ardiyesi kuru konteynerin ~4 kati (135 vs 33 USD/gun) -> gecikme riskiyle carpilir."
+
+  reefer_ardiye_gunluk_20ft:
+    value: null
+    band: [135, 165]
+    currency: USD
+    unit: USD/gun
+    status: FACT
+    tier: T4
+    evidence_id: EV-2026-08-09-341
+    ttl: 90d
+
   thermal_liner_ek_maliyet:
     value: null
     currency: null
     status: UNKNOWN
-    evidence_id: null
+    evidence_id: EV-2026-08-09-371
+    notes: "Liner performansi biliniyor (sicaklik artisini ~8-11 C ile sinirlar) ama BIRIM MALIYETI UNKNOWN."
+
   beklenen_fire_orani_pct:
     value: null
     unit: "%"
     status: UNKNOWN
     evidence_id: null
+    notes: "KRITIK: bu sayi olmadan liner/reefer karari finansal olarak verilemez."
 
+# =====================================================================
+# SURE
+# =====================================================================
 sure:
   transit_gun_port_to_port:
-    value: null
-    unit: gun
-    status: UNKNOWN
-    evidence_id: null
+    ispanya_ambarli:
+      value: null
+      band: [7, 10]
+      unit: gun
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-09-325
+    ispanya_mersin:
+      value: null
+      band: [5, 8]
+      unit: gun
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-09-325
+    ispanya_izmir:
+      value: null
+      band: [6, 9]
+      unit: gun
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-09-325
+    italya_turkiye:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    fransa_turkiye:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    abd_dogu_istanbul:
+      value: null
+      band: [18, 38]
+      unit: gun
+      status: CONFLICT
+      confidence: LOW
+      evidence_id: EV-2026-08-09-329
+      conflict_id: C-302
+    california_istanbul:
+      value: null
+      status: UNKNOWN
+      evidence_id: EV-2026-08-09-329
+      notes: "KRITIK - benchmark urununun rotasi."
+    sili_turkiye:
+      value: null
+      status: UNKNOWN
+      evidence_id: EV-2026-08-09-328
+    guney_afrika_turkiye:
+      value: 26
+      unit: gun
+      status: ESTIMATE
+      confidence: LOW
+      evidence_id: EV-2026-08-09-327
+      notes: "TERS YON olcumu (Turkiye -> Cape Town). Sefer sikligi 1-2 hafta."
+
+  sefer_sikligi:
+    akdeniz:
+      value: "haftalik / 2 haftalik"
+      status: FACT
+      evidence_id: EV-2026-08-09-325
+    guney_afrika:
+      value: "1-2 haftada bir"
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-327
+      notes: "Dusuk frekans -> bir sefer kacirmak lead time'a +7-14 gun ekler."
+
   gumrukleme_gun:
     value: null
     unit: gun
     status: UNKNOWN
     evidence_id: null
+
   antrepo_bandrol_gun:
     value: null
     unit: gun
     status: UNKNOWN
     evidence_id: null
+    notes: "mevzuat-ruhsat-uzmani'ndan gelecek -> T-301 (CRITICAL)."
+
   toplam_lead_time_gun:
     value: null
     unit: gun
     status: UNKNOWN
     evidence_id: null
-    notes: "PO'dan satisa hazir hale gelene kadar. Isletme sermayesi ve CCC icin KRITIK."
+    notes: >
+      UNKNOWN VE KRITIK. Isletme sermayesi, CCC ve peak_cash_requirement
+      dogrudan buna baglidir. YALNIZ TRANSIT SURESINI lead time sanmak
+      modeli sistematik olarak IYIMSER yapar.
