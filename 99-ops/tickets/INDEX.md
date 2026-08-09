@@ -2,10 +2,24 @@
 
 > Otomatik üretildi (`yatirim-komitesi-baskani` tur sonu derlemesi, 2026-08-09).
 > Kaynak: `99-ops/tickets/T-*.md`. Tek doğruluk kaynağı ticket dosyalarının kendisidir.
+>
+> **GÜNCELLEME 2026-08-09** — kanıt kalitesi denetimi sonrası `T-901`…`T-906`
+> eklendi (`90-karar/tur-1-kanit-kalitesi-denetimi.md` §8).
 
-**Toplam: 28 ticket** — CRITICAL: 6, HIGH: 13, MEDIUM: 9
+**Toplam: 34 ticket** — CRITICAL: 6, HIGH: 16, MEDIUM: 12
+**Tamamı `OPEN`. Kapanan ticket yoktur.**
 
 > **CLAUDE.md §5:** Kritik (`impact: CRITICAL`) açık ticket varken finans modeli `APPROVED` olamaz.
+
+## Başkanın masasındaki CRITICAL ticket'lar (target_agent = yatirim-komitesi-baskani)
+
+| ticket_id | konu | bağlı gate |
+|---|---|---|
+| `T-201` | 4250 s.K. 1.000.000 lt/yıl eşiği — dış hukuki görüş gerekir | **G0** |
+| `T-304` | Hiçbir rota için doğrulanmış navlun yok — TUR 7 RFQ zorunlu | **G2-L** |
+| `T-504` | OQ-001 promosyon ayağı — fiziksel raf gözlemi gerekir | **G3** |
+
+Bu üçü de **masabaşında kapanamaz**; gerçek dünya teması gerektirir.
 
 | ticket_id | açan | hedef ajan | impact | status | claim |
 |---|---|---|---|---|---|
@@ -37,3 +51,9 @@
 | `T-406` | `global-sourcing-kasifi` | `gumruk-vergi-uzmani` | **MEDIUM** | OPEN | "Turkiye 2025'te dokme sarap (GTIP 2204.29) ithalatini pratikte hic yapmamis (628 litre). Bunun vergisel/mevzu |
 | `T-502` | `turkiye-pazar-kasifi` | `mevzuat-ruhsat-uzmani` | **MEDIUM** | OPEN | "Turkiye'de alkollu ickinin tuketiciye internetten satisi yasaktir; bu nedenle zincir market online kanallarin |
 | `T-503` | `turkiye-pazar-kasifi` | `mevzuat-ruhsat-uzmani` | **MEDIUM** | OPEN | "Alkollu icki reklami/kampanya tanitimi yasagi nedeniyle Metro dahil hicbir perakendeci sarap fiyatini brosur/ |
+| `T-901` | `yatirim-komitesi-baskani` | `gumruk-vergi-uzmani` | **HIGH** | OPEN | C-101 çözümünün zayıf halkası: +%16,09 Yİ-ÜFE artışı TÜİK'ten bağımsız doğrulanmadı; alternatif olarak güncel |
+| `T-902` | `yatirim-komitesi-baskani` | `global-sourcing-kasifi` | **HIGH** | OPEN | Katman etiketi ihlali: `fob_gosterge_bandi.katman=L1` (alt sınır L0 altı, üst sınır L2) ve `katman_L1_ihracat_ | 
+| `T-903` | `yatirim-komitesi-baskani` | `turkiye-pazar-kasifi` | **HIGH** | OPEN | `80-model/inputs/pazar.yaml` MEVCUT DEĞİL — TUR 1'in tek pazar verisi hiçbir model girdi dosyasında yok; ayrıc |
+| `T-904` | `yatirim-komitesi-baskani` | `mevzuat-ruhsat-uzmani` | **MEDIUM** | OPEN | `ruhsat.yaml`'da katman alanı yok; bandrol antrepoda (tescil öncesi) uygulandığı için L3 mü L5 mi belirsiz (T- |
+| `T-905` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | **MEDIUM** | OPEN | `EV-2026-08-09-310` mevzuat kanıtı (Karayolları Trafik Yön. md.128, 44 ton) olmasına rağmen `effective_date: U |
+| `T-906` | `yatirim-komitesi-baskani` | `gumruk-vergi-uzmani` | **MEDIUM** | OPEN | `sise_hacmi_litre=0.75` `FACT`+`evidence_id: null` (ÖTV'yi doğrudan çarpar); `hesap_sozlesmesi` metninde oran/ |

@@ -149,10 +149,14 @@ Bu, `seytanin-avukati`'nın **regülasyon şoku** vektörünün doğrudan konusu
 | `navlun` soruları | KRİTİK/YÜKSEK/ORTA/DÜŞÜK gruplu liste (rota navlunu, California rotası, toplam lead time, bandrolleme kapasitesi vb.) | OPEN | 4'ü CRITICAL |
 | OQ-401…OQ-415 | Sourcing açık soruları (gerçek EXW/FOB, MOQ yapısı, menşe ispat kabiliyeti vb.) | OPEN | 3'ü CRITICAL |
 | OQ-501, OQ-502, OQ-503 | Pazar açık soruları (ithalat hacmi, fiziksel raf gözlemi, benchmark ürünün ithalatçısı) | OPEN | — |
+| **OQ-901** | **Karar eşiklerinin tamamı `TBD`** — nihai karar eşiksiz verilemez (sahibi: **yatırımcı**) | **OPEN** | **CRITICAL** |
+| **OQ-902** | **İki iş modeli (A/B) eşit derinlikte araştırılamadı** — karar kanıtla değil arama yöntemiyle Model B'ye kayabilir | **OPEN** | HIGH |
 
 > Ajanlar farklı ID şemaları kullanmıştır (`OQ-###`, `OQ-G##`, gruplu liste).
 > Başkan bunları yeniden numaralandırmamıştır; ajan raporları bu ID'lere
 > atıf yapmaktadır. Detay için aşağıdaki ajan bölümlerine bakınız.
+> `OQ-901`/`OQ-902` başkan tarafından TUR 1 kanıt kalitesi denetiminde
+> açılmıştır; kayıtları bu dosyanın **sonundadır**.
 
 ---
 
@@ -623,3 +627,154 @@ maliyet yapısı bir kademe daha alçaktır. Bu, projenin en kötü senaryosudur
 (Aynı mağaza ziyaretinde alınabilir — `T-504` ile birleştirilebilir.)
 
 ---
+
+---
+
+# BAŞKAN TARAFINDAN AÇILAN AÇIK SORULAR (OQ-901 …)
+
+> Açan: `yatirim-komitesi-baskani` · 2026-08-09
+> Dayanak: `90-karar/tur-1-kanit-kalitesi-denetimi.md`
+> Bu iki soru **hiçbir ajanın alanına girmez**; biri yatırımcıya, diğeri iki
+> ajanın kesişimine aittir. Bu yüzden ajan bloklarında değil, burada durur.
+
+---
+
+## OQ-901 — Karar eşiklerinin tamamı `TBD`
+
+```yaml
+oq_id:        OQ-901
+acan:         yatirim-komitesi-baskani
+acilis:       2026-08-09
+sahibi:       YATIRIMCI        # hicbir ajan bunu kapatamaz
+durum:        OPEN
+impact:       CRITICAL
+bloke_ettigi: TUR 6 (nihai karar)
+```
+
+### Soru
+
+`00-charter/karar-esikleri.md` içindeki **altı finansal eşiğin tamamı `TBD`**'dir:
+
+| Eşik | Değer |
+|---|---|
+| `target_gross_margin_pct` | TBD |
+| `minimum_contribution_try_per_bottle` | TBD |
+| `maximum_total_capital_try` | TBD |
+| `maximum_acceptable_pilot_loss_try` | TBD |
+| `target_inventory_days` | TBD |
+| `target_payback_months` | TBD |
+
+### Neden kritik
+
+Charter'ın kendi ifadesiyle: *"Model, eşikler `TBD` iken çalışabilir — ama
+**nihai karar** eşikler belirlenmeden verilemez."*
+
+Bu, **araştırmayla kapanmayan tek CRITICAL açık sorudur.** Beş ajan da mükemmel
+çalışsa, TUR 7'de gerçek RFQ ve gerçek navlun gelse, model pozitif contribution
+üretse bile — hangi contribution'ın "yeterli" olduğunu söyleyen bir eşik yoksa
+`IMPORT PILOT` ile `HOLD` arasındaki seçim **keyfî** olur.
+
+İki eşik özellikle belirleyicidir:
+- **`maximum_total_capital_try`** — `peak_cash_requirement` bunu aşarsa senaryo
+  uygulanamaz. Bandrol peşin ödemesi (100.000 şişe = 236.073 TL), ruhsat sabit
+  maliyeti (151–253 bin TL) ve gümrükte peşin ödenen ÖTV+KDV nedeniyle bu
+  projede nakit ihtiyacı yapısal olarak yüksektir.
+- **`maximum_acceptable_pilot_loss_try`** — `IMPORT PILOT` kararının
+  **büyüklüğünü** belirler; olmadan pilot hacmi seçilemez.
+
+### Ne zaman kapatılmalı
+
+Charter'ın önerisi **TUR 3 sonrası**dır: model ilk çıktısını verdiğinde
+yatırımcı gerçek sayı aralıklarını görür ve eşiği bilinçli belirler.
+
+**Bu bir tuzak taşır ve kayda geçirilmiştir:** eşiği modelden *sonra*
+belirlemek, **sonuca göre eşik ayarlama (hedef kaydırma)** riski yaratır.
+Bu risk `seytanin-avukati` tarafından TUR 4'te bir saldırı vektörü olarak
+kullanılmalıdır.
+
+### Kapanmazsa ne olur
+
+Başkan, kararın **hangi eşik varsayımıyla** verildiğini açıkça yazar ve bunu
+`ASSUMPTION` olarak etiketler (`00-charter/karar-esikleri.md` §3). Bu, karara
+gömülü ve doğrulanmamış bir eşik demektir — **kararın en zayıf halkası olur.**
+
+---
+
+## OQ-902 — İki iş modeli eşit derinlikte araştırılamadı
+
+```yaml
+oq_id:        OQ-902
+acan:         yatirim-komitesi-baskani
+acilis:       2026-08-09
+sahibi:       global-sourcing-kasifi + turkiye-pazar-kasifi (kesisim)
+durum:        OPEN
+impact:       HIGH
+bloke_ettigi: G2, is modeli secimi
+kaynak:       50-sourcing/rapor-tur1-global-sourcing.md §9.2 (ajanin kendi itirafi)
+```
+
+### Soru
+
+`00-charter/karar-esikleri.md`: *"**İki model eşit önceliklidir.**
+`global-sourcing-kasifi` ikisini de eşit derinlikte araştırır. Birini
+gerekçesiz öne çıkarmak yasaktır."*
+
+TUR 1 sonucu:
+
+| Model | Doğrulanmış aday |
+|---|---|
+| **B — Private label** | **10** |
+| **A — Mevcut marka distribütörlüğü** | **1** |
+
+`global-sourcing-kasifi` bunu §9.2'de **kendisi itiraf etmiştir** ve nedenini
+doğru teşhis etmiştir:
+
+> *"Private label sağlayıcıları kendilerini web'de 'private label wine' diye
+> pazarlar ve bu yüzden aranabilirler. Mevcut marka sahipleri distribütör
+> arayışını fuarlarda, ihracat destek kurumlarında ve doğrudan temasla
+> yürütür — web'de aranmazlar. … Bu asimetri **Model B'nin daha iyi olduğunu
+> göstermez; açık kaynakta daha görünür olduğunu gösterir.**"*
+
+### Neden HIGH
+
+Bu bir veri eksikliği değil, **sistematik arama yanlılığıdır.** Tehlike şudur:
+model B lehine hiçbir kanıt üretilmeden, yalnızca **B hakkında daha çok kanıt
+bulunduğu için** karar B'ye kayar. Ajanın kendi uyarısı:
+
+> *"Bu kayma **kanıtla değil, arama yöntemiyle** üretilmiş olur.
+> `yatirim-komitesi-baskani`'nın bu noktayı özellikle denetlemesi gerekir."*
+
+Bu denetim yapılmış ve uyarı **haklı bulunmuştur.**
+
+### Neden tek bir ajan kapatamaz
+
+"Türkiye'de temsilcisi olmayan f/p markası" **iki yönlü bir kesişimdir**:
+- Yön 1 (üretici portföyleri, fuar katılımcı listeleri) → `global-sourcing-kasifi`
+- Yön 2 (Türkiye raf/ithalatçı haritası) → `turkiye-pazar-kasifi`
+
+İkinci yön şu anda `UNKNOWN`'dır: ithalatçı/distribütör haritası çıkarılamamış,
+TADAB alkol istatistiği yayınlamıyor, yalnızca Diageo doğrulanabilmiştir
+(`OQ-404`, `T-505`, `T-405`).
+
+### Nasıl kapatılır
+
+| # | Ne | Kim | Süre |
+|---|---|---|---|
+| 1 | Türkiye'deki ithal SKU / ithalatçı listesi ile üretici portföylerinin çaprazlanması | `turkiye-pazar-kasifi` + `global-sourcing-kasifi` | 1–2 hafta (TUR 2) |
+| 2 | ProWein / Wine Paris katılımcı listelerinin f/p segmenti için taranması | `global-sourcing-kasifi` | 1 hafta |
+| 3 | Şişe arka etiketlerinden ithalatçı satırının okunması (raf ziyaretinde) | `turkiye-pazar-kasifi` | `T-504` ziyaretiyle birlikte |
+
+### Başkan direktifi
+
+Model A için **en az 5 somut aday marka** doğrulanana kadar, hiçbir ajan ve
+hiçbir model çıktısı iki iş modeli arasında **tercih sıralaması** üretemez.
+`finans-fizibilite` her iki modeli de çalıştırmak zorundadır; birinin girdisi
+eksikse sonuç o model için `UNKNOWN` döner — **"veri yok" ile "sonuç kötü"
+aynı şey değildir.**
+
+### Bu soruyu ne çürütür
+
+Model A'nın Türkiye'de **yapısal olarak** uygulanamaz olduğunun gösterilmesi
+(örneğin distribütörlük sözleşmelerinde ithalatçının markup tavanının bu
+segmentte ekonomiyi imkânsız kıldığının kanıtlanması). O durumda asimetri bir
+yanlılık değil, **doğru bir eleme** olur ve OQ-902 gerekçeli olarak kapanır.

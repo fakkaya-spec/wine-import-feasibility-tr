@@ -9,29 +9,35 @@ Format: `C-###`
 
 ---
 
-## DURUM — TUR 1 SONU: 14 AÇIK ÇELİŞKİ
+## DURUM — TUR 1 SONU: 14 ÇELİŞKİ → 8 KAPANDI, 6 AÇIK
 
-Tümü `OPEN`. Hiçbiri sessizce çözülmedi. Çözüm yetkisi `yatirim-komitesi-baskani`'ndadır.
+> **GÜNCELLEME 2026-08-09 — `yatirim-komitesi-baskani` kanıt kalitesi denetimi.**
+> Aşağıdaki tablo **güncel durumu** gösterir. Çözüm gerekçelerinin tamamı bu
+> dosyanın sonundaki **§TUR 1 SONU — BAŞKAN ÇÖZÜM KAYITLARI** bölümündedir.
+> Denetim raporu: `90-karar/tur-1-kanit-kalitesi-denetimi.md` §4.
 
-| conflict_id | Konu | impact | Açan ajan |
-|---|---|---|---|
-| C-101 | Asgari maktu ÖTV: 61,3914 vs 71,2692 TL/lt (mevzuat.gov.tr konsolide metin vs GİB güncel liste) | **CRITICAL** | `gumruk-vergi-uzmani` |
-| C-201 | 4250 m.1/3 — 1.000.000 lt/yıl eşiği durgun şarap ithalatına uygulanıyor mu (muafiyet fıkrası yalnız viski ve tabiî köpüren şarabı sayıyor) | **CRITICAL** | `mevzuat-ruhsat-uzmani` |
-| C-202 | Bildirim ↔ dağıtım yetki belgesi ↔ ithalat sıralama döngüsü | HIGH | `mevzuat-ruhsat-uzmani` |
-| C-203 | 7584 s.K. satış noktası marka/ambalaj görseli yasağının raf kapsamı | **CRITICAL** | `mevzuat-ruhsat-uzmani` |
-| C-204 | TGK Şarap Tebliği'nin mülga kanuna dayanması; etiket kuralı hangi metinden okunacak | LOW | `mevzuat-ruhsat-uzmani` |
-| C-301 | Konteyner başına palet adedi (aynı kaynağın iki yayını çelişiyor) | MEDIUM | `navlun-lojistik-uzmani` |
-| C-302 | Valencia/ABD → İstanbul transit süresi (7–10 gün vs 32–35 gün) | HIGH | `navlun-lojistik-uzmani` |
-| C-303 | 20DV azami payload (28.300 / 28.200 / 26.000 kg) | LOW | `navlun-lojistik-uzmani` |
-| C-401 | Private label MOQ: 300–1.200 vs 3.000–3.600 vs 1 konteyner | HIGH | `global-sourcing-kasifi` |
-| C-402 | ABD menşeli ithalatın birim değeri (25,19 USD/lt) benchmark segmentiyle bağdaşmıyor | MEDIUM | `global-sourcing-kasifi` |
-| C-403 | Benchmark ürünün California alt bölgesi | LOW | `global-sourcing-kasifi` |
-| C-501 | Aynı feed'de stokta olan/olmayan SKU fiyatları arasında 10 kat fark | HIGH | `turkiye-pazar-kasifi` |
-| C-502 | Metro'nun KDV dili: etikette KDV dahil, ticari koşullarda KDV hariç | MEDIUM (izleme) | `turkiye-pazar-kasifi` |
-| C-503 | T5 medya fiyat listesi ile gözlemlenen bant uyumu (üç site aynı tabloyu kopyalamış) | MEDIUM | `turkiye-pazar-kasifi` |
+| conflict_id | Konu | impact | Açan ajan | **durum** |
+|---|---|---|---|---|
+| C-101 | Asgari maktu ÖTV: 61,3914 vs 71,2692 TL/lt (mevzuat.gov.tr konsolide metin vs GİB güncel liste) | **CRITICAL** | `gumruk-vergi-uzmani` | **RESOLVED** (71,2692; koşullu — T-901) |
+| C-201 | 4250 m.1/3 — 1.000.000 lt/yıl eşiği durgun şarap ithalatına uygulanıyor mu (muafiyet fıkrası yalnız viski ve tabiî köpüren şarabı sayıyor) | **CRITICAL** | `mevzuat-ruhsat-uzmani` | **OPEN** |
+| C-202 | Bildirim ↔ dağıtım yetki belgesi ↔ ithalat sıralama döngüsü | HIGH | `mevzuat-ruhsat-uzmani` | **OPEN** |
+| C-203 | 7584 s.K. satış noktası marka/ambalaj görseli yasağının raf kapsamı | **CRITICAL** | `mevzuat-ruhsat-uzmani` | **OPEN** |
+| C-204 | TGK Şarap Tebliği'nin mülga kanuna dayanması; etiket kuralı hangi metinden okunacak | LOW | `mevzuat-ruhsat-uzmani` | **OPEN** (TUR 5 → mevzuat) |
+| C-301 | Konteyner başına palet adedi (aynı kaynağın iki yayını çelişiyor) | MEDIUM | `navlun-lojistik-uzmani` | **OPEN** (band zorunlu) |
+| C-302 | Valencia/ABD → İstanbul transit süresi (7–10 gün vs 32–35 gün) | HIGH | `navlun-lojistik-uzmani` | **RESOLVED** |
+| C-303 | 20DV azami payload (28.300 / 28.200 / 26.000 kg) | LOW | `navlun-lojistik-uzmani` | **RESOLVED** |
+| C-401 | Private label MOQ: 300–1.200 vs 3.000–3.600 vs 1 konteyner | HIGH | `global-sourcing-kasifi` | **RESOLVED** |
+| C-402 | ABD menşeli ithalatın birim değeri (25,19 USD/lt) benchmark segmentiyle bağdaşmıyor | MEDIUM | `global-sourcing-kasifi` | **RESOLVED** (sahte çelişki) |
+| C-403 | Benchmark ürünün California alt bölgesi | LOW | `global-sourcing-kasifi` | **UNRESOLVABLE** |
+| C-501 | Aynı feed'de stokta olan/olmayan SKU fiyatları arasında 10 kat fark | HIGH | `turkiye-pazar-kasifi` | **OPEN** |
+| C-502 | Metro'nun KDV dili: etikette KDV dahil, ticari koşullarda KDV hariç | MEDIUM (izleme) | `turkiye-pazar-kasifi` | **RESOLVED** (sahte çelişki) |
+| C-503 | T5 medya fiyat listesi ile gözlemlenen bant uyumu (üç site aynı tabloyu kopyalamış) | MEDIUM | `turkiye-pazar-kasifi` | **RESOLVED** |
 
-> **Not:** C-101, C-201 ve C-203 CRITICAL'dır. CLAUDE.md §5 uyarınca kritik
+> **Not:** C-201 ve C-203 **CRITICAL ve OPEN**'dır. CLAUDE.md §5 uyarınca kritik
 > çelişki/ticket açıkken finans modeli `APPROVED` olamaz.
+> C-101 kapanmıştır, ancak bağlı ticket `T-104` (**CRITICAL**) açık kalmaya
+> devam eder — çelişkinin çözülmesi ÖTV'nin zaman içinde değişkenliğini ortadan
+> kaldırmaz.
 
 ---
 
@@ -119,6 +125,11 @@ Bu noktalarda çelişki çıkması muhtemeldir; ajanlar dikkatli olsun:
 
 > Aşağıdaki bölümler ajanların `99-ops/_parts/celiskiler-*.md` dosyalarından
 > **değiştirilmeden** aktarılmıştır. Başlık seviyeleri bir kademe indirilmiştir.
+>
+> ⚠️ **OKUMA UYARISI:** Fragment metinlerinin içindeki `Durum: OPEN` /
+> `status: OPEN` satırları **TUR 1 tarihlidir ve dondurulmuştur** (ajan metni
+> değiştirilmez). **Güncel durum** için yukarıdaki özet tabloya ve bu dosyanın
+> sonundaki **§TUR 1 SONU — BAŞKAN ÇÖZÜM KAYITLARI** bölümüne bakınız.
 
 ## gumruk-vergi-uzmani
 
@@ -469,3 +480,296 @@ ziyaretinde okuyabilir) veya ABD TTB COLA kayıtları. → T-405
 | **Durum** | `OPEN` — fiziksel gözlemle kapanır (`OQ-502`) |
 
 ---
+
+# TUR 1 SONU — BAŞKAN ÇÖZÜM KAYITLARI
+
+```yaml
+cozen:          yatirim-komitesi-baskani
+cozum_tarihi:   2026-08-09
+dayanak:        90-karar/tur-1-kanit-kalitesi-denetimi.md §4
+kural:          bu dosyadaki "ÇÖZÜM HİYERARŞİSİ (BAŞKAN İÇİN)" 7 adımı
+```
+
+> Bu bölüm yalnızca `durum` / `cozum` / `cozen` / `cozum_tarihi` alanlarını
+> doldurur. Yukarıdaki ajan fragment'lerinin **hiçbir cümlesi silinmemiş veya
+> değiştirilmemiştir.**
+
+---
+
+## C-101 — Asgari maktu ÖTV: 61,3914 vs 71,2692 TL/lt
+
+```yaml
+conflict_id:      C-101
+celiski_turu:     TARIH        # DEGER degil — ayni hukmun iki farkli zamandaki hali
+impact:           CRITICAL
+durum:            RESOLVED
+cozum_evidence_id: EV-2026-08-09-111
+cozen:            yatirim-komitesi-baskani
+cozum_tarihi:     2026-08-09
+```
+
+**Karar:** `gumruk-vergi-uzmani`'nın çözüm önerisi **ONAYLANDI.**
+Modelde **71,2692 TL/litre** (`EV-2026-08-09-111`) kullanılır.
+`EV-2026-08-09-112` (61,3914) `SUPERSEDED` olarak kalır.
+
+**Gerekçe (çözüm hiyerarşisi sırasıyla):**
+
+1. **Kural 1 (tier) tek başına yetmez.** Naif okuma T1 (mevzuat.gov.tr) lehinedir.
+   Ancak çelişen şey iki ayrı *iddia* değil, **aynı hükmün iki farklı
+   zamandaki hâlidir** → `celiski_turu: TARIH`.
+2. **Kural 2 (yürürlük tarihi) belirleyicidir.** ÖTVK md.12/3 (T1,
+   `EV-2026-08-09-114`) asgari maktu tutarların Ocak/Temmuz'da Yİ-ÜFE oranında
+   *"yeniden belirlenmiş sayılır"* olduğunu söyler — ayrı bir CBK gerekmediği
+   için değişiklik **konsolide kanun metnine işlenmez.** GİB listesi (T2), bu
+   otomatik mekanizmanın **yayımıdır**, rakip bir iddia değildir; başlığında
+   dayanağını (md.12/3) ve yürürlüğünü (3/7/2026) açıkça yazar.
+3. **Askı kontrolü:** CBK 10799 md.12/3'ü yalnız **2026 Ocak–Haziran** için,
+   CBK 11489 yalnız **(III) sayılı listenin (B) cetveli (tütün)** için askıya
+   almıştır. Şarap ((III)/A) askı kapsamı **dışındadır.**
+4. **Kural 3 (model hedef tarihi):** `20-mevzuat/t0-takvimi.md`'ye göre ilk
+   konteynerin izinlerinin tamamlanması **2026-12 → 2027-05** bandındadır; yani
+   her senaryoda 3/7/2026'dan **sonrasıdır.** 61,3914 hiçbir senaryoda geçerli
+   değildir.
+
+**İki bağlayıcı koşul:**
+
+- **K1 —** Bu değer modele **sabit sayı olarak giremez.** `model_hedef_tarihi`
+  2027-01-01 veya sonrasıysa ÖTV **Yİ-ÜFE'ye endeksli bir değişken** olarak
+  modellenir. **Ticket `T-104` (CRITICAL) AÇIK KALIR**; C-101'in çözülmesi
+  T-104'ü kapatmaz.
+- **K2 —** Çözümün en zayıf halkası (+%16,09 artışın TÜİK Yİ-ÜFE'den bağımsız
+  doğrulanmamış olması) **`T-901`** ile takip edilir.
+
+**Bu çözümü ne çürütür:** 3/7/2026 sonrasında şarap için md.12/3'ü askıya alan
+veya tutarı yeniden tespit eden bir Cumhurbaşkanı Kararı; veya GİB listesinin
+hesap hatası içermesi.
+
+---
+
+## C-302 — Valencia/ABD → İstanbul transit süreleri
+
+```yaml
+conflict_id:      C-302
+celiski_turu:     DEGER
+impact:           HIGH
+durum:            RESOLVED
+cozum_evidence_id: EV-2026-08-09-325, EV-2026-08-09-326
+cozen:            yatirim-komitesi-baskani
+cozum_tarihi:     2026-08-09
+```
+
+**Karar:** Kaynak B (`EV-2026-08-09-329`, `EV-2026-08-09-333`, BR Logistics)
+**bütünüyle diskalifiye edilmiştir.**
+
+**Gerekçe:** Kural 1 (tier) — Kaynak A, T3 (Maersk SLR Marmara Sea A servis
+tarifesi) + T4 (JSV Logistic) olmak üzere **iki bağımsız kaynaktır**; Kaynak B
+T5'tir. Ayrıca Kaynak B **kendi içinde tutarsızdır** (LA→İstanbul 15 gün
+fiziksel olarak imkânsız; Valencia→İstanbul 32–35 gün Akdeniz içi bir rota için
+absürt) — bu, kaynağın tamamının güvenilirliğini ortadan kaldırır.
+
+- **Akdeniz transit süresi 7–10 gün olarak geçerlidir.**
+- **ABD / California rotası bir ÇELİŞKİ DEĞİLDİR — `UNKNOWN`'dır.** Ortada tek
+  bir kullanılabilir kaynak kalmamıştır. `T-304` ile takip edilir.
+- `navlun-lojistik-uzmani`'nın bu turdaki davranışı (ABD sayılarını modele
+  almamak) **doğrulanmıştır.**
+
+---
+
+## C-303 — 20DV azami payload
+
+```yaml
+conflict_id:      C-303
+celiski_turu:     DEGER
+impact:           LOW
+durum:            RESOLVED
+cozum_evidence_id: EV-2026-08-09-302
+cozen:            yatirim-komitesi-baskani
+cozum_tarihi:     2026-08-09
+```
+
+**Karar:** **28.300 kg** (Maersk, T3, `EV-2026-08-09-302`) kullanılır.
+
+**Gerekçe:** Kural 1 (tier): T3 > T4 (iContainers, 28.200) > T5 (26.000 —
+kanıt kartı **açılmamıştır**, dolayısıyla CLAUDE.md §2 uyarınca sonuç
+üretemez).
+
+**Model etkisi: SIFIR.** 20DV'de bağlayıcı kısıt zaten **hacimdir**
+(payload'ın %30–60'ı kullanılmaz); 26.000 kg iddiası doğru olsa bile bağlayıcı
+olmazdı. Çözüm kayıt düzenidir, sayı değişikliği değildir.
+
+---
+
+## C-401 — Private label MOQ büyüklüğü
+
+```yaml
+conflict_id:      C-401
+celiski_turu:     KAPSAM      # tedarikci sinifi farki — deger celiskisi degil
+impact:           HIGH
+durum:            RESOLVED
+cozum_evidence_id: EV-2026-08-09-408, EV-2026-08-09-409, EV-2026-08-09-410
+cozen:            yatirim-komitesi-baskani
+cozum_tarihi:     2026-08-09
+```
+
+**Karar iki adımlıdır:**
+
+1. **Kaynak A elenir.** `EV-2026-08-09-424` (usetorg.com agregatörü, 300–1.200
+   şişe) **T5**'tir ve hangi üreticilere dayandığı belirtilmemiştir.
+   CLAUDE.md §2: T5 tek başına sonuç üretemez. Kural 1 uygulanır.
+   Bu, `global-sourcing-kasifi`'nın uyardığı *"A'yı seçersek pilot yapay olarak
+   kolaylaşır"* riskini ortadan kaldırır.
+2. **Geriye kalan fark bir çelişki DEĞİLDİR.** 3.000 şişe (Interbrosa) /
+   3.600 şişe (The Wine Factory) / 1 × 20ft konteyner (Viña Maria) — üç **ayrı
+   tedarikçinin ayrı iş modelidir**, aynı soruya verilmiş çelişkili cevaplar
+   değildir. Kural 4 (kapsam uyumu). Bu zaten raporda `B-2` olarak **FACT**
+   niteliğinde tespit edilmiştir: *"MOQ bir sayı değil, bir yapıdır."*
+
+**Geriye kalan gerçek boşluk bir `UNKNOWN`'dır, `CONFLICT` değil:** bize
+uygulanacak gerçek MOQ (`OQ-402`, CRITICAL) yalnızca RFQ ile öğrenilir.
+
+**Bağlayıcı model kuralı:** `finans-fizibilite`, MOQ'nun **her iki yapısını**
+(SKU bazlı ~3.000–3.600 şişe **ve** konteyner bazlı) ayrı senaryo olarak
+çalıştırır. Tek bir MOQ değerine kilitlenmek **yasaktır** — seçim kararın
+kendisini belirler.
+
+---
+
+## C-402 — ABD menşeli ithalatın birim değeri vs benchmark
+
+```yaml
+conflict_id:      C-402
+celiski_turu:     KATMAN + KAPSAM     # sahte celiski
+impact:           MEDIUM
+durum:            RESOLVED
+cozum_evidence_id: EV-2026-08-09-405
+cozen:            yatirim-komitesi-baskani
+cozum_tarihi:     2026-08-09
+```
+
+**Karar: GERÇEK ÇELİŞKİ DEĞİLDİR.**
+
+**Gerekçe (kural 5 → kural 4, "en sık yapılan sahte-çelişki türü"):**
+
+| | Kaynak A | Kaynak B |
+|---|---|---|
+| Ne ölçüyor | **tek bir SKU'nun raf fiyatı** | **tüm ABD menşeinin yıllık ortalaması** |
+| Katman | **L8** | **L2 (CIF)** |
+| Popülasyon | 1 ürün | 18.298 litrelik toplam |
+
+İki sayı **ne aynı katmanda ne aynı popülasyondadır**; birbirini çürütemez.
+18.298 litrelik küçük bir toplamda ortalama birim değer, birkaç premium parti
+tarafından kolayca yukarı çekilir (ağırlıklı ortalama etkisi).
+
+**Bağlayıcı kural:** Comtrade ABD ortalama CIF birim değeri (25,19 USD/litre)
+benchmark ürünün maliyet proxy'si olarak **KULLANILAMAZ.**
+`global-sourcing-kasifi`'nın bu değeri "temsili değil" işaretleyip ülke
+sıralamasında kullanmama kararı **doğrulanmıştır.**
+
+**Kapanmayan kısım bir `UNKNOWN`'dır:** benchmark ürünün gerçek menşe/rota/
+ithalat yılı → `T-405`.
+
+---
+
+## C-403 — Benchmark ürünün California alt bölgesi
+
+```yaml
+conflict_id:      C-403
+celiski_turu:     DEGER
+impact:           LOW
+durum:            UNRESOLVABLE
+cozum_evidence_id: null
+cozen:            yatirim-komitesi-baskani
+cozum_tarihi:     2026-08-09
+```
+
+**Karar:** Her iki kaynak da **T5**'tir. Kural 1 (tier) uygulanamaz — eşit ve
+ikisi de yetersiz. Kural 2/3/4/5 de uygulanamaz. **Kural 7 devreye girer:**
+
+- Değer `UNKNOWN` olarak kalır ve **modele girmez.**
+- impact `LOW` olduğu için **karara taşınmaz** (model çıktısını değiştirmez,
+  yalnızca tedarikçi aramasını yönlendirirdi).
+- `T-405` (şişenin arka etiketi / TTB COLA kaydı) ile kapanabilir.
+
+---
+
+## C-502 — Metro'nun KDV dili
+
+```yaml
+conflict_id:      C-502
+celiski_turu:     KAPSAM      # sahte celiski
+impact:           MEDIUM
+durum:            RESOLVED
+cozum_evidence_id: EV-2026-08-09-503, EV-2026-08-09-508
+cozen:            yatirim-komitesi-baskani
+cozum_tarihi:     2026-08-09
+```
+
+**Karar:** `turkiye-pazar-kasifi`'nın değerlendirmesine **KATILIYORUM** —
+gerçek bir çelişki değildir.
+
+**Gerekçe (kural 4):** İki kaynak **aynı şey hakkında konuşmamaktadır.**
+- Kaynak A (broşür, her fiyatta `KDV'li`) = **müşteriye ilan edilen raf
+  fiyatı** → brüt.
+- Kaynak B ("alım hedeflerinize KDV dahil değildir") = **ciro/hedef
+  muhasebesi** → net.
+
+Aynı şirketin iki farklı amaç için iki farklı matrah kullanması olağandır ve
+cash & carry formatında beklenir. Benchmark bir **raf etiketi gözlemidir** →
+brüt taraf geçerlidir.
+
+**ÜÇ BAĞLAYICI SINIR (bu çözüm fazla okunmasın diye):**
+
+1. Bu çözüm **OQ-001'i KAPATMAZ** ve **G3'ü AÇMAZ.**
+2. Çözülen tek şey "Metro kendi içinde tutarsız" itirazıdır. **Şarap
+   reyonundaki fiziksel etiketin** de `KDV'li` yazdığı **görülmemiştir** —
+   tüm sonuç broşürden rafa yapılmış bir **çıkarımdır** (`T-501`, `T-504`).
+3. `EV-2026-08-09-506`'nın (Fiyat Etiketi Yönetmeliği) T1 etiketi, ajanın kendi
+   itirafıyla **ikincil veritabanından** okunmuştur; `T-501` ile
+   doğrulatılmadan bu çözümün hukuki ayağı tamamlanmış sayılmaz.
+
+---
+
+## C-503 — T5 medya fiyat listesi vs gözlemlenen bant
+
+```yaml
+conflict_id:      C-503
+celiski_turu:     DEGER
+impact:           MEDIUM
+durum:            RESOLVED
+cozum_evidence_id: EV-2026-08-09-510
+cozen:            yatirim-komitesi-baskani
+cozum_tarihi:     2026-08-09
+```
+
+**Karar:** Kaynak A (`EV-2026-08-09-512`) **elenir**; kayıt kapanır.
+
+**Gerekçe:** Kural 1 (tier) — Kaynak A **T5**'tir ve üç site aynı tabloyu
+kopyalamıştır (bağımsız doğrulama değildir). Kural 2 (tarih) — Ocak 2026
+tarihlidir, Ağustos 2026 fiyatı olarak kullanılamaz. CLAUDE.md §2 uyarınca
+T5 bir kaynak, T4 bir gözlemle **çelişki oluşturamaz**; yalnızca "nereye
+bakılacağını" gösterir.
+
+`EV-512` zaten `status: UNKNOWN` + **"MODELE GİREMEZ"** notuyla işaretlenmiştir;
+bu doğrulanmıştır.
+
+**Bu çözüm `EV-2026-08-09-510`'u DOĞRULAMAZ.** Yerli rakip fiyat bandı hâlâ tek
+bir ticari sitenin feed'ine dayanmaktadır ve `C-501` açıktır.
+
+---
+
+## AÇIK KALAN 6 ÇELİŞKİ — NEDEN ÇÖZÜLEMEDİ
+
+| id | impact | durum | Çözülememe nedeni | Kim/ne kapatır |
+|---|---|---|---|---|
+| **C-201** | **CRITICAL** | OPEN | T1 ↔ T1, aynı kanun, aynı yürürlük tarihi, ikisi de yürürlükte. Çözüm hiyerarşisinin **1–5. kuralları uygulanamıyor**. Bu bir **hukuki yorum** sorunudur; başkanın kendi yorumuyla çözmesi CLAUDE.md §1.16 ihlali olur | `T-201` — TADAB yazılı görüşü / hukuk bürosu mütalaası / Yetkili Dağıtım Firmaları Listesinde küçük ithalatçı tespiti |
+| **C-202** | HIGH | OPEN | T1 ↔ T1, aynı yönetmeliğin iki maddesi. `celiski_turu` **`TANIM`** olarak yeniden sınıflandırıldı (değer çelişkisi değil, sıralama sorunu). `t0-takvimi.md`'de A7→A8 sırasının `ASSUMPTION` etiketiyle işaretlenmiş olması **doğru davranıştır** | `T-202` — TADAB'a doğrudan soru |
+| **C-203** | **CRITICAL** | OPEN | T1 ↔ T1; kanun **9 haftalıktır**, ikincil düzenleme **henüz yoktur**. Çözmek için var olmayan bir metni okumak gerekir | `T-205` — TADAB ikincil düzenlemesi/rehberi |
+| **C-204** | LOW | OPEN | Mülga dayanaklı bir tebliğin yürürlük durumu bir **mevzuat yorumudur**; `mevzuat-ruhsat-uzmani`'nın alanıdır, başkan kendi yorumunu koyamaz. Etki düşük olduğu için **yeni ticket açılmadı** | TUR 5 → `mevzuat-ruhsat-uzmani` |
+| **C-301** | MEDIUM | OPEN | T4 ↔ T4, aynı firmanın iki yayını. Kural 2 (daha güncel kazanır) teknik olarak uygulanabilirdi (2025 > 2022) — **bilinçli olarak uygulanmadı**, çünkü daha güncel olanı seçmek kapasite bandını %11 daraltır ve modeli **gerekçesiz iyimser** yapar. Farkın kaynağı büyük olasılıkla **palet standardı tanımıdır** (`TANIM`) | `T-304` — forwarder'dan yazılı stowage planı |
+| **C-501** | HIGH | OPEN | T4 ↔ T4, **aynı feed**, aynı erişim tarihi, aynı `updated_at`. Tier, tarih, kapsam ve katman ayrımlarının **hiçbiri** uygulanamıyor | `OQ-502` — fiziksel mağaza gözlemi |
+
+### BAŞKAN DİREKTİFİ — C-301
+
+**9–11 (20ft) / 20–24 (40ft) palet bandı korunur. Tek bir değer seçilmesi
+YASAKTIR.** Tüm kapasite sonuçları aralık olarak taşınır.
+`navlun-lojistik-uzmani`'nın bu turdaki band kullanımı **doğrulanmıştır.**
