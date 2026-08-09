@@ -9,6 +9,46 @@ Bu dosya projenin çıkış noktası olan raf gözlemlerini kaydeder.
 
 ---
 
+## TUR 1 GÜNCELLEMESİ (2026-08-09) — OQ-001 `PARTIALLY_RESOLVED`
+
+`turkiye-pazar-kasifi` TUR 1'de OQ-001'i **kısmen** kapattı. Aşağıdaki
+tablolardaki `UNKNOWN` alanların bir kısmı artık kanıtlıdır, bir kısmı
+hâlâ açıktır. **Tablolar tarihsel kayıt olarak değiştirilmeden bırakılmıştır**;
+güncel durum budur:
+
+| Alan | TUR 1 sonrası durum | evidence_id |
+|------|---------------------|-------------|
+| KDV durumu | **KDV DAHİL** (Metro broşürlerinde her fiyatın yanında `KDV'li`) | `EV-2026-08-09-503`, `-504`, `-505`, `-506` |
+| Tüketici fiyatı mı | **EVET** — Metro bireysel müşteriye ücretsiz günlük kartla açık | `EV-2026-08-09-505` |
+| Profesyonel fiyatı mı | **EVET, aynı anda** — Metro'da tek fiyat | `EV-2026-08-09-505`, `-507`, `-508` |
+| Fiyat katmanı | **`L8_METRO_CASH_CARRY`** — zincir market L8'i DEĞİL; bakkal/HoReCa için aynı anda L7-proxy | `EV-2026-08-09-507` |
+| Promosyon durumu | **HÂLÂ UNKNOWN** — `T-504` (CRITICAL) | — |
+| Zincir market tüketici fiyatı (gerçek L8) | **HÂLÂ UNKNOWN** — alkol online satılamadığı için alınamadı | `EV-2026-08-09-511` |
+
+### Kurucu hipotez çürüdü
+
+Bu dosyanın "NEDEN BU KADAR ÖNEMLİ" bölümündeki
+*"Metro etiketlerinde KDV hariç profesyonel fiyat ile KDV dahil fiyat
+birlikte gösterilebilir"* varsayımı, incelenen Metro Türkiye materyalinde
+**karşılığını bulmamıştır.** Etiketteki ikinci sayı KDV hariç fiyat değil,
+**birim fiyattır** (kg/L/adet).
+
+### Model kullanım kuralı — güncellenmiş öneri
+
+`finans-fizibilite` benchmark'ı hâlâ **tek sayı olarak kullanamaz**, ancak
+senaryo ağırlıkları değişmiştir:
+
+| Senaryo | Tanım | TUR 1 sonrası konum |
+|---------|-------|---------------------|
+| BM_A | 599,90 TL = KDV **dahil** | **BASE CASE** (kanıtlı) |
+| BM_B | 599,90 TL = KDV **hariç** | SENSITIVITY (kanıtsız, ama elenmedi) |
+| BM_C | 599,90 TL = **promosyonlu** fiyat | YENİ — OQ-001'in kapanmayan ayağı |
+| BM_D | Zincir market L8 > Metro L8 | YENİ — katman ayrımı |
+
+> Bu bir **öneri**dir. Senaryo setini onaylamak `yatirim-komitesi-baskani`'na aittir.
+
+---
+
 ## BENCHMARK 1 — İLK BENCHMARK
 
 | Alan | Değer |
