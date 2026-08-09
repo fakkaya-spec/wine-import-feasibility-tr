@@ -3,40 +3,68 @@
 #
 # KURAL: evidence_id'si olmayan sayı modele GİREMEZ.
 # KURAL: Sure tahmini FACT degildir — ESTIMATE veya ASSUMPTION'dir.
-# Bu turda tüm değerler null / UNKNOWN'dır. UYDURMA.
+# Para birimi: TRY, KDV HARIC. Yil: 2026 tarifeleri (yururluk 2026-01-01).
 
 meta:
   dosya: ruhsat.yaml
   son_guncelleme: 2026-08-09
-  tur: "TUR 0 — kurulum"
-  durum: BOS_ISKELET
+  tur: "TUR 1 — mevzuat-ruhsat-uzmani ilk doldurma"
+  durum: KISMEN_DOLU
+  para_birimi: TRY
+  kdv_durumu: "Tum bedeller KDV HARIC. Bandrol fiyat listesi acikca '%20 KDV haric' der."
+  tarife_yili: 2026
+  uyari: >
+    Ticaret Yonetmeligi m.14 ve Satis Yonetmeligi m.15 uyarinca bedeller HER YIL
+    yeniden belirlenip Resmi Gazete'de yayimlanir. Ilk konteyner 2027'ye sarkarsa
+    2027 tarifeleri gecerli olur. Bu bir REGULASYON TAKVIMI RISKIDIR.
 
 g0_onerisi:
-  value: null
-  status: UNKNOWN
-  evidence_id: null
-  gerekce: null
+  value: G0_PASS
+  status: ESTIMATE
+  evidence_id: [EV-2026-08-09-201, EV-2026-08-09-203, EV-2026-08-09-206, EV-2026-08-09-210, EV-2026-08-09-212]
+  gerekce: >
+    Incelenen T1/T2 mevzuatta Turkiye'de sarap ithalatcisi olmayi YASAKLAYAN hukum
+    yoktur. Gerekli belgeler tanimli, 2026 bedelleri resmi tebliglerle bilinir ve
+    buyuklukleri karsilanabilir duzeydedir (~151-253 bin TL sabit). Depo sarti
+    sozlesmeli dagitim agi ile karsilanabilir.
+  kosullu_mu: true
+  blocked_a_cevirecek_bulgular:
+    - "T-201: 4250 s.K. m.1/3 1.000.000 litre/yil esiginin durgun sarap ithalatina bugun de uygulandiginin teyidi"
+    - "T-202: Dagitim yetki belgesi inceleme suresinin fiilen 6 ayi asmasi"
   notes: >
-    G0_PASS | G0_BLOCKED | G0_FAIL
     Bu bir ONERIDIR. Nihai karar yatirim-komitesi-baskani'na aittir.
     mevzuat-ruhsat-uzmani kendi basina KILL karari VERMEZ.
 
 belgeler:
   ithalat_yetki_belgesi:
     gerekli_mi:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
+      value: false
+      status: FACT
+      evidence_id: EV-2026-08-09-201
+      notes: >
+        Sarap/alkollu ickide 'ithalata uygunluk belgesi' DEGIL, 'ALKOLLU ICKI BILDIRIMI'
+        rejimi uygulanir (Ticaret Yon. m.5/2, eff. 2008-02-22). Uygunluk belgesi
+        yalnizca etil alkol ve metanol icindir.
+    alkollu_icki_bildirimi_gerekli_mi:
+      value: true
+      status: FACT
+      evidence_id: EV-2026-08-09-201
+    bildirim_zamani:
+      value: "ihracatci ulkede cikis islemleri tamamlanmadan ONCE"
+      status: FACT
+      evidence_id: EV-2026-08-09-202
     basvuru_suresi_gun:
-      value: null
+      value: 15
       unit: gun
-      status: UNKNOWN
-      evidence_id: null
+      status: FACT
+      evidence_id: EV-2026-08-09-202
+      notes: "Dilekce giris kaydini takip eden 15 gun icinde belgeler teslim edilir. Bu KARAR suresi degildir."
     harc_maliyet:
       value: null
-      currency: null
+      currency: TRY
       status: UNKNOWN
       evidence_id: null
+      notes: "Bildirim icin ayri bir bedel bulunamadi."
     yenileme_periyodu:
       value: null
       status: UNKNOWN
@@ -44,68 +72,177 @@ belgeler:
 
   dagitim_yetki_belgesi:
     gerekli_mi:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
+      value: true
+      status: FACT
+      evidence_id: EV-2026-08-09-203
+      notes: "m.12: 'Dagitim yetki belgesi olmadan, yenilenmeden veya guncellenmeden ithalat yapilamaz.'"
+    on_kosullar:
+      value: ["alkollu icki bildirimi", "TADAB sartlarina uygun depo VEYA akde baglanmis dagitim agi", "nakil araci", "faaliyet hacmi beyani"]
+      status: FACT
+      evidence_id: EV-2026-08-09-204
     basvuru_suresi_gun:
       value: null
       unit: gun
       status: UNKNOWN
-      evidence_id: null
-    harc_maliyet:
-      value: null
-      currency: null
-      status: UNKNOWN
-      evidence_id: null
+      evidence_id: EV-2026-08-09-228
+      planlama_araligi_gun: [30, 90]
+      planlama_statusu: ASSUMPTION
+      notes: "Mevzuatta SURE YOKTUR. Kritik yoldaki en buyuk belirsizlik. Ticket T-202."
+    gecerlilik_suresi_yil:
+      value: 2
+      unit: yil
+      status: FACT
+      evidence_id: EV-2026-08-09-203
+    harc_maliyet_maktu_asgari_kucuk_hacim:
+      value: 68375
+      currency: TRY
+      unit: "<= 20.000 litre/yil faaliyet hacmi"
+      status: FACT
+      evidence_id: EV-2026-08-09-206
+    harc_maliyet_maktu_asgari_buyuk_hacim:
+      value: 170908
+      currency: TRY
+      unit: "> 20.000 litre/yil faaliyet hacmi"
+      status: FACT
+      evidence_id: EV-2026-08-09-206
+    hacim_bedeli_per_1000_litre:
+      value: 427.15
+      currency: TRY
+      unit: TRY/1000 litre
+      status: FACT
+      evidence_id: EV-2026-08-09-207
+    uygulanacak_bedel_hesabi:
+      value: "max(maktu_asgari, faaliyet_hacmi_litre/1000 * 427.15)"
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-232
+      notes: >
+        'en az' ifadesinin max() olarak yorumu DOGRULANMAMISTIR (T-202).
+        5.000-25.000 sise/yil -> 68.375 TL; 50.000-100.000 sise/yil -> 170.908 TL.
+        Esik: 20.000 litre = 26.667 adet 750 ml sise.
+    odeme_yapisi:
+      value: "basvuruda 1/4, belge verilirken 3/4"
+      status: FACT
+      evidence_id: EV-2026-08-09-203
+    yenileme_bedeli:
+      value: 46970
+      currency: TRY
+      unit: "kategori/alt kategori basina, 2 yilda bir"
+      status: FACT
+      evidence_id: EV-2026-08-09-208
+    gec_yenileme_cezasi:
+      value: "3 ay icinde basvuruda bedel 2 KAT; sonrasinda yenileme kapsaminda degerlendirilmez"
+      status: FACT
+      evidence_id: EV-2026-08-09-203
 
   satis_belgesi:
     gerekli_mi:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
+      value: true
+      status: FACT
+      evidence_id: EV-2026-08-09-210
+      notes: >
+        Ithalatci toptan saticilara ayri belge olmadan satabilir; ANCAK DOGRUDAN
+        perakende saticilara (zincir market) veya acik alkollu icki saticilarina
+        (HoReCa) satis yapmak icin TOPTAN SATIS BELGESI zorunludur.
+        Kanal onceligi chain retail oldugundan bu proje icin FIILEN ZORUNLUDUR.
     kim_icin_gerekli:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
+      value: "ithalatci (dogrudan perakende/HoReCa satisi halinde); ayrica ALICININ satis belgesi olmasi sart"
+      status: FACT
+      evidence_id: [EV-2026-08-09-210, EV-2026-08-09-224]
+    toptan_satis_belgesi_bedeli:
+      value: 82464
+      currency: TRY
+      unit: "TRY/yil/belge"
+      status: FACT
+      evidence_id: EV-2026-08-09-211
+    her_depo_icin_ayri_mi:
+      value: true
+      status: FACT
+      evidence_id: EV-2026-08-09-210
+      notes: "Satis Yon. m.7/1(b): satisa sunulan her yer ve muhafaza edilen her depo icin ayri belge."
+    periyot:
+      value: "yillik sure uzatimi"
+      status: FACT
+      evidence_id: EV-2026-08-09-211
 
 urun_uygunlugu:
   tescil_gerekli_mi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-215
+    notes: "TADAB URUN ONAYI. Onay olmadan piyasaya arz edilemez VE bandrol talep edilemez."
+  on_kosul:
+    value: "Gida ve Kontrol GM - Bitkisel Gida ve Yemin Urun Bildirim Formu onayi"
+    status: FACT
+    evidence_id: EV-2026-08-09-215
   basvuru_suresi_gun:
-    value: null
-    unit: gun
-    status: UNKNOWN
-    evidence_id: null
+    value: 15
+    unit: is gunu
+    status: FACT
+    evidence_id: EV-2026-08-09-216
+    notes: "Eksik belge halinde +15 gun sure, tamamlaninca yeniden 15 is gunu."
   sku_basina_maliyet:
     value: null
-    currency: null
+    currency: TRY
     status: UNKNOWN
     evidence_id: null
-    notes: "SKU basina ise, cok SKU'lu portfoyde onemli sabit maliyet olur."
+    notes: "TADAB urun onayi icin ayri bir bedel bulunamadi. Danismanlik/tercume/fotograf maliyeti UNKNOWN."
+  sku_basina_mi:
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-215
+    notes: "Marka bazinda ve her ambalaj hacmi icin ayri. Her SKU icin 15 is gunu."
+  vintage_degisikligi_yeni_onay_gerektirir_mi:
+    value: false
+    status: FACT
+    evidence_id: EV-2026-08-09-217
+    notes: "Sarapta urun yili degisikligi yeni basvuru/guncelleme sayilmaz. Yillik tekrar maliyeti YOK."
+  marka_cakismasi_engeli:
+    value: "TURKPATENT'te 34 ve alti nice siniflarinda baskasi adina gecerli tescil varsa URUN ONAYI VERILMEZ"
+    status: FACT
+    evidence_id: EV-2026-08-09-218
 
 etiket:
   turkce_etiket_zorunlu_mu:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-219
   zorunlu_ibareler:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value:
+      - "TGK zorunlu bilgileri (urun adi, bilesen listesi, alerjen/sulfit, net miktar, ABV, parti no, ithalatci ad-adres, saklama kosulu)"
+      - "urunun Turkce kategorisi"
+      - "temel girdiler ve karakteristik ozellikleri ifade eden bilgiler"
+      - "uretildigi ulke; farkli ulkede ambalajlandiysa ambalajlama ulkesi"
+      - "3 grafik + 1 yazili saglik uyari mesaji"
+    status: FACT
+    evidence_id: [EV-2026-08-09-219, EV-2026-08-09-220]
+    notes: "TGK Gida Etiketleme Yonetmeligi (RG 26/1/2017-29960 mukerrer) tam metni bu turda T1 duzeyinde dogrulanamadi."
   saglik_uyarisi_gerekli_mi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-220
+  saglik_uyarisi_min_alan_cm2_750ml:
+    value: 18.0
+    unit: cm2
+    status: FACT
+    evidence_id: EV-2026-08-09-220
+    notes: "70-100 cl ambalaj bandi. Punto >= 10, Helvetica, beyaz uzerine siyah, 1-2 mm bayrak kirmizisi cerceve."
+  abv_punto_min_mm:
+    value: 3
+    unit: mm
+    status: FACT
+    evidence_id: EV-2026-08-09-221
+    notes: "20-100 cl ambalaj. TGK Sarap Tebligi 2008/67 m.10(b). Tebligin yayim tarihi dogrulanamadi."
   uygulama_yeri:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "MENSEDE | ANTREPODA | DEPODA — menside yapilabilirse Turkiye operasyon maliyeti duser."
+    notes: >
+      MENSEDE | ANTREPODA | DEPODA — mevzuatta yasaklayici hukum bulunamadi, ikisi de
+      mumkun gorunuyor ancak DOGRULANMADI. Bandrol zaten ANTREPODA uygulandigindan
+      (EV-2026-08-09-212) antrepoda birlesik ellecleme operasyonel olarak makuldur.
   etiket_basim_maliyeti_per_sise:
     value: null
-    currency: null
+    currency: TRY
     status: UNKNOWN
     evidence_id: null
 
@@ -113,11 +250,15 @@ analiz_laboratuvar:
   zorunlu_analizler:
     value: null
     status: UNKNOWN
-    evidence_id: null
+    evidence_id: EV-2026-08-09-230
+    notes: >
+      Ticaret Yon. m.7 analiz/kalite onayi DOKME alkol icindir. Siselenmis alkollu
+      ickide rejim dosya uzerinden bildirimdir. Gida ithalatinin resmi kontrollerinde
+      numune/lab analizi RISK ESASLIDIR, her partide otomatik degildir. Ticket T-206.
   akredite_lab_gerekli_mi:
     value: null
     status: UNKNOWN
-    evidence_id: null
+    evidence_id: EV-2026-08-09-230
   analiz_suresi_gun:
     value: null
     unit: gun
@@ -125,129 +266,366 @@ analiz_laboratuvar:
     evidence_id: null
   analiz_maliyeti_per_parti:
     value: null
-    currency: null
+    currency: TRY
     status: UNKNOWN
     evidence_id: null
   her_partide_tekrar_gerekli_mi:
     value: null
     status: UNKNOWN
-    evidence_id: null
-    notes: "Her partide tekrar gerekiyorsa degisken maliyet; tek seferse sabit maliyet."
+    evidence_id: EV-2026-08-09-230
 
 bandrol_uis:
   bandrol_gerekli_mi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-212
+    notes: "UIS disinda alkollu icki ithalati YAPILAMAZ."
   uis_kaydi_gerekli_mi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-212
   bandrol_birim_bedeli:
-    value: null
-    currency: null
-    status: UNKNOWN
-    evidence_id: null
-    notes: "Bandrolun MALIYETI burada. OPERASYON maliyeti lojistik.yaml'da."
+    value: 2.36073
+    currency: TRY
+    unit: TRY/adet
+    status: FACT
+    evidence_id: EV-2026-08-09-213
+    kdv_durumu: "KDV HARIC (%20 KDV haric fiyat listesi)"
+    notes: >
+      Liste fiyati 2.360,73 TL / 1.000 adet. Bandrolun MALIYETI burada.
+      YAPISTIRMA/ELLECLEME operasyon maliyeti lojistik.yaml'dadir (UNKNOWN).
+  bandrol_fiyat_endeksleme:
+    value: "her yil 1 Ocak'tan gecerli olmak uzere onceki yil Yi-UFE orani"
+    status: FACT
+    evidence_id: EV-2026-08-09-213
   bandrol_temin_suresi_gun:
-    value: null
+    value: 15
     unit: gun
-    status: UNKNOWN
-    evidence_id: null
+    status: FACT
+    evidence_id: EV-2026-08-09-214
+    notes: "Onay + bedelin Darphane hesabina yatirilmasindan itibaren. TADAB onay suresi AYRICA UNKNOWN."
+  bandrol_odeme_zamani:
+    value: "onay sonrasi PESIN, urun satilmadan once"
+    status: FACT
+    evidence_id: EV-2026-08-09-214
+    notes: "peak_cash_requirement kalemi. 100.000 sise = 236.073 TL pesin cikis (KDV haric)."
+  bandrol_on_kosullari:
+    value: ["TADAB urun onayi", "vadesi gecmis vergi borcu bulunmamasi", "OTV (III) Sayili Liste yukumluluklerinin yerine getirilmis olmasi"]
+    status: FACT
+    evidence_id: [EV-2026-08-09-214, EV-2026-08-09-215]
   uygulama_yeri:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: ANTREPO
+    status: FACT
+    evidence_id: EV-2026-08-09-212
+    notes: >
+      UIS Tebligi 3.5.3(iii): ithal alkollu ickilerde bandrol ANTREPODA her bir
+      sisenin kapagi/kapusonu uzerine uygulanir. Mensede uygulama alkollu icki
+      icin ONGORULMEMISTIR (tutun mamullerinde yurt disi uretim mahalli da sayilir).
 
 depo_antrepo_izni:
   alkol_depo_izni_gerekli_mi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-204
+    notes: >
+      Dagitim yetki belgesinin on kosulu. Depo sadece bu ise ayrilmis veya diger
+      gida urunlerinden tefrik edilmis olmali, marka bazinda siniflandirma/sayim/
+      etiket incelemesine imkan vermeli ve UZERINDE KURUMUN YETKI BELGESINI TASIMALI.
+  kendi_deposu_zorunlu_mu:
+    value: false
+    status: FACT
+    evidence_id: EV-2026-08-09-204
+    notes: "'Amaca uygun dagitim aglarinin akde baglanmis kullanicisi' olmak da kabul edilir -> 3PL modeli mumkun."
   antrepo_turu:
     value: null
     status: UNKNOWN
     evidence_id: null
+    notes: "Bandrol antrepoda uygulanmak zorunda oldugu icin antrepo ZORUNLU; ancak antrepo TURU/izni navlun-lojistik-uzmani alanidir. Ticket T-204."
   izin_suresi_gun:
     value: null
     unit: gun
     status: UNKNOWN
     evidence_id: null
+  her_depo_icin_toptan_satis_belgesi:
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-210
 
 teminat:
   gerekli_mi:
     value: null
     status: UNKNOWN
-    evidence_id: null
+    evidence_id: EV-2026-08-09-229
+    notes: >
+      Incelenen mevzuat metinlerinde (Ticaret Yonetmeligi, Satis ve Sunum Yonetmeligi,
+      UIS Tebligi, 4250 ve 4733 s. Kanunlar) TADAB'a verilecek bir teminat hukmu
+      BULUNAMADI. 'Teminat yoktur' seklinde FACT yazilmamistir (negatif ispat).
+      Gumruk/antrepo teminati BU AJANIN ALANI DISINDADIR.
   turu:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "Nakit | banka teminat mektubu"
   tutar:
     value: null
-    currency: null
+    currency: TRY
     status: UNKNOWN
     evidence_id: null
   isletme_sermayesine_etkisi:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "Nakit teminat ise peak_cash_requirement'a DOGRUDAN eklenir."
+    notes: "Teminat bulunamadi; ancak BANDROL PESIN odemesi benzer bir nakit kilitlenmesi yaratir (bkz. bandrol_uis)."
 
 satis_dagitim_reklam_kisitlari:
   reklam_yasagi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: "TAM YASAK — her ne surette olursa olsun reklam ve tuketiciye yonelik tanitim yapilamaz"
+    status: FACT
+    evidence_id: EV-2026-08-09-222
+    effective_date: 2013-06-11
   promosyon_kisiti:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: "TAM YASAK — kampanya, promosyon, etkinlik; tesvik/hediye/esantiyon/bedelsiz dagitim yasak"
+    status: FACT
+    evidence_id: EV-2026-08-09-222
   satis_saati_kisiti:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: "22:00-06:00 arasi perakende satis yasak"
+    status: FACT
+    evidence_id: EV-2026-08-09-222
   satis_noktasi_kisiti:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: >
+      Isletme disindan gorulecek sekilde perakende satisa arz yasak; ogrenci yurdu,
+      saglik kurulusu, egitim kurumu, stadyum/kapali spor salonu, kahvehane/kiraathane/
+      pastane, akaryakit istasyonu magaza-lokantalarinda satis yasak; otoyol ve devlet
+      karayolu tesislerinde satis-tuketim yasak; okula 100 m mesafe sarti
+    status: FACT
+    evidence_id: EV-2026-08-09-222
+  satis_noktasinda_marka_logo_yasagi:
+    value: >
+      YENI (yururluk 20/6/2026): marka, logo, amblem, ticaret unvani ve arz ambalajinda
+      yer alan ifade/sekil/isim/isaret/gorseller is yerlerinin icinde, disinda,
+      vitrinlerinde, satis unitelerinde ve hicbir etkinlik alaninda bulundurulamaz
+    status: FACT
+    evidence_id: EV-2026-08-09-223
+    effective_date: 2026-06-20
+    gecis_suresi: "is yerleri icin 20/6/2027"
+    kapsam_belirsizligi: "Zincir market rafindaki urun ambalajini kapsayip kapsamadigi ACIK DEGIL -> T-205"
   online_satis:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: "basin ve yayin yoluyla satis ve posta ile satis YASAK; otomatik satis makinesi YASAK"
+    status: FACT
+    evidence_id: EV-2026-08-09-222
+    notes: "Online D2C proje KAPSAMI DISIDIR; burada yalnizca kisitin VARLIGI notlanmistir."
   sponsorluk:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: "YASAK — hicbir etkinlige marka/amblem/isaret kullanarak destek olunamaz"
+    status: FACT
+    evidence_id: [EV-2026-08-09-222, EV-2026-08-09-223]
+  kime_satilabilir:
+    value: "yalnizca alkollu icki satis belgesini haiz gercek/tuzel kisilere"
+    status: FACT
+    evidence_id: EV-2026-08-09-224
+  dagitim_yukumlulugu:
+    value: "ulke genelinde her saticinin siparisini YERINDE TESLIM; perakendecilerin taleplerini zamaninda karsilama zorunlulugu"
+    status: FACT
+    evidence_id: [EV-2026-08-09-224, EV-2026-08-09-227]
+    notes: "4250 m.1/3 + Ticaret Yon. m.9/2. Dagitim maliyet modelini dogrudan etkiler -> kanal-marj-uzmani."
+  ambalaj_kisiti:
+    value: "5 cl'den kucuk ambalaj yasak. 300 cl ustu yasagi ve CAM ambalaj zorunlulugu Danistay kararlariyla YURUTMESI DURDURULMUS."
+    status: FACT
+    evidence_id: EV-2026-08-09-226
+    notes: "750 ml ana format etkilenmez. Cam zorunlulugu yeniden yururluge girerse PET/bag-in-box senaryolari elenir."
   notes: >
-    Bu kisitlar pazarlama modelini DOGRUDAN kisitlar. Reklam yapilamiyorsa
-    marka insa maliyeti/suresi degisir — bu kanal-marj-uzmani ve
-    finans-fizibilite icin kritik girdidir.
+    Bu kisitlar pazarlama modelini DOGRUDAN kisitlar. Reklam yapilamiyor VE
+    20/6/2026'dan itibaren satis noktasinda marka gorunurlugu de yasaklandi.
+    Marka insa kanali fiilen: ambalaj + raf konumu + fiyat + kanal iliskisi.
+    Bu kanal-marj-uzmani ve finans-fizibilite icin kritik girdidir.
+
+surekli_yukumlulukler:
+  aylik_satis_raporu:
+    value: "takip eden ayin en gec 20. gunu mesai bitimine kadar"
+    status: FACT
+    evidence_id: EV-2026-08-09-225
+  hizmet_bedeli_per_1000_litre:
+    value: 211.60
+    currency: TRY
+    unit: TRY/1000 litre
+    status: FACT
+    evidence_id: EV-2026-08-09-209
+    notes: "Aylik satis raporundaki hacim uzerinden. Raporun verildigi ayin son is gununde odenir."
+  hizmet_bedeli_per_sise_750ml:
+    value: 0.1587
+    currency: TRY
+    unit: TRY/sise
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-235
+    notes: "Turetme: 211,60 / 1000 litre * 0,75 litre."
+  kayit_saklama_yil:
+    value: 2
+    unit: yil
+    status: FACT
+    evidence_id: EV-2026-08-09-225
 
 t0_takvimi:
   toplam_gun_t0_ilk_konteyner:
-    value: null
+    value: [120, 270]
     unit: gun
-    status: UNKNOWN
-    evidence_id: null
-    notes: "T0 = sifirdan baslayan yatirimci. Kritik yol isaretlenecek."
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-233
+    notes: >
+      T0 = sifirdan baslayan yatirimci. YALNIZCA MEVZUAT kaynakli sure.
+      Tedarikci uretimi, navlun ve gumruk islem suresi HARICTIR ve ayrica eklenmelidir.
+      Icinde iki UNKNOWN vardir (dagitim yetki belgesi ve bandrol TADAB onayi).
+      Adim adim dagilim: 20-mevzuat/t0-takvimi.md
+  senaryolar_gun:
+    iyimser: 112
+    baz: 189
+    kotumser: 281
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-233
 
   kritik_yol:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: >
+      Sirket kurulusu -> Depo/3PL sozlesmesi -> Alkollu icki bildirimi ->
+      DAGITIM YETKI BELGESI (sure UNKNOWN) -> GGBS urun bildirimi ->
+      TADAB URUN ONAYI (15 is gunu) -> [uretim + navlun: kapsam disi] ->
+      Bandrol talebi/TADAB onayi -> Bandrol teslimi (15 gun) ->
+      ANTREPODA bandrol + Turkce etiket -> gumruk -> serbest dolasim
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-233
 
   adimlar:
-    - adim: null
-      sure_gun: null
+    - adim: "Sirket kurulusu"
+      sure_gun: [5, 15]
       onkosul: null
-      status: UNKNOWN
+      kritik_yol: true
+      status: ASSUMPTION
       evidence_id: null
+    - adim: "Depo / 3PL sozlesmesi ve TADAB sartlarina uygunluk"
+      sure_gun: [30, 90]
+      onkosul: "Sirket kurulusu"
+      kritik_yol: true
+      status: ASSUMPTION
+      evidence_id: EV-2026-08-09-204
+    - adim: "SKU secimi + marka cakisma taramasi (TURKPATENT)"
+      sure_gun: [20, 45]
+      onkosul: "Sirket kurulusu"
+      kritik_yol: true
+      status: ASSUMPTION
+      evidence_id: EV-2026-08-09-218
+    - adim: "Turkce etiket tasarimi + teknik spesifikasyon raporu + Turkce uretim prosesi"
+      sure_gun: [15, 40]
+      onkosul: "SKU secimi"
+      kritik_yol: true
+      status: ASSUMPTION
+      evidence_id: [EV-2026-08-09-219, EV-2026-08-09-220]
+    - adim: "Alkollu icki bildirimi dosyasinin TADAB'a sunulmasi"
+      sure_gun: 15
+      onkosul: "etiket + firma belgeleri"
+      kritik_yol: true
+      status: FACT
+      evidence_id: EV-2026-08-09-202
+    - adim: "DAGITIM YETKI BELGESI"
+      sure_gun: null
+      planlama_araligi_gun: [30, 90]
+      onkosul: "depo + alkollu icki bildirimi"
+      kritik_yol: true
+      status: UNKNOWN
+      evidence_id: EV-2026-08-09-228
+    - adim: "GGBS Bitkisel Gida ve Yem Urun Bildirim Formu onayi"
+      sure_gun: [10, 30]
+      onkosul: "Turkce etiket"
+      kritik_yol: true
+      status: ASSUMPTION
+      evidence_id: EV-2026-08-09-215
+    - adim: "TADAB Urun Onayi (Portal, SKU bazinda)"
+      sure_gun: 21
+      unit: "15 is gunu"
+      onkosul: "GGBS urun bildirimi + dagitim yetki belgesi"
+      kritik_yol: true
+      status: FACT
+      evidence_id: EV-2026-08-09-216
+    - adim: "Toptan satis belgesi"
+      sure_gun: [15, 30]
+      onkosul: "depo + dagitim yetki belgesi"
+      kritik_yol: false
+      status: ASSUMPTION
+      evidence_id: EV-2026-08-09-210
+    - adim: "Uretim + menside etiketleme + navlun"
+      sure_gun: null
+      onkosul: "urun onayi"
+      kritik_yol: true
+      status: KAPSAM_DISI
+      evidence_id: null
+      notes: "global-sourcing-kasifi + navlun-lojistik-uzmani"
+    - adim: "Bandrol talebi -> TADAB uygunluk onayi"
+      sure_gun: null
+      planlama_araligi_gun: [5, 15]
+      onkosul: "TADAB urun onayi + vergi borcu yok"
+      kritik_yol: true
+      status: UNKNOWN
+      evidence_id: EV-2026-08-09-214
+    - adim: "Bandrol bedeli odemesi -> teslim"
+      sure_gun: 15
+      onkosul: "TADAB uygunluk onayi"
+      kritik_yol: true
+      status: FACT
+      evidence_id: EV-2026-08-09-214
+    - adim: "ANTREPODA bandrol + Turkce etiket uygulamasi"
+      sure_gun: [5, 15]
+      onkosul: "bandrol teslimi + malin antrepoda olmasi"
+      kritik_yol: true
+      status: ASSUMPTION
+      evidence_id: EV-2026-08-09-212
+    - adim: "GGBS Sevkiyat Bildirimi + resmi kontrol"
+      sure_gun: [3, 10]
+      onkosul: "malin varisi"
+      kritik_yol: false
+      status: ASSUMPTION
+      evidence_id: EV-2026-08-09-230
+    - adim: "Gumruk beyannamesi + vergi + serbest dolasim"
+      sure_gun: null
+      onkosul: "bandrol + kontrol"
+      kritik_yol: true
+      status: KAPSAM_DISI
+      evidence_id: null
+      notes: "gumruk-vergi-uzmani"
+    - adim: "Bandrollu/etiketli urun fotograflari portala -> satis bildirimi"
+      sure_gun: [1, 5]
+      onkosul: "bandrol uygulanmis urun"
+      kritik_yol: false
+      status: ASSUMPTION
+      evidence_id: EV-2026-08-09-215
 
 toplam_ruhsat_sabit_maliyeti:
-  value: null
-  currency: null
-  status: UNKNOWN
-  evidence_id: null
-  notes: "Tum belge/harç/analiz/teminat toplami. finans-fizibilite sabit maliyet olarak kullanir."
+  kucuk_hacim_ilk_yil:
+    value: 150839
+    currency: TRY
+    unit: "TRY (<=20.000 litre/yil, tek depo, ilk yil)"
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-234
+    notes: "Dagitim yetki belgesi 68.375 + toptan satis belgesi 82.464. KDV haric."
+  buyuk_hacim_ilk_yil:
+    value: 253372
+    currency: TRY
+    unit: "TRY (>20.000 litre/yil, tek depo, ilk yil)"
+    status: ESTIMATE
+    evidence_id: EV-2026-08-09-234
+  ikinci_yil_tekrarlayan:
+    value: 82464
+    currency: TRY
+    unit: "TRY/yil (toptan satis belgesi sure uzatimi); 3. yil ayrica +46.970 dagitim yetki belgesi yenileme"
+    status: ESTIMATE
+    evidence_id: [EV-2026-08-09-208, EV-2026-08-09-211]
+  haric_tutulan_kalemler:
+    value: ["danismanlik", "noter/tercume", "depo kurulum/3PL", "etiket tasarim ve klise", "analiz", "antrepo/ellecleme", "teminat (bulunamadi)"]
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Bu kalemler UNKNOWN'dir ve toplam sabit maliyeti YUKARI cekecektir."
+
+toplam_ruhsat_degisken_maliyeti_per_sise:
+  value: 2.52
+  currency: TRY
+  unit: TRY/750ml sise
+  status: ESTIMATE
+  evidence_id: EV-2026-08-09-235
+  kdv_durumu: "KDV haric"
+  notes: >
+    Bandrol 2,36073 + TADAB hizmet bedeli 0,1587 = 2,5194 TL/sise.
+    Bandrol YAPISTIRMA operasyonu, etiket basimi ve analiz HARICTIR (UNKNOWN).
