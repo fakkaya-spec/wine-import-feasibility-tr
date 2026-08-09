@@ -22,55 +22,130 @@
 meta:
   dosya: vergi.yaml
   son_guncelleme: 2026-08-09
-  tur: "TUR 0 — kurulum"
-  durum: BOS_ISKELET_KILITLI
-  a1_dogrulama_yapildi_mi: false
+  tur: "TUR 1 — gumruk-vergi-uzmani dolduruldu"
+  durum: KISMEN_DOLDURULDU
+  a1_dogrulama_yapildi_mi: true
+  a1_notu: >-
+    Gumruk vergisi, OTV (oran + asgari maktu + birim + hesap kurali), KDV orani ve
+    matrahi, KKDF orani, gumruk kiymeti unsurlari ve vergi dogus ani T1/T2 ile
+    dogrulandi. KKDF matrahi, mense ispat belgesi turu, gozetim, antrepo kismi cekis,
+    ithalat KDV indirilebilirligi ve damga vergisi UNKNOWN olarak birakildi.
   model_hedef_tarihi: null   # Vergiler BU tarihte gecerli olan haliyle kullanilir
+  model_hedef_tarihi_uyarisi: >-
+    OTV maktu tutari Ocak ve Temmuz aylarinda Yi-UFE ile otomatik guncellenir
+    (EV-2026-08-09-114). model_hedef_tarihi 2027-01-01 veya sonrasi ise
+    otv.asgari_maktu_tutar SABIT ALINAMAZ; endekslenmelidir.
 
 gtip:
   kod:
-    value: null
-    status: UNKNOWN
+    value: "2204.21"
+    aciklama: "Taze uzum sarabi, kopuksuz, muhtevasi 2 litreyi gecmeyen kaplarda olanlar"
+    tam_12_hane:
+      value: null
+      status: UNKNOWN
+      notes: "12 haneli alt kirilim ABV ve PDO/PGI'ye bagli; vergi yukunu DEGISTIRMEZ (EV-2026-08-09-102)."
+    status: FACT
+    evidence_id: EV-2026-08-09-101
+    effective_date: 2021-10-01
+    tier: T1
+  alternatif_gtipler:
+    kopuklu:
+      kod: "2204.10"
+      otv_asgari_maktu_try_per_litre: 481.5146
+      status: FACT
+      evidence_id: EV-2026-08-09-110
+      effective_date: 2026-07-03
+    aromatize_vermut:
+      kod: "22.05"
+      otv_asgari_maktu_try_per_litre: 726.7254
+      status: FACT
+      evidence_id: EV-2026-08-09-110
+      effective_date: 2026-07-03
+    diger_fermente:
+      kod: "2206.00"
+      otv_asgari_maktu_try_per_litre: 157.2270
+      status: FACT
+      evidence_id: EV-2026-08-09-110
+      effective_date: 2026-07-03
+
+urun_parametreleri:
+  sise_hacmi_litre:
+    value: 0.75
+    status: FACT
     evidence_id: null
-    effective_date: null
-    tier: null
+    notes: "Kapsam tanimindan gelir (00-charter/kapsam.md, 750 ml ana format). Vergi kanitı degil, urun tanimidir."
 
 gumruk_kiymeti:
   baz_incoterm:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
-    notes: "CIF mi? Dogrulanmadan varsayilmaz."
+    value: CIF
+    status: FACT
+    evidence_id: EV-2026-08-09-120
+    tier: T1
+    effective_date: 2000-02-05
+    notes: "GK md.27/1-e: giris liman/yerine kadar navlun + sigorta + yukleme/ellecleme fiyata eklenir."
   navlun_dahil_mi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-120
   sigorta_dahil_mi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-120
+  yukleme_ellecleme_giris_yerine_kadar_dahil_mi:
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-120
+  ambalaj_bedeli_dahil_mi:
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-120
   royalti_dahil_mi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
-  komisyon_dahil_mi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: "KOSULLU"
+    status: FACT
+    evidence_id: EV-2026-08-09-120
+    notes: >-
+      Satis kosulu olan royalti/lisans ucreti DAHIL (GK md.27/1-c). Turkiye'de cogaltma
+      hakki ve satis kosulu olmayan dagitim/tekrar satis hakki odemeleri HARIC (md.27/5).
+  satin_alma_komisyonu_dahil_mi:
+    value: false
+    status: FACT
+    evidence_id: EV-2026-08-09-121
+  satim_komisyonu_ve_tellaliye_dahil_mi:
+    value: true
+    status: FACT
+    evidence_id: EV-2026-08-09-120
+  yurt_ici_nakliye_dahil_mi:
+    value: false
+    status: FACT
+    evidence_id: EV-2026-08-09-121
+    notes: "GK md.28/a — ancak fiyattan AYIRT EDILEBILIR olmasi sarttir."
+  turkiyede_odenecek_ithalat_vergileri_dahil_mi:
+    value: false
+    status: FACT
+    evidence_id: EV-2026-08-09-121
 
 gozetim:
   uygulama_var_mi:
     value: null
     status: UNKNOWN
-    evidence_id: null
+    evidence_id: EV-2026-08-09-125
     effective_date: null
+    notes: >-
+      2204.21 / 2204.29 / 22.04 icin yururlukte gozetim tebligi BULUNAMADI. Negatif arama
+      sonucu yoklugun kaniti degildir. Gumruk idaresinin GK md.23-31 kiymet arastirmasi
+      yetkisi saklidir.
   birim_kiymet_esigi:
     value: null
     unit: null
     currency: null
     status: UNKNOWN
-    evidence_id: null
+    evidence_id: EV-2026-08-09-125
     notes: "KRITIK: Esik varsa ucuz beyan fiilen kullanilamaz, sourcing stratejisi coker."
+  otv_gozetimden_etkilenir_mi:
+    value: false
+    status: FACT
+    evidence_id: EV-2026-08-09-113
+    notes: "OTV maktu oldugu icin kiymet itirazindan etkilenmez; yalniz GV ve KDV matrahi etkilenir."
 
 # ------------------------------------------------------------
 # MATRAH SIRASI — sira numarasi HESAPLAMA SIRASIDIR
@@ -79,66 +154,80 @@ gozetim:
 matrah_sirasi:
   - sira: 1
     vergi: GUMRUK_VERGISI
-    matrah_tanimi: null       # neyin uzerinden
-    oran_pct: null
+    matrah_tanimi: "CIF gumruk kiymeti"
+    oran_pct: null            # mense'ye bagli -> gumruk_vergisi_oranlari_by_mense
     tutar: null
-    tip: null                 # ORANSAL | MAKTU | KARMA | YOK
-    status: UNKNOWN
-    tier: null
-    evidence_id: null
-    effective_date: null
+    tip: ORANSAL
+    status: FACT
+    tier: T1
+    evidence_id: EV-2026-08-09-103
+    effective_date: 2026-01-01
 
   - sira: 2
     vergi: ILAVE_GUMRUK_VERGISI
     matrah_tanimi: null
-    oran_pct: null
+    oran_pct: 0
     tutar: null
-    tip: null
-    status: UNKNOWN
-    tier: null
-    evidence_id: null
-    effective_date: null
-    notes: "Var mi yok mu dogrulanacak."
+    tip: YOK
+    status: FACT
+    tier: T1
+    evidence_id: EV-2026-08-09-107
+    effective_date: 2026-01-01
+    notes: "2204 IGV Karari 3351 EK-1/EK-2/EK-3 tablolarinda YER ALMIYOR."
 
   - sira: 3
-    vergi: OTV
-    matrah_tanimi: null       # Gumruk Vergisi dahil mi? DOGRULA
-    oran_pct: null            # oransal OTV
-    asgari_maktu_tutar: null  # asgari maktu vergi
-    maktu_birim: null         # litre | sise | ABV bazli — DOGRULA
-    tip: null                 # ORANSAL | MAKTU | KARMA_YUKSEK_OLAN
-    status: UNKNOWN
-    tier: null
-    evidence_id: null
-    effective_date: null
-    guncelleme_periyodu: null
-    notes: >
-      KRITIK: Fiyat/performans segmentinde maktu OTV oransal OTV'den agir basabilir
-      ve dusuk fiyatli ithalatin ekonomisini TEK BASINA oldurebilir.
-      Maktu tutarlar periyodik guncellenir — hangi tarihli tutar oldugu ZORUNLU.
-      ttl kisa tutulacak.
+    vergi: KKDF
+    matrah_tanimi: null       # UNKNOWN: vadeli odenen ithalat bedeli mi, CIF mi
+    oran_pct: 6
+    dogdugu_odeme_sekilleri: ["kabul kredili", "vadeli akreditif", "mal mukabili"]
+    dogmadigi_odeme_sekilleri: ["pesin"]
+    tip: ORANSAL
+    status: FACT_ORAN_UNKNOWN_MATRAH
+    tier: T1
+    evidence_id: EV-2026-08-09-119
+    effective_date: 2011-10-13
+    notes: >-
+      Oran T1 ile dogrulandi (2011/2304 md.4). MATRAH TANIMI DOGRULANMADI -> ticket T-105.
+      Pesin odeme senaryosunda KKDF = 0 oldugu icin bu belirsizlik baz senaryoyu etkilemez.
 
   - sira: 4
-    vergi: KKDF
-    matrah_tanimi: null
-    oran_pct: null
-    dogdugu_odeme_sekilleri: null
-    tip: null
-    status: UNKNOWN
-    tier: null
-    evidence_id: null
-    effective_date: null
-    notes: "Odeme sekline bagli. tedarikci.yaml/odeme_sekli ile capraz kontrol edilecek."
+    vergi: OTV
+    matrah_tanimi: "CIF + Gumruk Vergisi + ithalatta odenen diger vergi/resim/harc/pay (KKDF dahil) + tescile kadarki diger giderler; OTV ve KDV HARIC"
+    oran_pct: 0               # nispi OTV orani
+    asgari_maktu_tutar: 71.2692
+    asgari_maktu_para_birimi: TRY
+    maktu_birim: "litre"
+    hesap_kurali: "max(nispi_oran * otv_matrahi ; asgari_maktu_tutar * hacim_litre)"
+    hesaplanan_otv_try_per_750ml: 53.4519
+    tip: KARMA_YUKSEK_OLAN
+    status: FACT
+    tier: T2
+    evidence_id: EV-2026-08-09-111
+    destekleyici_evidence_ids: [EV-2026-08-09-110, EV-2026-08-09-113, EV-2026-08-09-115, EV-2026-08-09-116]
+    effective_date: 2026-07-03
+    guncelleme_periyodu: "Ocak ve Temmuz — TUIK Yi-UFE son 6 ay degisimi (OTVK md.12/3, EV-2026-08-09-114)"
+    onceki_tutar: 61.3914
+    onceki_tutar_effective_date: 2025-12-31
+    onceki_tutar_evidence_id: EV-2026-08-09-112
+    son_artis_pct: 16.09
+    ttl: 30d
+    notes: >-
+      KRITIK: Nispi oran %0 oldugu icin OTV FIILEN TAMAMEN MAKTUDUR ve CIF'ten bagimsizdir.
+      Fiyat/performans segmentinde maktu OTV, dusuk fiyatli ithalatin ekonomisini
+      TEK BASINA oldurebilir. Maktu tutarlar Ocak/Temmuz'da otomatik guncellenir —
+      model hedef tarihi 2027 veya sonrasi ise SABIT ALINAMAZ (ticket T-104).
 
   - sira: 5
     vergi: KDV
-    matrah_tanimi: null       # OTV dahil mi? Gumruk Vergisi dahil mi? DOGRULA
-    oran_pct: null
-    tip: null
-    status: UNKNOWN
-    tier: null
-    evidence_id: null
-    effective_date: null
+    matrah_tanimi: "CIF + Gumruk Vergisi + KKDF + OTV + gumruk beyannamesinin tescil tarihine kadar yapilan diger gider ve odemeler"
+    oran_pct: 20
+    tip: ORANSAL
+    status: FACT
+    tier: T2
+    evidence_id: EV-2026-08-09-118
+    matrah_evidence_id: EV-2026-08-09-117
+    effective_date: 2023-07-10
+    notes: "OTV, KDV matrahina DAHILDIR (KDVK md.21/b). Sarap indirimli oran listelerinde yer almaz."
 
   - sira: 6
     vergi: DIGER
@@ -150,26 +239,121 @@ matrah_sirasi:
     tier: null
     evidence_id: null
     effective_date: null
-    notes: "TRT bandrol, damga, fon vb. — varligi dogrulanacak."
+    notes: >-
+      Gumruk beyannamesi damga vergisi (maktu) 2026 tutari dogrulanmadi.
+      TRT bandrolu radyo-TV cihazlarina ozgudur, sarapta uygulanabilirligi dogrulanmadi.
+      Bandrol/UIS (urun izleme sistemi) mevzuat-ruhsat-uzmani alanindadir.
+
+gumruk_vergisi_oranlari_by_mense:
+  # Ithalat Rejimi Karari 2026, I sayili Liste (Tarim Urunleri), 21-22. Fasillar
+  # 2204.21 / 2204.22 / 2204.29 satirlarinin TAMAMI icin ayni (EV-2026-08-09-102)
+  effective_date: 2026-01-01
+  tier: T1
+  AB_uyesi_ulkeler:
+    oran_pct: 50
+    ulkeler: ["Ispanya", "Italya", "Fransa", "Portekiz", "diger AB uyeleri"]
+    status: FACT
+    evidence_id: EV-2026-08-09-103
+  Birlesik_Krallik:
+    oran_pct: 50
+    status: FACT
+    evidence_id: EV-2026-08-09-103
+  Sili:
+    oran_pct: 50
+    status: FACT
+    evidence_id: EV-2026-08-09-105
+    notes: "I sayili Liste 21-22. Fasillar dipnot (2)."
+  Kuzey_Makedonya:
+    oran_pct: 35
+    status: FACT
+    evidence_id: EV-2026-08-09-106
+    notes: "Dipnot (1): DU sutunundaki gumruk vergisinin %50'si = 70 x 0,50."
+  Bosna_Hersek:
+    oran_pct: 0
+    status: FACT
+    evidence_id: EV-2026-08-09-106
+  Guney_Kore:
+    oran_pct: 0
+    status: FACT
+    evidence_id: EV-2026-08-09-106
+  Singapur:
+    oran_pct: 0
+    status: FACT
+    evidence_id: EV-2026-08-09-106
+  Kosova:
+    oran_pct: 0
+    status: FACT
+    evidence_id: EV-2026-08-09-106
+    notes: "Istisna: 2204.21.31 ve 2204.21.61 GTIP'lerinde %70."
+  Venezuela:
+    oran_pct: 35
+    status: FACT
+    evidence_id: EV-2026-08-09-106
+  BAE:
+    oran_pct: 49
+    status: FACT
+    evidence_id: EV-2026-08-09-106
+  Gurcistan:
+    oran_pct: 70
+    status: FACT
+    evidence_id: EV-2026-08-09-106
+  Malezya:
+    oran_pct: 70
+    status: FACT
+    evidence_id: EV-2026-08-09-106
+  diger_ulkeler_DU:
+    oran_pct: 70
+    ulkeler: ["ABD", "Guney Afrika", "Avustralya", "Arjantin", "sutunu olmayan tum ulkeler"]
+    status: FACT
+    evidence_id: EV-2026-08-09-104
+    notes: "BENCHMARK URUN (Gold Country, California/ABD) BU GRUPTADIR."
 
 tercihli_tarife:
   uygulanabilir_mi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: "KISMEN"
+    status: FACT
+    evidence_id: EV-2026-08-09-103
+    notes: >-
+      Gumruk Birligi sanayi urunlerini kapsar; sarap TARIM urunudur ve I sayili Listededir.
+      AB mensei sarapta gumruk vergisi %50'dir, SIFIR DEGILDIR.
   mense_ispat_belgesi:
     value: null
     status: UNKNOWN
     evidence_id: null
+    notes: >-
+      EUR.1 / fatura beyani / REX / A.TR ayrimi bu turda anlasma bazinda dogrulanamadi.
+      Indirimli oranin MENSE esasli oldugu yapisal olarak acik; belge turu belgelenmedi.
   etkiledigi_vergiler:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
-    notes: "Genellikle gumruk vergisi. OTV/KDV'yi etkiledigi VARSAYILMAZ — dogrulanir."
+    value: ["GUMRUK_VERGISI"]
+    status: FACT
+    evidence_id: EV-2026-08-09-110
+    notes: >-
+      OTV ve KDV mense'den BAGIMSIZDIR. Ancak gumruk vergisi OTV ve KDV matrahina
+      girdigi icin dolayli olarak ikisini de dusurur.
   tarife_kontenjani_var_mi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    kopuksuz_sarap_2204_21:
+      AB: false
+      BK: false
+      Sili: false
+      Isvicre_Lihtenstayn:
+        var: true
+        miktar_litre_yil: 30000
+        kontenjan_ici_oran_pct: 35
+        evidence_id: EV-2026-08-09-109
+      status: FACT
+      evidence_id: EV-2026-08-09-108
+      notes: "KRITIK NEGATIF BULGU: AB mensei KOPUKSUZ sarapta tarife kontenjani YOK."
+    kopuklu_sarap_2204_10:
+      AB:
+        var: true
+        miktar_hl_yil: 750
+        kontenjan_ici_oran_pct: 35
+        evidence_id: EV-2026-08-09-108
+      BK:
+        var: true
+        miktar_hl_yil: 125
+        kontenjan_ici_oran_pct: 35
+        evidence_id: EV-2026-08-09-108
 
 # ------------------------------------------------------------
 # KDV — İKİ AYRI PERSPEKTİF (CLAUDE.md §6)
@@ -180,18 +364,26 @@ kdv_perspektifleri:
       value: null
       status: UNKNOWN
       evidence_id: null
-      notes: "Indirilebiliyorsa P&L'e GIRMEZ. Indirilemiyorsa maliyettir."
+      notes: >-
+        Bu turda dogrulanmadi. Model IKI SENARYO ile calistirilmalidir:
+        (A1) indirilebilir -> KDV L5'e tasinmaz, yalniz nakit akisinda gorunur.
+        (A2) indirilemez -> KDV ekonomik maliyettir.
     otv_indirilebilir_mi:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
+      value: false
+      status: FACT
+      evidence_id: EV-2026-08-09-124
+      tier: T1
+      effective_date: 2002-08-01
+      notes: >-
+        OTVK md.1/1 "bir defaya mahsus" + md.9 indirim yalniz ayni listedeki malin
+        imalinde kullanimda. Siselenmis bitmis urunu ithal edip satan icin OTV MALIYETTIR.
 
   b_cash_tax_timing:
     kdv_odeme_ani:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
-      notes: "Gumrukte mi, beyanname doneminde mi?"
+      value: "gumrukte, gumruk vergisi ile birlikte"
+      status: FACT
+      evidence_id: EV-2026-08-09-126
+      tier: T2
     kdv_mahsup_gecikmesi_gun:
       value: null
       unit: gun
@@ -199,9 +391,11 @@ kdv_perspektifleri:
       evidence_id: null
       notes: "peak_cash_requirement'i DOGRUDAN buyutur."
     otv_odeme_ani:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
+      value: "ithalat vergileri ile AYNI ZAMANDA, gumrukte"
+      status: FACT
+      evidence_id: EV-2026-08-09-123
+      tier: T1
+      effective_date: 2002-08-01
     devreden_kdv_olusur_mu:
       value: null
       status: UNKNOWN
@@ -214,16 +408,50 @@ kdv_perspektifleri:
 
 antrepo_rejimi:
   vergi_dogus_ani:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
-    notes: "Antrepoya giriste mi, cikista mi?"
+    value: "serbest dolasima giris beyannamesinin TESCIL TARIHI"
+    status: FACT
+    evidence_id: EV-2026-08-09-122
+    tier: T1
+    effective_date: 2009-07-07
+    notes: "GK md.181/1-a. Antrepoya alista gumruk vergisi/OTV/KDV DOGMAZ."
+  antrepoda_kalis_suresi:
+    value: "sinirsiz"
+    status: FACT
+    evidence_id: EV-2026-08-09-122
+    tier: T1
+    notes: "GK md.101/1; gumruk idaresi gerekli gorurse sure belirleyebilir."
   kismi_cekis_mumkun_mu:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "Mumkunse peak_cash_requirement DRAMATIK duser. finans-fizibilite icin birinci derece onemli."
+    notes: >-
+      T1/T2 ile dogrulanamadi -> ticket T-101 (navlun-lojistik-uzmani).
+      Mumkunse peak_cash_requirement DRAMATIK duser.
   nakit_akisi_etkisi:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: "vergi odemesi satis takvimine yaklastirilabilir; peak_cash_requirement duser"
+    status: FACT
+    evidence_id: EV-2026-08-09-122
+    notes: >-
+      Karsi kalem: antrepo teminati + depo maliyeti (navlun-lojistik-uzmani alani).
+      RISK: OTV maktu tutari Ocak/Temmuz'da artar; antrepoda bekletme tescil tarihini
+      oteleyerek DAHA YUKSEK OTV riski yaratir (EV-2026-08-09-114).
+
+# ------------------------------------------------------------
+# MODEL ICIN HESAP FONKSIYONU TANIMI (engine bu siraya uyar)
+# ------------------------------------------------------------
+hesap_sozlesmesi:
+  girdi: ["cif_try", "hacim_litre", "mense", "odeme_sekli"]
+  adimlar:
+    - "gv = cif_try * gumruk_vergisi_oranlari_by_mense[mense].oran_pct / 100"
+    - "igv = 0"
+    - "kkdf = 0 if odeme_sekli == 'pesin' else UNKNOWN_MATRAH * 0.06"
+    - "otv_matrahi = cif_try + gv + igv + kkdf"
+    - "otv = max(otv_matrahi * 0.00, 71.2692 * hacim_litre)"
+    - "kdv_matrahi = cif_try + gv + igv + kkdf + otv"
+    - "kdv = kdv_matrahi * 0.20"
+    - "L4 = cif_try + gv + igv + kkdf + otv + kdv"
+  cikti: ["gv", "igv", "kkdf", "otv", "kdv", "L4"]
+  uyari: >-
+    Bu sozlesme metindir, kod degildir. engine/ altindaki kod oranlari BU DOSYADAN
+    okumalidir. odeme_sekli 'pesin' degilse model KKDF matrahi UNKNOWN oldugu icin
+    UNKNOWN donmelidir.
