@@ -1,0 +1,157 @@
+# SENARYOLAR
+# Sahibi: finans-fizibilite
+#
+# Hacim senaryolari charter tarafindan BELIRLENMISTIR (uydurma degildir).
+# Diger senaryo parametreleri TUR 1-2 sonrasi kanitla doldurulur.
+
+meta:
+  dosya: senaryolar.yaml
+  son_guncelleme: 2026-08-09
+  tur: "TUR 0 — kurulum"
+  durum: ISKELET_HACIMLER_BELIRLI
+
+# ------------------------------------------------------------
+# HACİM SENARYOLARI — charter'da belirlendi, bunlar ASSUMPTION degil KARARDIR
+# ------------------------------------------------------------
+hacim_senaryolari:
+  - id: V5K
+    yillik_sise: 5000
+    aciklama: "Pilot alt sinir"
+    moq_uyumlu_mu: null
+    konteyner_sayisi: null
+    status: UNKNOWN
+
+  - id: V10K
+    yillik_sise: 10000
+    aciklama: "Pilot ust sinir"
+    moq_uyumlu_mu: null
+    konteyner_sayisi: null
+    status: UNKNOWN
+
+  - id: V25K
+    yillik_sise: 25000
+    aciklama: "Erken olcek"
+    moq_uyumlu_mu: null
+    konteyner_sayisi: null
+    status: UNKNOWN
+
+  - id: V50K
+    yillik_sise: 50000
+    aciklama: "Olcek testi alt sinir (scale_intent)"
+    moq_uyumlu_mu: null
+    konteyner_sayisi: null
+    status: UNKNOWN
+
+  - id: V100K
+    yillik_sise: 100000
+    aciklama: "Olcek testi ust sinir (scale_intent)"
+    moq_uyumlu_mu: null
+    konteyner_sayisi: null
+    status: UNKNOWN
+
+# ------------------------------------------------------------
+# BENCHMARK SENARYOLARI — OPEN QUESTION #001 kapanana kadar ZORUNLU
+# ------------------------------------------------------------
+benchmark_senaryolari:
+  - id: BM_A
+    aciklama: "599,90 TL = KDV DAHIL"
+    kdv_durumu: KDV_DAHIL
+    fiyat_katmani: null
+    status: ASSUMPTION
+    notes: "OPEN QUESTION #001 kapanana kadar model bu senaryoyu AYRI calistirir."
+
+  - id: BM_B
+    aciklama: "599,90 TL = KDV HARIC (cash & carry profesyonel fiyat)"
+    kdv_durumu: KDV_HARIC
+    fiyat_katmani: null
+    status: ASSUMPTION
+    notes: "OPEN QUESTION #001 kapanana kadar model bu senaryoyu AYRI calistirir."
+
+# ------------------------------------------------------------
+# İŞ MODELİ SENARYOLARI — charter'da EŞİT öncelikli
+# ------------------------------------------------------------
+is_modeli_senaryolari:
+  - id: BM_EXISTING
+    aciklama: "Mevcut marka distributorlugu"
+    oncelik: equal
+    status: UNKNOWN
+
+  - id: BM_PRIVATE
+    aciklama: "Private label"
+    oncelik: equal
+    status: UNKNOWN
+
+# ------------------------------------------------------------
+# KANAL SENARYOLARI
+# ------------------------------------------------------------
+kanal_senaryolari:
+  - id: CH_RETAIL
+    aciklama: "Agirlikli zincir market"
+    oncelik: 1
+    kanal_karmasi: null
+    status: UNKNOWN
+
+  - id: CH_TEKEL
+    aciklama: "Agirlikli bagimsiz perakende / tekel"
+    oncelik: 2
+    kanal_karmasi: null
+    status: UNKNOWN
+
+  - id: CH_HORECA
+    aciklama: "Agirlikli HoReCa"
+    oncelik: 3
+    kanal_karmasi: null
+    status: UNKNOWN
+
+# ------------------------------------------------------------
+# DUYARLILIK EKSENLERİ — her biri min/base/max
+# ------------------------------------------------------------
+duyarlilik_eksenleri:
+  - eksen: FX
+    min: null
+    base: null
+    max: null
+    status: UNKNOWN
+    kaynak_dosya: makro.yaml
+
+  - eksen: FREIGHT
+    min: null
+    base: null
+    max: null
+    status: UNKNOWN
+    kaynak_dosya: lojistik.yaml
+
+  - eksen: OTV
+    min: null
+    base: null
+    max: null
+    status: UNKNOWN
+    kaynak_dosya: vergi.yaml
+    notes: "Maktu OTV artisi f/p segmentte en oldurucu tek degiskendir."
+
+  - eksen: PRICE
+    min: null
+    base: null
+    max: null
+    status: UNKNOWN
+    kaynak_dosya: kanal.yaml
+
+# ------------------------------------------------------------
+# MODEL YÖNÜ
+# ------------------------------------------------------------
+model_yonleri:
+  - id: FORWARD
+    aciklama: "EXW/FOB -> L8 CONSUMER SHELF PRICE"
+    aktif: true
+
+  - id: REVERSE
+    aciklama: "target shelf price (L8) -> max odenebilir EXW/FOB (L0/L1)"
+    aktif: true
+    notes: "PROJENIN ASIL SORUSU. Ureticiye en fazla kac dolar/euro odeyebiliriz?"
+
+# ------------------------------------------------------------
+# ÇIKTI KAPISI
+# ------------------------------------------------------------
+cikti_kapisi:
+  kritik_acik_ticket_varken_approved_olabilir_mi: false
+  notes: "impact: CRITICAL acik ticket varsa cikti en fazla DRAFT'tir."

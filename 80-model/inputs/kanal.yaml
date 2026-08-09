@@ -1,0 +1,196 @@
+# KANAL GİRDİLERİ
+# Sahibi: kanal-marj-uzmani
+#
+# KURAL: evidence_id'si olmayan sayı modele GİREMEZ.
+# KURAL: Her marj icin DORT sey belirtilmeden deger gecersizdir:
+#        (1) hangi iki katman arasi  (2) brut mu net mi
+#        (3) KDV dahil mi haric mi   (4) margin mi markup mi
+# KURAL: Kanal kosullari genellikle T4/T5'tir — min/base/max ZORUNLU.
+# Bu turda tüm değerler null / UNKNOWN'dır. UYDURMA.
+
+meta:
+  dosya: kanal.yaml
+  son_guncelleme: 2026-08-09
+  tur: "TUR 0 — kurulum"
+  durum: BOS_ISKELET
+
+dagitim_modeli:
+  secim:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "KENDI_DAGITIMIMIZ | DIS_DISTRIBUTOR | HIBRIT"
+
+  kendi_dagitimimiz:
+    yillik_sabit_maliyet:
+      value: null
+      currency: null
+      status: UNKNOWN
+      evidence_id: null
+      notes: "Ekip, arac, depo, sistem"
+    ekonomik_oldugu_min_hacim_sise:
+      value: null
+      unit: adet
+      status: UNKNOWN
+      evidence_id: null
+      notes: "Kirilma noktasi — hesabi finans-fizibilite yapar"
+
+  dis_distributor:
+    marj_pct:
+      min: null
+      base: null
+      max: null
+      unit: "%"
+      katmanlar: null          # or. "L6 -> L7"
+      brut_mu_net_mi: null
+      kdv_dahil_mi: null
+      margin_mi_markup_mi: null
+      status: UNKNOWN
+      evidence_id: null
+    kanal_erisimi:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    bagimlilik_riski:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+
+kanallar:
+
+  zincir_market:
+    oncelik: 1
+    marj_pct:
+      min: null
+      base: null
+      max: null
+      unit: "%"
+      katmanlar: null          # or. "L7 -> L8"
+      brut_mu_net_mi: null
+      kdv_dahil_mi: null
+      margin_mi_markup_mi: null
+      status: UNKNOWN
+      evidence_id: null
+    listeleme_bedeli:
+      value: null
+      currency: null
+      birim: null              # SKU basina | magaza basina | yillik
+      status: UNKNOWN
+      evidence_id: null
+    ciro_primi_pct:
+      value: null
+      unit: "%"
+      status: UNKNOWN
+      evidence_id: null
+    odeme_vadesi_gun:
+      value: null
+      unit: gun
+      status: UNKNOWN
+      evidence_id: null
+      notes: "Cash conversion cycle'in KRITIK girdisi."
+    iade_kosullari:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    iade_orani_pct:
+      value: null
+      unit: "%"
+      status: UNKNOWN
+      evidence_id: null
+    raf_kampanya_maliyeti:
+      gondol_basi:
+        value: null
+        currency: null
+        status: UNKNOWN
+        evidence_id: null
+      katalog_insert:
+        value: null
+        currency: null
+        status: UNKNOWN
+        evidence_id: null
+      fiyat_indirimi_katkisi_pct:
+        value: null
+        unit: "%"
+        status: UNKNOWN
+        evidence_id: null
+
+  tekel_bayi:
+    oncelik: 2
+    marj_pct:
+      min: null
+      base: null
+      max: null
+      unit: "%"
+      katmanlar: null
+      brut_mu_net_mi: null
+      kdv_dahil_mi: null
+      margin_mi_markup_mi: null
+      status: UNKNOWN
+      evidence_id: null
+    listeleme_bedeli:
+      value: null
+      currency: null
+      status: UNKNOWN
+      evidence_id: null
+    odeme_vadesi_gun:
+      value: null
+      unit: gun
+      status: UNKNOWN
+      evidence_id: null
+    iade_kosullari:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+
+  horeca:
+    oncelik: 3
+    marj_pct:
+      min: null
+      base: null
+      max: null
+      unit: "%"
+      katmanlar: null
+      brut_mu_net_mi: null
+      kdv_dahil_mi: null
+      margin_mi_markup_mi: null
+      status: UNKNOWN
+      evidence_id: null
+    odeme_vadesi_gun:
+      value: null
+      unit: gun
+      status: UNKNOWN
+      evidence_id: null
+    aktivasyon_tadim_maliyeti:
+      value: null
+      currency: null
+      status: UNKNOWN
+      evidence_id: null
+
+kanal_karmasi:
+  zincir_market_pay_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+  tekel_bayi_pay_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+  horeca_pay_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+  notes: "Toplami 100 olmalidir. Kanal karmasi agirlikli ortalama marji belirler."
+
+kanal_gucu_riski:
+  listeden_cikarilma_riski:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  tek_tarafli_kosul_dayatmasi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  notes: "seytanin-avukati bu alanlari saldiri vektoru olarak kullanacak."

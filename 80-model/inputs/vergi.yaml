@@ -1,0 +1,229 @@
+# VERGİ GİRDİLERİ
+# Sahibi: gumruk-vergi-uzmani
+#
+# ============================================================
+#  GÜVENLİK KİLİDİ — BU DOSYA MODELİN EN TEHLİKELİ YERİDİR
+# ============================================================
+#
+# HİÇBİR ORAN, TUTAR VEYA MATRAH TANIMI
+# T1/T2 RESMÎ KAYNAKLA (A1 SEVİYESİNDE) DOĞRULANMADAN YAZILMAZ.
+#
+# - Hatirlanan oran yazilmaz.
+# - "Genelde su kadardir" yazilmaz.
+# - T5 (blog/forum/LLM hafizasi) TEK BASINA yeterli DEGILDIR.
+# - Her deger icin effective_date ZORUNLUDUR.
+# - engine/ altindaki kod bu dosyadan okur; kodda oran HARD-CODE EDILMEZ.
+#
+# Bu dosya doldurulmadan finans modeli vergi hesabi CALISTIRMAZ.
+# Eksik girdi ile calistirilirsa model UNKNOWN doner ve eksik listesini basar.
+#
+# Kaynak: 30-vergi-gumruk/matrah-sirasi.md (tek dogruluk kaynagi)
+
+meta:
+  dosya: vergi.yaml
+  son_guncelleme: 2026-08-09
+  tur: "TUR 0 — kurulum"
+  durum: BOS_ISKELET_KILITLI
+  a1_dogrulama_yapildi_mi: false
+  model_hedef_tarihi: null   # Vergiler BU tarihte gecerli olan haliyle kullanilir
+
+gtip:
+  kod:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    effective_date: null
+    tier: null
+
+gumruk_kiymeti:
+  baz_incoterm:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "CIF mi? Dogrulanmadan varsayilmaz."
+  navlun_dahil_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  sigorta_dahil_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  royalti_dahil_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  komisyon_dahil_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+gozetim:
+  uygulama_var_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    effective_date: null
+  birim_kiymet_esigi:
+    value: null
+    unit: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "KRITIK: Esik varsa ucuz beyan fiilen kullanilamaz, sourcing stratejisi coker."
+
+# ------------------------------------------------------------
+# MATRAH SIRASI — sira numarasi HESAPLAMA SIRASIDIR
+# 30-vergi-gumruk/matrah-sirasi.md ile birebir tutarli olmalidir
+# ------------------------------------------------------------
+matrah_sirasi:
+  - sira: 1
+    vergi: GUMRUK_VERGISI
+    matrah_tanimi: null       # neyin uzerinden
+    oran_pct: null
+    tutar: null
+    tip: null                 # ORANSAL | MAKTU | KARMA | YOK
+    status: UNKNOWN
+    tier: null
+    evidence_id: null
+    effective_date: null
+
+  - sira: 2
+    vergi: ILAVE_GUMRUK_VERGISI
+    matrah_tanimi: null
+    oran_pct: null
+    tutar: null
+    tip: null
+    status: UNKNOWN
+    tier: null
+    evidence_id: null
+    effective_date: null
+    notes: "Var mi yok mu dogrulanacak."
+
+  - sira: 3
+    vergi: OTV
+    matrah_tanimi: null       # Gumruk Vergisi dahil mi? DOGRULA
+    oran_pct: null            # oransal OTV
+    asgari_maktu_tutar: null  # asgari maktu vergi
+    maktu_birim: null         # litre | sise | ABV bazli — DOGRULA
+    tip: null                 # ORANSAL | MAKTU | KARMA_YUKSEK_OLAN
+    status: UNKNOWN
+    tier: null
+    evidence_id: null
+    effective_date: null
+    guncelleme_periyodu: null
+    notes: >
+      KRITIK: Fiyat/performans segmentinde maktu OTV oransal OTV'den agir basabilir
+      ve dusuk fiyatli ithalatin ekonomisini TEK BASINA oldurebilir.
+      Maktu tutarlar periyodik guncellenir — hangi tarihli tutar oldugu ZORUNLU.
+      ttl kisa tutulacak.
+
+  - sira: 4
+    vergi: KKDF
+    matrah_tanimi: null
+    oran_pct: null
+    dogdugu_odeme_sekilleri: null
+    tip: null
+    status: UNKNOWN
+    tier: null
+    evidence_id: null
+    effective_date: null
+    notes: "Odeme sekline bagli. tedarikci.yaml/odeme_sekli ile capraz kontrol edilecek."
+
+  - sira: 5
+    vergi: KDV
+    matrah_tanimi: null       # OTV dahil mi? Gumruk Vergisi dahil mi? DOGRULA
+    oran_pct: null
+    tip: null
+    status: UNKNOWN
+    tier: null
+    evidence_id: null
+    effective_date: null
+
+  - sira: 6
+    vergi: DIGER
+    matrah_tanimi: null
+    oran_pct: null
+    tutar: null
+    tip: null
+    status: UNKNOWN
+    tier: null
+    evidence_id: null
+    effective_date: null
+    notes: "TRT bandrol, damga, fon vb. — varligi dogrulanacak."
+
+tercihli_tarife:
+  uygulanabilir_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  mense_ispat_belgesi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  etkiledigi_vergiler:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Genellikle gumruk vergisi. OTV/KDV'yi etkiledigi VARSAYILMAZ — dogrulanir."
+  tarife_kontenjani_var_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+# ------------------------------------------------------------
+# KDV — İKİ AYRI PERSPEKTİF (CLAUDE.md §6)
+# ------------------------------------------------------------
+kdv_perspektifleri:
+  a_ekonomik_maliyet:
+    ithalat_kdv_indirilebilir_mi:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+      notes: "Indirilebiliyorsa P&L'e GIRMEZ. Indirilemiyorsa maliyettir."
+    otv_indirilebilir_mi:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+
+  b_cash_tax_timing:
+    kdv_odeme_ani:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+      notes: "Gumrukte mi, beyanname doneminde mi?"
+    kdv_mahsup_gecikmesi_gun:
+      value: null
+      unit: gun
+      status: UNKNOWN
+      evidence_id: null
+      notes: "peak_cash_requirement'i DOGRUDAN buyutur."
+    otv_odeme_ani:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    devreden_kdv_olusur_mu:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    iade_sureci_gun:
+      value: null
+      unit: gun
+      status: UNKNOWN
+      evidence_id: null
+
+antrepo_rejimi:
+  vergi_dogus_ani:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Antrepoya giriste mi, cikista mi?"
+  kismi_cekis_mumkun_mu:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Mumkunse peak_cash_requirement DRAMATIK duser. finans-fizibilite icin birinci derece onemli."
+  nakit_akisi_etkisi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null

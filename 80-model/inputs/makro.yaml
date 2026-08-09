@@ -1,0 +1,128 @@
+# MAKRO GİRDİLER (FX, finansman, enflasyon)
+# Sahibi: finans-fizibilite (girdi toplayici), ama kur verisi kanitli olmali
+#
+# KURAL: evidence_id'si olmayan sayı modele GİREMEZ.
+# KURAL: Kur donusumu yapilmis bir sayi, orijinal sayinin YERINE GECMEZ.
+#        Her sayi kendi orijinal para biriminde saklanir.
+# Bu turda tüm değerler null / UNKNOWN'dır. UYDURMA.
+
+meta:
+  dosya: makro.yaml
+  son_guncelleme: 2026-08-09
+  tur: "TUR 0 — kurulum"
+  durum: BOS_ISKELET
+
+fx:
+  usd_try:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    kur_tarihi: null
+    kaynak: null
+    ttl: 7d
+    notes: "Kur tarihi belirtilmeden kullanilan kur gecersizdir."
+
+  eur_try:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    kur_tarihi: null
+    kaynak: null
+    ttl: 7d
+
+  eur_usd:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    kur_tarihi: null
+    ttl: 7d
+
+  gumruk_kuru_kullanilir_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Gumrukte beyan kuru serbest piyasa kurundan farkli olabilir. gumruk-vergi-uzmani dogrulayacak."
+
+fx_duyarlilik:
+  senaryo_min:
+    usd_try: null
+    eur_try: null
+    status: UNKNOWN
+  senaryo_base:
+    usd_try: null
+    eur_try: null
+    status: UNKNOWN
+  senaryo_max:
+    usd_try: null
+    eur_try: null
+    status: UNKNOWN
+  notes: >
+    KRITIK ASIMETRI: Alis dovizle, satis TL ile yapilir. TL deger kaybettiginde
+    maliyet ANINDA artar ama kanal fiyati ANINDA artmaz (fiyat guncelleme gecikmesi).
+    Bu gecikme asagida modellenir.
+
+  fiyat_guncelleme_gecikmesi_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Kanal fiyat artisini kabul edene kadar gecen sure. kanal-marj-uzmani girdisi."
+
+finansman:
+  isletme_sermayesi_faiz_orani_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Yillik. Nakit ihtiyaci finanse edilecekse maliyet olarak modele girer."
+
+  akreditif_komisyonu_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+
+  banka_masraflari:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+
+  teminat_mektubu_komisyonu_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+
+enflasyon:
+  tufe_yillik_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+    kaynak: null
+
+  maliyet_enflasyonu_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Depo, personel, ic nakliye gibi TL bazli maliyet kalemleri icin."
+
+model_donemi:
+  baslangic_tarihi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "T0 — mevzuat-ruhsat-uzmani takvimi ile hizalanir."
+
+  ilk_konteyner_tarihi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+  model_ufku_ay:
+    value: null
+    unit: ay
+    status: UNKNOWN
+    evidence_id: null

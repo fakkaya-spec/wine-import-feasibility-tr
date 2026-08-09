@@ -1,0 +1,198 @@
+# TEDARİKÇİ GİRDİLERİ
+# Sahibi: global-sourcing-kasifi
+#
+# KURAL: evidence_id'si olmayan sayı modele GİREMEZ.
+# KURAL: EXW fiyati L0, FOB fiyati L1 katmanidir. KARISTIRILMAZ.
+# Bu turda tüm değerler null / UNKNOWN'dır. UYDURMA.
+
+meta:
+  dosya: tedarikci.yaml
+  son_guncelleme: 2026-08-09
+  tur: "TUR 0 — kurulum"
+  durum: BOS_ISKELET
+
+secili_tedarikci:
+  supplier_id:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "50-sourcing/tedarikci-havuzu.csv referansi"
+
+  supplier_name:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+  ulke:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+  is_modeli:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "EXISTING_BRAND_DISTRIBUTION | PRIVATE_LABEL — charter'da ikisi de esit oncelikli"
+
+fiyat:
+  # L0 — EXW
+  exw_per_sise:
+    value: null
+    unit: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+    katman: L0
+    notes: "EXW = fabrika/mahzen cikisi. FOB ile KARISTIRMA."
+
+  # L1 — FOB
+  fob_per_sise:
+    value: null
+    unit: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+    katman: L1
+    yukleme_limani: null
+    notes: "FOB = yukleme limani bordasi. EXW ile KARISTIRMA."
+
+  incoterm:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Belirsizse UNKNOWN. Tahmin edilmez."
+
+  quote_type:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "INDICATIVE | FIRM_OFFER | PROFORMA — sadece FIRM_OFFER/PROFORMA gercek tekliftir"
+
+  quote_valid_until:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+  hacim_bazli_fiyat_kirilimi:
+    5000:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    10000:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    25000:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    50000:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    100000:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+
+siparis_kosullari:
+  moq_sise:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+    notes: "KRITIK: MOQ pilot hacmi imkansiz kiliyorsa pilot mantigi bozulur. seytanin-avukati vektoru."
+
+  moq_konteyner:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+
+  lead_time_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+    notes: "PO'dan yuklemeye kadar. Isletme sermayesi hesabina girer."
+
+  yillik_kapasite_sise:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+
+odeme:
+  odeme_sekli:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "TT_PESIN | TT_VADELI | AKREDITIF | ACIK_HESAP — KKDF etkisi icin gumruk-vergi-uzmani'na ipucu birak"
+
+  vade_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Cash conversion cycle girdisi. Tedarikci vadesi CCC'yi kisaltir."
+
+  kkdf_dogar_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "gumruk-vergi-uzmani dolduracak. Bu ajan doldurmaz."
+
+private_label:
+  mumkun_mu:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+  min_siparis_sise:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+
+  etiket_tasarim_maliyeti:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+
+  ek_lead_time_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+
+  turkce_arka_etiket_menside_uygulanabilir_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Menside uygulanabiliyorsa Turkiye'de etiketleme operasyonu ortadan kalkar. Onemli maliyet kalemi."
+
+belgeler:
+  mense_ispat_belgesi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "EUR.1 | FATURA_BEYANI | REX | YOK — tercihli tarife icin kritik. Oran gumruk-vergi-uzmani'nin alani."
+
+  analiz_sertifikasi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+risk:
+  turkiyeye_ihracat_gecmisi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+  alternatif_tedarikci_sayisi:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Supplier dependency riski. seytanin-avukati bu alani sorgulayacak."

@@ -1,0 +1,291 @@
+# LOJİSTİK GİRDİLERİ
+# Sahibi: navlun-lojistik-uzmani
+#
+# KURAL: evidence_id'si olmayan sayı modele GİREMEZ.
+# KURAL: Navlun CIF'e giriyorsa AYRICA lojistik gideri olarak sayilmaz (cift sayim).
+# Bu turda tüm değerler null / UNKNOWN'dır. UYDURMA.
+
+meta:
+  dosya: lojistik.yaml
+  son_guncelleme: 2026-08-09
+  tur: "TUR 0 — kurulum"
+  durum: BOS_ISKELET
+
+konteyner:
+  tip:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "20DV | 40HC"
+
+  sise_kapasitesi_hacim_kisitli:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Sadece hacim kisitina gore hesaplanan kapasite"
+
+  sise_kapasitesi_agirlik_kisitli:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Sadece payload agirlik limitine gore hesaplanan kapasite"
+
+  baglayici_kisit:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "HACIM | AGIRLIK — hangisi once dolarsa o baglayicidir. Sarapta genellikle agirlik, ama DOGRULA."
+
+  pratik_sise_kapasitesi:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+    notes: "min(hacim_kisitli, agirlik_kisitli). Hesap gosterilmeden yazilmaz."
+
+  palet_sayisi:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+
+  floor_loaded_mumkun_mu:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+navlun:
+  mod:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "FCL | LCL"
+
+  lcl_fcl_kirilma_noktasi_sise:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Bu adetten sonra FCL ucuzlar"
+
+  rota:
+    yukleme_limani:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    varis_limani:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+      notes: "Ambarli | Mersin | Izmir | diger"
+
+  ocean_freight_per_konteyner:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+    ttl: null
+    notes: "KRITIK: all-in mi base mi? Neyin dahil oldugu yazilmadan gecersizdir. Spot/kontrat ayrimi zorunlu."
+
+  navlun_tipi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "ALL_IN | BASE_ONLY | SPOT | CONTRACT"
+
+  ek_masraflar:
+    thc_origin:
+      value: null
+      currency: null
+      status: UNKNOWN
+      evidence_id: null
+    thc_destination:
+      value: null
+      currency: null
+      status: UNKNOWN
+      evidence_id: null
+    baf_caf:
+      value: null
+      currency: null
+      status: UNKNOWN
+      evidence_id: null
+    isps:
+      value: null
+      currency: null
+      status: UNKNOWN
+      evidence_id: null
+    doc_fee:
+      value: null
+      currency: null
+      status: UNKNOWN
+      evidence_id: null
+
+sigorta:
+  prim_orani_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+
+  kapsam:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Kirilma ve sicaklik teminati dahil mi?"
+
+  muafiyet:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+liman_ve_gumrukleme:
+  ordino:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  terminal_elleclleme:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  ardiye_gunluk:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  gumruk_musavirligi:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+
+demurrage_detention:
+  free_time_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+  demurrage_gunluk:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  detention_gunluk:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  beklenen_gecikme_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Ruhsat/analiz/bandrol beklemesi kaynakli. mevzuat-ruhsat-uzmani takviminden turetilir."
+
+antrepo:
+  depolama_ucreti_palet_gun:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  giris_cikis_ellecleme:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  ortalama_kalis_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+
+bandrolleme_operasyonu:
+  birim_maliyet_per_sise:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "OPERASYON maliyeti. Bandrolun MEVZUAT tarafi mevzuat-ruhsat-uzmani'nda."
+  kapasite_sise_gun:
+    value: null
+    unit: adet/gun
+    status: UNKNOWN
+    evidence_id: null
+  yapildigi_yer:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+ic_lojistik:
+  limandan_depoya:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  depodan_kanala_dagitim_per_sise:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+
+depolama:
+  aylik_maliyet_palet:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  minimum_taahhut:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  alkol_uyumlu_depo_gerekli_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+sicaklik_riski:
+  yaz_sevkiyati_riskli_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  reefer_ek_maliyet:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  thermal_liner_ek_maliyet:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  beklenen_fire_orani_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+
+sure:
+  transit_gun_port_to_port:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+  gumrukleme_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+  antrepo_bandrol_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+  toplam_lead_time_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+    notes: "PO'dan satisa hazir hale gelene kadar. Isletme sermayesi ve CCC icin KRITIK."

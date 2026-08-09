@@ -1,0 +1,146 @@
+# ÜRÜN GİRDİLERİ
+# Sahibi: global-sourcing-kasifi (spesifikasyon) + turkiye-pazar-kasifi (segment)
+#
+# KURAL: evidence_id'si olmayan sayı modele GİREMEZ.
+# Bu turda tüm değerler null / UNKNOWN'dır. UYDURMA.
+
+meta:
+  dosya: urun.yaml
+  son_guncelleme: 2026-08-09
+  tur: "TUR 0 — kurulum"
+  durum: BOS_ISKELET
+
+urun:
+  tip:
+    value: "beyaz sarap (dry white)"
+    status: ASSUMPTION
+    evidence_id: null
+    notes: "Benchmark beyaz sarap oldugu icin baslangic varsayimi. Segment analizi sonrasi degisebilir."
+
+  hacim_ml:
+    value: 750
+    unit: ml
+    status: ASSUMPTION
+    evidence_id: null
+    notes: "Charter'da belirlenen ana format."
+
+  uzum_blend:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Benchmark: Colombard-Chardonnay. Kendi urunumuzun blend'i TBD."
+
+  abv_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+    notes: "KRITIK: ABV, GTIP alt kirilimini ve OTV hesabini etkileyebilir. gumruk-vergi-uzmani dogrulayacak."
+
+  vintage:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+  raf_omru_ay:
+    value: null
+    unit: ay
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Yavas stok / olu stok riski icin gerekli. seytanin-avukati bu alani sorgulayacak."
+
+sise_spesifikasyonu:
+  bos_sise_agirligi_g:
+    value: null
+    unit: g
+    status: UNKNOWN
+    evidence_id: null
+
+  dolu_sise_brut_agirligi_g:
+    value: null
+    unit: g
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Konteyner agirlik limiti hesabi icin ZORUNLU. navlun-lojistik-uzmani."
+
+  kapak_tipi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "mantar | vidali | sentetik"
+
+ambalaj:
+  sise_per_koli:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+
+  koli_brut_agirlik_kg:
+    value: null
+    unit: kg
+    status: UNKNOWN
+    evidence_id: null
+
+  koli_olculeri_cm:
+    value: null
+    unit: cm
+    status: UNKNOWN
+    evidence_id: null
+    notes: "L x W x H"
+
+  koli_per_palet:
+    value: null
+    unit: adet
+    status: UNKNOWN
+    evidence_id: null
+
+  palet_brut_agirlik_kg:
+    value: null
+    unit: kg
+    status: UNKNOWN
+    evidence_id: null
+
+  palet_yuksekligi_cm:
+    value: null
+    unit: cm
+    status: UNKNOWN
+    evidence_id: null
+
+gtip:
+  kod:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "gumruk-vergi-uzmani dolduracak. GTIP yanlissa HER SEY yanlistir."
+
+  alt_kirilim_kriteri:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+segment:
+  hedef_raf_fiyati_bandi_try:
+    min:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    max:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    notes: >
+      Benchmark 599,90 TL. ANCAK OPEN QUESTION #001 kapanmadan bu sayi
+      tek basina hedef olarak kullanilamaz. Bkz. 00-charter/benchmark.md
+
+  benchmark_fiyat_katmani:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "L7 mi L8 mi? OPEN QUESTION #001"
+
+  benchmark_kdv_durumu:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "KDV dahil mi haric mi? OPEN QUESTION #001 — model iki senaryoda calisir."

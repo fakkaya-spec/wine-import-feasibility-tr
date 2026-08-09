@@ -1,0 +1,253 @@
+# RUHSAT / MEVZUAT GİRDİLERİ
+# Sahibi: mevzuat-ruhsat-uzmani
+#
+# KURAL: evidence_id'si olmayan sayı modele GİREMEZ.
+# KURAL: Sure tahmini FACT degildir — ESTIMATE veya ASSUMPTION'dir.
+# Bu turda tüm değerler null / UNKNOWN'dır. UYDURMA.
+
+meta:
+  dosya: ruhsat.yaml
+  son_guncelleme: 2026-08-09
+  tur: "TUR 0 — kurulum"
+  durum: BOS_ISKELET
+
+g0_onerisi:
+  value: null
+  status: UNKNOWN
+  evidence_id: null
+  gerekce: null
+  notes: >
+    G0_PASS | G0_BLOCKED | G0_FAIL
+    Bu bir ONERIDIR. Nihai karar yatirim-komitesi-baskani'na aittir.
+    mevzuat-ruhsat-uzmani kendi basina KILL karari VERMEZ.
+
+belgeler:
+  ithalat_yetki_belgesi:
+    gerekli_mi:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    basvuru_suresi_gun:
+      value: null
+      unit: gun
+      status: UNKNOWN
+      evidence_id: null
+    harc_maliyet:
+      value: null
+      currency: null
+      status: UNKNOWN
+      evidence_id: null
+    yenileme_periyodu:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+
+  dagitim_yetki_belgesi:
+    gerekli_mi:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    basvuru_suresi_gun:
+      value: null
+      unit: gun
+      status: UNKNOWN
+      evidence_id: null
+    harc_maliyet:
+      value: null
+      currency: null
+      status: UNKNOWN
+      evidence_id: null
+
+  satis_belgesi:
+    gerekli_mi:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    kim_icin_gerekli:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+
+urun_uygunlugu:
+  tescil_gerekli_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  basvuru_suresi_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+  sku_basina_maliyet:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "SKU basina ise, cok SKU'lu portfoyde onemli sabit maliyet olur."
+
+etiket:
+  turkce_etiket_zorunlu_mu:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  zorunlu_ibareler:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  saglik_uyarisi_gerekli_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  uygulama_yeri:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "MENSEDE | ANTREPODA | DEPODA — menside yapilabilirse Turkiye operasyon maliyeti duser."
+  etiket_basim_maliyeti_per_sise:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+
+analiz_laboratuvar:
+  zorunlu_analizler:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  akredite_lab_gerekli_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  analiz_suresi_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+  analiz_maliyeti_per_parti:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  her_partide_tekrar_gerekli_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Her partide tekrar gerekiyorsa degisken maliyet; tek seferse sabit maliyet."
+
+bandrol_uis:
+  bandrol_gerekli_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  uis_kaydi_gerekli_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  bandrol_birim_bedeli:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Bandrolun MALIYETI burada. OPERASYON maliyeti lojistik.yaml'da."
+  bandrol_temin_suresi_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+  uygulama_yeri:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+depo_antrepo_izni:
+  alkol_depo_izni_gerekli_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  antrepo_turu:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  izin_suresi_gun:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+
+teminat:
+  gerekli_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  turu:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Nakit | banka teminat mektubu"
+  tutar:
+    value: null
+    currency: null
+    status: UNKNOWN
+    evidence_id: null
+  isletme_sermayesine_etkisi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Nakit teminat ise peak_cash_requirement'a DOGRUDAN eklenir."
+
+satis_dagitim_reklam_kisitlari:
+  reklam_yasagi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  promosyon_kisiti:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  satis_saati_kisiti:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  satis_noktasi_kisiti:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  online_satis:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  sponsorluk:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  notes: >
+    Bu kisitlar pazarlama modelini DOGRUDAN kisitlar. Reklam yapilamiyorsa
+    marka insa maliyeti/suresi degisir — bu kanal-marj-uzmani ve
+    finans-fizibilite icin kritik girdidir.
+
+t0_takvimi:
+  toplam_gun_t0_ilk_konteyner:
+    value: null
+    unit: gun
+    status: UNKNOWN
+    evidence_id: null
+    notes: "T0 = sifirdan baslayan yatirimci. Kritik yol isaretlenecek."
+
+  kritik_yol:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+  adimlar:
+    - adim: null
+      sure_gun: null
+      onkosul: null
+      status: UNKNOWN
+      evidence_id: null
+
+toplam_ruhsat_sabit_maliyeti:
+  value: null
+  currency: null
+  status: UNKNOWN
+  evidence_id: null
+  notes: "Tum belge/harç/analiz/teminat toplami. finans-fizibilite sabit maliyet olarak kullanir."
