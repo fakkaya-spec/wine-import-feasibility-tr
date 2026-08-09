@@ -1,0 +1,115 @@
+                                         (III) SAYILI LİSTE
+        (4760 sayılı Özel Tüketim Vergisi Kanununun (12/3) maddesi uyarınca güncellenen liste)
+                                          (Yürürlük:3/7/2026)
+
+                                                        (A) CETVELİ
+
+                                                                                                                     Asgari
+                                                                                                           Vergi     Maktu
+  G.T.İ.P. NO                                            Mal İsmi                                          Oranı     Vergi
+                                                                                                           (%)       Tutarı
+                                                                                                                     (TL)
+20.09              Meyva suları (üzüm şırası dahil) ve sebze suları (fermente edilmemiş ve alkol            10          -
+                   katılmamış), ilave şeker veya diğer tatlandırıcı maddeler katılmış olsun olmasın
+                   (Yalnız ambalajlanmış olanlar ve/veya toptan teslime konu edilenler) (Sebze suları ve
+                   Türk Gıda Kodeksine göre % 100 meyve suyu sayılanlar hariç)
+22.02              Sular (mineral sular ve gazlı sular dahil) (ilave şeker veya diğer tatlandırıcı          10          -
+                   maddeler katılmış veya aromalandırılmış) ve alkolsüz diğer içecekler (20.09
+                   pozisyonundaki meyve ve sebze suları hariç) (Yalnız ambalajlanmış olanlar ve/veya
+                   toptan teslime konu edilenler) (Doğal mineralli doğal maden suyu ile üretilmiş,
+                   tatlandırılmış, aromalandırılmış meyveli gazlı içecekler; şalgam suyu; Türk Gıda
+                   Kodeksine göre çeşnili ve aromalı/aromalandırılmış içme sütleri, bebek ve devam
+                   sütleri sayılanlar ile 2202.10.00.00.11, 2202.10.00.00.12, 2202.10.00.00.13,
+                   2202.91.00.00.00 hariç)
+2202.10.00.00.11   Sade gazozlar                                                                            10          -
+2202.10.00.00.12   Meyvalı gazozlar                                                                         10          -
+2202.10.00.00.13   Kolalı gazozlar                                                                          35          -
+2202.91.00.00.00   Alkolsüz biralar                                                                         10          -
+2203.00            Malttan üretilen biralar                                                                 63       14,4937
+
+22.04              Taze üzüm şarabı (kuvvetlendirilmiş şaraplar dahil); üzüm şırası (20.09                   0       71,2692
+                   pozisyonunda yer alanlar hariç) (2204.10 köpüklü şaraplar ve 2204.30 diğer üzüm
+                   şıraları hariç)
+2204.10            Köpüklü şaraplar                                                                          0      481,5146
+
+22.05              Vermut ve diğer taze üzüm şarapları (bitkiler veya kokulu maddelerle                      0      726,7254
+                   aromalandırılmış) (2205.10.10.00.00, 2205.10.90.00.12 hariç)
+2205.10.10.00.00   Alkol derecesi hacim itibariyle % 18 veya daha az olanlar                                 0      577,1023
+
+2205.10.90.00.12   Alkol derecesi hacim itibariyle % 22 ve fazla olanlar                                     0     2.227,9277
+
+2206.00            Fermente edilmiş diğer içecekler (elma şarabı, armut şarabı, bal şarabı, sake             0      157,2270
+                   gibi), tarifenin başka yerinde belirtilmeyen veya yer almayan fermente edilmiş
+                   içeceklerin karışımları ve fermente edilmiş içeceklerle alkolsüz içeceklerin
+                   karışımları
+2207.20            Alkol derecesi ne olursa olsun tağyir (denatüre) edilmiş etil alkol ve damıtım            0     2.227,9277
+                   yoluyla elde edilen diğer alkollü içkiler [Alkol derecesi ne olursa olsun tağyir
+                   (denatüre) edilmiş etil alkol hariç]
+22.08              Alkol derecesi hacim itibariyle % 80'den az olan tağyir (denatüre) edilmemiş etil         0     2.227,9277
+                   alkol; damıtım yoluyla elde edilen alkollü içkiler, likörler ve diğer alkollü
+                   içecekler [(2208.90.91; 2208.90.99) Alkol derecesi hacim itibariyle % 80'den az olan
+                   tağyir (denatüre) edilmemiş etil alkol hariç, (2208.20; 2208.50; 2208.60; 2208.70 ve
+                   2208.90 hariç)]
+2208.20            Üzüm şarabı veya üzüm cibresinin damıtılması yolu ile elde edilen alkollü içkiler         0     2.227,9277
+
+2208.50            Cin ve Geneva                                                                             0     2.227,9277
+
+2208.60            Votka (2208.60.91.00.00, 2208.60.99.00.00 hariç)                                          0     2.227,9277
+
+2208.60.91.00.00   Muhtevası 2 litreyi geçmeyen kaplarda olanlar (Alkol derecesi hacim itibariyle %          0     2.227,9277
+                   45.4'den fazla olanlar)
+2208.60.99.00.00   Muhtevası 2 litreyi geçen kaplarda olanlar (Alkol derecesi hacim itibariyle %             0     2.227,9277
+                   45.4'den fazla olanlar)
+2208.70            Likörler                                                                                  0     2.227,9277
+
+2208.90            Diğerleri (2208.90.48.00.11, 2208.90.71.00.11 hariç)                                      0     2.227,9277
+
+2208.90.48.00.11   Rakı                                                                                      0     1.980,3822
+                   (Muhtevası 2 litreyi geçmeyen kaplarda olanlar)
+2208.90.71.00.11   Rakı                                                                                      0     1.980,3822
+                   (Muhtevası 2 litreyi geçen kaplarda olanlar)
+                                                      (B) CETVELİ
+
+                                                                                                        Asgari
+                                                                                                                     Maktu
+                                                                                             Vergi      Maktu
+                                                                                                                     Vergi
+      G.T.İ.P. NO                                    Mal İsmi                                Oranı      Vergi
+                                                                                                                     Tutarı
+                                                                                             (%)        Tutarı
+                                                                                                         (TL)        (TL)
+   2402.10.00.00.11       Tütün içeren purolar                                                 45       2,1643         3,1238
+
+   2402.10.00.00.12       Uçları açık purolar                                                  45       2,1643         3,1238
+
+   2402.10.00.00.19       Sigarillolar                                                         45       2,1643         3,1238
+
+   2402.20*               Tütün içeren sigaralar                                               42       2,2953        23,7404
+
+   2402.90.00.00.00       Diğerleri (Tütün yerine geçen maddelerden yapılmış purolar,
+                          uçları açık purolar, sigarillolar ve sigaralar)
+                          - Tütün yerine geçen maddelerden yapılmış purolar, uçları açık       45       2,1643         3,1238
+                          purolar ve sigarillolar
+                          -Tütün yerine geçen maddelerden yapılmış sigaralar*                  42       2,2953        23,7404
+
+   24.03*                 Diğer mamul tütün ve mamul tütün yerine geçen maddeler;              42       2,2953        23,7404
+                          "homojenize" veya yeniden tertip edilmiş tütün; tütün
+                          hülasa ve esansları
+                          (2403.11.00.00.00, 2403.19.10.00.19, 2403.19.90.00.19,
+                          2403.91.00.00.00, 2403.99.10.00.00, 2403.99.90.00.00 hariç)
+   2403.11.00.00.00       Bu faslın 1 nolu alt pozisyon notunda belirtilen nargile             0        0,8135         3,0257
+                          tütünleri
+   2403.19.10.00.19       Diğerleri (Net muhtevası 500 gr.ı geçmeyen ambalajlarda              55       0,3078         3,0257
+                          olanlar)
+   2403.19.90.00.19       Diğerleri (Net muhtevası 500 gr.ı geçen ambalajlarda olanlar)        55       0,3078         3,0257
+
+   2403.99.10.00.00*      Enfiye ve çiğnemeye mahsus tütün                                     42       2,2953        23,7404
+
+   4813.10.00.80.00       Diğerleri (Makaron)                                                  0        0,3321            -
+
+
+* 3/7/2026 tarihinde yürürlüğe giren 3/7/2026 tarihli ve 11489 sayılı Cumhurbaşkanı Kararının (1/1) maddesi ile (*) işaretli mallara
+uygulanan ÖTV oranları ile asgari maktu ve maktu vergi tutarları yeniden belirlenmiş olup, mezkûr Kararın 2 nci maddesi uyarınca, (*)
+işaretli malların asgari maktu ve maktu vergi tutarları hakkında 2026 yılı Temmuz-Aralık dönemi için 4760 sayılı Kanunun (12/3) maddesi
+hükmü uygulanmamıştır.
+
