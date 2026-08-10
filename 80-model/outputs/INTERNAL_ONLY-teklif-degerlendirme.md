@@ -23,10 +23,25 @@ ret_hukmu:      YASAK  # REJECTED uretilemez
 
 | eksen | usd_try | eur_try | status | kaynak |
 |---|---|---|---|---|
-| FX_DOWN_10 | 42.9406 | 49.6273 | DERIVED_FROM_OBSERVED | makro.yaml -> fx.* (gozlenen) x 0.90 (eksen tanimi) |
-| FX_0 | 47.7118 | 55.1414 | DERIVED_FROM_OBSERVED | makro.yaml -> fx.* (gozlenen) x 1.00 (eksen tanimi) |
-| FX_UP_10 | 52.4830 | 60.6555 | DERIVED_FROM_OBSERVED | makro.yaml -> fx.* (gozlenen) x 1.10 (eksen tanimi) |
-| FX_UP_20 | 57.2542 | 66.1697 | DERIVED_FROM_OBSERVED | makro.yaml -> fx.* (gozlenen) x 1.20 (eksen tanimi) |
+| FX_DOWN_10 | 42.9406 | 49.6273 | SENSITIVITY_AXIS | makro.yaml -> fx.senaryolar.FX_DOWN_10 (kur_tipi=doviz_satis, ttl_bitis=2026-08-17) |
+| FX_0 | 47.7118 | 55.1414 | OBSERVED | makro.yaml -> fx.senaryolar.FX_0 (kur_tipi=doviz_satis, ttl_bitis=2026-08-17) |
+| FX_UP_10 | 52.4830 | 60.6555 | SENSITIVITY_AXIS | makro.yaml -> fx.senaryolar.FX_UP_10 (kur_tipi=doviz_satis, ttl_bitis=2026-08-17) |
+| FX_UP_20 | 57.2542 | 66.1697 | SENSITIVITY_AXIS | makro.yaml -> fx.senaryolar.FX_UP_20 (kur_tipi=doviz_satis, ttl_bitis=2026-08-17) |
+
+## MAX_FOB / MAX_EXW — UST SINIR (fx geldikten sonra acildi)
+
+| fx ekseni | para | kur | MAX_FOB ust sinir @X | @Y | MAX_EXW ust sinir @Y | nokta degeri |
+|---|---|---|---|---|---|---|
+| FX_DOWN_10 | EUR | 49.6273 | 4.0497 | 5.8539 | 5.8539 | BLOCKED_INPUT (FOB->CIF koprusu yok, T-866) |
+| FX_DOWN_10 | USD | 42.9406 | 4.6804 | 6.7655 | 6.7655 | BLOCKED_INPUT (FOB->CIF koprusu yok, T-866) |
+| FX_0 | EUR | 55.1414 | 3.6448 | 5.2685 | 5.2685 | BLOCKED_INPUT (FOB->CIF koprusu yok, T-866) |
+| FX_0 | USD | 47.7118 | 4.2123 | 6.0889 | 6.0889 | BLOCKED_INPUT (FOB->CIF koprusu yok, T-866) |
+| FX_UP_10 | EUR | 60.6555 | 3.3134 | 4.7896 | 4.7896 | BLOCKED_INPUT (FOB->CIF koprusu yok, T-866) |
+| FX_UP_10 | USD | 52.4830 | 3.8294 | 5.5354 | 5.5354 | BLOCKED_INPUT (FOB->CIF koprusu yok, T-866) |
+| FX_UP_20 | EUR | 66.1697 | 3.0373 | 4.3904 | 4.3904 | BLOCKED_INPUT (FOB->CIF koprusu yok, T-866) |
+| FX_UP_20 | USD | 57.2542 | 3.5103 | 5.0741 | 5.0741 | BLOCKED_INPUT (FOB->CIF koprusu yok, T-866) |
+
+> Bu sutunlar **UST SINIRDIR**: CIF = FOB + navlun + sigorta ve koprulerin hepsi >= 0. Nokta degeri FOB->CIF koprusu girilmeden URETILMEZ (`T-866`). MAX_CIF'in kendisi de bir ust sinirdir.
 
 ## DEGERLENDIRME SATIRLARI
 

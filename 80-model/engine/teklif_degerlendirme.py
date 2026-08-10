@@ -292,42 +292,78 @@ def _d(v: Any) -> Decimal | None:
         return None
 
 
-def fx_eksenleri_oku(makro: dict[str, Any]) -> tuple[dict[str, FXEkseni], list[str]]:
-    """
-    Dort FX eksenini `makro.yaml`dan okur. UC yol denenir, sirasiyla:
+def _tarih(v: Any) -> date | None:
+    if isinstance(v, date):
+        return v
+    try:
+        return datetime.strptime(str(v)[:10], "%Y-%m-%d").date()
+    except Exception:
+        return None
 
-      1) `fx_eksenleri:` blogu (gumruk-vergi-uzmani acikca yazdiysa) —
-         eksen basina usd_try/eur_try okunur, status OBSERVED.
+
+def fx_eksenleri_oku(
+    makro: dict[str, Any], bugun: date | None = None
+) -> tuple[dict[str, FXEkseni], list[str]]:
+    """
+    Dort FX eksenini `makro.yaml`dan okur. UC yol, SIRASIYLA:
+
+      1) `fx.senaryolar` (TUR 3.25 §1 — `gumruk-vergi-uzmani`in yazdigi blok):
+         dort eksen ACIKCA verilmistir. TERCIH EDILEN YOL.
+         `fx_eksenleri:` duz blogu da ayni sekilde kabul edilir.
       2) `fx.usd_try` / `fx.eur_try` GOZLENEN taban degeri —
          dort eksen TANIMLI carpanlarla TURETILIR (status DERIVED_FROM_OBSERVED).
          Bu bir tahmin degildir: eksen adinin kendisi carpani tanimlar.
       3) Hicbiri yoksa -> dort eksen de `BLOCKED_INPUT`, kur `None`.
          KUR UYDURULMAZ.
 
+    ⛔ KUR TIPI KARISTIRILMAZ: `birincil = doviz_satis` kullanilir (ithalatci
+       dovizi SATIN ALAN taraftir). `alis_kuru_ekseni` AYRI bir eksendir ve
+       burada OKUNMAZ.
+
     Doner: (eksenler, eksik_girdiler)
     """
+    bugun = bugun or date.today()
     eksikler: list[str] = []
     eksenler: dict[str, FXEkseni] = {}
+    fx = (makro or {}).get("fx") or {}
 
-    blok = (makro or {}).get("fx_eksenleri") or {}
+    blok = fx.get("senaryolar") or (makro or {}).get("fx_eksenleri") or {}
     if isinstance(blok, dict) and any(k in blok for k in FX_EKSEN_CARPANLARI):
+        kur_tipi = blok.get("kur_tipi")
+        ttl_bitis = ((fx.get("observed") or {}).get("ttl_bitis"))
+        bayat = bool(ttl_bitis) and _tarih(ttl_bitis) is not None and _tarih(ttl_bitis) < bugun
         for kod in FX_EKSEN_SIRASI:
             e = blok.get(kod) or {}
             usd, eur = _d(e.get("usd_try")), _d(e.get("eur_try"))
+            # carpan denetimi: eksen adinin TANIMI ile yazilan carpan uyusmali
+            yazilan = _d(e.get("carpan"))
+            if yazilan is not None and yazilan != FX_EKSEN_CARPANLARI[kod]:
+                eksikler.append(
+                    f"CONFLICT fx.senaryolar.{kod}.carpan={yazilan} != "
+                    f"eksen tanimi {FX_EKSEN_CARPANLARI[kod]}"
+                )
             eksenler[kod] = FXEkseni(
                 kod=kod,
                 usd_try=usd,
                 eur_try=eur,
-                status="OBSERVED" if (usd or eur) else "BLOCKED_INPUT",
-                kaynak="makro.yaml -> fx_eksenleri",
-                kur_tarihi=e.get("kur_tarihi"),
-                evidence_id=e.get("evidence_id"),
+                status=("OBSERVED" if kod == "FX_0" else "SENSITIVITY_AXIS")
+                if (usd or eur) else "BLOCKED_INPUT",
+                kaynak=f"makro.yaml -> fx.senaryolar.{kod} "
+                       f"(kur_tipi={kur_tipi}, ttl_bitis={ttl_bitis})",
+                kur_tarihi=str(blok.get("baz_kur_tarihi") or ""),
+                evidence_id=str(blok.get("evidence_id") or ""),
+                kur_tipi=kur_tipi,
+                bayat_mi=bayat,
             )
             if not (usd or eur):
-                eksikler.append(f"makro.yaml/fx_eksenleri/{kod}: kur yok")
+                eksikler.append(f"makro.yaml/fx.senaryolar/{kod}: kur yok")
+        if bayat:
+            eksikler.append(
+                f"FX_STALE: fx.observed.ttl_bitis={ttl_bitis} < {bugun} "
+                "-> kur YENIDEN DOGRULANMALI (99-ops/veri-tazeligi.md)"
+            )
         return eksenler, eksikler
 
-    fx = (makro or {}).get("fx") or {}
     taban_usd = _d((fx.get("usd_try") or {}).get("value"))
     taban_eur = _d((fx.get("eur_try") or {}).get("value"))
     if taban_usd is None and taban_eur is None:
@@ -981,7 +1017,50 @@ def teklif_kalemi(teklif: Teklif, kademe: Kademe, sema: dict[str, Any]) -> Maliy
 
 
 # ===========================================================================
-# 8. CIKTI URETIMI
+# 8. MAX_FOB / MAX_EXW — FX GELDIKTEN SONRA ACILAN TAVAN
+# ===========================================================================
+
+def max_alim_tavani(
+    band: TavanBandi, eksenler: dict[str, FXEkseni]
+) -> list[dict[str, Any]]:
+    """
+    `MAX_FOB` / `MAX_EXW` UST SINIRI — dort FX ekseninde, iki para biriminde.
+
+    ⛔ NEDEN "UST SINIR" VE NEDEN NOKTA DEGERI DEGIL:
+       CIF = FOB + navlun + sigorta,  FOB = EXW + ic nakliye + ihracat masrafi.
+       Bu koprulerin HEPSI >= 0'dir. Dolayisiyla
+            MAX_FOB <= MAX_CIF_TRY / kur   ve   MAX_EXW <= MAX_FOB
+       MATEMATIKSEL OLARAK kesindir ve hicbir girdi gerektirmez.
+       NOKTA degeri icin FOB->CIF koprusunun (navlun + sigorta, CIF kapsamli,
+       sise basina) girilmesi gerekir; o girdi BUGUN YOKTUR -> `T-866`.
+       `lojistik.yaml -> sise_basi_lojistik_maliyeti` L1->L3 kapsamlidir
+       (CIF degil) ve sigortayi ICERMEZ; bu nedenle KULLANILMAZ.
+
+    ⛔ MAX_CIF'in kendisi de bir UST SINIRDIR (26 kalem BLOCKED_INPUT,
+       lambda=1 capasi). Yani buradaki sayi BIR UST SINIRIN UST SINIRIDIR.
+    """
+    satirlar: list[dict[str, Any]] = []
+    for kod in FX_EKSEN_SIRASI:
+        e = eksenler.get(kod) or FXEkseni(kod=kod)
+        for pb in ("EUR", "USD"):
+            kur = e.kur(pb)
+            satirlar.append({
+                "fx_ekseni": kod,
+                "para_birimi": pb,
+                "kur": kur,
+                "kur_tipi": e.kur_tipi,
+                "status": e.status,
+                "MAX_FOB_UST_SINIR_X": (band.X_try / kur) if (kur and band.X_try) else None,
+                "MAX_FOB_UST_SINIR_Y": (band.Y_try / kur) if (kur and band.Y_try) else None,
+                "MAX_EXW_UST_SINIR_Y": (band.Y_try / kur) if (kur and band.Y_try) else None,
+                "nokta_degeri": "BLOCKED_INPUT (FOB->CIF koprusu yok, T-866)",
+                "etiket": "MODEL_DERIVED / UPPER_BOUND / DRAFT",
+            })
+    return satirlar
+
+
+# ===========================================================================
+# 9. CIKTI URETIMI
 # ===========================================================================
 
 def _f(v: Decimal | None, n: int = 4) -> str:
@@ -1021,6 +1100,21 @@ def internal_rapor_metni(
         s.append("**FX BLOCKED_INPUT:**")
         for x in fx_eksikleri:
             s.append(f"- {x}")
+    s.append("")
+    s.append("## MAX_FOB / MAX_EXW — UST SINIR (fx geldikten sonra acildi)")
+    s.append("")
+    s.append("| fx ekseni | para | kur | MAX_FOB ust sinir @X | @Y | MAX_EXW ust sinir @Y | nokta degeri |")
+    s.append("|---|---|---|---|---|---|---|")
+    for r in max_alim_tavani(band, eksenler):
+        s.append(
+            f"| {r['fx_ekseni']} | {r['para_birimi']} | {_f(r['kur'])} | "
+            f"{_f(r['MAX_FOB_UST_SINIR_X'])} | {_f(r['MAX_FOB_UST_SINIR_Y'])} | "
+            f"{_f(r['MAX_EXW_UST_SINIR_Y'])} | {r['nokta_degeri']} |"
+        )
+    s.append("")
+    s.append("> Bu sutunlar **UST SINIRDIR**: CIF = FOB + navlun + sigorta ve "
+             "koprulerin hepsi >= 0. Nokta degeri FOB->CIF koprusu girilmeden "
+             "URETILMEZ (`T-866`). MAX_CIF'in kendisi de bir ust sinirdir.")
     s.append("")
     s.append("## DEGERLENDIRME SATIRLARI")
     s.append("")
@@ -1085,14 +1179,14 @@ def tedarikciye_giden_metin(teklif: Teklif, degerlendirmeler: list[Degerlendirme
 
 
 # ===========================================================================
-# 9. ANA
+# 10. ANA
 # ===========================================================================
 
 def ana(bugun: date | None = None) -> int:
     bugun = bugun or date.today()
     sema = guvenli_girdi_yukle(SEMA_DOSYASI)
     makro = guvenli_girdi_yukle(MAKRO_DOSYASI)
-    eksenler, fx_eksikleri = fx_eksenleri_oku(makro)
+    eksenler, fx_eksikleri = fx_eksenleri_oku(makro, bugun)
 
     ham_teklifler = sema.get("teklifler") or []
     degerlendirmeler: list[Degerlendirme] = []
@@ -1116,6 +1210,11 @@ def ana(bugun: date | None = None) -> int:
         for x in fx_eksikleri:
             print(f"  - {x}")
     print(f"degerlendirme   : {len(degerlendirmeler)} satir")
+    for r in max_alim_tavani(band, eksenler):
+        if r["fx_ekseni"] == "FX_0":
+            print(f"MAX_FOB ust sinir @Y ({r['para_birimi']}) : "
+                  f"{_f(r['MAX_FOB_UST_SINIR_Y'])}  (kur {_f(r['kur'])}, "
+                  f"{r['kur_tipi']})")
     print("RET HUKMU       : YASAK (OQ-901 / T-851)")
     print("=" * 100)
 

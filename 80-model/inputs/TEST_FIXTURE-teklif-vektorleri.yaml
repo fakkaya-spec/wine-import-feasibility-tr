@@ -1,0 +1,466 @@
+# =====================================================================
+#  ⛔⛔⛔  TEST_FIXTURE — GERÇEK GİRDİ DEĞİLDİR  ⛔⛔⛔
+# =====================================================================
+#
+#  BU DOSYA BİR TEKLİF DEĞİLDİR VE BİR TEDARİKÇİ VERİSİ DEĞİLDİR.
+#  İçindeki hiçbir fiyat, hiçbir kur, hiçbir tavan GERÇEK DEĞİLDİR.
+#  Tedarikçi adları UYDURMADIR ve havuzdaki hiçbir SUP-### ile eşleşmez.
+#  Tek amacı: `teklif_degerlendirme.py` CEBRİNİ ve KURAL MOTORUNU test etmek.
+#
+#  KORUMA MEKANİZMASI (üç katmanlı — kalem_defteri.py ile aynı):
+#    1) DOSYA ADI    : "TEST_FIXTURE" içerir -> guvenli_girdi_yukle() REDDEDER
+#    2) DEĞİŞKEN ADI : test modülünde TEST_FIXTURE_* ön ekiyle okunur
+#    3) STATUS       : sentetik değerler `status: TEST_FIXTURE` taşır
+#
+#  ⛔ FIXTURE KURLARI GERÇEK KURLAR DEĞİLDİR.
+#     makro.yaml'daki gerçek kur `ttl: 7d`'dir ve haftalık değişir; testler
+#     ona bağlanırsa HER HAFTA KIRILIR. Bu nedenle cebir testleri SENTETİK
+#     kur ve SENTETİK band ile koşar. Gerçek CSV/makro okuması AYRI testlerde
+#     (INV::TAVAN_CSV, INV::FX_DORT_EKSEN) doğrulanır.
+# =====================================================================
+
+TEST_FIXTURE: true
+uretim_girdisi_mi: false
+status: TEST_FIXTURE
+tarih: 2026-08-10
+amac: "TUR 3.25 §12/§13 — quote ingestion + evaluation birim vektorleri"
+
+# ---------------------------------------------------------------------
+# SENTETİK BAND — gerçek X/Y DEĞİLDİR
+# Yuvarlak sayılar BİLEREK seçildi: sonuç sınırları elle doğrulanabilsin.
+# ---------------------------------------------------------------------
+TEST_FIXTURE_band:
+  status: TEST_FIXTURE
+  hedef_id: TGT_FIXTURE
+  kanal: CHAIN_RETAIL
+  mense_grubu: P
+  X_try: 200.00
+  Y_try: 290.00
+
+# ---------------------------------------------------------------------
+# SENTETİK FX EKSENLERİ — gerçek TCMB kuru DEĞİLDİR
+# ---------------------------------------------------------------------
+TEST_FIXTURE_fx_eksenleri:
+  status: TEST_FIXTURE
+  FX_DOWN_10: { eur_try: 36.00, usd_try: 30.00 }
+  FX_0:       { eur_try: 40.00, usd_try: 33.00 }
+  FX_UP_10:   { eur_try: 44.00, usd_try: 36.00 }
+  FX_UP_20:   { eur_try: 48.00, usd_try: 39.00 }
+
+# ---------------------------------------------------------------------
+# SENTETİK KÖPRÜ — gerçek navlun DEĞİLDİR
+# ---------------------------------------------------------------------
+TEST_FIXTURE_kopru_tam:
+  status: TEST_FIXTURE
+  fob_cif:
+    - ad: navlun_sigorta
+      tutar: 0.50
+      currency: EUR
+      evidence_id: EV-TEST-FIXTURE-001
+      status: TEST_FIXTURE
+  exw_fob:
+    - ad: ic_nakliye_ihracat
+      tutar: 0.20
+      currency: EUR
+      evidence_id: EV-TEST-FIXTURE-002
+      status: TEST_FIXTURE
+
+TEST_FIXTURE_kopru_yok:
+  status: TEST_FIXTURE
+  fob_cif: []
+  exw_fob: []
+
+# ---------------------------------------------------------------------
+# VEKTÖRLER
+# ---------------------------------------------------------------------
+vektorler:
+
+  # === A) SINIFLANDIRMA VEKTÖRLERİ =====================================
+
+  - kod: TQV-1
+    aciklama: "tam teklif — dort unsur da var -> FIRM_QUOTE"
+    beklenen: { etkin_sinif: FIRM_QUOTE }
+    teklif:
+      supplier: FIXTURE_WINERY_A
+      supplier_id: SUP-FIXTURE-1
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: EV-TEST-FIXTURE-100
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V1
+          quantity: 5000
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 4.50
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+  - kod: TQV-2
+    aciklama: "gecerlilik tarihi YOK -> FIRM olamaz, B2B_INDICATIVE"
+    beklenen: { etkin_sinif: B2B_INDICATIVE }
+    teklif:
+      supplier: FIXTURE_WINERY_A
+      supplier_id: SUP-FIXTURE-1
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: null
+      evidence_id: EV-TEST-FIXTURE-100
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V1
+          quantity: 5000
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 4.50
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+  - kod: TQV-3
+    aciklama: "para birimi '$' — AUD mi USD mi belirsiz -> INCOMPLETE + PUBLIC"
+    beklenen: { etkin_sinif: PUBLIC_INDICATIVE, sonuc: INCOMPLETE }
+    teklif:
+      supplier: FIXTURE_WINERY_B
+      supplier_id: SUP-FIXTURE-2
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: EV-TEST-FIXTURE-101
+      origin_document: DUZENLENEMEZ
+      mense_grubu: N
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V1
+          quantity: 5000
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 2.85
+          currency: "$"
+          quote_class: PUBLIC_INDICATIVE
+
+  - kod: TQV-4
+    aciklama: "Incoterm var ama named place YOK -> B2B_INDICATIVE"
+    beklenen: { etkin_sinif: B2B_INDICATIVE }
+    teklif:
+      supplier: FIXTURE_WINERY_C
+      supplier_id: SUP-FIXTURE-3
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: EV-TEST-FIXTURE-102
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V3
+          quantity: 25000
+          incoterm: EXW
+          incoterm_named_place: null
+          EXW: 3.90
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+  - kod: TQV-5
+    aciklama: "beyan FIRM ama hesaplanan B2B -> beyan YUKSELTMEZ (QV-2)"
+    beklenen: { etkin_sinif: B2B_INDICATIVE, ihlal_kural: QV-1 }
+    teklif:
+      supplier: FIXTURE_WINERY_C
+      supplier_id: SUP-FIXTURE-3
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: null
+      evidence_id: EV-TEST-FIXTURE-102
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V3
+          quantity: 25000
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 4.50
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+  - kod: TQV-6
+    aciklama: "beyan PUBLIC, hesaplanan FIRM -> beyan DUSURUR (min kurali)"
+    beklenen: { etkin_sinif: PUBLIC_INDICATIVE }
+    teklif:
+      supplier: FIXTURE_WINERY_A
+      supplier_id: SUP-FIXTURE-1
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: EV-TEST-FIXTURE-100
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V1
+          quantity: 5000
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 4.50
+          currency: EUR
+          quote_class: PUBLIC_INDICATIVE
+
+  - kod: TQV-12
+    aciklama: "FULL_20FT_CONTAINER kademesinde sise adedi beyan EDILMEMIS -> INCOMPLETE"
+    beklenen: { sonuc: INCOMPLETE }
+    teklif:
+      supplier: FIXTURE_WINERY_A
+      supplier_id: SUP-FIXTURE-1
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: EV-TEST-FIXTURE-100
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: FULL_20FT_CONTAINER
+          quantity: null
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 4.00
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+  - kod: TQV-13
+    aciklama: "gecerlilik suresi DOLMUS -> B2B_INDICATIVE (QV-5), RET DEGIL"
+    beklenen: { etkin_sinif: B2B_INDICATIVE }
+    teklif:
+      supplier: FIXTURE_WINERY_A
+      supplier_id: SUP-FIXTURE-1
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-01-01"
+      quote_valid_until: "2026-02-01"
+      evidence_id: EV-TEST-FIXTURE-100
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V1
+          quantity: 5000
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 4.50
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+  - kod: TQV-14
+    aciklama: "Incoterm belirsiz (C-461 deseni) -> INCOMPLETE, L0/L1 karistirilmaz"
+    beklenen: { sonuc: INCOMPLETE }
+    teklif:
+      supplier: FIXTURE_WINERY_B
+      supplier_id: SUP-FIXTURE-2
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: EV-TEST-FIXTURE-101
+      origin_document: DUZENLENEMEZ
+      mense_grubu: N
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V1
+          quantity: 5000
+          incoterm: "EX_FACTORY_VEYA_FOB"
+          incoterm_named_place: "FIXTURE"
+          FOB: 2.85
+          currency: EUR
+          quote_class: PUBLIC_INDICATIVE
+
+  - kod: TQV-15
+    aciklama: "evidence_id YOK -> CLAUDE.md 1.6 -> INCOMPLETE"
+    beklenen: { sonuc: INCOMPLETE }
+    teklif:
+      supplier: FIXTURE_WINERY_A
+      supplier_id: SUP-FIXTURE-1
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: null
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V1
+          quantity: 5000
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 4.50
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+  # === B) FX EKSEN VEKTÖRLERİ (kopru TAM) ==============================
+
+  - kod: TQV-7A
+    aciklama: "FOB 4,50 EUR + kopru 0,50 -> 5,00 EUR/sise CIF esdegeri"
+    kopru: TAM
+    beklenen:
+      FX_DOWN_10: STRONG        # 5,00 x 36 = 180,00 <= 200
+      FX_0:       STRONG        # 5,00 x 40 = 200,00 <= 200 (SINIRDA)
+      FX_UP_10:   NEGOTIATE     # 5,00 x 44 = 220,00
+      FX_UP_20:   NEGOTIATE     # 5,00 x 48 = 240,00
+    teklif:
+      supplier: FIXTURE_WINERY_A
+      supplier_id: SUP-FIXTURE-1
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: EV-TEST-FIXTURE-100
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V1
+          quantity: 5000
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 4.50
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+  - kod: TQV-7B
+    aciklama: "FOB 6,50 EUR + kopru 0,50 -> 7,00 EUR/sise CIF esdegeri"
+    kopru: TAM
+    beklenen:
+      FX_DOWN_10: NEGOTIATE     # 7,00 x 36 = 252,00
+      FX_0:       NEGOTIATE     # 7,00 x 40 = 280,00
+      FX_UP_10:   ABOVE_CEILING # 7,00 x 44 = 308,00 > 290
+      FX_UP_20:   ABOVE_CEILING # 7,00 x 48 = 336,00
+    teklif:
+      supplier: FIXTURE_WINERY_A
+      supplier_id: SUP-FIXTURE-1
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: EV-TEST-FIXTURE-100
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V3
+          quantity: 25000
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 6.50
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+  # === C) KÖPRÜ EKSİK VEKTÖRLERİ =======================================
+
+  - kod: TQV-9
+    aciklama: "kopru YOK ama alt sinir Y'yi asiyor -> TEK YONLU ABOVE_CEILING"
+    kopru: YOK
+    beklenen:
+      FX_DOWN_10: ABOVE_CEILING   # 8,50 x 36 = 306,00 > 290 (kopru >= 0)
+      FX_0:       ABOVE_CEILING
+      FX_UP_10:   ABOVE_CEILING
+      FX_UP_20:   ABOVE_CEILING
+    teklif:
+      supplier: FIXTURE_WINERY_D
+      supplier_id: SUP-FIXTURE-4
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: EV-TEST-FIXTURE-103
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V1
+          quantity: 5000
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 8.50
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+  - kod: TQV-10
+    aciklama: "kopru YOK ve alt sinir Y'nin altinda -> STRONG DENEMEZ -> INCOMPLETE"
+    kopru: YOK
+    beklenen:
+      FX_DOWN_10: INCOMPLETE      # 4,00 x 36 = 144,00 — ama gercek CIF daha yuksek
+      FX_0:       INCOMPLETE
+      FX_UP_10:   INCOMPLETE
+      FX_UP_20:   INCOMPLETE
+    teklif:
+      supplier: FIXTURE_WINERY_D
+      supplier_id: SUP-FIXTURE-4
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: EV-TEST-FIXTURE-103
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V1
+          quantity: 5000
+          incoterm: FOB
+          incoterm_named_place: "FIXTURE PORT"
+          FOB: 4.00
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+  - kod: TQV-11
+    aciklama: "EXW teklifi, EXW->FOB koprusu YOK -> L0 ile L1 KARISTIRILMAZ"
+    kopru: SADECE_FOB_CIF
+    beklenen:
+      FX_DOWN_10: INCOMPLETE
+      FX_0:       INCOMPLETE
+      FX_UP_10:   INCOMPLETE
+      FX_UP_20:   INCOMPLETE
+    teklif:
+      supplier: FIXTURE_WINERY_E
+      supplier_id: SUP-FIXTURE-5
+      product: "750ml beyaz (FIXTURE)"
+      quote_date: "2026-08-01"
+      quote_valid_until: "2026-12-31"
+      evidence_id: EV-TEST-FIXTURE-104
+      origin_document: EUR1_TAAHHUT
+      mense_grubu: P
+      case_configuration: "12x750"
+      pallet_configuration: "56 koli/palet"
+      kademeler:
+        - tier_code: V1
+          quantity: 5000
+          incoterm: EXW
+          incoterm_named_place: "FIXTURE CELLAR"
+          EXW: 4.00
+          currency: EUR
+          quote_class: FIRM_QUOTE
+
+# ---------------------------------------------------------------------
+# GERÇEK CSV / GERÇEK makro.yaml BEKLENTİLERİ
+# (Bunlar fixture DEĞİL, ENTEGRASYON çapalarıdır: değişirlerse test
+#  KIRILMALIDIR — sessizce geçmemelidir.)
+# ---------------------------------------------------------------------
+entegrasyon_capalari:
+  status: MODEL_DERIVED
+  kaynak: 80-model/outputs/country-buying-ceilings.csv
+  TGT_799_CHAIN_P_X: 200.9780
+  TGT_799_CHAIN_P_Y: 290.5134
+  TGT_799_CHAIN_N_X: 200.9780
+  TGT_799_CHAIN_N_Y: 256.3354
+  V2_10000_tavan_satiri_var_mi: false     # T-865
