@@ -1,0 +1,60 @@
+TUIK Yi-UFE (Aralik 2025 -> Haziran 2026) DEGISIM ORANI — ERISIM DENEMESI LOGU
+Toplayan: gumruk-vergi-uzmani | Tarih: 2026-08-10 | Ticket: T-901
+================================================================================
+AMAC: OTV (III)/A 22.04 asgari maktu tutarindaki 61,3914 -> 71,2692 TL/lt
+(+%16,09) artisin dayandigi TUIK Yi-UFE 6 aylik degisim oranini BAGIMSIZ
+kaynaktan dogrulamak (T-901 Yol A).
+
+DENENEN YOLLAR VE SONUCLARI
+--------------------------------------------------------------------------------
+1) https://veriportali.tuik.gov.tr/tr/press/58032
+   ("Yurt Ici Uretici Fiyat Endeksi - Haziran 2026" bulteni)
+   -> HTTP 200, ancak sayfa 3.692 baytlik bos bir React SPA kabugu.
+      Icerik JavaScript ile yukleniyor; metin katmani YOK.
+
+2) https://veriportali.tuik.gov.tr/api/press/58032
+   https://veriportali.tuik.gov.tr/api/tr/press/58032
+   -> HTTP 403 "Erisim engellendi" (WAF).
+
+3) https://data.tuik.gov.tr/Bulten/Index?p=Yurt-Ici-Uretici-Fiyat-Endeksi-Haziran-2026-58032
+   https://data.tuik.gov.tr/Bulten/DownloadIstatistikselTablo?p=58032
+   -> Ikisi de ayni bos SPA kabugunu donduruyor (3.692 bayt).
+
+4) https://biruni.tuik.gov.tr/medas/?kn=65&locale=tr  (MEDAS istatistik sunucusu)
+   -> HTTP 200 ancak ZK framework tabanli, oturum/JS gerektiren arayuz;
+      endeks tablosu statik olarak cekilemedi.
+
+5) https://www.tuik.gov.tr/ ana sayfa
+   -> HTTP 200; bulten listesi JS ile yukleniyor, endeks degeri yok.
+
+6) SPA javascript bundle (assets/index-*.js, assets/main-*.js) uzerinden
+   API ucnoktasi cikarma denemesi -> main bundle indirmesi 120 sn'de
+   tamamlanmadi (timeout).
+
+SONUC
+--------------------------------------------------------------------------------
+TUIK Yi-UFE Aralik 2025 ve Haziran 2026 ENDEKS DEGERLERINE bu ortamdan
+ERISILEMEDI. Dolayisiyla ~%16,09'luk 6 aylik degisim orani BAGIMSIZ OLARAK
+DOGRULANAMAMISTIR. -> UNKNOWN.
+
+TEK DOLAYLI (VE YETERSIZ) KORELASYON
+--------------------------------------------------------------------------------
+Arama motoru ozetine gore "Yurt Ici Uretici Fiyat Endeksi - Haziran 2026"
+bulteninin yayim tarihi 2026-07-03'tur; OTV asgari maktu tutarinin yururluk
+tarihi de 2026-07-03'tur (EV-2026-08-09-111). OTVK md.12/3 tutarlarin
+"degisimin ilanı gunundan gecerli olmak uzere" yeniden belirlenmis sayilacagini
+soyledigi icin bu tarih birligi MEKANIZMAYI destekler.
+ANCAK:
+  - Bu yayim tarihi bilgisi arama motoru ozetinden gelmektedir (T5).
+  - Tarih birligi mekanizmayi destekler, ORANI (%16,09) DOGRULAMAZ.
+  - CLAUDE.md §2: T5 tek basina vergi/mevzuat sonucu uretemez.
+=> FACT olarak kaydedilemez.
+
+KAPANIS ICIN GEREKEN
+--------------------------------------------------------------------------------
+Yol A: TUIK Yi-UFE endeks serisinin (2003=100) Aralik 2025 ve Haziran 2026
+       degerlerinin birincil kaynaktan okunmasi (JS calistirabilen tarayici
+       veya TCMB EVDS API anahtari gerektirir).
+Yol B: Guncel bir sarap ithalat beyannamesinde fiilen uygulanan TL/litre
+       tutarinin gumruk musaviri / GIB teyidi. (DAHA GUCLU — hem aritmetigi
+       hem fiili uygulamayi dogrular.)

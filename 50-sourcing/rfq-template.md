@@ -1,11 +1,18 @@
 # RFQ TEMPLATE — Request for Quotation
 
 > **Sahibi:** `global-sourcing-kasifi`
-> **Sürüm:** v2.0 — TUR 1'de gönderilebilir profesyonel taslağa dönüştürüldü
+> **Sürüm:** v2.1 — TUR 1.5 alan kontrolü (25 zorunlu alan) sonrası tamamlandı
 > **Durum:** `READY_TO_SEND` (içerik olarak). **BU TURDA GÖNDERİLMEDİ VE GÖNDERİLMEZ.**
 > Fiili gönderim yalnızca karar `TEST` veya `IMPORT PILOT` ise, TUR 7'de yapılır.
 >
 > `<>` içindeki alanlar gönderim öncesi doldurulur. Doldurulmadan gönderilirse RFQ geçersizdir.
+>
+> **v2.1'de eklenen/genişletilen alanlar:** boş ve dolu şişe ağırlığı (1.14, 1.15),
+> Incoterms® 2020 kabiliyeti (3.16), lead time'ın üretim/evrak/gemi kırılımı (3.17),
+> kuru malzeme birim maliyet kırılımı — **karton/koli ve etiket dahil** (3.18, 3.19),
+> private label etiket maliyeti tek seferlik + tekrarlayan (4.13), ve cevabın CSV'ye
+> birebir oturmasını sağlayan **SUMMARY SHEET (S1–S25)**.
+> Alan alan denetim: `50-sourcing/rfq-alan-kontrolu.md`.
 
 ---
 
@@ -26,35 +33,69 @@
    teklifler karşılaştırılamaz hâle gelir.
 9. Gönderim öncesi hedef hacim (`<VOLUME>`) `00-charter/kapsam.md`'deki hacim
    basamaklarından seçilir: 5.000 / 10.000 / 25.000 / 50.000 / 100.000 şişe/yıl.
+10. **Bölüm 0'daki SUMMARY SHEET (S1–S25) kaldırılmaz.** Bu tablo, gelen cevabın
+    `tedarikci-havuzu.csv` ve `80-model/inputs/tedarikci.yaml` alanlarına birebir
+    oturmasını sağlayan yapıdır. Serbest metin cevap, yapılandırılmış cevap değildir.
+11. **Etiket ve karton maliyetinin EXW'ye dahil olup olmadığı ayrı sorulur** (3.18,
+    4.13, 4.14). Dahil/hariç belirsizse fiyat karşılaştırılamaz — `UNKNOWN` yazılır.
+    Bu, L0'ın ne kapsadığını tanımlayan sorudur; katman disiplininin bir parçasıdır.
+12. **Üretim süresi ile toplam lead time ayrı alanlardır** (3.17a vs 3.11). TUR 1'de
+    gözlenen 28–42 gün **yalnızca üretim** süresidir; navlun hariçtir. İkisi
+    karıştırılırsa `peak_cash_requirement` yanlış hesaplanır.
 
-### Soru → CSV kolonu eşlemesi (denetim için)
+### Soru → CSV kolonu / YAML alanı eşlemesi (denetim için)
 
-| RFQ sorusu | `tedarikci-havuzu.csv` kolonu |
-|---|---|
-| 1.2 | `grape_blend` |
-| 1.3 | `vintage` |
-| 1.4 | `abv_pct` |
-| 1.7 | `volume_ml` |
-| 2.1 | `bottles_per_case` |
-| 2.2 | `case_gross_weight_kg` |
-| 2.3 | `case_dims_cm` |
-| 2.5 | `cases_per_pallet` |
-| 2.7 | `pallet_gross_weight_kg` |
-| 3.1 | `price_value` + `price_currency` (incoterm = EXW) |
-| 3.2 | `price_value` + `price_currency` (incoterm = FOB) |
-| 3.4 | `quote_type` |
-| 3.5 | `quote_valid_until` |
-| 3.6 | `moq_bottles`, `moq_containers` |
-| 3.8 / 3.9 | `payment_terms`, `payment_days` |
-| 3.10 | `lead_time_days` |
-| 3.11 | `annual_capacity_bottles` |
-| 4.1 / 4.2 | `private_label_capable` |
-| 4.4 / 4.5 | `label_customization` |
-| 6.1 | `origin_proof_doc` |
-| 6.2 | `analysis_certificates` |
-| 6.6 | `exported_to_turkey_before` |
-| 6.7 | `export_markets` |
-| 7.1 | `sample_sent` |
+Sol sütun = üreticiye giden soru numarası. Orta sütun = `50-sourcing/tedarikci-havuzu.csv`
+kolonu. Sağ sütun = `80-model/inputs/tedarikci.yaml` alanı (boşsa: bu alan CSV'de kalır,
+modele yalnızca **seçili tedarikçi** belirlendikten sonra taşınır).
+
+| RFQ sorusu | `tedarikci-havuzu.csv` kolonu | `tedarikci.yaml` alanı |
+|---|---|---|
+| S-blok (özet) | tüm satır — çapraz kontrol | — |
+| 1.1 | `product_type`, `brand_name` | — |
+| 1.2 | `grape_blend` | — |
+| 1.3 | `vintage` | — |
+| 1.4 | `abv_pct` | — |
+| 1.7 | `volume_ml` | — |
+| **1.14** | `empty_bottle_weight_g` *(yeni kolon)* | — |
+| **1.15** | `filled_bottle_weight_g` *(yeni kolon)* | — |
+| 2.1 | `bottles_per_case` | — |
+| 2.2 | `case_gross_weight_kg` | — |
+| 2.3 | `case_dims_cm` | — |
+| 2.5 | `cases_per_pallet` | — |
+| 2.7 | `pallet_gross_weight_kg` | — |
+| 2.10 | `loading_port` *(yeni kolon)* | `fiyat.fob_per_sise.yukleme_limani` |
+| 3.1 | `price_value` + `price_currency`, `price_unit` (incoterm = **EXW**) | `fiyat.exw_per_sise` (**L0**) |
+| 3.2 | `price_value` + `price_currency`, `price_unit` (incoterm = **FOB**) | `fiyat.fob_per_sise` (**L1**) |
+| 3.3 | — (CIF ayrı satıra yazılır, L0/L1 ile **karıştırılmaz**) | — (**L2**) |
+| 3.4 | `quote_type` | `fiyat.quote_type` |
+| 3.5 | `quote_valid_until` | `fiyat.quote_valid_until` |
+| 3.6 | `moq_bottles`, `moq_containers` | `siparis_kosullari.moq_sise`, `.moq_konteyner` |
+| 3.7 | — | `fiyat.hacim_bazli_fiyat_kirilimi.*` |
+| 3.8 / 3.9 | `payment_terms` | `odeme.odeme_sekli` |
+| 3.10 | `payment_days` | `odeme.vade_gun` |
+| 3.11 | `lead_time_days` | `siparis_kosullari.lead_time_gun` |
+| 3.12 | `annual_capacity_bottles` | `siparis_kosullari.yillik_kapasite_sise` |
+| **3.16** | `incoterm` | `fiyat.incoterm` |
+| **3.17** | `production_time_days` *(yeni kolon)* | `arastirma_bulgulari.uretim_lead_time_gun` karşılığı |
+| **3.18** | `carton_cost_per_bottle`, `label_cost_per_bottle` *(yeni kolonlar)* | — |
+| **3.19** | — (koli konfigürasyonu değişikliğinin fiyat etkisi) | — |
+| 4.1 / 4.2 | `private_label_capable` | `private_label.mumkun_mu`, `.min_siparis_sise` |
+| 4.4 / 4.5 / 4.6 | `label_customization` | `private_label.turkce_arka_etiket_menside_uygulanabilir_mi` (4.6) |
+| **4.7 / 4.13** | `label_cost_per_bottle` *(yeni kolon)* | `private_label.etiket_tasarim_maliyeti` |
+| 4.11 | — | `private_label.ek_lead_time_gun` |
+| 6.1 | `origin_proof_doc` | `belgeler.mense_ispat_belgesi` |
+| 6.2 / 6.3 | `analysis_certificates` | `belgeler.analiz_sertifikasi` |
+| 6.6 | `exported_to_turkey_before` | `risk.turkiyeye_ihracat_gecmisi` |
+| 6.7 | `export_markets` | — |
+| 7.1 | `sample_sent` | — |
+| 8.1 / 8.7 | `supplier_name`, `contact_channel`, `country`, `region` | `secili_tedarikci.supplier_name`, `.ulke` |
+| 8.3 | `annual_capacity_bottles` (çapraz kontrol: 3.12 ile aynı olmalı) | `siparis_kosullari.yillik_kapasite_sise` |
+
+> **Yeni CSV kolonları:** `empty_bottle_weight_g`, `filled_bottle_weight_g`,
+> `loading_port`, `production_time_days`, `carton_cost_per_bottle`,
+> `label_cost_per_bottle`. Bu kolonlar **teklif geldiğinde** `tedarikci-havuzu.csv`'ye
+> eklenir; teklif yokken tüm satırlar `UNKNOWN` olacağı için bu turda eklenmemiştir.
 
 ---
 
@@ -105,6 +146,50 @@ support both, please quote for both.
 
 ---
 
+### 0. SUMMARY SHEET — please complete this table first
+
+This one-page table is what we compare across suppliers. Sections 1–8 below ask for
+the same information in more detail; if the two ever disagree, **this table governs**.
+Please fill every row. Use `N/A` if it does not apply and `TBC` if it is not yet known.
+
+| # | Field | Unit / format | Your answer | Detail question |
+|---|---|---|---|---|
+| S1 | Winery / supplier legal name | text | | 8.1 |
+| S2 | Product name / reference quoted | text | | 1.1 |
+| S3 | Grape variety or blend | % by variety | | 1.2 |
+| S4 | Vintage quoted | year | | 1.3 |
+| S5 | ABV | % vol | | 1.4 |
+| S6 | Bottle size | ml | | 1.7 |
+| S7 | Empty bottle weight | grams | | 1.14 |
+| S8 | Case configuration | bottles/case; L×W×H cm; gross kg | | 2.1, 2.2, 2.3 |
+| S9 | Pallet configuration | cases/pallet; pallet type; gross kg; height cm | | 2.5, 2.6, 2.7 |
+| S10 | MOQ | (a) bottles per SKU, (b) containers per shipment | | 3.6 |
+| S11 | **EXW price per bottle** | currency + amount + EXW &lt;place&gt; | | 3.1 |
+| S12 | **FOB price per bottle** | currency + amount + FOB &lt;named port&gt; | | 3.2 |
+| S13 | Incoterms® 2020 rule(s) you can trade under | list + your default | | 3.16 |
+| S14 | Port of loading | port name + country | | 2.10 |
+| S15 | Lead time, PO → goods ready for loading | calendar days | | 3.11 |
+| S16 | Of which: production / bottling time | calendar days | | 3.17 |
+| S17 | Payment terms — first order | text (e.g. 50% T/T advance, balance against B/L) | | 3.8 |
+| S18 | Private label available? | YES / NO | | 4.1 |
+| S19 | Label cost | one-off (artwork/plates) + per bottle or per 1,000; state currency; **state whether already included in S11** | | 3.18, 4.13 |
+| S20 | Carton / case cost | per bottle or per case; state currency; **state whether already included in S11** | | 3.18 |
+| S21 | Samples | can send YES/NO; number of bottles; cost; days | | 7.1–7.3 |
+| S22 | Annual capacity available to us | bottles/year | | 3.12, 8.3 |
+| S23 | Certificates you can issue | list (analysis, origin proof type, health/free sale, BRCGS/IFS/ISO) | | 6.1–6.5, 6.10 |
+| S24 | Have you exported to Türkiye before? | YES / NO + years + volume | | 6.6 |
+| S25 | **Quotation type and validity** | INDICATIVE or FIRM OFFER, valid until &lt;date&gt; | | 3.4, 3.5 |
+
+> **Two things we must ask you to be strict about, because they decide whether your
+> offer can be compared at all:**
+> 1. **S11 and S12 are different prices.** Please do not answer only "our price is X".
+>    An EXW price must name the place of delivery; an FOB price must name the port.
+> 2. **S19 and S20:** please tell us whether label and carton are *inside* the EXW
+>    price or charged separately. A price that silently excludes dry goods is not
+>    comparable with one that includes them.
+
+---
+
 ### 1. Product specification
 
 | # | Question | Your answer |
@@ -116,12 +201,15 @@ support both, please quote for both.
 | 1.5 | Residual sugar (g/L) | |
 | 1.6 | Total acidity (g/L) and pH | |
 | 1.7 | Bottle volume — we require **750 ml**. Confirm availability. | |
-| 1.8 | Bottle type/mould, glass colour and **empty bottle weight (g)** | |
+| 1.8 | Bottle type / mould reference and glass colour (flint, antique green, dead leaf, etc.) | |
 | 1.9 | Closure type (natural cork / technical cork / screw cap / synthetic) | |
 | 1.10 | Total sulphur dioxide level (mg/L) | |
 | 1.11 | Is the wine fined with animal-derived agents? (vegan status) | |
 | 1.12 | Recommended shelf life from bottling (months) | |
 | 1.13 | Is the wine produced from your own vineyards, purchased grapes, purchased must, or purchased finished wine? | |
+| 1.14 | **Empty bottle weight (g)** — weight of the glass alone, as stated by your glass supplier | |
+| 1.15 | **Filled bottle gross weight (g)** — wine + glass + closure + capsule + labels | |
+| 1.16 | Do you offer a lighter-weight bottle for the same wine? If yes, state its weight (g) and the price difference per bottle. | |
 
 ### 2. Packaging and logistics data — **mandatory for container and freight calculation**
 
@@ -163,6 +251,11 @@ support both, please quote for both.
 | 3.13 | Currency of invoicing and whether you accept EUR / USD | |
 | 3.14 | Which costs are **not** included in the EXW price (pallets, export documents, labelling, etc.)? | |
 | 3.15 | Do you require a written annual volume commitment? | |
+| 3.16 | **Which Incoterms® 2020 rules can you trade under** (EXW / FCA / FOB / CFR / CIF / CPT / CIP / DAP)? Which one is your standard for a first-time buyer, and which do you recommend for Türkiye? | |
+| 3.17 | Please split the lead time you gave in 3.11 into: (a) production / bottling days, (b) label printing and application days, (c) export documentation days, (d) days waiting for a vessel or truck booking | |
+| 3.18 | **Dry goods cost breakdown per bottle** — please state the amount and currency for each, and mark clearly whether each one is ALREADY INCLUDED in the EXW price in 3.1: (a) glass bottle, (b) closure, (c) capsule, (d) **label set (front + back)**, (e) **carton / case**, (f) dividers or inserts, (g) pallet, stretch wrap and palletising labour | |
+| 3.19 | If we required a different case configuration (for example 6 × 750 ml instead of 12 × 750 ml), what would the cost impact per bottle be? | |
+| 3.20 | Do you charge separately for export documentation (certificate of origin, EUR.1, health certificate, legalisation)? If yes, how much per shipment? | |
 
 ### 4. Model B — Private label
 
@@ -174,12 +267,15 @@ support both, please quote for both.
 | 4.4 | Can you adjust the blend / style to a target sensory profile? What is the minimum batch for a bespoke blend? | |
 | 4.5 | Do you print and apply labels in-house, or through a third party? | |
 | 4.6 | Can you apply a **Turkish-language back label** at your facility, using artwork we supply? | |
-| 4.7 | Number of label revisions / mock-ups included, and any one-off artwork or plate/cliché charge | |
+| 4.7 | Number of label revisions / mock-ups included in the price, and how many working days each revision cycle takes | |
 | 4.8 | Custom bottle mould, capsule colour, embossing or screen printing — availability and MOQ impact | |
 | 4.9 | Who owns the brand, the artwork and the blend recipe? Please state explicitly. | |
 | 4.10 | Would you undertake **not** to sell the same blend under another brand into Türkiye? | |
 | 4.11 | Additional lead time for private label versus your standard product (days) | |
 | 4.12 | Minimum quantity for a **pre-production sample run** (e.g. 6–12 labelled bottles) | |
+| 4.13 | **Label cost for private label.** Please split into: (a) one-off charges — artwork/origination, plates or clichés, cutting dies, colour proofing; (b) recurring cost per bottle or per 1,000 bottles for the label set (front + back), and separately for a printed capsule or branded closure. State the currency, and state whether (b) is already inside the EXW price you gave in 3.1. | |
+| 4.14 | **Carton cost for private label.** Cost per case for a printed/branded carton versus your standard plain or generic carton, and the minimum print run for a branded carton. | |
+| 4.15 | If we cancel or change artwork after plates are made, what is the charge? | |
 
 ### 5. Model A — Existing brand distribution
 
@@ -242,7 +338,8 @@ support both, please quote for both.
 ---
 
 We would be grateful for your response by **<DEADLINE DATE>**. Please return this
-document with your answers inserted, together with:
+document with your answers inserted — **including the Summary Sheet in Section 0** —
+together with:
 
 - a current price list,
 - product technical sheets,
@@ -269,6 +366,12 @@ Kind regards,
 
 Teklif geldiğinde, `tedarikci-havuzu.csv`'ye işlenmeden **önce** kontrol et:
 
+- [ ] **Summary Sheet (S1–S25) dolu mu?** 25 satırın kaçı boş kaldı? Boş kalan her
+      satır `UNKNOWN`'dır ve takip e-postasına girer.
+- [ ] **Summary Sheet ile Bölüm 1–8 çelişiyor mu?** Çelişiyorsa sayı **kullanılmaz**;
+      `99-ops/celiskiler.md`'ye taşınır ve üreticiye sorulur. (Şablon "S bloğu esastır"
+      diyor, ama tedarikçi kendi belgesinde kendisiyle çelişiyorsa bu bir veri
+      kalitesi sinyalidir, sessizce seçim yapılmaz.)
 - [ ] Incoterm **açıkça** yazılmış mı? EXW ise yer, FOB ise liman adı var mı?
       (Yer/liman yoksa fiyat `UNKNOWN`'dır — EXW Bordeaux ile EXW Languedoc aynı şey değildir.)
 - [ ] EXW ve FOB **ayrı ayrı** verilmiş mi? Tek fiyat varsa hangisi olduğu yazılı mı?
@@ -283,6 +386,14 @@ Teklif geldiğinde, `tedarikci-havuzu.csv`'ye işlenmeden **önce** kontrol et:
 - [ ] Ödeme vadesi net mi? İlk sipariş ve sonraki siparişler ayrı ayrı mı? (3.8/3.9)
 - [ ] Türkiye'ye ihracat geçmişi sorusu (6.6) cevaplanmış mı?
 - [ ] ABV rakamı verilmiş mi? (1.4)
+- [ ] **Boş şişe ağırlığı (1.14) verilmiş mi?** Verilmemişse koli brüt ağırlığı
+      doğrulanamaz ve `navlun-lojistik-uzmani` ağırlık/hacim kontrolünü yapamaz.
+- [ ] **Etiket maliyeti (3.18d / 4.13) EXW'nin İÇİNDE mi DIŞINDA mı?** "Var" cevabı
+      yetersiz — dahil/hariç yazmıyorsa fiyat karşılaştırılamaz, `UNKNOWN` işaretlenir.
+- [ ] **Karton/koli maliyeti (3.18e / 4.14) EXW'nin İÇİNDE mi DIŞINDA mı?** Aynı kural.
+- [ ] **Üretim süresi (3.17a) toplam lead time'dan (3.11) ayrı verilmiş mi?**
+      İkisi karıştırılırsa `siparis_kosullari.lead_time_gun` yanlış dolar.
+- [ ] Incoterm kabiliyeti (3.16) listelenmiş mi ve tedarikçinin **standardı** hangisi?
 - [ ] Türkçe arka etiket menşede uygulanabiliyor mu? (4.6)
 - [ ] Marka/reçete IP sahipliği açıkça yazılmış mı? (4.9)
 - [ ] Eksik alanlar `UNKNOWN` olarak mı işaretlendi, yoksa tahmin mi edildi?
@@ -317,3 +428,4 @@ Kind regards,
 |---|---|---|---|
 | v1.0 | 2026-08-09 (TUR 0) | İskelet oluşturuldu | kurulum |
 | v2.0 | 2026-08-09 (TUR 1) | Gönderilebilir profesyonel taslağa dönüştürüldü; soru→CSV eşlemesi, ambalaj/palet bloğu, Model A/B ayrımı, IP sahipliği, takip şablonu eklendi | `global-sourcing-kasifi` |
+| v2.1 | 2026-08-10 (TUR 1.5) | 25 zorunlu alan kontrolü yapıldı. **Eklendi:** SUMMARY SHEET (S1–S25), 1.14/1.15/1.16 şişe ağırlığı, 3.16 Incoterms® 2020 kabiliyeti, 3.17 lead time kırılımı (üretim süresi ayrı), 3.18 kuru malzeme birim maliyeti (**karton + etiket**, EXW'ye dahil mi sorusu ile), 3.19 koli konfigürasyonu değişim etkisi, 3.20 evrak ücretleri, 4.13 private label etiket maliyeti (tek seferlik + tekrarlayan), 4.14 markalı karton maliyeti, 4.15 klişe iptal ücreti. **Genişletildi:** soru→CSV+YAML eşleme tablosu, cevap değerlendirme kontrol listesi. Denetim: `50-sourcing/rfq-alan-kontrolu.md` | `global-sourcing-kasifi` |

@@ -12,13 +12,24 @@
 
 meta:
   dosya: tedarikci.yaml
-  son_guncelleme: 2026-08-09
-  tur: "TUR 1 — global-sourcing-kasifi kesfi"
+  son_guncelleme: 2026-08-10
+  tur: "TUR 1.5 — T-902 katman etiketi duzeltmesi (TUR 1 kesfi uzerine)"
   durum: KISMI_DOLU_TEKLIF_YOK
   teklif_alindi_mi: false
   havuz_dosyasi: "50-sourcing/tedarikci-havuzu.csv"
   dogrulanmis_tedarikci_sayisi: 11
-  rfq_sablonu: "50-sourcing/rfq-template.md (v2.0, READY_TO_SEND, GONDERILMEDI)"
+  rfq_sablonu: "50-sourcing/rfq-template.md (v2.1, READY_TO_SEND, GONDERILMEDI)"
+  tur15_degisiklik_ozeti: >-
+    T-902 uyarinca IKI ALANIN KATMAN ETIKETI GERI CEKILDI. HICBIR DEGER DEGISMEDI;
+    hicbir yeni sayi eklenmedi. Degisen yalnizca etiketlerdir:
+    (1) `fob_gosterge_bandi` blogu `duyarlilik_sinirlari_KARISIK_KATMAN` olarak
+        yeniden adlandirildi; blok seviyesindeki `katman: L1` KALDIRILDI, her sinira
+        KENDI katmani yazildi (alt sinir: L0_ALTI, ust sinir: L2, ara dogrulama: UNPROVEN).
+    (2) `katman_L1_ihracat_ort_EUR_per_litre` ->
+        `ihracat_ort_birim_degeri_EUR_per_litre` olarak yeniden adlandirildi;
+        L1 iddiasi GERI CEKILDI, `katman: null / katman_status: UNKNOWN` yapildi.
+    (3) `ara_dogrulama.status`: FACT -> ESTIMATE (sise hacmi 750 ml VARSAYIMI nedeniyle).
+    (4) `SENSITIVITY_BOUNDS_ONLY` citi KORUNDU ve gerekcesi genisletildi.
 
 secili_tedarikci:
   supplier_id:
@@ -67,7 +78,12 @@ fiyat:
     evidence_id: null
     katman: L1
     yukleme_limani: null
-    notes: "FOB = yukleme limani bordasi. Gercek FOB teklifi YOK. Gosterge bant icin bkz. arastirma_bulgulari.fob_gosterge_bandi."
+    notes: >-
+      FOB = yukleme limani bordasi. Gercek FOB teklifi YOK.
+      DIKKAT (T-902): `arastirma_bulgulari` altindaki gosterge sinirlari FOB DEGILDIR.
+      TUR 1'de `fob_gosterge_bandi` adiyla duran blok, TUR 1.5'te
+      `duyarlilik_sinirlari_KARISIK_KATMAN` olarak yeniden adlandirilmistir;
+      bu blok bu alani DOLDURAMAZ.
 
   incoterm:
     value: null
@@ -291,8 +307,30 @@ arastirma_bulgulari:
         Yalnizca URETIM/SISELEME suresi. NAVLUN, gumruk ve ic lojistik HARICTIR.
         Iki uretici beyanindan turetilmistir (FR 4-6 hafta, ZA ~4 hafta) — n=2.
 
-  fob_gosterge_bandi:
-    katman: L1
+  # -------------------------------------------------------------------------
+  # T-902 DUZELTMESI (TUR 1.5, 2026-08-10)
+  # Eski ad: `fob_gosterge_bandi` — blok seviyesinde `katman: L1` tasiyordu.
+  # O etiket YANLISTI ve GERI CEKILDI. Blok bir "FOB bandi" DEGILDIR:
+  # alt siniri ile ust siniri AYNI MALIYET MERDIVENININ AYNI BASAMAGI DEGILDIR.
+  # Deger olarak hicbir sey degismedi; degisen etikettir.
+  # -------------------------------------------------------------------------
+  duyarlilik_sinirlari_KARISIK_KATMAN:
+    eski_adi: "fob_gosterge_bandi (TUR 1) — 'FOB' cagrisimi YANLISTI, T-902 ile degistirildi"
+    evidence_id: "EV-2026-08-10-402"
+    supersedes_evidence: "EV-2026-08-09-421"
+    katman: null
+    katman_status: UNKNOWN
+    katman_aciklamasi: >-
+      BU BLOGUN TEK BIR KATMANI YOKTUR. Alt sinir ile ust sinir FARKLI KATMANLARDAN
+      gelir; ikisi arasindaki mesafe bir katman araligi degil, IKI AYRI OLCUMUN
+      arasindaki mesafedir. Blok seviyesinde katman etiketi verilemez -> null/UNKNOWN.
+    neden_bant_degil: >-
+      (1) Alt sinir EUR, ust sinir USD'dir ve BILINCLI OLARAK birlestirilmemistir —
+          aritmetik olarak bir "bant" olusturmazlar.
+      (2) Alt sinir L0'in bile ALTINDADIR (yalnizca sivi girdi maliyeti).
+      (3) Ust sinir L2'dir (CIF).
+      Yani bu bir "FOB araligi" degil, iki YONLU BIR CITTIR: gercek L0/L1 fiyatinin
+      hangi iki gozlemin arasinda kalmasi GEREKTIGINI soyler, NEREDE oldugunu SOYLEMEZ.
     alt_sinir_sivi_maliyeti:
       value: 0.56
       unit: EUR
@@ -300,10 +338,15 @@ arastirma_bulgulari:
       status: ESTIMATE
       tier: T3
       evidence_id: "EV-2026-08-09-402"
+      katman: "L0_ALTI"
+      katman_uyarisi: >-
+        BU SAYI L0 (EXW) DEGILDIR, L0'IN ALTINDADIR. Yalnizca sivinin dunya ortalama
+        dokme ihracat fiyatidir; kuru malzeme (sise, kapak, kapsul, etiket, koli),
+        siseleme isciligi ve uretici marji HARICTIR ve UNKNOWN'dir.
       notes: >-
         Dunya dokme sarap ort. ihracat fiyati 0.75 EUR/l x 0.75 l.
-        YALNIZCA SIVI. Kuru malzeme + sisleme + uretici marji UNKNOWN ve BU RAKAMIN UZERINE eklenir.
         Gercek EXW her zaman bunun UZERINDEDIR. Bu bir TABAN, tahmin degildir.
+        Kuru malzeme kalemleri RFQ 3.18 ile sorulacak (rfq-template.md v2.1).
     ust_sinir_cif_tavani:
       value: "1.85 - 2.40"
       unit: USD
@@ -311,6 +354,7 @@ arastirma_bulgulari:
       status: ESTIMATE
       tier: T3
       evidence_id: "EV-2026-08-09-405"
+      katman: "L2"
       katman_uyarisi: "BU BIR L2 (CIF) SAYISIDIR. FOB tanim geregi bunun ALTINDADIR."
       notes: >-
         Turkiye'ye 2025'te fiilen giren en ucuz menseilerin CIF birim degerleri
@@ -319,26 +363,71 @@ arastirma_bulgulari:
     ara_dogrulama:
       value: 1.98
       unit: USD
-      per: "sise (750 ml VARSAYILDI)"
-      status: FACT
+      per: "sise — sise hacmi kaynakta BELIRTILMEMIS, 750 ml VARSAYILMISTIR"
+      status: ESTIMATE
+      status_tur1: "FACT — T-902 ile ESTIMATE'e cevrildi"
       tier: T4
-      evidence_id: "EV-2026-08-09-419"
-      notes: "Moldova siselenmis sakin sarap ort. ihracat fiyati, 8A2025, ONVV. Bant icinde ve tutarli."
+      evidence_id: "EV-2026-08-10-403"
+      supersedes_evidence: "EV-2026-08-09-419"
+      katman: null
+      katman_status: UNKNOWN
+      katman_uyarisi: >-
+        BU SAYIYA L1 (FOB) DENEMEZ. Ulusal ihracat istatistiklerinin FOB bazinda
+        raporlandigi YAYGIN bir uygulamadir ama ONVV icin DOGRULANMAMISTIR
+        (bkz. EV-2026-08-09-404 hata kaynagi #3: "ulkeler arasi raporlama pratigi
+        tam ayni degildir"). Katman iddiasi GERI CEKILDI.
+      neden_estimate: >-
+        Kaynak "sise basina 1.98 USD" diyor ama sise HACMINI yazmiyor. "1.98 USD /
+        750 ml" ifadesi bir VARSAYIM icerir, dolayisiyla FACT degil ESTIMATE'tir
+        (CLAUDE.md §3). Kaynagin ilan ettigi "sise basina ort. ihracat fiyati = 1.98 USD"
+        kismi FACT olarak EV-2026-08-09-419'da durmaya devam eder.
+      notes: "Moldova siselenmis sakin sarap ort. ihracat fiyati, 8A2025, ONVV."
     kullanim_kurali:
       value: "SENSITIVITY_BOUNDS_ONLY"
       status: FACT
+      cit_korundu: true
       notes: >-
-        Bu bant modelde TEK BASINA FIYAT GIRDISI OLARAK KULLANILAMAZ.
-        Yalnizca duyarlilik analizinin alt/ust sinirlarini belirlemek icin kullanilabilir.
+        CIT KORUNDU VE GEREKCESI GENISLETILDI (T-902).
+        Bu sinirlar modelde TEK BASINA FIYAT GIRDISI OLARAK KULLANILAMAZ ve
+        BIRBIRINDEN CIKARILAMAZ. Yalnizca duyarlilik analizinin alt/ust sinirlarini
+        belirlemek icin kullanilabilir; duyarlilik ciktisi raporlanirken HANGI SINIRIN
+        HANGI KATMANDAN geldigi yazilmak ZORUNDADIR.
         EUR ve USD BILINCLI OLARAK BIRLESTIRILMEMISTIR; kur donusumu yalnizca
         makro.yaml'daki kanitli kurla, modelde yapilir.
+        Cit neden korundu: T-902 bulgunun kendisini degil ETIKETINI reddetti. Sinirlarin
+        altindaki kanitlar (EV-402, EV-405, EV-419) gecerlidir; degisen, bu sinirlarin
+        bir FOB araligi OLMADIGININ acikca yazilmasidir. Cit kaldirilirsa yanlis etiket
+        modele sizabilir hale gelir.
+    finans_fizibiliteye_uyari: >-
+      Bu blok L1 (FOB) girdisi DEGILDIR ve L2'den CIKARILARAK navlun turetilemez.
+      Boyle bir islem NEGATIF NAVLUN uretir. `fiyat.fob_per_sise` null/UNKNOWN'dir
+      ve oyle kalmalidir; gercek FOB yalnizca RFQ ile alinacak FIRM_OFFER'dan gelir.
 
   ulke_gosterge_birim_degerleri:
-    katman_L1_ihracat_ort_EUR_per_litre:
+
+    # -----------------------------------------------------------------------
+    # T-902 DUZELTMESI (TUR 1.5, 2026-08-10)
+    # Eski ad: `katman_L1_ihracat_ort_EUR_per_litre`.
+    # L1 (FOB) IDDIASI GERI CEKILDI. Degerler DEGISMEDI.
+    # -----------------------------------------------------------------------
+    ihracat_ort_birim_degeri_EUR_per_litre:
+      eski_adi: "katman_L1_ihracat_ort_EUR_per_litre (TUR 1) — 'L1' iddiasi geri cekildi"
       status: ESTIMATE
       tier: T3
-      evidence_id: "EV-2026-08-09-404"
+      evidence_id: "EV-2026-08-10-401"
+      supersedes_evidence: "EV-2026-08-09-404"
+      katman: null
+      katman_status: UNKNOWN
+      katman_iddiasi_geri_cekildi: true
+      katman_uyarisi: >-
+        BU SERIYE L1 (FOB) DENEMEZ ve L2 CIF SERISINDEN CIKARILAMAZ.
+        Iddia iki nedenle geri cekildi: (1) OIV ihracat birim degerlerinin FOB bazinda
+        oldugu DOGRULANMADI (EV-2026-08-09-404 hata kaynagi #3); (2) asagidaki
+        `karsilastirilamazlik_kaniti`.
       uyari: "ULKE ORTALAMASI — fiyat/performans segmenti bunun ALTINDADIR."
+      kapsam: >-
+        Her ulkenin TUM DUNYAYA yaptigi siselenmis sarap ihracatinin ortalama birim
+        degeri (premium SKU'lar dahil). Turkiye'ye giden karma DEGILDIR.
       degerler:
         sili: 2.68
         guney_afrika: 2.72
@@ -349,6 +438,66 @@ arastirma_bulgulari:
         avustralya: 4.99
         fransa: 7.79
         abd: 7.89
+
+    # -----------------------------------------------------------------------
+    # IKI SERININ NEDEN KARSILASTIRILAMAZ OLDUGU (T-902 istegi #3)
+    # Bu blok bir DEGER TASIMAZ; bir KULLANIM YASAGI tasir.
+    # -----------------------------------------------------------------------
+    karsilastirilamazlik_kaniti:
+      status: FACT
+      evidence_id: "EV-2026-08-10-401, EV-2026-08-09-405"
+      iki_seri:
+        A: "ihracat_ort_birim_degeri_EUR_per_litre (OIV turetmesi, EUR/litre)"
+        B: "katman_L2_turkiye_cif_USD_per_litre_2025 (UN Comtrade, USD/litre, L2 CIF)"
+      gozlem: >-
+        A serisi UC MENSEDE B serisinden BUYUKTUR. Eger A gercekten L1 (FOB) olsaydi
+        A < B olmasi ZORUNLU olurdu (aradaki fark navlun + sigortadir). Terslik,
+        A'nin L1 OLMADIGININ degil de olsa olsa iki serinin AYNI MERDIVENIN BASAMAKLARI
+        OLMADIGININ dogrudan kanitidir.
+      terslik_tablosu:
+        ispanya:   { A_EUR_per_litre: 2.87, B_USD_per_litre: 2.71, sonuc: "A > B — TERSLIK" }
+        portekiz:  { A_EUR_per_litre: 3.43, B_USD_per_litre: 3.20, sonuc: "A > B — TERSLIK" }
+        fransa:    { A_EUR_per_litre: 7.79, B_USD_per_litre: 6.27, sonuc: "A > B — TERSLIK" }
+        sili:      { A_EUR_per_litre: 2.68, B_USD_per_litre: 2.89, sonuc: "A < B — ama fark navlunu karsilamayacak kadar kucuk" }
+      nedenler:
+        - kod: FARKLI_URUN_KARMASI
+          aciklama: >-
+            A = ulkenin TUM DUNYAYA ihracatinin ortalamasi (premium SKU'lar dahil).
+            B = yalnizca TURKIYE'ye giren karma. Turkiye'ye giden karma, ulke
+            ortalamasindan sistematik olarak DAHA UCUZ UCLU olabilir. Bu tek basina
+            A > B tersligini aciklayabilir ve navlunla ilgisi yoktur.
+          kaynak: "EV-2026-08-09-404 (kapsam: ulke ortalamasi) / EV-2026-08-09-405 (kapsam: TR ithalati)"
+        - kod: FARKLI_PARA_BIRIMI
+          aciklama: >-
+            A EUR/litre, B USD/litre. Kur donusumu BILINCLI OLARAK YAPILMAMISTIR
+            (yalnizca makro.yaml'daki kanitli kurla, modelde yapilir). Iki seri
+            donusumsuz karsilastirilamaz; tablodaki terslik bu yuzden yon gostergesidir,
+            olcu degildir.
+          kaynak: "CLAUDE.md §1.6 + makro.yaml"
+        - kod: FARKLI_RAPORLAMA_BAZI
+          aciklama: >-
+            A'nin FOB bazinda oldugu VARSAYILMISTIR ama dogrulanmamistir; ulkeler arasi
+            raporlama pratigi ayni degildir. B, Turk gumruk idaresince raporlanan
+            ithalat degeridir ve CIF'tir (dogrulanmis).
+          kaynak: "EV-2026-08-09-404 hata kaynagi #3"
+        - kod: FARKLI_YIL_KESITI_VE_YUVARLAMA
+          aciklama: >-
+            A, OIV Table 5'ten TURETILMISTIR: deger sutunu yuvarlanmis (ornek: Ispanya
+            "3" bn EUR) ve dikey yapi yuzdeleri 2024 basligiyla verilmisken hacim/deger
+            2025'tir. Yani iki farkli yilin verisi carpilmistir. Hata payi %5'in
+            uzerinde olabilir. B tek yil (2025) ve tek kaynaktir.
+          kaynak: "EV-2026-08-09-404 hata kaynaklari #1 ve #2"
+      kullanim_yasagi:
+        - "A serisi L1 (FOB) girdisi OLARAK KULLANILAMAZ."
+        - "B - A = navlun HESABI YAPILAMAZ. Bu islem negatif navlun uretir."
+        - "A ve B ayni grafikte/tabloda ayni eksende GOSTERILEMEZ."
+        - "A serisi tek basina ULKE ELEMESI icin kullanilamaz; yalnizca buyukluk sirasi hakkinda kaba bir isarettir."
+      cozulmemis_soru: >-
+        A serisinin gercek katmani NEDIR? Cevap UNKNOWN'dir. OIV'in ihracat deger
+        tanimini birincil kaynaktan teyit etmeden bu alan doldurulamaz.
+        Bu, bu ajanin acik sorusudur (bkz. OQ-401 ailesi) ve TUR 1.5'te
+        ARASTIRILMAMISTIR (bu tur yeni arastirma turu degildir).
+
     katman_L2_turkiye_cif_USD_per_litre_2025:
       status: FACT
       tier: T3
