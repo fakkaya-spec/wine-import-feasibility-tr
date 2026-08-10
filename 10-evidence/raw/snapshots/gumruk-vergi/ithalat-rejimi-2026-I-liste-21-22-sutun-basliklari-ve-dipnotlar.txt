@@ -1,0 +1,13 @@
+r1: 21. ve 22. FASILLAR
+r2: GTİP | DİPNOT | GÜMRÜK VERGİSİ ORANI (%)
+r3: AB, BK | GÜR | B-HER | G.KORE | MLZ | SNG | KOS | VNZ | BAE  | TPS-OIC | D-8 | DÜ
+r5: 210690300000 | 58.5 | 58.5 | 58.5 | 58.5 | 58.5 | 46.8 | 58.5 | 58.5 | 58.5 | 58.5
+r150: 220900110000 | 39 | 39 | 39 | 39 | 39 | 39 | 39 | 39 | 39
+r151: 220900190000 | 39 | 39 | 39 | 39 | 39 | 39 | 39 | 39 | 39
+r152: 220900910000 | 39 | 39 | 39 | 39 | 39 | 39 | 39 | 39 | 39
+r153: 220900990000 | 39 | 39 | 39 | 39 | 39 | 39 | 39 | 39 | 39
+r154: (1) Kuzey Makedonya Cumhuriyeti için DÜ sütununda yer alan gümrük vergisinin %50'si uygulanır.
+r155: (2) Şili Cumhuriyeti için gümrük vergisi %50 olarak uygulanır.
+r156: (3) Şili Cumhuriyeti için  gümrük vergisi %0 olarak uygulanır.
+r157: (4) Kuzey Makedonya Cumhuriyeti için  gümrük vergisi %0 olarak uygulanır.
+r158: (5) Norveç Krallığı ve İzlanda Cumhuriyeti için AB sütunundaki oran uygulanır.

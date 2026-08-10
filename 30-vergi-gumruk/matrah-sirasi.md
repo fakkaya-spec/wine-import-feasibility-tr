@@ -195,7 +195,11 @@ CIF = 100,00 TL/şişe (keyfî, sadece zinciri göstermek için), peşin ödeme 
 |------|-------|--------|-------------|
 | Hangi ülkeler için STA/tercihli tarife var? | Şarapta **sıfır oran yalnız** Bosna-Hersek, Güney Kore, Singapur, Kosova için. AB/BK ve Şili **indirimli ama sıfır değil (%50)**. K.Makedonya %35, Venezuela %35, BAE %49 | FACT | EV-2026-08-09-103, -105, -106 |
 | **Gümrük Birliği şarabı kapsıyor mu?** | **HAYIR.** Şarap tarım ürünüdür ve İthalat Rejimi Kararı **I sayılı Liste (Tarım Ürünleri)** içindedir; AB menşeli şarapta %50 gümrük vergisi vardır | FACT | EV-2026-08-09-103 |
-| Menşe ispat belgesi türü (EUR.1 / fatura beyanı / REX / A.TR) | **UNKNOWN** — bu turda anlaşma bazında doğrulanamadı. A.TR'nin (serbest dolaşım belgesi) tarım ürünlerinde tercihli tarife sağlamayacağı, indirimli oranın **menşe** esaslı olduğu yapısal olarak açıktır ancak belge türü belgelenmedi | UNKNOWN | — |
+| Menşe ispat belgesi türü (EUR.1 / fatura beyanı / REX / A.TR) | **EUR.1 Dolaşım Belgesi (MBS 0302) veya Fatura Beyanı (MBS 0538)** — hem AB tarım rejimi (1/98) hem Şili STA'sı için aynı ikili. **A.TR GEÇERSİZDİR** (menşeyi göstermez; BİLGE'de A.TR'nin kapsamı "AKÇT ve tarım ürünleri hariç"). **REX** yalnızca GTS'dedir ve **şarapta GTS uygulanmaz** | **FACT — TUR 2'de kapandı** | EV-2026-08-10-155, -156, -158, -159, -160 |
+| Belge ibraz edilemezse ne olur? | **Tercihli oran düşer, DÜ oranı (%70) uygulanır.** CIF=100 TL illüstrasyonunda L4 244,14 → 268,14 TL (**+24,00 TL/şişe**) — çünkü GV, KDV matrahına da girer | **FACT** | EV-2026-08-10-157 |
+| Tercihli oranın koşulları | **Dört kümülatif koşul:** (K1) eşya anlaşma kapsamında · (K2) menşe kuralını karşılıyor · (K3) geçerli belge var · (K4) **doğrudan nakledilmiş**. K4 için BİLGE **çıkış ülkesi kontrolü** yapar: Şili'de çıkış ülkesi **yalnızca Şili**; AB tarım rejiminde çıkış ülkesi listesinde **Birleşik Krallık YOKTUR** | **FACT** | EV-2026-08-10-163, -158, -160 |
+| GTS (Genelleştirilmiş Tercihler Sistemi) şarapta uygulanır mı? | **HAYIR — üç bağımsız kanıt:** (a) I sayılı Liste 21–22. Fasıllar'da **GTS sütunu yok**; (b) 2204, GTS sütunu bulunan **II sayılı Liste'de yer almaz**; (c) EK-1 GTS ülkeleri listesinde kapsamdaki 9 ülkenin **hiçbiri yok** | **FACT** | EV-2026-08-10-151, -153, -154 |
+| Ülke bazlı tam eşleme (9 ülke) | → **`30-vergi-gumruk/mense-tarife-eslemesi.md`** (TUR 2 ana çıktısı) ve `vergi.yaml` → `mense_tarife_eslemesi` | FACT | EV-2026-08-10-151…-164 |
 | Tarife kontenjanı var mı? | **Köpüksüz şarapta AB için YOK.** AB kontenjanı yalnız 2204.10 köpüklü (750 hl, %35); BK yalnız 2204.10 (125 hl, %35); İsviçre/Lihtenştayn 2204.21 için 30.000 lt (DÜ oranının %50'si = %35) | FACT | EV-2026-08-09-108, -109 |
 | Tercihli tarife hangi vergiyi etkiler, hangisini etkilemez? | **Yalnızca gümrük vergisini** etkiler. ÖTV, ÖTV Kanunu'na ekli listeye göre belirlenir ve menşeye göre değişmez; KDV oranı da menşeye göre değişmez. Ancak gümrük vergisi ÖTV ve KDV matrahına girdiği için **dolaylı** olarak ikisini de düşürür | FACT (türetme) | EV-2026-08-09-110, -115, -117, -118 |
 
@@ -270,7 +274,11 @@ Bu ikisi **asla tek satırda** gösterilmez ve toplanmaz.
 | KKDF matrahının tam tanımı | ❌ UNKNOWN (T-105) |
 | Gümrük kıymeti dahil/hariç kalemleri | ✅ FACT |
 | Gözetim / referans kıymet | ❌ UNKNOWN (negatif arama) |
-| Menşe ispat belgesi türü | ❌ UNKNOWN |
+| Menşe ispat belgesi türü | ✅ **FACT — TUR 2'de kapandı** (EV-2026-08-10-155/-158/-160) |
+| Menşe → tarife eşlemesi (9 ülke) | ✅ **FACT — TUR 2** → `mense-tarife-eslemesi.md` |
+| ÖTV'nin zaman endeksli model temsili | ✅ **TANIMLANDI — TUR 2** → `vergi.yaml` `otv_maktu_zaman_serisi` (T-104 `ANSWERED`) |
+| Fatura beyanının değer eşiği | ❌ UNKNOWN (T-162) — baz senaryoyu etkilemez |
+| DÜ menşede menşe şahadetnamesi zorunlu mu | ❌ UNKNOWN (T-162) — **oranı değiştirmez**, G1'i bloke etmez |
 | Antrepo vergi doğuş anı | ✅ FACT |
 | Antrepo kısmi çekiş | ❌ UNKNOWN (T-101) |
 | İthalat KDV'sinin indirilebilirliği | ✅ **FACT — TUR 1.5'te kapandı** (EV-2026-08-10-101/-102/-103) |

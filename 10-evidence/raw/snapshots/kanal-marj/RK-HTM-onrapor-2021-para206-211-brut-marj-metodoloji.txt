@@ -1,0 +1,76 @@
+     analizin amacı brüt marjların seviyesinin tespitinden ziyade söz konusu marjların yıllara
+     göre değişimini görmektir.
+(206) Bu bağlamda söz konusu perakende zincirlerinden, toplam hızlı tüketim ürünleri ve
+     önceden belirlenen 7 kategori için (süt ve süt ürünleri, dondurulmuş gıda, şekerlemeler,
+
+
+     56   https://www.accc.gov.au/publications/report-of-the-accc-inquiry-into-the-competitiveness-of-retail-
+     prices-for-standard-groceries-july-2008
+
+                                                                                                      85/137
+     konserve gıda, yemeklik yağ, kağıt ürünleri ve çamaşır deterjanları) üretici markalı ve
+     özel markalı ürün ayırımında satış ciroları ve alım ciroları istenmiştir57. Toplam kategori
+     alkol ve tütün hariç olmak üzere gıda, kişisel bakım ve temizlik ana kategorilerinin
+     toplamından oluşan hızlı tüketim maddeleridir. Ürün kategori tanımlarında standart
+     sağlamak adına Nielsen’in ürün kategori içerikleri baz alınmış ve veriler buna göre
+     talep edilmiştir.
+(207) Öte yandan özellikle kategori bazındaki verilerde olmak üzere bazı durumlarda alım
+     cirolarının satış cirolarından daha yüksek olduğu tespit edilmiştir. İlgili perakende
+     zincirleri ile yapılan görüşmelerde bu durumun esas olarak iki durumdan kaynaklandığı
+     ifade edilmiştir. Birinci sebebi stok etkisidir. Kimi yıllarda, dönemlerde ürünlerin stoklara
+     girdiği yıl, bu ürünlerin bir kısmı stoklarda kalmaya devam etmekte ve sonraki yıla
+     aktarılmakta veya tedarikçiye iade edilmektedir. İkinci önemli sebep ise ilgili ürünler
+     satın alındıktan sonraki dönemde perakendeciler çeşitli adlar altında (ciro primi, aktivite
+     prim vb) tedarikçilere/sağlayıcılara fatura kesmekte ve bu şekilde ilave gelir elde
+     etmekte ve dolayısıyla satın alım maliyetini düşürmektedirler. Bu çerçevede
+     perakendecilerden anılan etkileri gidermek ve brüt marjı daha doğru hesaplayabilmek
+     açısından dönem başı ve dönem sonu stok tutarları ve tedarikçilere kesilen ciro primi,
+     aktivite primi, iade ürün tutarı, ürün imha bedeli, iskonto faturası gibi çeşitli adlar
+     altındaki bedellerin toplam tutarları talep edilmiştir. Ardından aşağıdaki formül
+     çerçevesinde her bir yıl için satın alım maliyeti aşağıdaki gibi bulunmuştur:
+
+
+     Üretici Markaları (ÜM) için Satın Alım Maliyeti = ÜM satın alım cirosu - (dönem
+     sonu stok tutarı-dönem başı stok tutarı) - (Ciro primi + aktivite primi + iade tutarı
+     + ürün imha bedeli + ıskonto faturaları).
+(208) Satın alım maliyeti ilgili yıl hesaplandıktan sonra da satış ciroları farkı brüt marj olarak
+     hesaplanmıştır.
+     Brüt Marj ÜM = ÜM satış cirosu - ÜM satın alım maliyeti
+     Brüt Marj Oranı ÜM = Brüt Marj ÜM/ÜM satış cirosu
+
+(209) Özel markalar için ilgili hesaplamalar benzer şekilde aşağıdaki gibi yapılmaktadır:
+
+
+
+
+     57 Hızlı tüketim ürünlerinin gıda, kişisel bakım ve temizlik ürünleri olarak üç ana kategoriden oluştuğu
+
+     dikkate alınarak ve gıdanın toplam HTM payının yaklaşık %80 olduğundan hareketle; beş alt kategori
+     gıdadan, birer kategori de temizlik ve kişisel bakım kategorilerinden seçilmiştir.
+
+                                                                                                      86/137
+     Özel Markalar (ÖM) için Satın Alım Maliyeti = ÖM satın alım cirosu - (dönem sonu
+     stok tutarı - dönem başı stok tutarı) - (Ciro primi + aktivite primi + iade tutarı +
+     ürün imha bedeli + ıskonto faturaları).
+
+     Brüt Marj ÖM = ÖM satış cirosu - ÖM satın alım maliyeti
+     Brüt Marj Oranı ÖM = Brüt Marj ÖM/ÖM Satış Cirosu
+(210) Buradaki ön beklentimiz eğer perakendecilerin pazar gücü/alıcı gücü artmışsa, yıllara
+     göre brüt marjın da artmış olmasıdır.
+
+     5.2.1. Toplam HTM
+
+(211) Beş büyük perakende zinciri toplam hızlı üretim ürünleri kategorisinde (tütün ve alkol
+     hariç) ÜM için hesaplan brüt marj oranları aşağıdaki tabloda verilmektedir.
+
+     Tablo 46- Üretici Markaları İçin Brüt Marjların Yıllara Göre Seyri (%)
+                 BİM58       A10159      Migros      ŞOK60       Carrefoursa61
+      2011       ...                     ...                     ...
+      2012       ...                     ...         ...         ...
+      2013       ...         ...         ...         ...         ...
+      2014       ...         ...         ...         ...         ...
+      2015       ...         ...         ...         ...         ...
+      2016       ...         ...         ...         ...         ...
+      2017       ...         ...         ...         ...         ...
+      2018       ...         ...         ...         ...         ...
+      2019       ...         ...         ...         ...         ...

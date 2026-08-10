@@ -1,0 +1,107 @@
+
+
+İÇİNDEKİLER 
+Kısaltmalar ………………………………………………………………………….
+I Sayılı Liste Tarım Ürünleri………………………………………………………..
+II Sayılı Liste Tarım Ürünleri (4,5,9,13,14,15,17,18,19,20,21,22 ve 24. Fasıllar)….
+II Sayılı Liste Sanayi Ürünleri (25-97. Fasıllar)……………………………………
+III Sayılı Liste İşlenmiş Tarım Ürünleri………………………………………........
+       Tablo 1- III Sayılı Listeye Ait Kod Numaralarını Gösterir Bileşim Tablosu..…
+       Tablo 2- III Sayılı Listeye Ait Tarım Payı Tablosu……………………….........
+IV Sayılı Liste Balıkçılık ve Su Ürünleri (2,3,15, 16 ve 23. Fasıllar).……………...
+V Sayılı Liste Gümrük Vergisi Askıya Alınan Sanayi Ürünleri..........……………..
+VI Sayılı Liste Nihai Kullanım Uygulaması Kapsamında İndirimli Gümrük Vergisinden Faydalanacak Sivil Hava Taşıtlarında Kullanılmaya Mahsus Ürünler………………………………
+VII Sayılı Liste Nihai Kullanım Uygulaması Kapsamında İndirimli Gümrük Vergisinden Faydalanacak Tarım Ürünleri ……………………………………...................................................
+EK-1 Genelleştirilmiş Tercihler Sisteminden Yararlanacak Ülkeler Listesi ………
+EK-2 Gelişme Yolundaki Ülkeler Ürün Grubu Listesi …………………………….
+EK-3 Özel Teşvik Düzenlemesi Kapsamındaki Ülkeler Ürün Grubu Listesi………
+EK-4 En Az Gelişmiş Ülkeler Ürün Grubu Listesi………………………………….
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KISALTMALAR  
+I, II (4-24. FASILLAR), III, IV, V, VI VE VII SAYILI LİSTELER İÇİN KISALTMALAR
+AB
+: Avrupa Birliği Üyesi Ülkeler
+BK
+: Büyük Britanya ve Kuzey İrlanda Birleşik Krallığı
+B–HER
+: Bosna-Hersek
+BAE
+: Birleşik Arap Emirlikleri
+D-8
+: Gelişen Sekiz Ülke (Mısır Arap Cumhuriyeti hariç olmak üzere Bangladeş Halk Cumhuriyeti, Endonezya Cumhuriyeti, İran İslam Cumhuriyeti, Malezya, Nijerya Federal Cumhuriyeti ve Pakistan İslam Cumhuriyeti)
+DTÖ
+: Dünya Ticaret Örgütü
+DÜ
+: Diğer Ülkeler
+EAGÜ
+: En Az Gelişmiş Ülkeler
+EFTA
+: EFTA Üyesi Ülkeler (İzlanda, Lihtenştayn, Norveç, İsviçre)
+EMY
+: Ek Mali Yükümlülük
+F.ADA
+: Faroe Adaları
+G.KORE
+: Kore Cumhuriyeti (Güney Kore)
+GTİP                   
+: Gümrük Tarife İstatistik Pozisyonu (2026 yılı “İstatistik Pozisyonlarına Bölünmüş Türk Gümrük Tarife Cetvelinde” yer alan pozisyon numaralarındaki eşya)
+GTP
+: Gümrük Tarife Pozisyonu
+GTS 
+ÜLKELERİ
+: Ek -1’de yer alan Genelleştirilmiş Tercihler Sisteminden Yararlanacak Ülkeler
+GÜR
+: Gürcistan
+GV
+: Gümrük Vergisi Oranı
+GYÜ
+: Gelişme Yolundaki Ülkeler
+KOS
+: Kosova
+MLZ
+: Malezya
+ÖTDÜ
+: Özel Teşvik Düzenlemelerinden Yararlanacak Ülkeler
+SNG
+: Singapur Cumhuriyeti
+TPS-OIC
+: İslam Konferansı Teşkilatı Üyesi Devletler Arasında Tercihli Ticaret Sistemi Çerçeve Anlaşması ve Tercihli Tarife Düzenlemesi Protokolü (PRETAS) kapsamındaki ülkeler (Bahreyn Krallığı, Bangladeş Halk Cumhuriyeti, Birleşik Arap Emirlikleri, Fas Krallığı, İran İslam Cumhuriyeti, Katar Devleti, Kuveyt Devleti, Malezya, Pakistan İslam Cumhuriyeti, Suudi Arabistan Krallığı, Umman Sultanlığı ve Ürdün Haşimi Krallığı)
+VNZ
+:Bolivarcı Venezuela Cumhuriyeti
+ 
+II SAYILI LİSTE (25-97. FASILLAR) SÜTUN BAŞLIKLARI KISALTMALARI
+1 
+:AB Üyesi Ülkeler, EFTA Üyesi Ülkeler, Serbest Ticaret Anlaşması Ülkeleri: Arnavutluk, Bolivarcı Venezuela Cumhuriyeti, Büyük Britanya ve Kuzey İrlanda Birleşik Krallığı, Bosna-Hersek, Fas, Faroe Adaları, Filistin, Gürcistan, Güney Kore, İsrail, Karadağ, Kosova, Kuzey Makedonya Cumhuriyeti, Malezya, Mısır Arap Cumhuriyeti, Morityus, Moldova, Sırbistan, Singapur Cumhuriyeti, Şili, Tunus,  
+2 
+: Katar Devleti
+3
+: Birleşik Arap Emirlikleri
+GTS ÜLKELERİ
+: Ek -1’de yer alan Genelleştirilmiş Tercihler Sisteminden Yararlanacak Ülkeler
+4
+: En Az Gelişmiş Ülkeler
+5
+: Özel Teşvik Düzenlemelerinden Yararlanacak Ülkeler
+6
+: Gelişme Yolundaki Ülkeler
+7
+: Diğer Ülkeler
+

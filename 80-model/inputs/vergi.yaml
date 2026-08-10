@@ -22,7 +22,7 @@
 meta:
   dosya: vergi.yaml
   son_guncelleme: 2026-08-10
-  tur: "TUR 1 (2026-08-09) + TUR 1.5 BLOCKER REMEDIATION (2026-08-10)"
+  tur: "TUR 1 (2026-08-09) + TUR 1.5 BLOCKER REMEDIATION (2026-08-10) + TUR 2 MENSE-TARIFE ESLEMESI (2026-08-10)"
   durum: KISMEN_DOLDURULDU
   a1_dogrulama_yapildi_mi: true
   a1_notu: >-
@@ -30,8 +30,11 @@ meta:
     matrahi, KKDF orani, gumruk kiymeti unsurlari ve vergi dogus ani T1/T2 ile
     dogrulandi. TUR 1.5'te ITHALAT KDV'SININ INDIRILEBILIRLIGI T1 ile KAPATILDI
     (KDVK md.29/1-b, md.34/1, md.30 tam metin; EV-2026-08-10-101/-102/-103).
-    KKDF matrahi, mense ispat belgesi turu, gozetim, antrepo kismi cekis,
-    fiili vergilendirme donemi ve damga vergisi UNKNOWN olarak kalmistir.
+    TUR 2'de MENSE -> TARIFE ESLEMESI ve MENSE ISPAT BELGESI kapatildi
+    (mense_tarife_eslemesi blogu; EV-2026-08-10-151..-164). Ayrica OTV'nin zaman
+    endeksli temsili tanimlandi (otv_maktu_zaman_serisi; ticket T-104).
+    KKDF matrahi, gozetim, antrepo kismi cekis, fiili vergilendirme donemi,
+    damga vergisi ve fatura beyani deger esigi UNKNOWN olarak kalmistir.
 
   # ============================================================
   #  IKI AYRI TARIH — KARISTIRILMAZ
@@ -309,6 +312,80 @@ matrah_sirasi:
       TRT bandrolu radyo-TV cihazlarina ozgudur, sarapta uygulanabilirligi dogrulanmadi.
       Bandrol/UIS (urun izleme sistemi) mevzuat-ruhsat-uzmani alanindadir.
 
+# ------------------------------------------------------------
+# OTV ASGARI MAKTU TUTARI — ZAMAN ENDEKSLI TEMSIL
+# TUR 2 / ticket T-104 (CRITICAL, target: finans-fizibilite)
+# ------------------------------------------------------------
+# NEDEN VAR: OTVK md.12/3 uyarinca (III) sayili listedeki asgari maktu tutarlar
+# OCAK ve TEMMUZ aylarinda TUIK Yi-UFE'nin son 6 aylik degisimi oraninda, AYRI BIR
+# KARARA GEREK OLMAKSIZIN "yeniden belirlenmis sayilir" (EV-2026-08-09-114, T1).
+# Bu nedenle OTV modelde TEK BIR SABIT SAYI olarak tutulamaz.
+#
+# BU BLOK BIR TAHMIN DEGILDIR. Yalnizca DOGRULANMIS gozlemleri ve engine'in bu
+# gozlemleri NASIL OKUYACAGINI tanimlar. GELECEK DEGER BU DOSYAYA YAZILMAZ.
+otv_maktu_zaman_serisi:
+  gtip: "22.04"
+  birim: "TRY/litre"
+  para_birimi: TRY
+  dayanak: "4760 s. OTVK md.12/3 — Ocak ve Temmuz, TUIK UFE son 6 ay degisimi, kendiliginden"
+  dayanak_evidence_id: EV-2026-08-09-114
+  dayanak_tier: T1
+  guncelleme_aylari: [1, 7]
+
+  # ---- GOZLENEN DEGERLER: yalnizca T1/T2 ile DOGRULANMIS, GERCEKLESMIS tutarlar ----
+  gozlenen_degerler:
+    - effective_date: 2025-12-31
+      value: 61.3914
+      status: SUPERSEDED
+      tier: T1
+      evidence_id: EV-2026-08-09-112
+    - effective_date: 2026-07-03
+      value: 71.2692
+      status: FACT
+      tier: T2
+      evidence_id: EV-2026-08-09-111
+      ttl: 30d
+      stale_tarihi: 2026-09-08
+
+  # ---- GECERLILIK UFKU: bu tarihten sonrasi icin DOGRULANMIS deger YOKTUR ----
+  son_gozlem_gecerlilik_ufku: 2026-12-31
+  son_gozlem_gecerlilik_ufku_gerekcesi: >-
+    2026-07-03 tutari, bir sonraki otomatik guncellemeye (beklenen: Ocak 2027) kadar
+    gecerlidir. Cumhurbaskani md.12/3'un uygulanmamasina karar verebilir; boyle bir
+    karar CIKARSA tutar degismez. Iki ihtimalin hangisinin gerceklesecegi BILINMEZ.
+
+  gelecek_degerler: null
+  gelecek_deger_status: UNKNOWN
+  gelecek_deger_kurali: >-
+    GELECEK OTV TUTARI BU DOSYAYA YAZILMAZ (BASE_DATE_kurali). Projeksiyon gerekiyorsa
+    artis varsayimi makro.yaml'da (Yi-UFE) ASSUMPTION olarak tutulur ve senaryolar.yaml'da
+    bir DUYARLILIK EKSENI olarak calistirilir. vergi.yaml yalnizca GERCEKLESMIS tutari
+    tasir. Tarihsel referans (TAHMIN DEGIL): 2025-12-31 -> 2026-07-03 arasi +%16,09.
+
+  # ---- ENGINE ICIN BAGLAYICI OKUMA KURALI ----
+  engine_okuma_kurali: >-
+    otv_maktu(t) fonksiyonu:
+      1) t = model_hedef_tarihi; t null/TBD ise t = meta.BASE_DATE.
+      2) gozlenen_degerler icinde effective_date <= t olan EN SON kaydi sec.
+      3) EGER t > son_gozlem_gecerlilik_ufku ISE:
+           - senaryolar.yaml'da acik bir OTV artis ASSUMPTION'i TANIMLI DEGILSE
+             -> engine UNKNOWN doner ve eksik girdiyi 'otv_maktu_zaman_serisi.gelecek_degerler'
+                olarak raporlar (CLAUDE.md §12: uydurmaz).
+           - TANIMLI ISE -> tutar SENARYO cikitisidir, cikti "PROJEKSIYON (ASSUMPTION)"
+             etiketiyle basilir ve ASLA FACT olarak raporlanmaz.
+      4) otv_per_sise = otv_maktu(t) * urun_parametreleri.sise_hacmi_litre
+      5) Cikti raporunda kullanilan effective_date ve evidence_id ZORUNLU olarak yazilir.
+  engine_yasak: >-
+    matrah_sirasi[sira=4].asgari_maktu_tutar alani BU SERININ 2026-07-03 KAYDININ
+    KISAYOLUDUR ve geriye donuk uyumluluk icin durur. Cok donemli / t > 2026-12-31
+    hesaplarda engine BU ALANI DEGIL, otv_maktu_zaman_serisi'ni okumak ZORUNDADIR.
+    Iki alan CELISIRSE otv_maktu_zaman_serisi esas alinir.
+  antrepo_etkilesimi: >-
+    Vergi, serbest dolasima giris beyannamesinin TESCIL tarihinde dogar (EV-2026-08-09-122).
+    Antrepoda 1 Ocak veya 1 Temmuz'u gecirmek, t'yi bir sonraki basamaga tasiyarak
+    sise basina OTV'yi yukseltir. Bu, antreponun nakit avantajinin KARSI RISKIDIR ve
+    peak_cash_requirement optimizasyonunda AYRI bir kalem olarak gorunmelidir.
+
 gumruk_vergisi_oranlari_by_mense:
   # Ithalat Rejimi Karari 2026, I sayili Liste (Tarim Urunleri), 21-22. Fasillar
   # 2204.21 / 2204.22 / 2204.29 satirlarinin TAMAMI icin ayni (EV-2026-08-09-102)
@@ -382,12 +459,39 @@ tercihli_tarife:
       Gumruk Birligi sanayi urunlerini kapsar; sarap TARIM urunudur ve I sayili Listededir.
       AB mensei sarapta gumruk vergisi %50'dir, SIFIR DEGILDIR.
   mense_ispat_belgesi:
+    # TUR 2'de UNKNOWN -> FACT. Detay: 30-vergi-gumruk/mense-tarife-eslemesi.md
+    value: ["EUR.1 Dolasim Belgesi (MBS 0302)", "Fatura Beyani (MBS 0538)"]
+    status: FACT
+    tier: T2
+    evidence_id: EV-2026-08-10-155
+    destekleyici_evidence_ids: [EV-2026-08-10-158, EV-2026-08-10-160, EV-2026-08-10-163]
+    effective_date: 2026-01-01
+    notes: >-
+      Hem AB tarim rejimi (1/98) hem Sili STA'si icin AYNI iki belge gecerlidir.
+      A.TR GECERSIZDIR: A.TR menseyi gostermez ve mense ispat belgesi yerine gecmez
+      (EV-2026-08-10-156); BILGE'de A.TR'nin GTIP kapsami "AKCT ve TARIM URUNLERI
+      HARICINDEKI tum urunler"dir (EV-2026-08-10-159). REX yalnizca GTS'de kullanilir
+      ve sarapta GTS UYGULANMAZ (EV-2026-08-10-151/-153/-154).
+  mense_ispat_belgesi_yoksa_uygulanan_oran:
+    value: 70
+    unit: "%"
+    status: FACT
+    tier: T2
+    evidence_id: EV-2026-08-10-157
+    notes: >-
+      "...mense ispat veya dolasim belgesi verilemedigi zaman, ithalatci firma vergi
+      muafiyetinden veya indiriminden yararlanamayacak ve DAHA YUKSEK ithalat vergisi
+      odemek zorunda kalacaktir." -> AB/Sili mensede %50 yerine DU %70 uygulanir.
+  fatura_beyani_deger_esigi:
     value: null
+    unit: EUR
     status: UNKNOWN
     evidence_id: null
     notes: >-
-      EUR.1 / fatura beyani / REX / A.TR ayrimi bu turda anlasma bazinda dogrulanamadi.
-      Indirimli oranin MENSE esasli oldugu yapisal olarak acik; belge turu belgelenmedi.
+      Fatura beyaninin belirli bir deger esigi altinda her ihracatciya, ustunde ise yalnizca
+      "onaylanmis ihracatci"ya acik olup olmadigi bu turda T1/T2 ile DOGRULANAMADI
+      (mevzuat.gov.tr erisilemedi). Ticket T-162. Model etkisi: baz senaryoda YOK
+      (EUR.1 her halukarda duzenlenebilir); yalnizca tedarikci uyum yukunu etkiler.
   etkiledigi_vergiler:
     value: ["GUMRUK_VERGISI"]
     status: FACT
@@ -419,6 +523,226 @@ tercihli_tarife:
         miktar_hl_yil: 125
         kontenjan_ici_oran_pct: 35
         evidence_id: EV-2026-08-09-108
+
+# ------------------------------------------------------------
+# MENSE -> UYGULANACAK TARIFE ESLEMESI  (TUR 2)
+# Ana belge: 30-vergi-gumruk/mense-tarife-eslemesi.md
+# ------------------------------------------------------------
+# KURAL: TARIFE MENSE SEVIYESINDEDIR, TEDARIKCI SEVIYESINDE DEGILDIR.
+# Ayni ulkedeki iki farkli tedarikci AYNI orani oder. Bu blok tedarikci bazinda
+# KIRILAMAZ; kirilmasi YANLIS HASSASIYET uretir.
+mense_tarife_eslemesi:
+  gtip_kapsami: "2204.21 (750 ml siselenmis, kopuksuz durgun sarap)"
+  oran_effective_date: 2026-01-01
+  oran_tier: T1
+  oran_kaynak: "Ithalat Rejimi Karari 2026, I sayili Liste (Tarim Urunleri), 21-22. Fasillar"
+  belge_effective_date: 2026-01-01
+  ttl: 90d
+
+  ulkeler:
+    - country: ES
+      country_name: "Ispanya"
+      shortlist_tier: A
+      applicable_customs_rate: 50
+      preferential_regime: "Turkiye-AB Ortaklik Konseyi 1/98 sayili Karar (tercihli TARIM urunleri ticareti)"
+      preferential_regime_kod: ATRM
+      sarabi_kapsiyor_mu: true
+      required_origin_document: ["EUR.1", "Fatura Beyani"]
+      status: FACT
+      evidence_id: EV-2026-08-09-103
+      belge_evidence_id: EV-2026-08-10-155
+    - country: CL
+      country_name: "Sili"
+      shortlist_tier: A
+      applicable_customs_rate: 50
+      preferential_regime: "Turkiye-Sili Serbest Ticaret Anlasmasi (I sayili Liste dipnot 2)"
+      preferential_regime_kod: SIL
+      sarabi_kapsiyor_mu: true
+      required_origin_document: ["EUR.1", "Fatura Beyani"]
+      status: FACT
+      evidence_id: EV-2026-08-09-105
+      belge_evidence_id: EV-2026-08-10-160
+      notes: "STA sarabi KAPSAR ama SIFIRLAMAZ: %70 -> %50. Cikis ulkesi SILI olmak ZORUNDA."
+    - country: PT
+      country_name: "Portekiz"
+      shortlist_tier: A
+      applicable_customs_rate: 50
+      preferential_regime: "Turkiye-AB 1/98 sayili Karar"
+      preferential_regime_kod: ATRM
+      sarabi_kapsiyor_mu: true
+      required_origin_document: ["EUR.1", "Fatura Beyani"]
+      status: FACT
+      evidence_id: EV-2026-08-09-103
+      belge_evidence_id: EV-2026-08-10-155
+    - country: IT
+      country_name: "Italya"
+      shortlist_tier: A
+      applicable_customs_rate: 50
+      preferential_regime: "Turkiye-AB 1/98 sayili Karar"
+      preferential_regime_kod: ATRM
+      sarabi_kapsiyor_mu: true
+      required_origin_document: ["EUR.1", "Fatura Beyani"]
+      status: FACT
+      evidence_id: EV-2026-08-09-103
+      belge_evidence_id: EV-2026-08-10-155
+    - country: ZA
+      country_name: "Guney Afrika"
+      shortlist_tier: A
+      applicable_customs_rate: 70
+      preferential_regime: null
+      preferential_regime_kod: null
+      sarabi_kapsiyor_mu: false
+      required_origin_document: ["Mense Sahadetnamesi (tercihsiz, KOSULLU)"]
+      status: FACT
+      evidence_id: EV-2026-08-09-104
+      belge_evidence_id: EV-2026-08-10-162
+      notes: "STA YOK (EV-2026-08-10-152, -161). GTS ulkesi de degil (EV-2026-08-10-153)."
+    - country: FR
+      country_name: "Fransa"
+      shortlist_tier: B
+      applicable_customs_rate: 50
+      preferential_regime: "Turkiye-AB 1/98 sayili Karar"
+      preferential_regime_kod: ATRM
+      sarabi_kapsiyor_mu: true
+      required_origin_document: ["EUR.1", "Fatura Beyani"]
+      status: FACT
+      evidence_id: EV-2026-08-09-103
+      belge_evidence_id: EV-2026-08-10-155
+    - country: AR
+      country_name: "Arjantin"
+      shortlist_tier: B
+      applicable_customs_rate: 70
+      preferential_regime: null
+      preferential_regime_kod: null
+      sarabi_kapsiyor_mu: false
+      required_origin_document: ["Mense Sahadetnamesi (tercihsiz, KOSULLU)"]
+      status: FACT
+      evidence_id: EV-2026-08-09-104
+      belge_evidence_id: EV-2026-08-10-162
+      notes: "MERCOSUR STA'si yururlukte DEGIL."
+    - country: US
+      country_name: "ABD / Kaliforniya"
+      shortlist_tier: B
+      applicable_customs_rate: 70
+      preferential_regime: null
+      preferential_regime_kod: null
+      sarabi_kapsiyor_mu: false
+      required_origin_document: ["Mense Sahadetnamesi (tercihsiz, KOSULLU)"]
+      status: FACT
+      evidence_id: EV-2026-08-09-104
+      belge_evidence_id: EV-2026-08-10-162
+      notes: "BENCHMARK URUN (Gold Country) BU SATIRDADIR — en pahali gumruk rejimi."
+    - country: AU
+      country_name: "Avustralya"
+      shortlist_tier: B
+      applicable_customs_rate: 70
+      preferential_regime: null
+      preferential_regime_kod: null
+      sarabi_kapsiyor_mu: false
+      required_origin_document: ["Mense Sahadetnamesi (tercihsiz, KOSULLU)"]
+      status: FACT
+      evidence_id: EV-2026-08-09-104
+      belge_evidence_id: EV-2026-08-10-162
+
+  # ---- TERCIHLI ORANIN DORT KUMULATIF KOSULU (EV-2026-08-10-163) ----
+  tercihli_oran_kosullari:
+    - kod: K1
+      kosul: "Esya anlasma KAPSAMINDA olmali"
+      sarapta_durum: "AB ve Sili icin SAGLANIR; EFTA icin SAGLANMAZ (I sayili listede EFTA sutunu/dipnotu yok)"
+      evidence_id: EV-2026-08-10-164
+      sahibi: gumruk-vergi-uzmani
+      durum: KAPANDI
+    - kod: K2
+      kosul: "Anlasmanin MENSE KURALINI karsilamali"
+      sarapta_durum: "Dokme ithal sarabin baska ulkede siselenmesi menseyi bozabilir — private label'da RISK"
+      evidence_id: EV-2026-08-10-163
+      sahibi: global-sourcing-kasifi
+      durum: ACIK
+      ticket: T-161
+    - kod: K3
+      kosul: "Gecerli MENSE ISPAT BELGESI bulunmali"
+      sarapta_durum: "EUR.1 veya fatura beyani; ihracatci duzenler. Tedarikciye BAGLIDIR."
+      evidence_id: EV-2026-08-10-155
+      sahibi: global-sourcing-kasifi
+      durum: ACIK
+      ticket: T-161
+    - kod: K4
+      kosul: "DOGRUDAN NAKLEDILMIS olmali (cikis ulkesi kontrolu)"
+      sarapta_durum: "SIL: cikis ulkesi YALNIZCA Sili. ATRM: AB+SanMarino+EFTA+... (BIRLESIK KRALLIK YOK)."
+      evidence_id: EV-2026-08-10-158
+      destekleyici_evidence_ids: [EV-2026-08-10-160]
+      sahibi: navlun-lojistik-uzmani
+      durum: ACIK
+      ticket: T-163
+
+  # ---- ENGINE ICIN BAGLAYICI OKUMA KURALI ----
+  engine_okuma_kurali: >-
+    gv(mense, cif_try) hesabi:
+      1) mense_tarife_eslemesi.ulkeler icinde country == mense kaydini bul.
+         Bulunamazsa -> DU fallback (%70) uygula ve ciktida "DU FALLBACK" etiketle.
+      2) EGER kayit.preferential_regime == null ISE -> oran = kayit.applicable_customs_rate.
+      3) EGER kayit.preferential_regime != null ISE oran KOSULLUDUR:
+           tercihli_belge_ibraz_edildi == true VE dogrudan_nakliyat_saglandi == true
+             -> oran = kayit.applicable_customs_rate
+           AKSI HALDE
+             -> oran = tercihli_tarife.mense_ispat_belgesi_yoksa_uygulanan_oran (=70)
+      4) gv = cif_try * oran / 100
+      5) Ciktida kullanilan country, oran, kosul durumu ve evidence_id YAZILIR.
+  senaryo_degiskenleri:
+    # BUNLAR VERGI VERISI DEGILDIR — SENARYO GIRDISIDIR. Sahibi: finans-fizibilite.
+    tercihli_belge_ibraz_edildi:
+      varsayilan: true
+      status: ASSUMPTION
+      duyarlilik_zorunlu_mu: true
+      gerekce: >-
+        Tedarikcinin EUR.1/fatura beyani duzenleyecegi varsayilir; DOGRULANMAMISTIR (T-161).
+        false senaryosu ZORUNLU olarak calistirilmalidir: CIF=100 TL/sise illustrasyonunda
+        L4 244,14 -> 268,14 TL, yani +24,00 TL/sise (CIF'in %24'u).
+    dogrudan_nakliyat_saglandi:
+      varsayilan: true
+      status: ASSUMPTION
+      duyarlilik_zorunlu_mu: true
+      gerekce: >-
+        Konsolidasyon/aktarma rotasi cikis ulkesi kontrolunu dusurebilir (T-163).
+        Bu bir NAVLUN karari gibi gorunur ama VERGI sonucu dogurur.
+
+  # ---- SARAPTA UYGULANMAYAN REJIMLER (NEGATIF BULGULAR) ----
+  uygulanmayan_rejimler:
+    gumruk_birligi_1_95:
+      uygulanir_mi: false
+      gerekce: "1/95 sanayi + islenmis tarim urunlerini kapsar; A.TR'nin GTIP kapsami 'AKCT ve tarim urunleri HARIC'"
+      evidence_id: EV-2026-08-10-159
+      destekleyici_evidence_ids: [EV-2026-08-09-103, EV-2026-08-10-156]
+    gts_genellestirilmis_tercihler_sistemi:
+      uygulanir_mi: false
+      gerekce: >-
+        UC BAGIMSIZ KANIT: (a) I sayili Liste 21-22. Fasillar tablosunda GTS SUTUNU YOK;
+        (b) 2204, GTS sutunu bulunan II sayili Liste'de YER ALMAZ; (c) EK-1 GTS ulkeleri
+        listesinde 9 ulkenin HICBIRI yok.
+      evidence_id: EV-2026-08-10-151
+      destekleyici_evidence_ids: [EV-2026-08-10-153, EV-2026-08-10-154]
+    moldova_sta:
+      uygulanir_mi: false
+      gerekce: >-
+        Turkiye-Moldova STA'si VARDIR (GGM Mense Kontrol Tablosu 'MD' satiri, EUR.1/Fatura Beyani)
+        ANCAK Moldova'nin I sayili Liste 21-22. Fasillar tablosunda NE SUTUNU NE DIPNOTU vardir
+        -> Moldova mensei 2204.21 sarap %70 oder. EFTA ile AYNI YAPISAL DURUM.
+        Romanya ve Bulgaristan AB uyesidir -> %50.
+      evidence_id: EV-2026-08-10-165
+      kapsam_notu: >-
+        Moldova, charter'daki 9 ulkelik kapsamin DISINDADIR ve mense_tarife_eslemesi.ulkeler
+        listesinde SATIRI YOKTUR. Bu kayit, 50-sourcing/supplier-priority-ranking.md B onceliginde
+        Purcari (MD) bulundugu icin acilmistir. Kapsam genisletilirse ulkeler listesine
+        country: MD / applicable_customs_rate: 70 / preferential_regime: null olarak EKLENIR.
+    efta_sta:
+      uygulanir_mi: false
+      gerekce: >-
+        Turkiye'nin ILK STA'sidir (1992) ancak 2204.21 icin I sayili Liste'de ne sutunu
+        ne dipnotu vardir -> %70. Dipnot (5) yalnizca 2208.90.91/99 satirlarinda Norvec ve
+        Izlanda'ya AB oranini verir. "STA var = indirim var" varsayimini AYNI TABLO ICINDE
+        curuten kanit. Tek istisna: Isvicre/Lihtenstayn 30.000 lt/yil tarife kontenjani @ %35.
+      evidence_id: EV-2026-08-10-164
+      destekleyici_evidence_ids: [EV-2026-08-09-109]
 
 # ------------------------------------------------------------
 # KDV — İKİ AYRI PERSPEKTİF (CLAUDE.md §6)
@@ -687,14 +1011,22 @@ hesap_sozlesmesi:
   # DESENKRONIZASYON RISKI: OTV Ocak/Temmuz'da degistiginde iki yerde guncelleme gerekiyordu.
   # DUZELTME: tum literaller ALAN REFERANSINA cevrildi. Bu dosyada bir oran/tutar
   # ARTIK YALNIZCA TEK BIR YERDE yasar (matrah_sirasi[*]).
-  girdi: ["cif_try", "hacim_litre", "mense", "odeme_sekli"]
+  # ---- TUR 2 GENISLETMESI ----
+  # (1) mense orani artik mense_tarife_eslemesi'nden KOSULLU okunur (belge + dogrudan nakliyat).
+  # (2) OTV maktu tutari cok donemli hesapta otv_maktu_zaman_serisi'nden okunur.
+  girdi: ["cif_try", "hacim_litre", "mense", "odeme_sekli",
+          "tercihli_belge_ibraz_edildi", "dogrudan_nakliyat_saglandi", "tarih_t"]
   adimlar:
-    - "gv          = cif_try * gumruk_vergisi_oranlari_by_mense[mense].oran_pct / 100"
+    - "gv_oran     = mense_tarife_eslemesi.engine_okuma_kurali(mense, tercihli_belge_ibraz_edildi, dogrudan_nakliyat_saglandi)"
+    - "gv          = cif_try * gv_oran / 100"
+    - "# ESKI SATIR (geriye donuk uyumluluk; tercih KOSULSUZ varsayilir):"
+    - "# gv        = cif_try * gumruk_vergisi_oranlari_by_mense[mense].oran_pct / 100"
     - "igv         = cif_try * matrah_sirasi[sira=2].oran_pct / 100"
     - "kkdf        = 0 if odeme_sekli == 'pesin' else UNKNOWN_MATRAH * matrah_sirasi[sira=3].oran_pct / 100"
     - "otv_matrahi = cif_try + gv + igv + kkdf"
+    - "otv_maktu_t = otv_maktu_zaman_serisi.engine_okuma_kurali(tarih_t)   # T-104"
     - "otv         = max( otv_matrahi * matrah_sirasi[sira=4].oran_pct / 100 ,
-                          matrah_sirasi[sira=4].asgari_maktu_tutar * hacim_litre )"
+                          otv_maktu_t * hacim_litre )"
     - "kdv_matrahi = cif_try + gv + igv + kkdf + otv"
     - "kdv         = kdv_matrahi * matrah_sirasi[sira=5].oran_pct / 100"
     - "L4          = cif_try + gv + igv + kkdf + otv + kdv"
