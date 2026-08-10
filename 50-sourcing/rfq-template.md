@@ -44,7 +44,7 @@
    teklifler karşılaştırılamaz hâle gelir.
 9. Gönderim öncesi hedef hacim (`<VOLUME>`) `00-charter/kapsam.md`'deki hacim
    basamaklarından seçilir: 5.000 / 10.000 / 25.000 / 50.000 / 100.000 şişe/yıl.
-10. **Bölüm 0'daki SUMMARY SHEET (S1–S25) kaldırılmaz.** Bu tablo, gelen cevabın
+10. **Bölüm 0'daki SUMMARY SHEET (v2.2'de S1–S27) kaldırılmaz.** Bu tablo, gelen cevabın
     `tedarikci-havuzu.csv` ve `80-model/inputs/tedarikci.yaml` alanlarına birebir
     oturmasını sağlayan yapıdır. Serbest metin cevap, yapılandırılmış cevap değildir.
 11. **Etiket ve karton maliyetinin EXW'ye dahil olup olmadığı ayrı sorulur** (3.18,
@@ -172,6 +172,15 @@ not apply to you, please write **"N/A"** rather than leaving it blank, and where
 do not yet know the answer, please write **"TBC"**. Estimated answers are of no use
 to us — an honest "TBC" is more valuable than an approximation.
 
+**Eight lines are marked `[MANDATORY]`.** They are the eight figures without which
+we physically cannot turn a price into a delivered cost, and therefore cannot
+compare your offer with any other. They are listed together at the top of the
+Summary Sheet in Section 0, with the exact format we need and with an explanation
+of what happens if they are left blank. Three of them (bottle weight, case
+configuration, pallet configuration) are pure packaging data that your production
+or logistics colleague can normally supply in a few minutes from an existing
+specification sheet — please do involve them before replying.
+
 **We are evaluating two business models in parallel and have no preference between
 them at this stage:**
 
@@ -202,17 +211,54 @@ This one-page table is what we compare across suppliers. Sections 1–8 below as
 the same information in more detail; if the two ever disagree, **this table governs**.
 Please fill every row. Use `N/A` if it does not apply and `TBC` if it is not yet known.
 
+> ## ⚠ EIGHT ROWS MARKED `[MANDATORY]` CANNOT BE LEFT BLANK
+>
+> Rows **S5, S7, S8, S9, S23, S24, S26, S27** are marked `[MANDATORY]`.
+> We are not asking these out of curiosity: without them we physically cannot
+> convert your price into a landed cost, and your offer therefore cannot be
+> compared with any other offer. Please read the three rules below before you start.
+>
+> **Rule 1 — the format column is binding.** Each mandatory row states the unit and
+> the form of the answer. An answer that does not match the stated format counts as
+> a blank answer.
+>
+> **Rule 2 — the following words are not answers** in a mandatory row, and we will
+> come back to you if we see them:
+> *approximately · around · circa · standard · usually · typically · varies ·
+> depends · upon request · see attached spec (with nothing attached) ·
+> yes / possible (with no figure, unit or amount) · no problem.*
+> A figure without its unit is also a blank answer ("400" is not a weight).
+>
+> **Rule 3 — "NO" and "N/A" are complete answers; silence is not.**
+> If you cannot issue a preferential origin document, if you cannot apply a
+> Turkish back label, or if you have never exported to Türkiye — please say so
+> plainly. That is useful information and it does **not** count against you.
+> `TBC` is also acceptable and honest, but it will trigger one follow-up e-mail.
+>
+> **What happens if a mandatory row stays empty after our single follow-up:**
+> - **S7, S8, S9** (bottle weight, case, pallet): we cannot calculate how many
+>   bottles fit in a container, so we cannot calculate freight per bottle, so we
+>   cannot convert your EXW/FOB price into a delivered cost. **Your offer will not
+>   enter the price comparison.** This is the one outcome we would most like to avoid.
+> - **S27** (origin document): we will have to assume that no preferential origin
+>   proof will be available for any shipment. That assumption **reduces the price we
+>   are able to pay**, so it is in your interest to answer it precisely.
+> - **S5, S23, S24, S26**: your offer stays in the comparison, but it is flagged as
+>   unverified on product specification, certification, market experience or
+>   labelling respectively, and it will rank behind complete offers for the first
+>   (pilot) shipment.
+
 | # | Field | Unit / format | Your answer | Detail question |
 |---|---|---|---|---|
 | S1 | Winery / supplier legal name | text | | 8.1 |
 | S2 | Product name / reference quoted | text | | 1.1 |
 | S3 | Grape variety or blend | % by variety | | 1.2 |
 | S4 | Vintage quoted | year | | 1.3 |
-| S5 | ABV | % vol | | 1.4 |
-| S6 | Bottle size | ml | | 1.7 |
-| S7 | Empty bottle weight | grams | | 1.14 |
-| S8 | Case configuration | bottles/case; L×W×H cm; gross kg | | 2.1, 2.2, 2.3 |
-| S9 | Pallet configuration | cases/pallet; pallet type; gross kg; height cm | | 2.5, 2.6, 2.7 |
+| **S5** | **ABV** `[MANDATORY]` | **`__ , _ % vol`** — one decimal, **for the vintage quoted**; a separate line per vintage if you quote more than one. Add: *"this is the figure that will be printed on the label: YES / NO"*. A range is accepted **only** if both ends are given **and** the upper end is stated as the contractual maximum | | 1.4 |
+| **S6** | Bottle size | ml | | 1.7 |
+| **S7** | **Bottle weight and shape** `[MANDATORY]` | (a) empty glass weight **`___ g`** (+ tolerance ± g), (b) filled gross weight **`___ g`** (wine + glass + closure + capsule + labels), (c) bottle shape (Bordeaux / Burgundy / Alsace / custom mould), (d) max body diameter **`___ mm`**, (e) total height **`___ mm`**. **All five.** | | 1.14, 1.15, 1.17 |
+| **S8** | **Case configuration** `[MANDATORY]` | (a) bottles/case, (b) **external** case dimensions `L × W × H` **with the unit written** (mm or cm — internal dimensions are not accepted), (c) gross weight `___ kg`, (d) net weight `___ kg`, (e) cases per layer × layers, (f) dividers/inserts yes/no | | 2.1, 2.2, 2.3, 2.4 |
+| **S9** | **Pallet configuration** `[MANDATORY]` | (a) pallet type (EUR 800×1200 / 1000×1200 / GMA / other → give mm), (b) **ISPM-15 heat treated: YES/NO**, (c) cases/pallet, (d) bottles/pallet, (e) number of layers, (f) loaded pallet gross `___ kg`, (g) **total loaded height `___ mm` (pallet included)**, (h) pallets **and** cases per 20' DV and per 40' HC, (i) floor-loading possible YES/NO + cases per 20' DV | | 2.5, 2.6, 2.7, 2.8, 2.9 |
 | S10 | MOQ | (a) bottles per SKU, (b) containers per shipment | | 3.6 |
 | S11 | **EXW price per bottle** | currency + amount + EXW &lt;place&gt; | | 3.1 |
 | S12 | **FOB price per bottle** | currency + amount + FOB &lt;named port&gt; | | 3.2 |
@@ -226,17 +272,24 @@ Please fill every row. Use `N/A` if it does not apply and `TBC` if it is not yet
 | S20 | Carton / case cost | per bottle or per case; state currency; **state whether already included in S11** | | 3.18 |
 | S21 | Samples | can send YES/NO; number of bottles; cost; days | | 7.1–7.3 |
 | S22 | Annual capacity available to us | bottles/year | | 3.12, 8.3 |
-| S23 | Certificates you can issue | list (analysis, origin proof type, health/free sale, BRCGS/IFS/ISO) | | 6.1–6.5, 6.10 |
-| S24 | Have you exported to Türkiye before? | YES / NO + years + volume | | 6.6 |
+| **S23** | **Certificate set** `[MANDATORY]` *(origin documents moved to S27)* | (a) analysis certificate — **tick the parameters actually reported**: ☐ ABV ☐ total acidity ☐ volatile acidity ☐ residual sugar ☐ total SO₂ ☐ methanol ☐ density ☐ dry extract ☐ other ___ ; (b) **name of the laboratory** + accreditation (ISO 17025 / OIV): ___ ; (c) issued **per batch or per product**: BATCH / PRODUCT; (d) health / free sale certificate: YES/NO + exact document name; (e) food safety: ☐ BRCGS ☐ IFS ☐ ISO 22000 ☐ HACCP ☐ none → **attach a copy** (a ticked box with no copy attached is an incomplete answer); (f) batch traceability bottle lot → tank → harvest: YES/NO | | 6.3, 6.4, 6.5, 6.10, 6.11 |
+| **S24** | **Have you exported to Türkiye before?** `[MANDATORY]` | **YES / NO.** If YES: importer name, years `<yyyy>–<yyyy>`, annual volume (bottles or litres). If NO: *"any additional condition you would require for a first shipment to Türkiye?"* YES/NO + explanation. **"We export to many countries" is not an answer to this question.** | | 6.6, 5.2, 5.3 |
 | S25 | **Quotation type and validity** | INDICATIVE or FIRM OFFER, valid until &lt;date&gt; | | 3.4, 3.5 |
+| **S26** | **Label adaptation capability** `[MANDATORY]` *(this is about capability, not cost — cost is S19)* | Five YES/NO answers, each with the figure asked for: (a) can you **apply a Turkish-language back label at your own facility** from artwork we supply? YES/NO → if YES: cost per bottle (currency) + days added to lead time; (b) can you provide **at least 18 cm² of printable area** on the back label? YES/NO + current label size `mm × mm`; (c) can you leave a **blank area for an importer-applied strip/stamp**? YES/NO + area `mm × mm` + its position on the bottle; (d) can you adapt the label to the importing country's mandatory statements (allergens, importer details, health warning)? YES/NO + revision turnaround in days; (e) can you print the ABV at a **character height of at least 3 mm**? YES/NO | | 4.6, 6.8, 6.9 |
+| **S27** | **Origin document — capability AND commitment** `[MANDATORY]` | (a) **which document can you issue — write the document name, "yes" is not an answer**: ☐ EUR.1 movement certificate ☐ invoice declaration ☐ REX statement on origin ☐ A.TR ☐ non-preferential certificate of origin only ☐ none; (b) will you **commit contractually to issuing it for every shipment**? YES/NO; (c) are you an "approved exporter", and will you switch to EUR.1 if the invoice-declaration value threshold is exceeded? YES/NO; (d) is the wine **wholly produced and bottled in the country of origin**, or does it contain imported bulk wine? NONE / YES → country + %; (e) **from which country's port will the shipment leave**, and will it be consolidated in a third country? port + country / no consolidation; (f) would you accept a **price-adjustment clause** if the document cannot be issued or is rejected at import? YES/NO | | 6.1, 6.2, 6.13 |
 
-> **Two things we must ask you to be strict about, because they decide whether your
+> **Three things we must ask you to be strict about, because they decide whether your
 > offer can be compared at all:**
 > 1. **S11 and S12 are different prices.** Please do not answer only "our price is X".
 >    An EXW price must name the place of delivery; an FOB price must name the port.
 > 2. **S19 and S20:** please tell us whether label and carton are *inside* the EXW
 >    price or charged separately. A price that silently excludes dry goods is not
 >    comparable with one that includes them.
+> 3. **S7, S8 and S9 must be internally consistent.** We cross-check them:
+>    *(filled bottle weight × bottles per case) + packaging ≈ case gross weight*, and
+>    *(case gross weight × cases per pallet) + pallet ≈ loaded pallet gross weight*.
+>    If they do not reconcile we will come back to you rather than guess, so please
+>    take the figures from your actual packaging specification sheet.
 
 ---
 
@@ -247,7 +300,7 @@ Please fill every row. Use `N/A` if it does not apply and `TBC` if it is not yet
 | 1.1 | Product name / internal reference | |
 | 1.2 | Grape variety or exact blend composition (% by variety) | |
 | 1.3 | Vintage(s) currently available and approximate stock per vintage | |
-| 1.4 | **ABV (% vol)** — please state the exact figure that will appear on the label | |
+| **1.4** | **`[MANDATORY]` ABV (% vol)** — the exact figure that will appear on the label, to one decimal, **for the vintage you are quoting**. If you quote more than one vintage, give one figure per vintage. If you can only give a range, give both ends **and** state the upper end as the contractual maximum. *"Approximately", "standard" and "depends on the vintage" are not answers.* | |
 | 1.5 | Residual sugar (g/L) | |
 | 1.6 | Total acidity (g/L) and pH | |
 | 1.7 | Bottle volume — we require **750 ml**. Confirm availability. | |
@@ -257,23 +310,36 @@ Please fill every row. Use `N/A` if it does not apply and `TBC` if it is not yet
 | 1.11 | Is the wine fined with animal-derived agents? (vegan status) | |
 | 1.12 | Recommended shelf life from bottling (months) | |
 | 1.13 | Is the wine produced from your own vineyards, purchased grapes, purchased must, or purchased finished wine? | |
-| 1.14 | **Empty bottle weight (g)** — weight of the glass alone, as stated by your glass supplier | |
-| 1.15 | **Filled bottle gross weight (g)** — wine + glass + closure + capsule + labels | |
+| **1.14** | **`[MANDATORY]` Empty bottle weight (g)** — weight of the glass alone, as stated by your glass supplier, **with tolerance (± g)**. *"Lightweight bottle" or "standard Bordeaux" without a figure is not an answer.* | |
+| **1.15** | **`[MANDATORY]` Filled bottle gross weight (g)** — wine + glass + closure + capsule + labels. Please state which components are included if your figure differs. | |
 | 1.16 | Do you offer a lighter-weight bottle for the same wine? If yes, state its weight (g) and the price difference per bottle. | |
+| **1.17** | **`[MANDATORY]` Bottle shape and dimensions** — (a) shape: Bordeaux / Burgundy / Alsace / custom mould; (b) maximum body diameter (mm); (c) total bottle height (mm). *We ask because bottle shape alone changes how many bottles fit into a container by up to 38%, which changes the freight cost per bottle — and therefore the price we can pay you.* | |
 
-### 2. Packaging and logistics data — **mandatory for container and freight calculation**
+### 2. Packaging and logistics data — **`[MANDATORY]` BLOCK: 2.1–2.9 cannot be left blank**
+
+> **Why this whole block is mandatory.** Everything we can pay you depends on the
+> delivered cost per bottle, and the delivered cost per bottle depends on how many
+> bottles fit into one container. We cannot estimate that: the same 750 ml wine
+> occupies between 0.00223 m³ and 0.00360 m³ per bottle depending on bottle shape
+> and case format — a **38% swing** in container capacity, and therefore in freight
+> per bottle. If 2.1–2.9 come back empty, we are not able to compare your price with
+> anyone else's, however good your price is.
+>
+> The fastest way to answer this block is to **attach your packaging specification
+> sheet** (case and pallet drawing) *and* still fill in the table, so that we know
+> which figures you consider binding.
 
 | # | Question | Your answer |
 |---|---|---|
-| 2.1 | Bottles per case | |
-| 2.2 | Case **gross** weight (kg) and net weight (kg) | |
-| 2.3 | Case external dimensions L × W × H (cm) | |
-| 2.4 | Cases per layer × number of layers per pallet | |
-| 2.5 | **Cases per pallet** and bottles per pallet | |
-| 2.6 | Pallet type (EUR 120×80 / industrial 120×100 / other) and whether heat-treated (ISPM-15) | |
-| 2.7 | Pallet **gross** weight (kg) and total pallet height (cm) | |
-| 2.8 | Maximum number of cases you load into a **20' DV** and into a **40' HC** | |
-| 2.9 | Can you load floor-loaded (non-palletised)? If yes, cases per 20' DV. | |
+| **2.1** | **`[MANDATORY]` Bottles per case** — and can this be changed (6 ↔ 12)? YES/NO | |
+| **2.2** | **`[MANDATORY]` Case gross weight (kg) AND net weight (kg)** — both figures; a single unlabelled weight is not accepted | |
+| **2.3** | **`[MANDATORY]` Case EXTERNAL dimensions L × W × H — with the unit written (mm or cm).** Internal dimensions are not accepted. All three dimensions required. | |
+| **2.4** | **`[MANDATORY]` Cases per layer × number of layers per pallet**; are dividers/inserts used? YES/NO | |
+| **2.5** | **`[MANDATORY]` Cases per pallet AND bottles per pallet** | |
+| **2.6** | **`[MANDATORY]` Pallet type** (EUR 800×1200 / industrial 1000×1200 / GMA / other → give mm) **and whether heat-treated (ISPM-15): YES/NO**, and whether the stamp is present | |
+| **2.7** | **`[MANDATORY]` Loaded pallet gross weight (kg) and total loaded height including the pallet (mm or cm — state the unit)** | |
+| **2.8** | **`[MANDATORY]` How many pallets AND how many cases you load into a 20' DV, and into a 40' HC** — from your own loading experience | |
+| **2.9** | **`[MANDATORY]` Can you load floor-loaded (non-palletised)? YES/NO.** If YES, cases per 20' DV. | |
 | 2.10 | Nearest loading port / your usual port of departure | |
 | 2.11 | Distance from your winery to that port (km) | |
 | 2.12 | Do you offer temperature-controlled (reefer) or thermal-liner loading, and at what surcharge? | |
@@ -316,7 +382,7 @@ Please fill every row. Use `N/A` if it does not apply and `TBC` if it is not yet
 | 4.3 | Is the private label MOQ different from your standard MOQ? By how much? | |
 | 4.4 | Can you adjust the blend / style to a target sensory profile? What is the minimum batch for a bespoke blend? | |
 | 4.5 | Do you print and apply labels in-house, or through a third party? | |
-| 4.6 | Can you apply a **Turkish-language back label** at your facility, using artwork we supply? | |
+| **4.6** | **`[MANDATORY]` Can you apply a Turkish-language back label at your facility, using artwork we supply? YES / NO.** If YES: cost per bottle (state currency) and how many days it adds to the lead time. If NO: say so plainly — we will then apply it in Türkiye and we need to know that now, not later. *(This is the capability question. The cost of the label itself is 4.13.)* | |
 | 4.7 | Number of label revisions / mock-ups included in the price, and how many working days each revision cycle takes | |
 | 4.8 | Custom bottle mould, capsule colour, embossing or screen printing — availability and MOQ impact | |
 | 4.9 | Who owns the brand, the artwork and the blend recipe? Please state explicitly. | |
@@ -346,22 +412,32 @@ Please fill every row. Use `N/A` if it does not apply and `TBC` if it is not yet
 
 | # | Question | Your answer |
 |---|---|---|
-| 6.1 | Can you issue a **preferential origin proof** for Türkiye — EUR.1 movement certificate, invoice declaration, REX statement on origin, or A.TR? Please state exactly which. | |
+| **6.1** | **`[MANDATORY]` Which preferential origin proof can you issue for Türkiye — EUR.1 movement certificate, invoice declaration, REX statement on origin, or A.TR? Please write the document name.** "Yes", "we provide all documents" and "our customs agent handles it" are **not** answers. If none of these is available for your country, please answer **"none"** — that is a complete and perfectly acceptable answer. | |
 | 6.2 | Can you issue a non-preferential **Certificate of Origin** (chamber of commerce certified)? | |
-| 6.3 | Analysis certificate — which parameters are included (ABV, total/volatile acidity, RS, total SO₂, methanol, density, dry extract)? | |
-| 6.4 | Which laboratory issues it, and is it accredited (ISO 17025 / OIV method)? | |
-| 6.5 | Can you provide a **health / free sale certificate** issued or endorsed by your national authority? | |
-| 6.6 | **Have you exported to Türkiye before?** If yes: which importer, which years, what annual volume? | |
+| **6.3** | **`[MANDATORY]` Analysis certificate — tick the parameters actually reported** (ABV, total acidity, volatile acidity, residual sugar, total SO₂, methanol, density, dry extract, other). A statement that "an analysis report is provided" without the parameter list is not an answer. Is it issued **per batch** or **per product**? | |
+| **6.4** | **`[MANDATORY]` Which laboratory issues it — name the laboratory — and is it accredited (ISO 17025 / OIV method)?** | |
+| **6.5** | **`[MANDATORY]` Can you provide a health / free sale certificate issued or endorsed by your national authority? YES/NO + the exact document name.** | |
+| **6.6** | **`[MANDATORY]` Have you exported to Türkiye before? YES / NO.** If YES: which importer, which years, what annual volume. If NO: do you have any additional condition for a first shipment to Türkiye? **"We export to many countries" does not answer this question. "No" does, and it does not count against you.** | |
 | 6.7 | Which export markets do you currently serve, and what is your total annual export volume? | |
-| 6.8 | Can you adapt the label to the importing country's legal requirements (mandatory statements, allergen declaration, importer details, health warnings)? | |
-| 6.9 | Are you able to leave a defined blank area on the label or bottle for an importer-applied stamp/strip? | |
-| 6.10 | Food safety / quality certifications held (BRCGS, IFS, ISO 22000, HACCP) — please attach certificates | |
-| 6.11 | Traceability: can you supply batch-level records linking bottle lot → tank → harvest? | |
+| **6.8** | **`[MANDATORY]` Can you adapt the label to the importing country's legal requirements (mandatory statements, allergen declaration, importer details, health warnings)? YES/NO + how many days a revision cycle takes.** Two specific points we must confirm now: (a) can the back label carry **at least 18 cm² of printable area**? YES/NO + your current label size in mm × mm; (b) can the ABV be printed at a **character height of at least 3 mm**? YES/NO | |
+| **6.9** | **`[MANDATORY]` Can you leave a defined blank area on the label or bottle for an importer-applied strip/stamp? YES/NO + the area in mm × mm + its position on the bottle.** This strip is applied in Türkiye, not by you — but the physical space has to exist on the bottle you ship. | |
+| **6.10** | **`[MANDATORY]` Food safety / quality certifications held (BRCGS, IFS, ISO 22000, HACCP) — tick and ATTACH a copy with its expiry date.** A ticked box with no attachment is an incomplete answer. If you hold none, answer "none". | |
+| **6.11** | **`[MANDATORY]` Traceability: can you supply batch-level records linking bottle lot → tank → harvest? YES/NO** | |
 | 6.12 | Do you hold liability insurance covering exported product? | |
+| **6.13** | **`[MANDATORY]` Origin commitment.** Four separate answers: (a) will you **commit contractually to issuing the document named in 6.1 for every shipment**? YES/NO; (b) are you an **"approved exporter"**, and will you switch to a EUR.1 if the invoice-declaration value threshold is exceeded? YES/NO; (c) is the wine **wholly produced and bottled in the country of origin**, or does it contain **imported bulk wine**? NONE / YES → state country and %; (d) **from which country's port will the shipment physically leave**, and will it be consolidated in a third country on the way? Port + country / no consolidation. | |
+| **6.14** | Would you accept a **price-adjustment clause** in the contract for the case where the origin document cannot be issued, or is rejected at import? YES / NO + on what terms | |
 
 > **Note to supplier:** we ask about origin documentation because the importing
 > country's treatment of the consignment depends on it. We are **not** asking you to
-> advise on Turkish duties or taxes — only to confirm which documents you can issue.
+> advise on Turkish duties or taxes — only to confirm which documents you can issue
+> and whether you will commit to issuing them. To be transparent about why we press
+> on this: whether a valid origin document accompanies each shipment changes the
+> maximum price we are able to pay you by **around 12%**. It is therefore in your
+> commercial interest, not only ours, that 6.1 and 6.13 are answered precisely.
+> If your country has no preferential arrangement with Türkiye, "none" is the right
+> answer and costs you nothing — but please note that in that case no premium can be
+> justified for "handling the paperwork", because there is no preferential document
+> to handle.
 
 ### 7. Samples
 
@@ -416,7 +492,39 @@ Kind regards,
 
 Teklif geldiğinde, `tedarikci-havuzu.csv`'ye işlenmeden **önce** kontrol et:
 
-- [ ] **Summary Sheet (S1–S25) dolu mu?** 25 satırın kaçı boş kaldı? Boş kalan her
+### 2.0 ZORUNLU ALAN KAPISI — ÖNCE BU (M1…M8)
+
+Bu kapı geçilmeden aşağıdaki genel liste işletilmez. Kural seti:
+`50-sourcing/rfq-zorunlu-alanlar.md` §4.
+
+- [ ] **M1 (S5) ABV** — tek rakam + birim + hasat yılı var mı? Aralıksa üst uç
+      sözleşme azamisi olarak beyan edilmiş mi?
+- [ ] **M2 (S7) şişe ağırlığı** — boş cam **ve** dolu brüt **ve** form/çap/yükseklik,
+      beşi birden var mı?
+- [ ] **M3 (S8) koli** — şişe/koli + **dış** ölçü (birimli, 3 boyut) + brüt **ve** net kg?
+- [ ] **M4 (S9) palet** — palet tipi + ISPM-15 + koli/palet + yüklü brüt kg +
+      **toplam yükseklik** + 20'DV/40'HC adetleri?
+- [ ] **M5 (S26) etiket kabiliyeti** — 5 alt sorunun her biri EVET/HAYIR **ve**
+      istenen ölçü/bedel/süre ile mi?
+- [ ] **M6 (S27) menşe belgesi** — **belge adı** var mı ("evet" yeterli değil)?
+      Her sevkiyat taahhüdü, dökme bileşen, çıkış limanı ülkesi cevaplı mı?
+- [ ] **M7 (S23) sertifika seti** — analiz **parametre listesi** + laboratuvar adı +
+      parti/ürün ayrımı + gıda güvenliği belgesinin **kopyası ekli** mi?
+- [ ] **M8 (S24) Türkiye geçmişi** — EVET/HAYIR net mi? EVET ise ithalatçı/yıl/hacim var mı?
+- [ ] **Çapraz tutarlılık:** (dolu şişe g × şişe/koli) + ambalaj ≈ koli brüt kg?
+      (koli brüt × koli/palet) + palet ≈ yüklü palet brüt kg? **Tutmuyorsa sayı
+      kullanılmaz**, `99-ops/celiskiler.md`'ye taşınır ve üreticiye sorulur.
+- [ ] **Reddedilen kalıp taraması:** zorunlu alanlarda *approximately / standard /
+      usually / varies / upon request / yes* (rakamsız) geçiyor mu? Geçiyorsa
+      o alan **boş sayılır**.
+- [ ] Eksik varsa → **tek** takip e-postası, **7 takvim günü**. Sonrasında alan bazında
+      sonuç uygulanır (`rfq-zorunlu-alanlar.md` §4.2): M2/M3/M4 → **değerlendirme dışı**;
+      M6 → **`DOC_FAIL` cezalı**; M1/M5/M7/M8 → etiketlenir, elenmez.
+- [ ] **Hiçbir zorunlu alan bizim tarafımızdan tahminle doldurulmadı** (`CLAUDE.md` §1.1).
+
+### 2.1 GENEL KONTROL LİSTESİ
+
+- [ ] **Summary Sheet (S1–S27) dolu mu?** 27 satırın kaçı boş kaldı? Boş kalan her
       satır `UNKNOWN`'dır ve takip e-postasına girer.
 - [ ] **Summary Sheet ile Bölüm 1–8 çelişiyor mu?** Çelişiyorsa sayı **kullanılmaz**;
       `99-ops/celiskiler.md`'ye taşınır ve üreticiye sorulur. (Şablon "S bloğu esastır"
@@ -461,14 +569,30 @@ Dear <NAME>,
 Thank you for your reply. To be able to compare your offer with the others on a
 like-for-like basis, we still need the following:
 
-- <MISSING ITEM 1 — RFQ question number>
-- <MISSING ITEM 2 — RFQ question number>
+**Mandatory fields still outstanding** *(Summary Sheet rows)*:
+
+- <S-ROW — FIELD — the exact format we need>
+- <S-ROW — FIELD — the exact format we need>
+
+Other outstanding items:
+
+- <MISSING ITEM — RFQ question number>
 
 Please note we would rather record "not available" than an estimate — an
-approximate figure that later changes is worse for us than a blank.
+approximate figure that later changes is worse for us than a blank. Equally,
+"no" is a complete answer wherever the question is a yes/no one.
+
+We would be grateful for these by **<DATE — 7 calendar days>**. After that date we
+will have to evaluate your offer with those fields recorded as unknown, which in
+the case of the packaging figures (bottle weight, case and pallet configuration)
+means we cannot calculate a delivered cost for your product at all.
 
 Kind regards,
 <NAME>
+
+> **İç not (gönderilmez):** Bu takip **bir kere** gönderilir. İkinci takip,
+> tedarikçiyi fiyat yerine süreç konusunda eğitmeye başlar ve pazarlık
+> pozisyonunu zayıflatır (`rfq-zorunlu-alanlar.md` §4.3/2).
 
 ---
 
@@ -478,4 +602,5 @@ Kind regards,
 |---|---|---|---|
 | v1.0 | 2026-08-09 (TUR 0) | İskelet oluşturuldu | kurulum |
 | v2.0 | 2026-08-09 (TUR 1) | Gönderilebilir profesyonel taslağa dönüştürüldü; soru→CSV eşlemesi, ambalaj/palet bloğu, Model A/B ayrımı, IP sahipliği, takip şablonu eklendi | `global-sourcing-kasifi` |
+| **v2.2** | **2026-08-10 (TUR 3A)** | **8 teknik alan zorunlu cevap alanına çevrildi (M1…M8):** ABV (S5), şişe ağırlığı+form (S7), koli konfigürasyonu (S8), palet konfigürasyonu (S9), sertifika seti (S23), Türkiye ihracat geçmişi (S24), **etiket uyarlama kabiliyeti (S26 — YENİ)**, **menşe belgesi kabiliyet+taahhüt (S27 — YENİ)**. SUMMARY SHEET S1–S25 → **S1–S27**; paralel liste yaratılmadı. **Eklendi:** §0 kural 13/14/15, `MANDATORY FIELDS` üretici kutusu (kabul formatı + reddedilen kelime listesi + cevapsızlık sonucu), 1.17 (şişe formu/çap/yükseklik), 6.13 (menşe taahhüdü OD-1…OD-4), 6.14 (fiyat düzeltme maddesi / OD-5), §2.0 zorunlu alan kapısı + çapraz tutarlılık kontrolü, takip e-postasına 7 gün süre ve zorunlu alan bloğu. **Genişletildi:** 1.4, 1.14, 1.15, 2.1–2.9, 4.6, 6.1, 6.3–6.6, 6.8–6.11 kabul formatı ile. Kural seti: `50-sourcing/rfq-zorunlu-alanlar.md`. Cevapsızlık/eleme kuralı **başkan onayı bekliyor** (`T-884`) | `global-sourcing-kasifi` |
 | v2.1 | 2026-08-10 (TUR 1.5) | 25 zorunlu alan kontrolü yapıldı. **Eklendi:** SUMMARY SHEET (S1–S25), 1.14/1.15/1.16 şişe ağırlığı, 3.16 Incoterms® 2020 kabiliyeti, 3.17 lead time kırılımı (üretim süresi ayrı), 3.18 kuru malzeme birim maliyeti (**karton + etiket**, EXW'ye dahil mi sorusu ile), 3.19 koli konfigürasyonu değişim etkisi, 3.20 evrak ücretleri, 4.13 private label etiket maliyeti (tek seferlik + tekrarlayan), 4.14 markalı karton maliyeti, 4.15 klişe iptal ücreti. **Genişletildi:** soru→CSV+YAML eşleme tablosu, cevap değerlendirme kontrol listesi. Denetim: `50-sourcing/rfq-alan-kontrolu.md` | `global-sourcing-kasifi` |
