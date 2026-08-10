@@ -778,3 +778,278 @@ Model A'nın Türkiye'de **yapısal olarak** uygulanamaz olduğunun gösterilmes
 (örneğin distribütörlük sözleşmelerinde ithalatçının markup tavanının bu
 segmentte ekonomiyi imkânsız kıldığının kanıtlanması). O durumda asimetri bir
 yanlılık değil, **doğru bir eleme** olur ve OQ-902 gerekçeli olarak kapanır.
+
+---
+
+# TUR 1.5 AÇIK SORULARI
+
+TUR 1.5 sonunda ana açık soruların durumu:
+
+| id | Durum | Not |
+|---|---|---|
+| **OQ-001** | `PARTIALLY_RESOLVED` (kapanmadı) | Promosyon ayağı `UNKNOWN`; ayrıca KDV ayağı C-551 ile nitelendi. **G3 açılamaz.** |
+| **OQ-002** | `OPEN` — yatırımcı girdisi | `model_target_date` TBD kalır. Yerine `BASE_DATE = 2026-08-10` tanımlandı; BASE_DATE senaryosunda yalnızca 2026-08-10'da yürürlükte olan doğrulanmış mevzuat kullanılır, gelecek ÖTV/kur tahmini yapılmaz. |
+| **OQ-G01** (ithalat KDV'si) | **KAPANDI** | KDVK md.29/1-b + md.30 taraması, T1. |
+
+## gumruk-vergi-uzmani (TUR 1.5)
+
+> Bu dosya TUR 1'deki `acik-sorular-gumruk-vergi-uzmani.md` dosyasının
+> **EKİDİR**, onun yerine geçmez. TUR 1 dosyasına DOKUNULMAMIŞTIR.
+
+---
+
+### KAPANAN SORU
+
+#### ✅ OQ-G01 — İthalatta ödenen KDV indirilebilir mi? — **KAPANDI**
+
+**Cevap: EVET, indirilebilir.**
+KDVK **md.29/1-b** (T1, yürürlük 1985-01-01) + **md.34/1** belge şartı +
+**md.30** tahdidi yasak listesinde alkole ilişkin hüküm **yok**.
+
+| evidence_id | tier | ne kanıtlıyor |
+|---|---|---|
+| `EV-2026-08-10-101` | T1 | md.29/1-b — ithalatta ödenen KDV indirilir |
+| `EV-2026-08-10-102` | T1 | md.34/1 — gümrük makbuzu + defter kaydı şartı |
+| `EV-2026-08-10-103` | T1 | md.30 tam metin — alkole özgü yasak YOK (tahdidi liste) |
+| `EV-2026-08-10-104` | T1 | md.29/2 — devreden KDV **iade edilmez** |
+| `EV-2026-08-10-105` | T1 | md.29/3 — indirim hakkı süresi (VDO yılı + 1 yıl) |
+
+Tam analiz: `30-vergi-gumruk/kdv-ekonomik-maliyet-vs-nakit.md`
+
+**Modele etkisi:** `A1/A2 iki senaryo` zorunluluğu **kalktı**. A1 baz senaryodur;
+KDV'nin ekonomik maliyeti **0,00 TL/şişe**'dir.
+
+---
+
+### YENİ AÇILAN SORULAR
+
+#### OQ-G09 — Fiili KDV vergilendirme dönemi 1 ay mı 3 ay mı? (HIGH)
+
+**Neden kritik:** KDVK md.39/1'in **kanuni varsayılanı 3 aydır**; 1 aylık dönem
+bir Bakanlık tespitine dayanır. Model 1 ay varsayıyor (`ASSUMPTION`).
+3 aylık dönemde ithalat KDV'sinin mahsup gecikmesi **28–59 gün → 28–~118 gün**'e
+çıkar ve `peak_cash_requirement` ciddi biçimde büyür.
+**Bu turda neden çözülemedi:** GİB'in mükellef gruplarını belirleyen tespiti/
+tebliği bulunamadı; GİB sayfaları JS ile render ediliyor.
+**evidence_id:** `EV-2026-08-10-111` (kanun metni, T1) · **Ticket:** `T-152`
+
+---
+
+#### OQ-G10 — KDVGUT III/C ve md.36 CB kararları taranmadı (MEDIUM)
+
+**Neden önemli:** KDVK **md.36** Cumhurbaşkanı'na indirim hakkını kısmen/tamamen
+**kaldırma** yetkisi verir. Şarap için böyle bir karar olup olmadığı
+**aranmamıştır.** Bulunursa OQ-G01'in cevabı tersine döner.
+**Neden düşük olasılık:** md.30'un tahdidi listesiyle sistematik çelişki
+yaratırdı ve sektörde bilinir olurdu. Ama bu bir **argüman**, kanıt değil.
+**evidence_id:** `EV-2026-08-10-114` (`status: UNKNOWN`) · **Ticket:** `T-151`
+
+---
+
+#### OQ-G11 — 149 No.lu VUK Sirküleri'nin tarihi (LOW)
+
+GİB, KDV beyannamesi verme süresini kanuni 24. günden (KDVK md.41/1) **28. güne**
+uzatmıştır. Bu uzatmanın `effective_date`'i doğrulanamadı → `EV-2026-08-10-109`
+`effective_date: UNKNOWN`. Model **muhafazakâr** olan 28'i kullanır; 24/26
+kullanılsaydı gecikme **2–4 gün kısalırdı** (yön lehte, büyüklük ihmal edilebilir).
+
+---
+
+#### OQ-G12 — KVK md.11/1-(ı) %50 oranı yürürlükte değiştirilmiş mi? (LOW)
+
+Alkollü içki **ilan/reklam** giderlerinin %50'si KKEG'dir (T1, `EV-2026-08-10-113`)
+ve KDVK md.30/d uyarınca o kısma ait KDV indirilemez. Cumhurbaşkanı bu oranı
+%0–%100 arası değiştirmeye yetkilidir; yürürlükte bir değiştirme kararı olup
+olmadığı **doğrulanmadı.**
+**Neden düşük:** malın kendisine ait KDV'yi etkilemez; ayrıca alkolde reklamın
+hukuken mümkün olup olmadığı `mevzuat-ruhsat-uzmani` alanıdır ve bu turda
+kapalıdır. Reklam yapılamıyorsa etki **sıfırdır.**
+
+---
+
+### DEVAM EDEN SORULAR (TUR 1'den)
+
+`OQ-G02` (gözetim), `OQ-G03` (KKDF matrahı), `OQ-G04` (antrepo kısmi çekiş),
+`OQ-G05` (menşe ispat belgesi), `OQ-G06` (12 haneli GTİP), `OQ-G07` (damga
+vergisi), `OQ-G08` (model hedef tarihi ÖTV'si) **AÇIK KALMAKTADIR**.
+Bu turun kapsamı dar olduğu için bunlara dokunulmamıştır.
+
+`T-901` (TÜİK Yİ-ÜFE doğrulaması) **ANSWERED / DOĞRULANAMADI** olarak
+kapatılmıştır — sonuç `UNKNOWN`'dır, `RESOLVED` değildir.
+
+---
+
+## mevzuat-ruhsat-uzmani (TUR 1.5)
+
+> `99-ops/acik-sorular.md`'ye konsolide edilmek üzere. Ana dosyaya bu turda
+> **DOKUNULMAMIŞTIR.**
+
+---
+
+### Bu turda AÇILAN / DARALTILAN sorular
+
+| id | Soru | status | Yön (proje açısından) | Kritik mi | Kapanış yolu |
+|---|---|---|---|---|---|
+| **OQ-251** | 2007'den itibaren 4250 m.1/3 ölçüsünü **sıfıra indiren** yürürlükte bir BKK/CBK var mı? | `UNKNOWN` | **LEHİNE** — varsa eşik tamamen kalkar | HAYIR | Farklı ağdan `resmigazete.gov.tr` / `mevzuat.gov.tr` taraması (bu oturumda TLS ile erişilemedi) |
+| **OQ-252** | 4250 m.1/3 c.3'teki "**Tekel Genel Müdürlüğü eliyle** fiyatlandırma/satış/dağıtım" **ticari** işlevinin bugünkü halefi kim? | `UNKNOWN` | **ALEYHİNE** — varsa mekanizma canlanır | HAYIR (senaryolar eşiğin altında) | TADAB'a KEP ile yazılı görüş talebi |
+| **OQ-253** | 4250 m.1/3'teki "**ülke genelinde her satıcıya yerinde teslim**" şartının **fiilî ölçütü** nedir? (kaç gün, hangi coğrafya, minimum sipariş var mı) | `UNKNOWN` | **ALEYHİNE** — doğrudan dağıtım maliyeti | HAYIR (G0 için); **kanal modeli için önemli** | TADAB uygulaması + faal ithalatçı görüşmesi → `kanal-marj-uzmani` |
+| **OQ-254** | 4733 m.8 artık yaptırımının (uyarı → belge iptali) 4250 m.1/3 bağlamında **fiilen uygulandığı** bir örnek var mı? | `UNKNOWN` | **ALEYHİNE** | HAYIR | TADAB "İdari Yaptırımlar ve Teminatlar" arşivi (yıl bazında 4250 İPC listeleri yayımlanıyor) |
+
+---
+
+### Bu turda KAPANAN sorular
+
+| Önceki soru | Yeni durum | Kanıt |
+|---|---|---|
+| "Eşik 1.000.000 mi ve durgun şaraba uygulanıyor mu?" (`T-201` çekirdeği) | **CEVAPLANDI** — uygulanan ölçü en çok 600.000; eşik bir ithalat/dağıtım/bedel eşiği değil, fiyatlandırma serbestisi koşulu | `EV-2026-08-10-201` … `-216` |
+| "Yaptırım mercii ortadan kalktığına göre hüküm uygulanabilir mi?" | **CEVAPLANDI (proje aleyhine)** — 4250'nin uygulanması T1 ile Bakanlığa devredilmiştir; "hüküm ölü" argümanı geçersiz | `EV-2026-08-10-208`, `-210` |
+| "Yetkili Dağıtım Firmaları Listesinden eşik altı ithalatçı tespit edilebilir mi?" | **KAPALI YOL** — TADAB firma bazında hacim yayımlamıyor; Resmî İstatistikler yalnızca yakıt biyoetanolü içeriyor | `EV-2026-08-10-213` |
+
+---
+
+### Bu turda TESPİT EDİLEN ama ARAŞTIRILMAYAN ipucu *(kapsam dışı bırakıldı)*
+
+TADAB sitesinde **"İdari Yaptırımlar ve Teminatlar"** başlıklı bir bölüm
+bulunmaktadır (`https://www.tarimorman.gov.tr/TADAB/Link/140/...`). TUR 1'de
+`teminat` alanı `UNKNOWN` bırakılmıştı (`EV-2026-08-09-229`). **Bu tur dar
+kapsamlı olduğu için bölüm İNCELENMEMİŞTİR ve hakkında hiçbir sonuç
+üretilmemiştir.** Gelecek turda `teminat.*` alanlarının doldurulması için
+birincil aday kaynaktır.
+
+---
+
+## global-sourcing-kasifi (TUR 1.5)
+
+```yaml
+ajan:  global-sourcing-kasifi
+tur:   TUR 1.5 — BLOCKER REMEDIATION (T-902)
+tarih: 2026-08-10
+```
+
+> Parça dosyadır. `99-ops/acik-sorular.md` ana dosyasına başkan birleştirir.
+> Bu ajan ana dosyaya dokunmadı.
+
+---
+
+### Yeni açık soru
+
+| # | Ne bilinmiyor | Neden bu turda çözülmedi | Kritik mi | Nasıl bulunabilir |
+|---|---|---|---|---|
+| **OQ-451** | **OIV ihracat birim değeri serisinin gerçek katmanı nedir?** (`tedarikci.yaml → ihracat_ort_birim_degeri_EUR_per_litre`) TUR 1'de L1 (FOB) varsayılmıştı; T-902 ile bu iddia geri çekildi ve katman `UNKNOWN` yapıldı. | TUR 1.5 bir **düzeltme turudur**, araştırma turu değildir; yeni kaynak araması bu turda açıkça yasaklandı. | **MEDIUM** — modele fiyat girdisi olarak girmiyor (çit var), ama ülke sıralamasını kaba düzeyde etkiliyor | OIV'in "export value" tanımının birincil kaynaktan (OIV metodoloji notu) okunması. ~1 gün. |
+
+**Neden CRITICAL değil:** bu seri `SENSITIVITY_BOUNDS_ONLY` çitinin arkasındadır ve
+`kullanim_yasagi` bloğu onu L1 girdisi olarak kullanmayı açıkça yasaklar. Katmanı
+bilinmese bile model yanlış bir sayı okumaz — sadece bu seriden çıkarım yapamaz.
+
+**Neden LOW da değil:** eğer serinin gerçekten FOB olduğu doğrulanırsa, L1 > L2
+tersliği bir etiket sorunu olmaktan çıkıp **veri sorununa** dönüşür ve o zaman ya
+Comtrade birim yorumu (bkz. TUR 1 raporu §9.1) ya da OIV türetmesi hatalıdır.
+Yani bu soru, iki farklı kaynağın güvenilirliğini test eden bir düğümdür.
+
+---
+
+### TUR 1'den devreden ve bu turda DEĞİŞMEYEN açık sorular
+
+`OQ-401` … `OQ-415` (bkz. `99-ops/_parts/acik-sorular-global-sourcing-kasifi.md`)
+**hiçbiri kapanmamıştır.** Özellikle:
+
+- `OQ-401` (gerçek EXW/FOB — **CRITICAL**) — bu turda üreticiye temas yasaktı.
+- `OQ-402` (gerçek MOQ yapısı — **CRITICAL**) — aynı.
+- `OQ-403` (menşe ispat belgesi — **CRITICAL**) — `T-401`'e bağlı.
+
+**T-902'nin kapanması bu üç kritik UNKNOWN'ı kapatmaz.** Katman etiketinin
+düzeltilmesi bir kanıt kalitesi iyileştirmesidir, bir fiyat bulgusu değildir.
+
+---
+
+### Bu turda yeni ÇELİŞKİ (`C-4xx`) açılMAdı — gerekçe
+
+L1 > L2 tersliği ilk bakışta bir `CONFLICT` gibi görünür, ama değildir:
+
+- `CONFLICT` = **iki kaynak aynı iddia hakkında çelişiyor** (CLAUDE.md §1.13).
+- Burada OIV ile Comtrade **aynı iddiada bulunmuyor**: biri ülkelerin dünyaya
+  ihracatını, diğeri Türkiye'nin ithalatını ölçüyor. Çelişen kaynaklar değil,
+  **bu ajanın iki seriye aynı ölçeği atfeden etiketiydi** — ve o etiket geri çekildi.
+
+Terslik yine de kaydedilmiştir: `EV-2026-08-10-401` ve
+`tedarikci.yaml → karsilastirilamazlik_kaniti`. Sessizce geçilmemiştir.
+
+**Ne zaman gerçek bir çelişkiye dönüşür:** `OQ-451` cevaplanır ve OIV serisinin
+gerçekten FOB olduğu doğrulanırsa. O noktada iki T3 kaynak aynı ölçekte çelişiyor
+demektir ve bir `C-` numarası hak eder.
+
+---
+
+## turkiye-pazar-kasifi (TUR 1.5)
+
+> `99-ops/acik-sorular.md`'ye **merge edilmek üzere** hazırlanmıştır.
+> Ana dosyaya bu ajan tarafından DOKUNULMAMIŞTIR.
+
+---
+
+### OQ-001 — durum güncellemesi (TUR 1.5)
+
+**`PARTIALLY_RESOLVED` OLARAK KALIR. KAPANMADI.**
+
+| Ayak | TUR 1 | TUR 1.5 |
+|---|---|---|
+| KDV dahil mi? | KAPANDI — KDV DAHİL | **KAPALI (korundu)** — ama `C-551` / `T-551` ile *nitelendi*: gerekçe artık "çiftli gösterim yoktur" olamaz |
+| Tüketici fiyatı mı / cash&carry mi? | KAPANDI — ikisi de | KAPALI (değişmedi) |
+| Etiketteki ikinci sayı | KAPANDI — **birim (litre) fiyatı** | KAPALI (değişmedi) |
+| Katman | `L8_METRO_CASH_CARRY` | KAPALI (başkan onaylı) |
+| **Promosyon mu, normal mi?** | **UNKNOWN** | **UNKNOWN — 8 masabaşı yolu denendi, hepsi kapalı** (`EV-2026-08-10-504`) |
+| Zincir market gerçek L8'i | UNKNOWN | UNKNOWN (araştırılmadı — kapsam dışı) |
+| Şarap reyonu fiziksel etiketi | GÖRÜLMEDİ | GÖRÜLMEDİ |
+
+**OQ-001'i kapatan tek şey değişmedi ve fizikseldir:**
+şarap reyonundaki etiketin küçük puntolu satırları okunacak fotoğrafı +
+2–4 hafta arayla ikinci fiyat gözlemi.
+
+---
+
+### OQ-551 — Metro Türkiye'nin şarap assortman büyüklüğü (DOĞRULANMADI)
+
+```yaml
+oq_id:        OQ-551
+sorumlu:      turkiye-pazar-kasifi
+tur:          TUR 1.5 (yan bulgu)
+durum:        OPEN
+impact:       MEDIUM
+```
+
+TUR 1.5'te `T-504` araştırması sırasında bir web araması özetinde
+*"Metro Türkiye'de üzümden elde edilen 502 çeşit içecek var; 342 yerli,
+160 yabancı"* biçiminde bir ifadeye rastlandı.
+
+- **Birincil kaynağa ULAŞILAMADI.** Hangi Metro yayınından/basın bülteninden
+  geldiği doğrulanamadı.
+- **Kanıt kartı AÇILMADI**, çünkü doğrulanamayan bir sayı için kart açmak
+  onu meşrulaştırır.
+- **MODELE GİREMEZ.**
+
+Neden yine de kaydediliyor: doğruysa, Metro'nun şarap reyonunda **160 ithal
+SKU** olduğu anlamına gelir; bu, benchmark'ın "tek başına duran bir ürün"
+değil, geniş bir ithal assortmanın parçası olduğunu gösterir ve
+`ithal_sku_400_800_uzman_kanal = 0` bulgusunun **kanal spesifik** olduğunu
+kuvvetle destekler. TUR 2'de fiziksel mağaza turunda **sayılarak**
+doğrulanmalıdır.
+
+---
+
+### Devam eden UNKNOWN'lar (TUR 1'den, TUR 1.5'te DEĞİŞMEDİ)
+
+Bu tur **dar kapsamlıydı**; aşağıdakiler araştırılmadı ve `pazar.yaml`'da
+`null` + `UNKNOWN` olarak durmaktadır:
+
+| # | Alan | impact |
+|---|---|---|
+| 1 | `l8_chain_retail.deger_try` — zincir market gerçek tüketici raf fiyatı | HIGH |
+| 2 | `pazar_hacmi.*` — Türkiye şarap ithalat hacmi / menşe kırılımı / trend | HIGH |
+| 3 | `ithalatci_haritasi.*` — 1 doğrulanmış ithalatçı bir harita değildir | HIGH |
+| 4 | `horeca.fiyat_carpani`, `horeca.hacim_payi_pct` | HIGH |
+| 5 | `kanal_yapisi.tekel_bayii_fiyatlari` | HIGH |
+| 6 | `benchmark_1.magaza` / `.sehir` / `.abv_pct` / `.ithalatci_distributor` | MEDIUM |
+| 7 | `benchmark_2.hacim_ml` (750 ml **doğrulanmadı**) | MEDIUM |
+| 8 | `kanal_yapisi.bim_a101_sok_sarap_var_mi`, `bizim_toptan_fiyatlari`, `duty_free` | MEDIUM |
+
+---

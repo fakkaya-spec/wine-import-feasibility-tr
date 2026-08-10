@@ -807,3 +807,280 @@ bayiinde **sıfır** gözlem var. Segment bantlarını "Türkiye pazarı" diye o
 şu an **hatalı** olur. → `OQ-502`
 
 ---
+
+---
+
+# TUR 1.5 ÇAPRAZ İPUÇLARI
+
+> Dört ajanın TUR 1.5 çapraz ipuçları. Ajanların kendi numaralandırması korundu.
+
+## gumruk-vergi-uzmani (TUR 1.5)
+
+> Alan dışı bulgular. **Sonuç üretilmemiştir** (CLAUDE.md §1.10, §1.11).
+> `99-ops/capraz-ipuclari.md` ana dosyasına DOKUNULMAMIŞTIR.
+
+---
+
+### → `navlun-lojistik-uzmani`
+
+#### Cİ-15.1 — Kırılma/fire oranı artık bir VERGİ kalemidir (MEDIUM–HIGH)
+
+KDVK **md.30/c** (T1, `EV-2026-08-10-103`): *"…**zayi olan mallara ait katma
+değer vergisi**"* indirilemez.
+
+Bu, fire oranını salt bir lojistik kaybı olmaktan çıkarır:
+
+```
+fire_maliyeti = f × (L4_per_sise)              ← malın kendisi
+              + f × (KDV_per_sise)             ← İNDİRİLEMEYEN KDV  ← YENİ
+```
+
+Yani cam şişede **her %1 fire, KDV kanalından ayrıca ~%1 × 40–45 TL/şişe**
+gerçek ekonomik maliyet yaratır (illüstratif CIF=100 TL'de). Bu, TUR 1'de
+hiçbir yerde modellenmemiştir.
+
+**İstenen:** `lojistik.yaml`'a `fire_orani` alanı (deniz taşıması + antrepo +
+iç dağıtım kırılması). Kanıtlı bir bant yoksa `null` + `UNKNOWN`.
+Vergi tarafı hazır: `vergi.yaml → kdv_perspektifleri.a_ekonomik_maliyet.
+kdv_ekonomik_maliyete_donusme_kosullari[K2]` ve `hesap_sozlesmesi.turev_ciktilar
+→ kdv_fire_maliyeti`.
+
+#### Cİ-15.2 — `lojistik.yaml → urun_fizik.sise_hacmi_ml = 750` aynı hijyen sorununu taşıyor (LOW)
+
+`T-906(a)` `vergi.yaml`'daki `sise_hacmi_litre = 0.75` alanını
+`FACT` + `evidence_id: null` → `ASSUMPTION` + `EV-2026-08-10-116` olarak
+düzeltti. Başkanın denetimi (§3.2) **aynı sayının** `lojistik.yaml`'da da
+`FACT` + `evidence_id: null` durduğunu tespit etmişti.
+
+**Bu dosyaya DOKUNULMADI** (ajan izolasyonu). Aynı düzeltme orada da
+yapılabilir; `EV-2026-08-10-116` kartı doğrudan referans alınabilir.
+
+#### Cİ-15.3 — Antrepo, ÖTV/GV'nin yanı sıra KDV nakit çıkışını da öteler (MEDIUM)
+
+`EV-2026-08-10-106` (KDVK md.10/ı, T1): ithalatta vergiyi doğuran olay
+**serbest dolaşıma giriş beyannamesinin tescilidir.** Bu yalnızca ÖTV ve gümrük
+vergisi için değil, **KDV için de** geçerlidir.
+
+Sonuç: `T-101` (antrepodan kısmi çekiş) sorusunun `peak_cash_requirement`
+üzerindeki etkisi TUR 1'de sanılandan **daha büyüktür** — çünkü ertelenen tutar
+sadece kalıcı vergiler değil, **devreden KDV havuzunun kendisidir.**
+Kısmi çekiş mümkünse devreden KDV havuzu **hiç oluşmayabilir.**
+
+**Karşı kalem (değişmedi):** ÖTV maktu tutarı Ocak/Temmuz'da artar
+(`EV-2026-08-09-114`) → bekletme ÖTV artış riski taşır.
+
+---
+
+### → `finans-fizibilite`
+
+#### Cİ-15.4 — Devreden KDV'nin finansman maliyeti L5'te GERÇEK bir maliyettir
+
+KDV ekonomik maliyet **değildir** (indirilebilir), ama **bedava da değildir.**
+Devreden KDV nakden **iade edilmez** (KDVK md.29/2, `EV-2026-08-10-104`) ve
+28–59 gün (ilk konteynerde satış hızı kadar) kilitli kalır.
+
+```
+kdv_finansman_maliyeti = ortalama_devreden_KDV × finansman_orani × sure_yil
+```
+
+`finansman_orani` `makro.yaml` alanıdır ve şu an `null`/`UNKNOWN`'dır.
+Bu kalem **L5'te ayrı satır** olmalıdır (`vergi.yaml → engine_kurallari[C3]`).
+
+#### Cİ-15.5 — "Vergi yükü" tek satırda toplanamaz
+
+`ekonomik_vergi_yuku = GV + İGV + KKDF + ÖTV` — **KDV DAHİL DEĞİL.**
+`kdv_nakit_cikisi = KDV` — L5'e taşınmaz ama `peak_cash_requirement`'a
+**tam tutarıyla** girer.
+
+L4'e bakıp "şişe başına vergi yükü ~140 TL" demek **yanlıştır**.
+Bkz. `vergi.yaml → hesap_sozlesmesi.turev_ciktilar` ve `engine_kurallari[C2, C4]`.
+
+---
+
+### → `mevzuat-ruhsat-uzmani` (bilgi notu — sonuç üretilmemiştir)
+
+#### Cİ-15.6 — Bandrol bedelinin katmanı, KDV matrahını da ilgilendiriyor
+
+Başkanın denetimi (§2.5) bandrolün L5 değil **L3**'te doğabileceğini ve
+vergilendirilebilir olabileceğini tespit etmişti (`T-203`).
+
+TUR 1.5'te KDVK **md.21** tam metni okundu (`EV-2026-08-10-108`, T1):
+matraha *"(c) gümrük beyannamesinin **tescil tarihine kadar** yapılan diğer
+giderler ve ödemelerden **vergilendirilmeyenler**"* girer.
+
+İki koşul birlikte aranır: **(1)** ödeme tescilden **önce** yapılmış olmalı,
+**(2)** kendisi **vergilendirilmemiş** olmalı. Bandrol bedeli KDV'ye tabi bir
+hizmet bedeli ise (2) sağlanmayabilir.
+
+**Bu bir sonuç değildir** — bandrolün hukuki niteliği ve KDV'ye tabi olup
+olmadığı `mevzuat-ruhsat-uzmani` alanıdır. Yalnızca `T-203`'ün doğru soruyu
+sorabilmesi için madde metni buraya bırakılmıştır.
+
+#### Cİ-15.7 — KVK md.11/1-(ı): alkol reklam gideri KKEG (bilgi notu)
+
+`EV-2026-08-10-113` (T1): alkollü içki **ilan/reklam giderlerinin %50'si**
+kurum kazancının tespitinde indirilemez; KDVK md.30/d uyarınca o kısma ait
+**KDV de indirilemez.**
+
+**Bu bir vergi bulgusudur ve bu ajanın alanındadır.** Ancak alkolde reklamın
+4250 / 7584 kapsamında **hukuken mümkün olup olmadığı** araştırılmamıştır
+(bu tur kapsamı dışı ve `mevzuat-ruhsat-uzmani` alanı). Reklam hukuken
+yapılamıyorsa bu hükmün pratik etkisi **sıfırdır** — dolayısıyla bu bir
+"maliyet kalemi" olarak modele **girmemiştir.**
+
+---
+
+## mevzuat-ruhsat-uzmani (TUR 1.5)
+
+> `99-ops/capraz-ipuclari.md`'ye konsolide edilmek üzere. Ana dosyaya bu turda
+> **DOKUNULMAMIŞTIR.** CLAUDE.md §1.11: alan dışı bulgu silinmez, bırakılır.
+> Bu tur dar kapsamlı olduğu için yalnızca **3 ipucu** vardır.
+
+| # | Hedef ajan | İpucu | Neden önemli | Kanıt |
+|---|---|---|---|---|
+| X-251 | `kanal-marj-uzmani` | **TUR 1'deki bir bilgiyi düzeltiyorum.** Ticaret Yön. m.9/2'nin 4250 m.1/3'teki *"ülke genelinde yerinde teslim"* şartını teyit ettiğini yazmıştım — **metin bunu söylemiyor.** Yönetmelikteki yükümlülük daha dardır: *"perakende satıcıların taleplerini zamanında karşılayacak dağıtımı sağlamak."* "Ülke genelinde" ve "yerinde teslim" ifadeleri **yalnızca kanunda** geçer. | İki metnin **dağıtım maliyeti yükü farklıdır**. Ulusal kılcal dağıtım ağı zorunluluğu varsayımı TUR 1'de olduğundan **daha zayıf** bir zemine oturuyor. Kanal modeli bu farkı ayrıştırmalı. | `EV-2026-08-10-212` (T1) |
+| X-252 | `finans-fizibilite` | Beş hacim senaryosunun **hiçbiri** 4250 m.1/3 eşiğine ulaşmıyor (3.750–75.000 L vs 600.000 L). "Eşiği aşmak için hacmi büyütelim" **modellenebilir bir strateji değildir**: en büyük senaryonun **8 katı** gerekir. Buna karşılık **20.000 litre/yıl bedel kırılımı** (S3→S4 arasında, 26.667 şişede) gerçek ve modellenmesi gereken tek eşiktir. | Ölçek duyarlılığında yanlış eşiğe optimizasyon yapılmasını engeller. | `EV-2026-08-10-215`, `EV-2026-08-09-206` |
+| X-253 | `seytanin-avukati` | Bu turun **proje aleyhine iki bulgusu** kırmızı takım için hazır malzemedir: (1) 4733 m.4/B(b) ile 4250'nin uygulanması **açıkça Bakanlığa devredilmiştir** — "hüküm ölü, merci yok" argümanı **çürüktür**; (2) 4733 m.8'in artık fıkrası, sayılmayan tüm 4250 aykırılıkları için **uyarı → süre → BELGE İPTALİ** yolunu açık tutar. Yani 4250'ye aykırılık yaptırımsız değildir. | G0 PASS önerimin en saldırılabilir yeri burasıdır ve **kendim işaretledim.** | `EV-2026-08-10-208`, `EV-2026-08-10-210` (ikisi de T1) |
+
+---
+
+### Alan dışı bırakılan tek gözlem
+
+TADAB sitesinde **"İdari Yaptırımlar ve Teminatlar"** bölümü mevcuttur ve yıl
+bazında 4250/4733 idari para cezası listeleri yayımlanmaktadır. Bu, hem
+`teminat.*` (`UNKNOWN`, TUR 1) hem de OQ-254 için birincil aday kaynaktır.
+**Bu turda incelenmemiş, hakkında sonuç üretilmemiştir.**
+
+---
+
+## global-sourcing-kasifi (TUR 1.5)
+
+```yaml
+ajan:   global-sourcing-kasifi
+tur:    TUR 1.5 — BLOCKER REMEDIATION (T-902)
+tarih:  2026-08-10
+kapsam: Yalnizca T-902 duzeltmesi + RFQ alan kontrolu. YENI ARASTIRMA YAPILMADI.
+```
+
+> Bu dosya bir **parça dosyasıdır**. `99-ops/capraz-ipuclari.md` ana dosyasına
+> `yatirim-komitesi-baskani` tarafından birleştirilir. Bu ajan ana dosyaya dokunmadı.
+
+---
+
+### 1. `finans-fizibilite` — EN KRİTİK, MODELİ SESSİZCE BOZABİLİR
+
+**`tedarikci.yaml`'daki iki seri artık L1 (FOB) etiketi taşımıyor. Aralarında çıkarma
+işlemi yapmayın.**
+
+TUR 1'de iki alan yanlışlıkla L1 (FOB) etiketiyle duruyordu. T-902 ile bu etiketler
+geri çekildi. Somut risk şudur:
+
+```
+YANLIŞ:  navlun = L2_CIF_serisi − "L1"_serisi
+SONUÇ:   İspanya, Portekiz ve Fransa için NEGATİF NAVLUN
+```
+
+Bu üç menşede "L1" serisi L2 serisinden **büyüktür**. Bu bir veri hatası değil, iki
+serinin farklı şeyleri ölçtüğünün kanıtıdır (farklı ürün karması, farklı para birimi,
+farklı raporlama bazı, farklı yıl kesiti — detay `tedarikci.yaml →
+ulke_gosterge_birim_degerleri.karsilastirilamazlik_kaniti`).
+
+Uyulması gereken üç kural YAML içine gömüldü:
+- `duyarlilik_sinirlari_KARISIK_KATMAN.finans_fizibiliteye_uyari`
+- `karsilastirilamazlik_kaniti.kullanim_yasagi` (4 madde)
+- `kullanim_kurali: SENSITIVITY_BOUNDS_ONLY` (çit korundu)
+
+**`fiyat.fob_per_sise` hâlâ `null`/`UNKNOWN`'dır ve bu turda da öyle kalmıştır.**
+Gerçek FOB yalnızca RFQ ile alınacak `FIRM_OFFER`'dan gelir.
+
+**Ek kural (T-902 sonrası):** duyarlılık çıktısı raporlanırken **hangi sınırın hangi
+katmandan geldiği** yazılmak zorundadır. Alt sınır `L0_ALTI`, üst sınır `L2`'dir.
+
+---
+
+### 2. `navlun-lojistik-uzmani` — RFQ artık ağırlık verisini eksiksiz soruyor
+
+`rfq-template.md` v2.1'de eklenen alanlar sizin konteyner/ağırlık hesabınız içindir:
+
+| Yeni soru | Ne veriyor |
+|---|---|
+| 1.14 | Boş şişe ağırlığı (g) — koli brüt ağırlığının (2.2) bağımsız çapraz kontrolü |
+| 1.15 | Dolu şişe brüt ağırlığı (g) — kapak, kapsül, etiket dahil |
+| 1.16 | Hafif şişe alternatifi + şişe başına fiyat farkı — ağırlık/navlun ödünleşimi |
+| 3.17d | Lead time'ın "gemi/kamyon bekleme" bileşeni ayrı soruluyor |
+
+**Sizden bir talebim var:** v2.1'i bir kez okuyup Bölüm 2 (2.1–2.13) + 1.14/1.15 ile
+konteyner doluluk hesabınızı **gerçekten kurabiliyor musunuz**, eksik bir alan var mı?
+Varsa şablona eklerim — şablon TUR 7'de gönderildikten sonra eklemek geç olur.
+(T-402 hâlâ OPEN.)
+
+---
+
+### 3. `gumruk-vergi-uzmani` — RFQ 3.18 ve 3.20 sizin matrahınızı ilgilendirebilir
+
+Şablona eklenen 3.18, kuru malzeme kalemlerinin (etiket, karton, kapsül, palet)
+**EXW fiyatının içinde mi dışında mı** olduğunu ayrı ayrı soruyor. 3.20 ise ihracat
+evrak ücretlerini soruyor.
+
+**Neden size ipucu bırakıyorum:** bu kalemlerin faturada ayrı satır olarak mı yoksa
+mal bedeline dahil mi geldiği, gümrük kıymetinin oluşumunu etkiliyor olabilir.
+**Bu benim alanım değil ve bir sonuç üretmedim.** Eğer fatura yapısı kıymet açısından
+fark yaratıyorsa, RFQ'ya bu turdan sonra bir soru daha ekleyebilirim — söyleyin.
+
+---
+
+### 4. `yatirim-komitesi-baskani` — iki bakım işi
+
+1. **`10-evidence/index.csv`:** `EV-2026-08-09-404`, `-419` ve `-421` kartlarının
+   `status` alanı kart dosyalarında `SUPERSEDED` yapıldı, ancak `index.csv`
+   satırlarında hâlâ eski değer duruyor. Bu ajan `index.csv`'ye dokunmakla
+   yetkilendirilmedi. Yeni satırlar:
+   `10-evidence/_index-parts/global-sourcing-kasifi-tur15.csv` (başlıksız, 3 satır).
+2. **Terminoloji uyarısı:** `fob_gosterge_bandi` adı repoda **beş dosyada daha**
+   geçiyor (denetim raporu, T-902, tickets/INDEX.md, `capraz-ipuclari.md` §607,
+   TUR 1 raporu §5). Bunlar **tarihsel kayıttır ve değiştirilmemiştir** — geçmişi
+   yeniden yazmak kanıt disiplinine aykırı olurdu. İzlenebilirlik için YAML'a
+   `eski_adi` alanı eklendi. Arama yapan biri hem eski hem yeni adı bulur.
+
+---
+
+### 5. `seytanin-avukati` — size iki yeni saldırı vektörü bırakıyorum
+
+1. **RFQ v2.1 uzadı.** 13 soru daha eklendi. Kendinizi bir üretici yerine koyup
+   şablonu okuyun: kaç satırı **kaçamak cevapla** geçiştirebilirsiniz? Özellikle
+   S19/S20 ("etiket ve karton EXW'nin içinde mi") ve 3.6 (MOQ) satırlarını hedef
+   alın. Şablon "N/A veya TBC yazın" diyor — bu dürüstlüğü teşvik eder, ama aynı
+   zamanda **cevaptan kaçmak için meşru bir kapı** açar.
+2. **Katman düzeltmesi bir şeyi çözmedi, sadece dürüstçe etiketledi.** T-902 sonrası
+   elimizde hâlâ **tek bir gerçek EXW veya FOB rakamı yok.** "Katman etiketi
+   düzeltildi" cümlesi ilerleme gibi okunabilir; okunmamalı. Fiyat bilgisi açısından
+   TUR 1.5, TUR 1'den bir milimetre ileride değildir.
+
+---
+
+### 6. BU TURDA YAPILMAYANLAR (kapsam dışı, bilinçli)
+
+- Yeni tedarikçi, yeni ülke, yeni fiyat araştırması **yapılmadı**.
+- Hiçbir üreticiye e-posta/mesaj **gönderilmedi**.
+- OIV ihracat değer tanımının FOB olup olmadığı **araştırılmadı** (açık soru olarak
+  kaydedildi — bkz. `acik-sorular-global-sourcing-kasifi-tur15.md`).
+- Vergi, navlun tutarı, ruhsat ve kanal marjı konularında **sonuç üretilmedi**.
+
+---
+
+## turkiye-pazar-kasifi (TUR 1.5)
+
+> `99-ops/capraz-ipuclari.md`'ye **merge edilmek üzere** hazırlanmıştır.
+> Ana dosyaya bu ajan tarafından DOKUNULMAMIŞTIR.
+> **Bunlar SONUÇ DEĞİL, İPUCUDUR.** Bu tur dar kapsamlıydı; liste kısadır.
+
+| # | Hedef ajan | İpucu | evidence_id | Neden önemli |
+|---|---|---|---|---|
+| İP-551 | `kanal-marj-uzmani` | Metro'nun **2010 şarap kataloğunda** fiyatlar KDV hariç + KDV'li **çiftli** basılıydı ve KDV hariç sayı ondalıklı (131,36), KDV'li sayı yuvarlaktı (155,00) | `EV-2026-08-10-503` | Metro'nun şarap kategorisinde **brüt fiyattan geriye** çalıştığını (net değil) gösterir. Pazarlıkta hangi matrahtan konuşulduğu belirsizse marj hesabı kayar. |
+| İP-552 | `kanal-marj-uzmani` | Metro'nun tarihsel şarap fiyatları **dönemseldir**: *"fiyatlar &lt;tarih aralığı&gt; arasında geçerlidir ve stoklarla sınırlıdır"* | `EV-2026-08-10-503` | Şarapta Metro'nun "kalıcı raf fiyatı" verip vermediği belirsiz. Listeleme/vade pazarlığında fiyat taahhüdünün süresi sorulmalı. |
+| İP-553 | `mevzuat-ruhsat-uzmani` | Metro Türkiye 2013'e kadar **basılı şarap katalogu** yayınlıyordu; 2026'da hiçbir yayınında alkol yok | `EV-2026-08-10-503`, `EV-2026-08-09-514` | Reklam yasağının **fiili başlangıcını** ve kapsamının pratikte nereye oturduğunu gösteren somut bir "önce/sonra" karşılaştırması. *(Yasağın kapsamı bu turda YENİDEN ARAŞTIRILMAMIŞTIR — kabul edilmiş iş kısıtıdır.)* |
+| İP-554 | `global-sourcing-kasifi` | Metro'nun 2008–2010 ithal şarap assortmanında **ABD ve Avustralya menşe zaten vardı** (Terra California Zinfandel, Sunset Creek California, Yellow Tail Shiraz, Huntington Chardonnay, Gallo) | `EV-2026-08-10-503` | Metro'nun bu iki menşede **15+ yıllık bir listeleme geçmişi** var. `EV-2026-08-09-509`'daki "uzman kanalda ABD/Avustralya YOK" bulgusuyla birlikte okunduğunda: bu menşeler Türkiye'de **uzman kanalın değil, cash&carry/market kanalının** menşeleridir. Kanal seçimi ile menşe seçimi bağımsız değildir. |
+| İP-555 | `yatirim-komitesi-baskani` | `10-evidence/index.csv`'de `EV-2026-08-09-509` / `-510` satırlarının `status` alanı hâlâ `FACT`; raw kartlar `SUPERSEDED` yapıldı | — | Bu ajan `index.csv`'ye dokunmakla yetkili değil. Merge sırasında düzeltilmezse index ile kartlar desenkron kalır. |
+| İP-556 | `finans-fizibilite` | `pazar.yaml` içindeki `katman_kurallari.K4`: bu dosyadan **marj türetilemez**; Metro 599,90 ile uzman perakende 875 TL farkı **kasten hesaplanmamıştır** | `pazar.yaml` | İki sayı farklı **kanal** ve farklı **katman** etiketlidir (`L8_METRO_CASH_CARRY` vs `L8_ONLINE_UZMAN_PERAKENDE`). Aradaki %46 fark bir marj **değil**, bilinmeyen bir karışımdır. |
+
+---
