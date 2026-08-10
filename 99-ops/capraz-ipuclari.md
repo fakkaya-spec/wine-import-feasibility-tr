@@ -1084,3 +1084,96 @@ fark yaratıyorsa, RFQ'ya bu turdan sonra bir soru daha ekleyebilirim — söyle
 | İP-556 | `finans-fizibilite` | `pazar.yaml` içindeki `katman_kurallari.K4`: bu dosyadan **marj türetilemez**; Metro 599,90 ile uzman perakende 875 TL farkı **kasten hesaplanmamıştır** | `pazar.yaml` | İki sayı farklı **kanal** ve farklı **katman** etiketlidir (`L8_METRO_CASH_CARRY` vs `L8_ONLINE_UZMAN_PERAKENDE`). Aradaki %46 fark bir marj **değil**, bilinmeyen bir karışımdır. |
 
 ---
+
+---
+
+# TUR 2 PRE-FLIGHT ÇAPRAZ İPUÇLARI
+
+```yaml
+tarih:  2026-08-10
+yazan:  yatirim-komitesi-baskani
+not:    "Bu bir ARASTIRMA BULGUSU DEGILDIR. Kurucu kararinin ve baskan
+         kayit bakiminin sonraki ajana AKTARIMIDIR."
+```
+
+---
+
+## → `kanal-marj-uzmani`
+
+### İP-2001 — 7584 s.K. kısıtı bir BELİRSİZLİK değil, bir VERİDİR *(BAĞLAYICI GİRDİ)*
+
+```yaml
+ipucu_id:      IP-2001
+hedef_ajan:    kanal-marj-uzmani
+kaynak:        KURUCU KARARI (baglayici) + T-205 / C-203 kapanisi
+evidence_id:   [EV-2026-08-09-223, EV-2026-08-09-222]
+statu:         ACCEPTED BUSINESS CONSTRAINT
+tip:           GIRDI — arastirma sorusu DEGIL
+```
+
+**Ne oldu:** `T-205` ve `C-203` (7584 s.K. m.2 — alkollü içki marka/logo/ambalaj
+görsellerinin satış ünitelerinde bulundurulması yasağı) **kapatılmıştır**, ama
+*çözülerek* değil — **kabul edilerek**. Yeni statü:
+**`ACCEPTED BUSINESS CONSTRAINT`**.
+
+**Sizin için ne değişti:**
+
+| Eskiden | Şimdi |
+|---|---|
+| "Yasağın raf kapsamı bilinmiyor, sonuç yazamazsın" (denetim §6.3 madde 4) | **Kısıt bir VERİDİR. Onu bir girdi olarak alıp kanal ekonomisini kurun.** |
+| Dar/geniş yorumu iki ayrı senaryo olarak modellemeniz gerekiyordu | **Tek çerçeve:** reklam/tanıtım/görsel kaldıraçları **YOKTUR** varsayımıyla planlayın |
+| `T-205` CRITICAL, TUR 2'nin en büyük engeli (E1) | `T-205` **RESOLVED**, engel **kalkmıştır** |
+
+**Operasyonel çıkarım — kanal modelinizin başlangıç koşulu:**
+
+> **Marka bilinirliği reklamla kurulamaz → raf / kanal / fiyat üzerinden kurulur.**
+
+Bunun üç doğrudan sonucu vardır ve üçü de sizin alanınızdadır:
+
+1. **ATL/reklam bütçesi diye bir kalem yoktur.** Marka inşa harcaması, varsa,
+   **kanal içinde** (listeleme, raf konumu, dağıtım genişliği, fiyat) görünür.
+   Bu kalemleri "pazarlama" değil, **kanal maliyeti** olarak modelleyin.
+2. **Kalan kaldıraçların pazarlık gücü orantısız biçimde belirleyicidir.**
+   Tüketiciye ulaşmanın başka yolu olmadığı için listeleme bedeli / raf konumu
+   pazarlığındaki her TL, normalden daha yüksek bir stratejik ağırlık taşır.
+   Bu, bedelin **büyüklüğü** hakkında bir iddia **değildir** — büyüklük sizin
+   kanıtınızla gelecek.
+3. **Private label ile mevcut marka distribütörlüğü arasındaki asimetri
+   yapısaldır.** Bilinmeyen bir marka + tanıtım kanalı yok = daha kötü risk
+   profili. `00-charter/karar-esikleri.md` iki modeli **eşit öncelikli** tutar,
+   dolayısıyla private label **elenmemiştir**; ama iki modeli karşılaştırırken
+   bu asimetri **açıkça gösterilmelidir**. Gizlenirse karar yanlış kurulur.
+
+**Ne YAPMAYACAKSINIZ:**
+- Yasağın kapsamını **yeniden araştırmayacaksınız** (kurucu kararı).
+- Dar/geniş yorum tartışmasını **yeniden açmayacaksınız**.
+- "Kısıt hafifleyebilir" varsayımıyla **iyimser** bir kanal senaryosu
+  kurmayacaksınız. Kabul edilen çerçeve, kısıtın **var olduğu** çerçevedir.
+
+**Bilmeniz gereken tek nüans:** Bu kabul **muhafazakâr** yöndedir. Kapsam
+ileride dar yorum lehine netleşirse bu, proje **lehine** bir sürprizdir —
+modelinizin yukarı yönlü, aşağı yönlü olmayan bir opsiyonudur. Bunu bir
+duyarlılık notu olarak taşıyın, base case'e **koymayın**.
+
+---
+
+### İP-2002 — Benchmark'ı nasıl kullanabilirsiniz, nasıl kullanamazsınız
+
+```yaml
+ipucu_id:      IP-2002
+hedef_ajan:    kanal-marj-uzmani
+kaynak:        kurucu karari + T-504 de-blocking + T-551 karari
+evidence_id:   [EV-2026-08-09-501, EV-2026-08-09-502]
+```
+
+`599,90 TL` (ve `649,90 TL`) **gözlenen gerçek fiyattır** ve öyle kalır.
+Ancak `pazar.yaml → katman_kurallari.K5/K6` bağlayıcıdır:
+
+- Bu bir **Metro cash & carry** gözlemidir; **genel piyasa fiyatı değildir**.
+  Her kullanımda böyle yazılır.
+- **Tek gerçek piyasa fiyatı gibi kullanılamaz.**
+- `L8_METRO_CASH_CARRY` **≠** `L8_CHAIN_RETAIL` ve **L7 olarak da kullanılamaz**
+  (K1/K2 — değişmedi). L7'yi **kendi kanıtınızla** kuracaksınız.
+- Promosyon durumu `UNKNOWN`'dır (`T-504`, hâlâ açık) ve KDV sunumu `C-551`
+  ile nitelenmiştir; ikisi de **TUR 2'yi bloke etmez** ama ikisi de
+  raporunuzda **görünmek zorundadır**.

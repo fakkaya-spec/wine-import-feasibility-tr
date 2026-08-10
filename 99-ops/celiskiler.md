@@ -19,9 +19,9 @@ Format: `C-###`
 | conflict_id | Konu | impact | Açan ajan | **durum** |
 |---|---|---|---|---|
 | C-101 | Asgari maktu ÖTV: 61,3914 vs 71,2692 TL/lt (mevzuat.gov.tr konsolide metin vs GİB güncel liste) | **CRITICAL** | `gumruk-vergi-uzmani` | **RESOLVED** (71,2692; koşullu — T-901) |
-| C-201 | 4250 m.1/3 — 1.000.000 lt/yıl eşiği durgun şarap ithalatına uygulanıyor mu (muafiyet fıkrası yalnız viski ve tabiî köpüren şarabı sayıyor) | **CRITICAL** | `mevzuat-ruhsat-uzmani` | **OPEN** |
+| C-201 | 4250 m.1/3 — 1.000.000 lt/yıl eşiği durgun şarap ithalatına uygulanıyor mu (muafiyet fıkrası yalnız viski ve tabiî köpüren şarabı sayıyor) | **CRITICAL** | `mevzuat-ruhsat-uzmani` | **RESOLVED — NON_MATERIAL** (2026-08-10, başkan; kalan ayak → C-252) |
 | C-202 | Bildirim ↔ dağıtım yetki belgesi ↔ ithalat sıralama döngüsü | HIGH | `mevzuat-ruhsat-uzmani` | **OPEN** |
-| C-203 | 7584 s.K. satış noktası marka/ambalaj görseli yasağının raf kapsamı | **CRITICAL** | `mevzuat-ruhsat-uzmani` | **OPEN** |
+| C-203 | 7584 s.K. satış noktası marka/ambalaj görseli yasağının raf kapsamı | ~~CRITICAL~~ → **CONSTRAINT** | `mevzuat-ruhsat-uzmani` | **ACCEPTED BUSINESS CONSTRAINT** (2026-08-10, kurucu kararı; G0'ı bloke ETMEZ) |
 | C-204 | TGK Şarap Tebliği'nin mülga kanuna dayanması; etiket kuralı hangi metinden okunacak | LOW | `mevzuat-ruhsat-uzmani` | **OPEN** (TUR 5 → mevzuat) |
 | C-301 | Konteyner başına palet adedi (aynı kaynağın iki yayını çelişiyor) | MEDIUM | `navlun-lojistik-uzmani` | **OPEN** (band zorunlu) |
 | C-302 | Valencia/ABD → İstanbul transit süresi (7–10 gün vs 32–35 gün) | HIGH | `navlun-lojistik-uzmani` | **RESOLVED** |
@@ -33,11 +33,20 @@ Format: `C-###`
 | C-502 | Metro'nun KDV dili: etikette KDV dahil, ticari koşullarda KDV hariç | MEDIUM (izleme) | `turkiye-pazar-kasifi` | **RESOLVED** (sahte çelişki) |
 | C-503 | T5 medya fiyat listesi ile gözlemlenen bant uyumu (üç site aynı tabloyu kopyalamış) | MEDIUM | `turkiye-pazar-kasifi` | **RESOLVED** |
 
-> **Not:** C-201 ve C-203 **CRITICAL ve OPEN**'dır. CLAUDE.md §5 uyarınca kritik
+> **Not (2026-08-09, TUR 1 sonu — TARİHSEL KAYIT, SİLİNMEDİ):** C-201 ve C-203
+> **CRITICAL ve OPEN**'dır. CLAUDE.md §5 uyarınca kritik
 > çelişki/ticket açıkken finans modeli `APPROVED` olamaz.
 > C-101 kapanmıştır, ancak bağlı ticket `T-104` (**CRITICAL**) açık kalmaya
 > devam eder — çelişkinin çözülmesi ÖTV'nin zaman içinde değişkenliğini ortadan
 > kaldırmaz.
+
+> **GÜNCELLEME 2026-08-10 — TUR 2 PRE-FLIGHT (`yatirim-komitesi-baskani`).**
+> Yukarıdaki not **artık güncel değildir** ama tarihsel kayıt olarak durmaktadır.
+> Güncel durum: **C-201 `RESOLVED — NON_MATERIAL`**, **C-203 `ACCEPTED BUSINESS
+> CONSTRAINT`**. Gerekçeler bu dosyanın sonundaki
+> **§TUR 2 PRE-FLIGHT — BAŞKAN KAYITLARI** bölümündedir.
+> Karar kaydı: `90-karar/tur-2-preflight-housekeeping.md`.
+> `T-104` (**CRITICAL, OPEN**) hakkındaki uyarı **aynen geçerlidir.**
 
 ---
 
@@ -782,7 +791,13 @@ TUR 1.5'te üç yeni çelişki açıldı:
 
 | conflict_id | Konu | impact | Açan |
 |---|---|---|---|
-| **C-551** | Metro'nun **şarap** kataloglarında (2008/2009/2010 arşiv) fiyatlar fiilen ÇİFT gösteriliyor (KDV hariç + KDV'li). TUR 1'in KDV sonucu, içinde sıfır alkol bulunan broşürlerden çıkarılmıştı. | **CRITICAL** | `turkiye-pazar-kasifi` |
+| **C-551** | Metro'nun **şarap** kataloglarında (2008/2009/2010 arşiv) fiyatlar fiilen ÇİFT gösteriliyor (KDV hariç + KDV'li). TUR 1'in KDV sonucu, içinde sıfır alkol bulunan broşürlerden çıkarılmıştı. | ~~CRITICAL~~ **HIGH** ¹ | `turkiye-pazar-kasifi` |
+
+> ¹ **Başkan düzeltmesi 2026-08-10:** Bu satırda `CRITICAL` yazıyordu; aynı
+> çelişkinin kendi `yaml` bloğunda (aşağıda) ve `T-551` ticket'ında `impact:
+> HIGH` yazmaktadır. Bu bir **kayıt tutarsızlığıdır**, yeni bir değerlendirme
+> değildir. Ajanın kendi bloğundaki değer (**HIGH**) esas alınmıştır; başkan
+> impact'i **yükseltmemiş veya düşürmemiştir**.
 | C-251 | Fiyat serbestisi ölçüsü 600.000 mi 1.000.000 litre/yıl mı | LOW (maddi değil) | `mevzuat-ruhsat-uzmani` |
 | C-252 | 4250 m.1/5 muafiyet fıkrasının ithal durgun şarabı kapsayıp kapsamadığı (C-201'in kalan lafzî ayağı) | LOW (model etkisi yok) | `mevzuat-ruhsat-uzmani` |
 
@@ -992,3 +1007,209 @@ senaryosu ELENMESİN**. Kesin çözüm için gereken şey değişmiyor:
 **şarap reyonundaki fiziksel etiketin fotoğrafı** (`T-504`).
 
 ---
+
+---
+
+# TUR 2 PRE-FLIGHT — BAŞKAN KAYITLARI
+
+```yaml
+tarih:      2026-08-10
+yazan:      yatirim-komitesi-baskani
+belge:      90-karar/tur-2-preflight-housekeeping.md
+kapsam:     KAYIT BAKIMI — arastirma turu DEGILDIR, yatirim karari ICERMEZ
+kural:      HICBIR CELISKI METNI SILINMEDI. Yalnizca 'durum' alanlari guncellendi.
+```
+
+---
+
+## C-201 — **RESOLVED — NON_MATERIAL**
+
+```yaml
+conflict_id:      C-201
+onceki_durum:     OPEN (CRITICAL)
+yeni_durum:       RESOLVED — NON_MATERIAL
+cozen:            yatirim-komitesi-baskani
+cozum_tarihi:     2026-08-10
+oneren:           mevzuat-ruhsat-uzmani (TUR 1.5) — oneri AYNEN kabul edildi
+kalan_ayak:       C-252 (LOW)
+bagli_ticket:     T-201 (RESOLVED)
+```
+
+**Karar:** `mevzuat-ruhsat-uzmani`'nın `RESOLVED — NON_MATERIAL` önerisi
+**aynen kabul edilmiştir.** Öneriye hiçbir ekleme veya çıkarma yapılmamıştır.
+
+**Gerekçe.** C-201'in G0'ı bloke etme sebebi *"beş hacim senaryosunun hukuki
+geçerliliği"* idi. Üç ayağından ikisi TUR 1.5'te **kanıtla** düşmüştür:
+
+| Ayak | Durum | Kanıt |
+|---|---|---|
+| (1) "Eşik 1.000.000 litre/yıl'dır" | **DÜZELDİ** — uygulanan ölçü en çok **600.000** | `EV-2026-08-10-204`, `EV-2026-08-10-205` (T1) |
+| (2) "Yaptırım mercii yok, hüküm ölü" | **ÇÜRÜDÜ** (proje **aleyhine**) — 4250'nin uygulanması Bakanlığa devredilmiştir | `EV-2026-08-10-208`, `EV-2026-08-10-210` (T1) |
+| (3) "Muafiyet fıkrası ithal durgun şarabı kapsamıyor olabilir" | **AÇIK** — ayrı kayda alındı → **C-252** | `EV-2026-08-10-202` (T1) |
+
+Kalan ayak (3) **maddi değildir**: beş senaryonun beşi de eşiğin altındadır
+(3.750–75.000 L vs 600.000 L; `EV-2026-08-10-215`) ve eşik **her iki okumada
+da** model girdisini değiştirmez.
+
+**Bu çözümün en zayıf yeri (dürüstlük kaydı):** Ayak (2) proje **aleyhine**
+kapanmıştır — "hüküm fiilen uygulanamaz" argümanı **geçersizdir**. C-201'i
+kapatan şey hükmün ölü olması değil, **ölçeğimizin ölçünün 8–160 katı altında
+olmasıdır**. Bu ayrım korunmalıdır.
+
+---
+
+## C-251 — **OPEN (LOW) — AÇIK KALIR**
+
+```yaml
+conflict_id:      C-251
+durum:            OPEN
+impact:           LOW
+model_girdisi_etkisi: YOK
+baskan_notu_tarihi: 2026-08-10
+```
+
+**Karar: AÇIK KALIR. Kapatılmamıştır ve kapatılması için acele edilmeyecektir.**
+
+**Gerekçe — neden kapatmıyorum:** C-251 (2007'den itibaren uygulanan ölçü
+600.000 mi 1.000.000 mi) T1 ↔ T1 bir **hukuki yorum** sorunudur. Çözüm
+hiyerarşisinin 1–5. kurallarının hiçbiri uygulanamaz. Kendi yorumumla kapatmam
+CLAUDE.md §1.16 ihlali olur.
+
+**Gerekçe — neden bloke etmiyor:** Beş senaryonun en büyüğü **75.000 litre/yıl**;
+**600.000** ölçüsünün %12,5'i, **1.000.000** ölçüsünün %7,5'i. İki değerin
+**hangisi doğru olursa olsun cevap aynıdır** (`EV-2026-08-10-215`). Bu, bir
+çelişkinin *çözülmeden* zararsızlaştırıldığı meşru bir durumdur: sonuç
+**girdi değerine duyarsızdır**.
+
+**Ne zaman maddi hâle gelir:** Hacim **800.001 şişe/yıl**'a (600.000 L) yaklaşırsa.
+Bu, en büyük senaryonun (S5, 100.000 şişe) **8 katıdır** ve bu projede
+`SCALE` kararı bile böyle bir hacmi öngörmemektedir. `SCALE` tartışması
+800.000 şişe/yıl'ı aşarsa **C-251 otomatik olarak yeniden gündeme gelir.**
+
+---
+
+## C-252 — **OPEN (LOW) — AÇIK KALIR**
+
+```yaml
+conflict_id:      C-252
+durum:            OPEN
+impact:           LOW
+model_girdisi_etkisi: YOK
+baskan_notu_tarihi: 2026-08-10
+```
+
+**Karar: AÇIK KALIR. Okuma A veya B lehine SEÇİM YAPILMAMIŞTIR.**
+
+**Gerekçe — neden seçmiyorum:** Aynı cümlenin iki lafzî okuması; ikisi de T1,
+ikisi de aynı yürürlük tarihli. `mevzuat-ruhsat-uzmani` TUR 1'de yalnızca B'yi
+görmüş, TUR 1.5'te A'yı tespit etmiş ve **sessiz seçim yapmamıştır** — doğru
+davranıştır. Ben de yapmıyorum.
+
+**Gerekçe — neden bloke etmiyor:** B okuması (proje aleyhine olan) doğru olsa
+**bile** eşik bir *yasak* değil, bir *serbestlik kazanma çizgisidir*; beş
+senaryo zaten çizginin altındadır; ve çizginin altında kalanlar için öngörülen
+mekanizmanın **ikincil mevzuatta karşılığı yoktur** (`EV-2026-08-10-206`,
+`EV-2026-08-10-209`).
+
+**G0'ı yeniden bloke etme koşulu (İKİSİ BİRDEN gerekir):**
+1. C-252'nin **B lehine** kapanması, **VE**
+2. "Tekel GM eliyle" işlev için yürürlükte bir **halef merci** tespiti
+   (`EV-2026-08-10-214` bugün `UNKNOWN`).
+
+Tek başına hiçbiri yetmez.
+
+---
+
+## C-203 — **ACCEPTED BUSINESS CONSTRAINT**
+
+```yaml
+conflict_id:      C-203
+onceki_durum:     OPEN (CRITICAL)
+yeni_durum:       ACCEPTED BUSINESS CONSTRAINT
+onceki_impact:    CRITICAL
+yeni_impact:      CONSTRAINT
+karar_kaynagi:    KURUCU KARARI (baglayici) — arastirma bulgusu DEGILDIR
+karar_tarihi:     2026-08-10
+g0_etkisi:        BLOKE ETMEZ
+bagli_ticket:     T-205 (RESOLVED — ACCEPTED_BUSINESS_CONSTRAINT)
+yeniden_arastirilacak_mi: HAYIR
+```
+
+**Karar.** Kurucu kararı bağlayıcıdır:
+
+> *"Alkol ürünlerine ilişkin reklam / görsel / tanıtım kısıtları bu projede
+> **bilinçli olarak kabul edilen bir BUSINESS CONSTRAINT**'tir."*
+
+**Bu, çelişkinin ÇÖZÜLDÜĞÜ anlamına gelmez.** 7584 s.K. m.2'nin dar/geniş
+yorumu arasındaki lafzî gerilim **aynen durmaktadır** ve metni **silinmemiştir**
+(bkz. yukarıda `mevzuat-ruhsat-uzmani` bölümü, C-203 satırı). Değişen şey
+kaydın **statüsüdür**: bir *çözülmesi gereken belirsizlik* olmaktan çıkıp bir
+*kabul edilmiş çerçeve şartı* olmuştur.
+
+**Ne anlama geliyor:**
+
+| Şudur | Şu DEĞİLDİR |
+|---|---|
+| Kısıt **doğrulanmış** (T1, `EV-2026-08-09-223`) ve **kabul edilmiştir** | Kısıt yok sayılmıştır |
+| `kanal-marj-uzmani` için bir **VERİ / GİRDİ**'dir | `kanal-marj-uzmani` için bir belirsizliktir |
+| Planlama, kısıtın **var olduğu** dünyaya göre yapılır | Kapsam belirsizliği çözülmüştür |
+
+**Yön uyarısı — bu kabul MUHAFAZAKÂRDIR.** Reklam/tanıtım kaldıraçlarının
+**yok** sayılması, kapsamın ileride **dar yorum** lehine netleşmesi hâlinde
+proje **lehine** bir sürpriz bırakır. Bu sınıflandırma bir iyimserlik riski
+taşımaz.
+
+**Yeniden açılma koşulu:** TADAB'ın (veya bir yargı kararının) yasağı **ürünün
+satış ünitesinde fiziksel olarak bulundurulmasını** kapsayacak şekilde yorumlayan
+bağlayıcı bir metni. Bu durumda C-203 `OPEN`'a döner ve konu **G0 kapsamına**
+girer — çünkü o zaman soru pazarlama değil, **kanalın varlığı** sorusudur.
+
+---
+
+## C-551 — **OPEN (HIGH) — `NON_BLOCKING_TUR2`**
+
+```yaml
+conflict_id:        C-551
+durum:              OPEN
+impact:             HIGH
+celiski_turu:       TARIH | KAPSAM   # BELIRSIZ BIRAKILDI — secim yapilmadi
+blocking_status:    NON_BLOCKING_TUR2
+blocking_karari:    yatirim-komitesi-baskani, 2026-08-10
+bagli_ticket:       T-551 (RESOLVED — DIRECTIVE_ISSUED)
+kapanis_yolu:       T-504 (sarap reyonundaki fiziksel etiket fotografi)
+```
+
+**Karar: ÇÖZEMİYORUM — açık kalır; ama TUR 2'yi BLOKE ETMEZ.**
+
+**Neden çözemiyorum (sessiz seçim yapmama gerekçesi):** Çözüm hiyerarşisinde
+**kural 2 (tarih) A lehine**, **kural 4 (kapsam) B lehine** işaret ediyor ve
+aralarında öncelik kuran bir üst kural yok. Kural 1 (tier) uygulanamıyor —
+ikisi de T4 ve ikisi de Metro'nun **kendi künyeli** yayını. Bir tarafı seçmek
+kanıta değil tercihe dayanırdı.
+
+**Neden TUR 2'yi bloke etmiyor:** Kurucu kararı uyarınca benchmark
+(`599,90 TL`) modelde **tek gerçek piyasa fiyatı olarak kullanılamaz** ve
+**Metro cash & carry gözlemi** olduğu her kullanımda belirtilir. Bu kullanım
+kuralı, C-551'in modele sızma yolunu kapatır. Ayrıca etki yönü **muhafazakârdır**:
+sonuç "KDV hariç" çıkarsa benchmark'ın tüketici karşılığı **yukarı** kayar ve
+proje **daha kolay** görünür — yani mevcut `KDV_DAHIL` etiketi projeyi
+kayırmıyor, sıkıyor.
+
+**Uygulanan tedbirler:**
+1. `pazar.yaml` → `benchmark_1/2.kdv_durumu.confidence`: **HIGH → MEDIUM**
+   (değer `KDV_DAHIL` **DEĞİŞTİRİLMEDİ**).
+2. `pazar.yaml` → benchmark kayıtlarına **kullanım kuralı** (K5/K6) eklendi.
+3. **BM_B senaryosu ELENMEZ** (başkan onayı, `T-551` S3).
+4. Denetim §5.5'in "çiftli gösterim YOK" satırı **nitelendi** (`T-551` S4).
+
+**Kapanış yolu (değişmedi):** `T-504` — şarap reyonundaki fiziksel etiketin
+fotoğrafı. `C-551` ve `T-504` **aynı tek eylemle** kapanır.
+
+---
+
+## BU TURDA DEĞİŞMEYEN ÇELİŞKİLER
+
+`C-202` (HIGH, sıralama döngüsü), `C-204` (LOW, TGK Şarap Tebliği dayanağı),
+`C-301` (MEDIUM, palet bandı — **başkan direktifi aynen geçerli: band korunur**),
+`C-501` (HIGH, feed tutarsızlığı) bu turda **ele alınmamıştır.**
+Durumları **değişmemiştir** ve hiçbiri bu turda çözülmüş sayılmaz.

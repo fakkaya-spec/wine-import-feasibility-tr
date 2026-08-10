@@ -13,10 +13,21 @@
 #   (EV-509/510 -> EV-2026-08-10-501/502) ve promosyon sorusu için negatif
 #   arama kaydı eklenmiştir (EV-2026-08-10-504).
 
+# TUR 2 PRE-FLIGHT NOTU (yatirim-komitesi-baskani, 2026-08-10):
+#   Bu dosyada TUR 2 PRE-FLIGHT'ta YENI PAZAR VERISI EKLENMEMISTIR ve
+#   HICBIR DEGER DEGISTIRILMEMISTIR (599,90 ve 649,90 aynen durmaktadir).
+#   Yapilan tek sey: (a) benchmark confidence HIGH -> MEDIUM,
+#   (b) K5/K6 kullanim kurallarinin eklenmesi. Gerekce:
+#   90-karar/tur-2-preflight-housekeeping.md §C + T-504 + T-551 + C-551.
+
 meta:
   dosya: pazar.yaml
   son_guncelleme: 2026-08-10
-  tur: "TUR 1.5 — turkiye-pazar-kasifi ilk dolum (T-903 düzeltmesi)"
+  tur: "TUR 1.5 — turkiye-pazar-kasifi ilk dolum (T-903 düzeltmesi) + TUR 2 PRE-FLIGHT kullanim kurali (baskan)"
+  baskan_mudahalesi:
+    tarih: 2026-08-10
+    kapsam: "SADECE confidence + kullanim kurali. Deger degisikligi YOK."
+    ref: 90-karar/tur-2-preflight-housekeeping.md
   durum: KISMI_DOLU
   rapor: 60-pazar/rapor-tur15-turkiye-pazar.md
   tur1_raporu: 60-pazar/rapor-tur1-turkiye-pazar.md
@@ -49,6 +60,25 @@ katman_kurallari:
     kullanılamaz. Metro 599,90 ile uzman perakende 875 TL arasındaki fark
     bu ajan tarafından KASTEN hesaplanmamıştır (kanal marjı mı, segment
     farkı mı bilinmiyor) -> T-506.
+
+  # --- TUR 2 PRE-FLIGHT'ta EKLENDİ (yatirim-komitesi-baskani, 2026-08-10) ---
+  # Kaynak: kurucu karari + 90-karar/tur-2-preflight-housekeeping.md §C
+  # Bu iki kural da BAGLAYICIDIR ve K1-K4 ile ayni statudedir.
+  K5: >
+    BENCHMARK KULLANIM KURALI (599,90 TL ve 649,90 TL):
+    Bu sayilar TEK GERCEK PIYASA FIYATI OLARAK KULLANILAMAZ.
+    METRO CASH & CARRY GOZLEMIDIR — genel piyasa fiyati DEGILDIR.
+    Modelde, raporda ve ters modelde her kullanildiginda "Metro cash & carry
+    gozlemi" oldugu ACIKCA yazilir. Ters modelin hedefi bu tek sayiya
+    KILITLENEMEZ; en az bir alternatif hedef (veya band) ile birlikte
+    calistirilir. Deger DEGISTIRILMEMISTIR ve degistirilmeyecektir —
+    kisitlanan sey degerin kendisi degil, KULLANIM BICIMIDIR.
+  K6: >
+    Benchmark'in promosyon durumu UNKNOWN'dir (T-504) ve KDV sunumu C-551 ile
+    nitelenmistir. Bu iki belirsizlik nedeniyle benchmark kayitlarinin
+    confidence degeri MEDIUM'a cekilmistir. MEDIUM olmasi sayinin YANLIS
+    okundugu anlamina GELMEZ (fotograftan okuma HIGH'dir); PIYASAYI TEMSIL
+    GUCUNUN dusuk oldugu anlamina gelir. Ayrim korunmalidir.
 
 # =====================================================================
 # GÖZLEM HAVUZUNUN YAPISI — MODELE OKUNMADAN GİRİLMEZ
@@ -154,11 +184,26 @@ benchmark_1:
     notes: "Fotoğrafta okunamadı. gumruk-vergi-uzmani için GTİP alt kırılımı açısından önemli olabilir."
 
   raf_fiyati_try:
-    value: 599.90
+    value: 599.90                 # DEGISMEDI — kurucu karari: gozlenen gercek fiyat olarak tutulur
     unit: TRY
     status: FACT
     tier: T4
-    confidence: HIGH
+    confidence: MEDIUM            # 2026-08-10 baskan: HIGH -> MEDIUM (T-504 + C-551)
+    onceki_confidence: HIGH
+    confidence_dusurme_gerekcesi: >
+      TEMSIL GUCU dusurulmustur, OKUMA DOGRULUGU degil.
+      (1) Promosyon/normal ayrimi UNKNOWN'dir (T-504, EV-2026-08-10-504).
+      (2) KDV sunumu C-551 ile nitelenmistir.
+      (3) Tek magaza, tek tarih, tek gozlem; magaza ve sehir UNKNOWN.
+      (4) Repoda snapshot YOKTUR (fotograf kullanicidadir).
+      Fotograftan okuma guveni ayri tutulur: okuma_confidence = HIGH.
+    okuma_confidence: HIGH
+    kullanim_kurali: >
+      TEK GERCEK PIYASA FIYATI OLARAK KULLANILAMAZ. Bu bir METRO CASH & CARRY
+      gozlemidir; genel piyasa fiyati DEGILDIR. Her kullanimda bu nitelik
+      yazilir. Ters model hedefi bu tek sayiya kilitlenemez. Bkz.
+      katman_kurallari.K5 / K6 ve K1-K3.
+    kural_kaynagi: "kurucu karari + 90-karar/tur-2-preflight-housekeeping.md §C"
     evidence_id: EV-2026-08-09-501
     gozlem_tarihi: 2026-08-09
     ttl: 30d
@@ -181,12 +226,20 @@ benchmark_1:
       L8'i. K1/K2/K3 kuralları uygulanır.
 
   kdv_durumu:
-    value: KDV_DAHIL
+    value: KDV_DAHIL              # DEGISMEDI — baskan sessiz secim YAPMADI (C-551 OPEN)
     status: ESTIMATE
+    confidence: MEDIUM            # 2026-08-10 baskan: HIGH -> MEDIUM (T-551 S2)
+    onceki_confidence: HIGH
+    confidence_dusurme_gerekcesi: >
+      Mevcut sonuc, ICINDE SIFIR ALKOL SKU'SU bulunan 2026 broşürlerinden
+      (EV-2026-08-09-514) sarap rafina yapilmis bir CIKARIMDIR; projenin
+      bulabildigi TEK Metro sarap kategorisi fiyat iletisiminde
+      (EV-2026-08-10-503) CIFTLI gosterim vardir. HIGH, bu kanit tabaninin
+      tasiyabileceginden fazlasini iddia eder. C-551 OPEN / NON_BLOCKING_TUR2.
     tier: T4
-    confidence: HIGH
     evidence_id: [EV-2026-08-09-503, EV-2026-08-09-504, EV-2026-08-09-505, EV-2026-08-09-506]
     conflict_id: C-551
+    bm_b_senaryosu: "ELENMEZ — baskan onayi 2026-08-10 (T-551 S3)"
     notes: >
       TÜRETME ZİNCİRİ: Metro Türkiye'nin 2026 tarihli künyeli broşürlerinde
       (58 sayfa) HER fiyatın yanında küçük puntoyla "KDV'li" yazar ve tek bir
@@ -277,11 +330,16 @@ benchmark_2:
     status: UNKNOWN
     evidence_id: null
   raf_fiyati_try:
-    value: 649.90
+    value: 649.90                 # DEGISMEDI
     unit: TRY
     status: FACT
     tier: T4
-    confidence: HIGH
+    confidence: MEDIUM            # 2026-08-10 baskan: HIGH -> MEDIUM (benchmark_1 ile ayni gerekce)
+    onceki_confidence: HIGH
+    okuma_confidence: HIGH
+    kullanim_kurali: >
+      TEK GERCEK PIYASA FIYATI OLARAK KULLANILAMAZ — METRO CASH & CARRY
+      gozlemidir. Bkz. katman_kurallari.K5 / K6.
     evidence_id: EV-2026-08-09-502
     gozlem_tarihi: 2026-08-09
     ttl: 30d
@@ -293,12 +351,14 @@ benchmark_2:
     confidence: HIGH
     evidence_id: [EV-2026-08-09-505, EV-2026-08-09-507]
   kdv_durumu:
-    value: KDV_DAHIL
+    value: KDV_DAHIL              # DEGISMEDI
     status: ESTIMATE
     tier: T4
-    confidence: HIGH
+    confidence: MEDIUM            # 2026-08-10 baskan: HIGH -> MEDIUM (T-551 S2)
+    onceki_confidence: HIGH
     evidence_id: [EV-2026-08-09-503, EV-2026-08-09-504]
     conflict_id: C-551
+    bm_b_senaryosu: "ELENMEZ — baskan onayi 2026-08-10 (T-551 S3)"
   promosyon_durumu:
     value: null
     status: UNKNOWN
