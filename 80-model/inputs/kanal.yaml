@@ -21,16 +21,39 @@
 #     70-kanal/marj-vs-markup.md         (tanim sozlesmesi + ornek hesap)
 #     70-kanal/kendi-dagitim-senaryosu.md (own distribution veri yapisi)
 #     70-kanal/rapor-tur2-kanal-marj.md  (rapor)
+#
+# TUR 3A NOTU (kanal-marj-uzmani, 2026-08-10) — KATMAN/MATRAH DENETIMI:
+#   Bu turda HICBIR YENI DEGER EKLENMEMISTIR. Eklenen tek sey METADATA'dir:
+#   her kalemin HANGI KATMANDA ve HANGI MATRAH uzerinden calistigi.
+#   Gerekce: TUR 2.5'te R5 hatasi (-28,95 TL/sise) bir ARITMETIK hatasi degil,
+#   bir MATRAH hatasiydi (L6 ile L7_eff'in birbirinin yerine kullanilmasi) ve
+#   R8 round-trip'ten 2.700/2.700 satirda TEMIZ GECTI (T-942).
+#
+#   YENI DOKUMANLAR:
+#     70-kanal/kanal-katman-matrah-haritasi.md   (kalem x 10 zorunlu alan, uc kanal)
+#     70-kanal/kanal-bacagi-hata-listesi.md      (K1..K12 + TVK-1..TVK-P6)
+#     70-kanal/rapor-tur3a-kanal-marj.md         (rapor)
+#
+#   YENI STATU ETIKETI — `BLOCKED`:
+#     UNKNOWN = bir SEVIYENIN bilinmemesi        -> duyarlilikla yonetilebilir
+#     BLOCKED = bir DENKLEMIN SEKLININ bilinmemesi -> yonetilemez, cunku hangi
+#               eksene konulacagi bile bilinmez. BLOCKED kalem modele SESSIZCE
+#               0 olarak GIREMEZ; 0 alindiysa CIKTIDA YAZILMAK ZORUNDADIR.
 
 meta:
   dosya: kanal.yaml
   son_guncelleme: 2026-08-10
-  tur: "TUR 2 — kanal-marj-uzmani ilk dolum"
+  tur: "TUR 3A — kanal katman/matrah denetimi (TUR 2 dolumunun uzerine METADATA)"
   durum: KISMI_DOLU
-  rapor: 70-kanal/rapor-tur2-kanal-marj.md
-  acik_ticketlar: [T-601, T-602, T-603, T-604, T-605]
-  acik_celiskiler: [C-601, C-602]
+  rapor: 70-kanal/rapor-tur3a-kanal-marj.md
+  onceki_rapor: 70-kanal/rapor-tur2-kanal-marj.md
+  acik_ticketlar: [T-601, T-602, T-603, T-604, T-605,
+                   T-611, T-612, T-613, T-614, T-615, T-616, T-617, T-618, T-619]
+  acik_celiskiler: [C-601, C-602, C-611]
+  cevaplanan_ticketlar_tur3a: [T-943, T-944, T-856]
   evidence_araligi: "EV-2026-08-10-601 .. EV-2026-08-10-624"
+  tur3a_yeni_evidence: "YOK — yeni arastirma yapilmamistir (sinirli denetim turu)"
+  tur3a_yeni_marj_degeri: "YOK — bu tur SAYI uretmez, MATRAH tanimlar"
 
 # =====================================================================
 # BAGLAYICI KULLANIM KURALLARI  (M1-M6)
@@ -61,6 +84,18 @@ kullanim_kurallari:
     Vergi orani (KDV/OTV), navlun, ruhsat bedeli ve tedarikci fiyati bu dosyanin
     KAPSAMI DISINDADIR. Formullerde t_kdv sembolik birakilmistir; degeri
     vergi.yaml'dan alinir.
+  M7: >
+    TUR 3A. Her ticari kosul kalemi ON ALANLA tanimlanir: payer, receiver,
+    layer, basis, currency, fixed_or_variable, per_bottle_or_total,
+    tax_treatment, evidence_id, status. Alanlardan biri eksikse kalem
+    BLOCKED'dir ve modele SESSIZCE 0 OLARAK GIREMEZ. Tam tanim:
+    70-kanal/kanal-katman-matrah-haritasi.md §2.
+  M8: >
+    TUR 3A. L7 CIPLAK TOKENI YASAKTIR — her kullanimda L7_eff yazilir.
+    L6 (fatura fiyati) ile L7_eff (ithalatcinin FIILI net hasilati) IKI AYRI
+    SAYIDIR ve aralarindaki fark (d*L6 + f) TAM OLARAK R5 hatasinin
+    buyuklugudur. Ayrica L6_gross = L6*(1+v) bu turda repoya YENI GIRMISTIR
+    ve ALACAK TUTARIDIR (vade ve peak_cash BUNUN uzerinden kurulur, L6 degil).
 
 # =====================================================================
 # FIYAT MERDIVENI DENKLEMI — MODELIN TASIYICI FORMULU

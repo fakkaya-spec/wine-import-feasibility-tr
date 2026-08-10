@@ -1,16 +1,72 @@
-# TICKET İNDEKSİ — TUR 2.5 KAPANIŞ SONRASI
+# TICKET İNDEKSİ — TUR 3A
 
-> Güncellendi: **2026-08-10, TUR 2.5 KAPANIŞ** (`yatirim-komitesi-baskani`).
+> Güncellendi: **2026-08-10, TUR 3A** (`yatirim-komitesi-baskani`).
 > Kaynak: `99-ops/tickets/T-*.md` — **tek doğruluk kaynağı ticket dosyalarının
-> kendisidir.** Bu indeks o dosyalardan programatik olarak türetilmiştir.
-> Karar kayıtları: `90-karar/tur-2-konsolidasyon.md` → `90-karar/tur-25-preflight.md`
-> → **`90-karar/tur-25-konsolidasyon.md`**
+> kendisidir.** Bu indeks o dosyalardan türetilmiştir.
+> Karar kayıtları: `90-karar/tur-2-konsolidasyon.md` → `tur-25-preflight.md`
+> → `tur-25-konsolidasyon.md` → **`90-karar/tur-3a-ticket-degerlendirmesi.md`**
+> Yatırımcı girdisi: **`90-karar/investor-decisions-required.md` (SÜRÜM 2)**
 
 ```
-TOPLAM : 101 ticket
-impact : CRITICAL 13 · HIGH 53 · MEDIUM 33 · LOW 1 · CONSTRAINT 1
-status : OPEN 86 · ANSWERED 9 · RESOLVED 6
+TOPLAM : 113 ticket        (dosya sayimi ile DOGRULANDI)
+impact : CRITICAL 13 · HIGH 64 · MEDIUM 34 · LOW 1 · CONSTRAINT 1
+status : OPEN 98 · ANSWERED 9 · RESOLVED 6
+acik   : 107  (OPEN + ANSWERED) · acik CRITICAL: 10   (DEGISMEDI)
 ```
+
+> **TUR 3A'da hiçbir ticket kapatılmadı, hiçbir `impact` düşürülmedi,
+> hiçbir ajan bulgusu reddedilmedi.** Yapılan: iki ticket'ın **kapsamı
+> ayrıştırıldı** (`T-946`, `T-913`), dört yeni ticket açıldı, iki yeni
+> **kapı** yürürlüğe girdi (`P-3b-DATED`, `P-5`).
+
+---
+
+## ⚠ İKİNCİ KAYIT HATASI DÜZELTMESİ — **8 TICKET İNDEKSTE HİÇ YOKTU**
+
+TUR 2.5'te indeks *"76 → 101"* olarak düzeltilmişti. **O düzeltme de eksikti.**
+Dosya sistemi sayımı ile indeks tablosu bu turda karşılaştırıldı:
+
+```
+99-ops/tickets/T-*.md dosya sayisi : 113
+indeks tablosundaki id sayisi      : 105   (TUR 3A'nin 4 yenisi dahil)
+FARK                               :   8
+```
+
+**İndekste hiç görünmemiş 8 ticket:**
+
+| ticket | açan | hedef | impact | Neden önemli |
+|---|---|---|---|---|
+| `T-611` | `kanal-marj-uzmani` | `gumruk-vergi-uzmani` | HIGH | `f` ve `d`'nin **KDV'si indirilebilir mi**; indirilemezse ekonomik maliyet **1,20 katı** |
+| `T-612` | `kanal-marj-uzmani` | `gumruk-vergi-uzmani` | HIGH | `R1`'de HoReCa satırlarına **ürün KDV'si** uygulanıyor; menü fiyatı **hizmet KDV'si** olabilir |
+| `T-613` | `kanal-marj-uzmani` | `finans-fizibilite` | HIGH | `d` tek oransal katsayı; oysa altı kalemin **en az üçü SABİT TUTARLI** → hacim riski modelden **silinmiş** |
+| `T-614` | `kanal-marj-uzmani` | `finans-fizibilite` | HIGH | (a) alacak matrahı `L6` değil **`L6×(1+v)`** → `peak_cash` **%20 eksik**; (b) kanal vadesinin **finansman maliyeti modelde SIFIR** (60→120 gün ≈ **−27,55 TL/şişe**, tornadoda **hiç yok**) |
+| `T-881` | `global-sourcing-kasifi` | `mevzuat-ruhsat-uzmani` | HIGH | RFQ v2.2 `M5` etiket ölçüleri teyidi |
+| `T-882` | `global-sourcing-kasifi` | `navlun-lojistik-uzmani` | HIGH | RFQ v2.2 `M2`/`M3`/`M4` ↔ `T-302`'nin 14 maddesi eşleşiyor mu |
+| `T-883` | `global-sourcing-kasifi` | `gumruk-vergi-uzmani` | HIGH | Menşe ispat taahhüdünün **kabul kriteri** (`T-162` hâlâ `UNKNOWN`) |
+| **`T-884`** | `global-sourcing-kasifi` | **`yatirim-komitesi-baskani`** | HIGH | **RFQ cevapsızlık kuralı ONAYI başkanındır** — bugünkü doluluk oranıyla (`bottle_weight` **26/26 `UNKNOWN`**) kural **kısa listenin tamamını** eleyebilir |
+
+> **Bu bir başkan kayıt hatasının ikinci kez düzeltilmesidir; hiçbir ajanın
+> bulgusu değişmemiştir.** Sekizi de `TÜM TICKET'LAR` tablosuna eklendi.
+>
+> ⚠ **Ayrıca bir süreç tespiti:** `T-611`…`T-614` ve `T-881`…`T-884`
+> **TUR 3A'da açılmıştır** — yani `kanal-marj-uzmani` ve
+> `global-sourcing-kasifi` TUR 3A'da **çalışmıştır.** Önceki bölümdeki
+> *"TUR 3A'da ele alınmayanlar"* listesi bu ajanları kapsamaz.
+
+### ⚠ `T-951` bu düzeltmeden DOĞRUDAN etkilendi
+
+`T-611`'in `claim` alanı, `T-951`'in çekirdek sorusunu **zaten cevaplanmış
+gibi** kullanmaktadır: *"`f` ve `d` **hizmet faturası** ile alınmaktadır
+(`EV-2026-08-10-610`, `FACT`)."*
+
+**Ama `EV-2026-08-10-610`'un kendi `claim` ve `value` alanlarında "hizmet
+faturası" GEÇMEZ.** Kart bir **kalem listesidir**; mekanizmayı taşımaz.
+Mekanizma ifadesi kartın değil, **`snapshot`'ın** içindedir.
+
+> Bu bir çelişki değil, bir **kayıt boşluğudur**: kaynak metinde var olan
+> bir olgu, kanıt kartına **girmemiştir** — ve `T-611` onu kart yokmuş gibi
+> `FACT` diye kullanmaktadır. `T-951` bu boşluğu kapatmak üzere
+> **yeniden yönlendirilmiştir** (bkz. `T-951` § TUR 3A EK).
 
 > ⚠ **Önceki indeks (TUR 2.5 pre-flight) "76 ticket" diyordu ve BU SAYIM
 > EKSİKTİ.** `T-701`, `T-702`, `T-751`, `T-801`, `T-802`, `T-851`…`T-859`,
@@ -42,6 +98,54 @@ status : OPEN 86 · ANSWERED 9 · RESOLVED 6
 > **CLAUDE.md §5:** `impact: CRITICAL` açık ticket varken finans modeli
 > `APPROVED` olamaz. **`reverse-price-model.md`, `sweet-spot-analizi.md` ve
 > `country-buying-ceilings.csv` `DRAFT`'tır ve öyle kalır.**
+
+---
+
+---
+
+## TUR 3A'DA YAPILANLAR (2026-08-10)
+
+### Kapsam ayrıştırmaları — **statü değişmedi**
+
+| ticket | önce | sonra | ne yapıldı |
+|---|---|---|---|
+| **`T-946`** | `OPEN` (HIGH) | **`OPEN` (HIGH)** — `tur_atamasi: TUR 4` | **Kapatılamadı — iki bağımsız nedenle:** (1) `seytanin-avukati` bu turda çalıştırılmadı, (2) `R5` düzeltmesini **kabul eden taraf başkandır** → kendi hükmünü denetleyemez. **Bu bir "kapatılamadı" değil, "doğru tura ait" durumudur.** Denetim sorularının **5'inden 1'i** (fatura mekanizması) alan dışı olduğu için **`T-951`**'e ayrıldı |
+| **`T-913`** | `OPEN` (HIGH) | **`OPEN` (Ayak A) + `CLOSED` (Ayak B)** | Ticket **iki ayağa bölündü**: **A — PROTOKOL** *(yeniden çekim dış temas gerektiriyor mu → `navlun-lojistik-uzmani`, açık)* · **B — ZAMANLAMA** *(başkan hükmü: **`P-3b-DATED`**, verildi)*. **Cevap: bu ikisi de — ve ticket bunları karıştırıyordu.** `claim` alanındaki "11 kart" sayımı **düzeltilmedi ama not düşüldü** (bağlayıcı sayım `T-802`'deki **10 karttır**) |
+
+### TUR 3A'da açılan ticket'lar
+
+| ticket | hedef | impact | konu |
+|---|---|---|---|
+| **`T-951`** | `kanal-marj-uzmani` | **HIGH** | `d`/`f` **mekanizması**: fatura indirimi mi ayrı hizmet faturası mı? **(a) ise `R5` ÇİFT SAYIM yapıyor.** `T-946` Soru 3'ten ayrıldı |
+| **`T-952`** | `finans-fizibilite` | MEDIUM | Brüt marj **üç katman tanımında yan yana** raporlansın (`L5→L6` / `L5→L7_eff` / `L5→L8`) → `D-01`(ii) yatırımcı listesinden düşer |
+| **`T-953`** | `finans-fizibilite` | **HIGH** | `L5` kalemleri **`VARIABLE`/`FIXED`/`STEP`** sınıflandırılsın → `break_even_volume` **tanımlı** hâle gelir; `D-02`(ii) düşer |
+| **`T-954`** | `finans-fizibilite` | **HIGH** | **`P-5`** — TUR 3B çıktısı tek "baz senaryo" olarak sunulamaz; **yüzey** olarak sunulur, post-output eşikler **`POST_OUTPUT_THRESHOLD`** damgalanır |
+
+### TUR 3A'da yürürlüğe giren kapılar
+
+| Kapı | İçerik |
+|---|---|
+| **`P-3b-DATED`** | **2026-08-17 00:00**'dan sonra 10 LCL kartı **otomatik `STALE`**; lojistik bacağı `ESTIMATE/LOW` + çıktıda **`STALE_LOGISTICS`** damgası; damgalı çıktı **`G2-L`'yi geçemez**; yenilenirse damga düşer ve **iki ölçüm farkı zorunlu kaydedilir** (`T-913`) |
+| **`P-5`** | Ertelenen 21 eşiğin bedeli: çıktı **yüzeydir**, nokta seçimi `INVESTOR_DECISION` olarak **tarihlenir**, çıktıdan sonra yazılan eşik **damgalanır** ve `seytanin-avukati`'ya `IR-4` saldırı vektörü olarak verilir (`T-954`) |
+
+### `T-851` / `T-852` / `OQ-901` — kapsam daraltması *(statü değişmedi)*
+
+`90-karar/investor-decisions-required.md` **sürüm 2**'ye geçmiştir:
+
+```
+ONCE  : 16 esik + 8 girdi = 24 kalem
+SONRA : MUST DECIDE NOW = 3   (N-1 fx · N-2 dis temas izni · N-3 L8 alt katmani)
+        CAN DECIDE LATER = 21
+        YATIRIMCI LISTESINDEN CIKARILAN = 3  ->  T-952, T-953, T-944
+```
+
+> **`MUST DECIDE NOW` listesinde tek bir EŞİK DEĞERİ yoktur:**
+> biri bir **kayıt**, biri bir **izin**, biri bir **netleştirme**.
+> `T-851`, `T-852` ve `OQ-901` **`OPEN` kalır** — kapanışlarını yalnızca
+> yatırımcı yapabilir. Değişen tek şey **kapanış koşulunun küçülmesidir.**
+>
+> `I-8` *(TUR 3A/3B çalıştırma tarihi)* yatırımcı listesinden **çıkarıldı** —
+> o bir başkan zamanlama kararıydı ve `P-3b-DATED` olarak verilmiştir.
 
 ---
 
@@ -166,7 +270,10 @@ olarak bildirmiştir, ancak **ticket dosyalarının `status` alanı hâlâ `OPEN
 | `T-941` ➕ | `yatirim-komitesi-baskani` | `gumruk-vergi-uzmani` | HIGH | OPEN | `R5` başlığı yanlış girdi katmanını gösteriyor (`L6` → doğrusu `L7_eff`) |
 | `T-943` ➕ | `yatirim-komitesi-baskani` | `kanal-marj-uzmani` | HIGH | OPEN | Kanal bacağı için **"en muhtemel hatalar" listesi hiç yazılmamış** |
 | `T-944` ➕ | `yatirim-komitesi-baskani` | `finans-fizibilite` | HIGH | OPEN | `μ`'nün matrahı (`L6`?) **tanımsız ve hiç test edilmemiş** |
-| `T-946` ➕ | `yatirim-komitesi-baskani` | `seytanin-avukati` | HIGH | OPEN | `R5` düzeltmesinin **bağımsız denetimi** + **DESEN denetimi** |
+| `T-946` | `yatirim-komitesi-baskani` | `seytanin-avukati` | HIGH | OPEN | `R5` düzeltmesinin **bağımsız denetimi** + **DESEN denetimi** — **TUR 4** |
+| `T-951` ➕ | `yatirim-komitesi-baskani` | `kanal-marj-uzmani` | HIGH | OPEN | `d`/`f` **mekanizması**: fatura indirimi mi ayrı hizmet faturası mı — `R5` çift sayım riski |
+| `T-953` ➕ | `yatirim-komitesi-baskani` | `finans-fizibilite` | HIGH | OPEN | `L5` kalemlerinin `VARIABLE`/`FIXED`/`STEP` sınıflandırması — `break_even_volume` bunsuz **tanımsız** |
+| `T-954` ➕ | `yatirim-komitesi-baskani` | `finans-fizibilite` | HIGH | OPEN | **`P-5`** — TUR 3B çıktısı **yüzey** olarak sunulur; post-output eşikler damgalanır |
 | `T-105` | `gumruk-vergi-uzmani` | `gumruk-vergi-uzmani` | MEDIUM | OPEN | KKDF **matrahının** tanımı `UNKNOWN` |
 | `T-151` | `gumruk-vergi-uzmani` | `gumruk-vergi-uzmani` | MEDIUM | OPEN | İthalat KDV'sinin indirilebilirliği T1 tam metinle doğrulanmalı → **`T-947`** |
 | `T-153` | `gumruk-vergi-uzmani` | `finans-fizibilite` | MEDIUM | OPEN | `matrah_sirasi.py:217` yalnız `is None` denetliyor *(`T-921` kapsadı — dosya güncellenmeli)* |
@@ -188,6 +295,14 @@ olarak bildirmiştir, ancak **ticket dosyalarının `status` alanı hâlâ `OPEN
 | `T-564` | `turkiye-pazar-kasifi` | `mevzuat-ruhsat-uzmani` | MEDIUM | OPEN | 4 ithalatçı üzerinden TADAB liste doğrulaması |
 | `T-565` | `turkiye-pazar-kasifi` | `global-sourcing-kasifi` | MEDIUM | OPEN | Cantina Danese kendi markasıyla TR'de mi |
 | `T-605` | `kanal-marj-uzmani` | `global-sourcing-kasifi` | MEDIUM | OPEN | RFQ 5.6 (üretici katkısı) ↔ kanal listeleme bedeli aynı şey mi |
+| `T-611` ⚠ | `kanal-marj-uzmani` | `gumruk-vergi-uzmani` | HIGH | OPEN | `f`/`d`'nin KDV'si indirilebilir mi — indirilemezse ekonomik maliyet **1,20 katı** *(indekse ilk kez girdi)* |
+| `T-612` ⚠ | `kanal-marj-uzmani` | `gumruk-vergi-uzmani` | HIGH | OPEN | `R1`'de HoReCa'ya **ürün KDV'si** uygulanıyor; menü fiyatı **hizmet KDV'si** olabilir *(indekse ilk kez girdi)* |
+| `T-613` ⚠ | `kanal-marj-uzmani` | `finans-fizibilite` | HIGH | OPEN | `d` tek oransal katsayı; altı kalemin **en az üçü SABİT** → hacim riski silinmiş *(indekse ilk kez girdi)* |
+| `T-614` ⚠ | `kanal-marj-uzmani` | `finans-fizibilite` | HIGH | OPEN | Alacak matrahı `L6×(1+v)` olmalı (`peak_cash` %20 eksik) + **vade finansman maliyeti SIFIR** (≈ −27,55 TL/şişe) *(indekse ilk kez girdi)* |
+| `T-881` ⚠ | `global-sourcing-kasifi` | `mevzuat-ruhsat-uzmani` | HIGH | OPEN | RFQ v2.2 `M5` etiket ölçüleri teyidi *(indekse ilk kez girdi)* |
+| `T-882` ⚠ | `global-sourcing-kasifi` | `navlun-lojistik-uzmani` | HIGH | OPEN | RFQ v2.2 `M2`/`M3`/`M4` ↔ `T-302`'nin 14 maddesi *(indekse ilk kez girdi)* |
+| `T-883` ⚠ | `global-sourcing-kasifi` | `gumruk-vergi-uzmani` | HIGH | OPEN | Menşe taahhüdünün **kabul kriteri** — `T-162` `UNKNOWN` *(indekse ilk kez girdi)* |
+| `T-884` ⚠ | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | HIGH | OPEN | **RFQ cevapsızlık kuralı onayı başkanındır** — kısa listenin tamamını eleyebilir *(indekse ilk kez girdi)* |
 | `T-853` | `finans-fizibilite` | `gumruk-vergi-uzmani` | MEDIUM | OPEN | Moldova ülke listesinde **yok** → **DÜ FALLBACK**; sonuç tesadüfen doğru |
 | `T-855` | `finans-fizibilite` | `navlun-lojistik-uzmani` | MEDIUM | OPEN | `V10K` (10.000 şişe) için lojistik satırı yok → senaryo çalıştırılamadı |
 | `T-872` | `global-sourcing-kasifi` | `gumruk-vergi-uzmani` | MEDIUM | OPEN | Menşe ispat belgesi reddedilirse tarife %50 → %70 |
@@ -199,7 +314,8 @@ olarak bildirmiştir, ancak **ticket dosyalarının `status` alanı hâlâ `OPEN
 | `T-924` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | MEDIUM | OPEN | 750 ml **üç dosyada üç farklı statü** |
 | `T-925` | `yatirim-komitesi-baskani` | `global-sourcing-kasifi` | MEDIUM | OPEN | `urun.yaml → hacim_ml` `evidence_id` eksik |
 | `T-945` ➕ | `yatirim-komitesi-baskani` | `gumruk-vergi-uzmani` | MEDIUM | OPEN | `L3-K` kuralı `matrah-sirasi.md`'ye yazılmalı (`C-851` çözümü) |
-| `T-948` ➕ | `yatirim-komitesi-baskani` | `finans-fizibilite` | MEDIUM | OPEN | `P-2` tam tablosu + CSV'ye `λ` sütunları |
+| `T-948` | `yatirim-komitesi-baskani` | `finans-fizibilite` | MEDIUM | OPEN | `P-2` tam tablosu + CSV'ye `λ` sütunları |
+| `T-952` ➕ | `yatirim-komitesi-baskani` | `finans-fizibilite` | MEDIUM | OPEN | Brüt marj **üç katman tanımında yan yana** raporlansın → `D-01`(ii) yatırımcı listesinden düşer |
 | `T-801` | `navlun-lojistik-uzmani` | `yatirim-komitesi-baskani` | LOW | OPEN | LCL kanıt seti 11 değil **10** karttır |
 | `T-205` | `mevzuat-ruhsat-uzmani` | `kanal-marj-uzmani` | CONSTRAINT | RESOLVED | 7584 s.K. m.2 görsel yasağı — `ACCEPTED BUSINESS CONSTRAINT` |
 
@@ -207,21 +323,52 @@ olarak bildirmiştir, ancak **ticket dosyalarının `status` alanı hâlâ `OPEN
 
 ## HEDEF AJANA GÖRE AÇIK YÜK
 
-*(“açık” = `status` ∈ {`OPEN`, `ANSWERED`}. Toplam açık: **95**, açık CRITICAL: **10**.)*
+*(“açık” = `status` ∈ {`OPEN`, `ANSWERED`}. Toplam açık: **107**, açık CRITICAL: **10**.)*
 
-| Hedef ajan | Açık CRITICAL | Toplam açık |
-|---|---|---|
-| `gumruk-vergi-uzmani` | **1** *(`T-947`)* | **20** |
-| `navlun-lojistik-uzmani` | 0 | 15 |
-| **`yatirim-komitesi-baskani`** | **3** *(`T-304`, `T-851`, `T-852`)* | 14 |
-| `mevzuat-ruhsat-uzmani` | **2** *(`T-301`, `T-601`)* | 13 |
-| `finans-fizibilite` | **4** *(`T-104`, `T-466`, `T-912`, `T-942`)* | 11 |
-| `global-sourcing-kasifi` | 0 | 11 |
-| `turkiye-pazar-kasifi` | 0 | 5 |
-| `kanal-marj-uzmani` | 0 | 5 |
-| `seytanin-avukati` | 0 | 1 |
+| Hedef ajan | Açık CRITICAL | Toplam açık | TUR 3A değişimi |
+|---|---|---|---|
+| **`gumruk-vergi-uzmani`** | **1** *(`T-947`)* | **23** | **+3** *(`T-611`, `T-612`, `T-883` — indekse ilk kez girdi)* |
+| **`finans-fizibilite`** | **4** *(`T-104`, `T-466`, `T-912`, `T-942`)* | **16** | **+5** *(`T-952`, `T-953`, `T-954`; `T-613`, `T-614` indekse ilk kez girdi)* |
+| **`navlun-lojistik-uzmani`** | 0 | 16 | **+1** *(`T-882`)* |
+| **`yatirim-komitesi-baskani`** | **3** *(`T-304`, `T-851`, `T-852`)* | 15 | **+1** *(`T-884` — **RFQ eleme kuralı onayı**)* |
+| **`mevzuat-ruhsat-uzmani`** | **2** *(`T-301`, `T-601`)* | 14 | **+1** *(`T-881`)* |
+| `global-sourcing-kasifi` | 0 | 11 | — |
+| **`kanal-marj-uzmani`** | 0 | **6** | **+1** *(`T-951`)* |
+| `turkiye-pazar-kasifi` | 0 | 5 | — |
+| `seytanin-avukati` | 0 | 1 | — *(`T-946` — **TUR 4**)* |
 
 > **Başkana yönelik 3 açık `CRITICAL`'ın 3'ü de bir ARAŞTIRMA değil, bir
 > KARAR veya İZİN beklemektedir** (`T-304` → dış temas izni; `T-851` →
 > yatırımcı eşikleri; `T-852` → `fx` kaydı).
-> Bu üçü `90-karar/investor-decisions-required.md`'ye taşınmıştır.
+> Bu üçü `90-karar/investor-decisions-required.md`'ye taşınmıştır ve **sürüm
+> 2'de sırasıyla `N-2`, `CAN DECIDE LATER` ve `N-1`'e karşılık gelir** —
+> yani üçünden **ikisi hâlâ `MUST DECIDE NOW`**'dadır.
+
+> ⚠ **`finans-fizibilite` TUR 3A'da en çok yük alan ajandır (+3).** Bu bir
+> tesadüf değil: yatırımcı listesinden çıkarılan üç kalemin (`D-01`(ii),
+> `D-02`(ii), `D-03`(i)) **üçü de bir modelleme tanımıydı** ve tanımların
+> sahibi bu ajandır. **Yatırımcının listesinin kısalması, ajanın listesinin
+> uzaması demektir** — iş yok olmadı, **doğru masaya taşındı.**
+
+---
+
+## TUR 3A'DA ELE ALINMAYANLAR *(kayıt — öncelik uyarısı)*
+
+`tur-25-konsolidasyon.md` §6.1 TUR 3A iş listesini **öncelik sırasıyla**
+vermişti. **Bu OTURUMDA** 6 ve 7 numaralı işler (`T-946`, `T-913`) ele alındı;
+**1–5 arası bu oturumda ele alınmadı.**
+
+⚠ **Not:** `kanal-marj-uzmani` ve `global-sourcing-kasifi` TUR 3A'da ayrıca
+çalışmış ve **8 ticket açmıştır** (`T-611`…`T-614`, `T-881`…`T-884`) — aşağıdaki
+liste yalnızca **bu oturumun** kapsamı içindir, TUR 3A'nın tamamı değil.
+
+| Öncelik | İş | Ajan | Durum |
+|---|---|---|---|
+| **1** | **`T-947`** — KDVK md.36 CB kararı taraması | `gumruk-vergi-uzmani` | ⛔ **ele alınmadı** — ters modelin **TÜM sayılarını** çürütebilecek tek bulgu (~%22,7) |
+| **2** | Gözetim tebliği yeniden taraması | `gumruk-vergi-uzmani` | ele alınmadı |
+| **3** | **`T-942`** — `R8-K` kanal round-trip | `finans-fizibilite` | ele alınmadı |
+| **4** | **`T-917`** — tek fiziksel mağaza turu | `turkiye-pazar-kasifi` | ele alınmadı — 5 kaydı **aynı anda** kapatır |
+| **5** | `T-941` · `T-943` · `T-944` · `T-945` | çeşitli | ele alınmadı |
+
+> **Sıra yanlış olmuş olabilir ve bu kayda geçirilmiştir**
+> (`90-karar/tur-3a-ticket-degerlendirmesi.md` § kör nokta).

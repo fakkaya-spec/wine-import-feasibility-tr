@@ -51,6 +51,255 @@ yeni_kapi:              P-5   # POST-OUTPUT THRESHOLD damgasi — T-954
 
 ---
 
+# §A — **MUST DECIDE NOW** *(TUR 3B'den önce zorunlu — 3 kalem)*
+
+> ## ÖNCE EN ÖNEMLİ SONUÇ
+>
+> **Yatırımcının TUR 3B'den önce tek bir EŞİK DEĞERİ belirlemesi
+> gerekmemektedir.**
+>
+> 16 eşiğin (`D-01` … `D-16`) **hiçbiri** bu listede bir *sayı* olarak yer
+> almıyor. Listede kalan 3 kalemin niteliği şudur:
+>
+> | # | Kalem | Nedir | Ne DEĞİLDİR |
+> |---|---|---|---|
+> | **`N-1`** | `fx` | bir **KAYIT** | bir karar değil |
+> | **`N-2`** | dış temas izni | bir **İZİN** | bir karar değil |
+> | **`N-3`** | hedef merdivenin `L8` alt katmanı | bir **NETLEŞTİRME** *(zaten yapılmış bir beyanın)* | yeni bir eşik değil |
+>
+> Yani yatırımcıdan istenen şey **bir risk iştahı beyanı değil**; bir kur
+> kaydı, bir izin ve kendi beyanının hangi rafı kastettiğidir.
+
+## Sıralama kuralı `S-1` — bu listenin nasıl 24'ten 3'e indiği
+
+> **`S-1`:** Bir kalem, modelin **parametrik olarak üretebildiği bir yüzey
+> üzerinde bir NOKTA SEÇİYORSA** → **ertelenebilir** (duyarlılık ekseni
+> olarak taşınır).
+> Yüzeyin **eksenlerini, birimlerini veya katman ANLAMINI tanımlıyorsa** →
+> **ertelenemez.**
+
+`S-1`'in dayanağı bir tercih değil, bir olgudur: **TUR 3B zaten parametrik bir
+yüzey üretmek zorundadır.** Alış fiyatı (`T-466`, CRITICAL), antrepo bekleme
+süresi (`T-301`, CRITICAL) ve `l8_chain_retail` (`T-603`) bilinmediği için
+ileri model **hiçbir koşulda tek bir nokta üretemez.** Bir eşik koymak, zaten
+bir yüzey olan çıktının üzerine bir kesme düzlemi koymaktır — ve **kesme
+düzlemi yüzeyden sonra da konulabilir.**
+
+> ⚠ **Bunun bir bedeli vardır ve gizlenmiyor:** ertelenen her eşik `IR-4`
+> (**hedef kaydırma**) riskine girer. Bedel **`P-5` damgasıyla** ödenir
+> (bkz. §D). Bedelsiz bir sadeleştirme yoktur.
+
+---
+
+## `N-1` — `fx` (USD/TRY, EUR/TRY, EUR/USD)
+
+| Alan | İçerik |
+|---|---|
+| **Nedir** | Bir **kayıt**. Bir eşik değil, bir risk iştahı değil, bir tercih değil. |
+| **Karar formatı** | **Üç sayı + bir tarih + bir kaynak adı + bir bant:**<br>`usd_try`, `eur_try`, `eur_usd` · `kur_tarihi` · `kaynak` · `LOW / BASE / HIGH` |
+| **Karar için gereken bağlam** | ⚠ **Model çıktısına bakmaya gerek YOKTUR.** Bakılacak tek şey kurun **hangi kaynaktan** ve **hangi tarihten** alındığıdır. Bu, bu listedeki tek kalemdir ki hiçbir modele bakmadan cevaplanır. |
+| **Test — belirlenmezse TUR 3B'de hangi çıktı üretilemez?** | `MAX_FOB_TRY` ve `MAX_EXW_TRY` **üretilemez.** 9 tedarik ülkesi **9 farklı sayıya ayrışamaz — 2 sayıda kalır** (`g = 0,50` / `0,70`). Ülkeler arası gerçek ayrışma **FOB seviyesinde** doğar ve o bacak `fx` olmadan hesaplanamaz. |
+| **Duyarlılık ekseni olarak taşınabilir mi?** | **Teknik olarak evet** — model bir `fx` gridi üzerinde koşabilirdi. **Ama ertelenmesi savunulamaz**, çünkü: (i) bu bir risk iştahı değil, **gözlenebilir bir olgudur** — ertelemenin *bilgi getirisi sıfırdır*; (ii) maliyeti **dakikalardır**; (iii) ertelenirse zaten parametrik olan yüzeye **bir eksen daha** eklenir ve ülke ayrıştırması o eksenin arkasına gizlenir. **Erteleme burada yalnızca maliyet üretir, hiçbir şey satın almaz.** |
+| **Ertelenirse ne olur** | Ülke seçimi TUR 3B'de yapılamaz; `global-sourcing-kasifi`'nın 9 ülkelik havuzu **finansal olarak sıralanamaz.** |
+| **Uyarı — bu kayıt neyi KAPATMAZ** | **Gümrük beyan kuru** serbest piyasa kurundan farklı olabilir; kural `UNKNOWN`'dır (`T-911`, `gumruk-vergi-uzmani`). Yatırımcı kuru verse bile bu **ayrı bir açık kalır** ve kapanışı ajana aittir. |
+| **Bağlı ticket** | **`T-852`** (CRITICAL), **`T-912`** (CRITICAL), `T-911` |
+| **Tam gerekçe** | `EK-C · I-1` |
+
+> **Bu, projede ÜÇ TURDUR kapanmayan, maliyeti ~sıfır olan ve en çok çıktı
+> açan tek girdidir. Dördüncü kez kayda geçiriyorum.**
+
+---
+
+## `N-2` — DIŞ TEMAS İZNİ
+
+| Alan | İçerik |
+|---|---|
+| **Nedir** | Bir **izin**. Bir veri eksikliği **değildir.** |
+| **Karar formatı** | **İki bağımsız EVET/HAYIR** — tek bir cevapla birleştirilemez:<br>**(a)** tedarikçilere **RFQ** gönderimi (`T-467`)<br>**(b)** forwarder'lardan **FCL kotasyonu** talebi (`T-304`)<br>*İzin verilirse sınırlar da yazılır: kaç tedarikçi · hangi kimlikle · bağlayıcı olmayan sorgu mu.* |
+| **Karar için gereken bağlam** | ⚠ **Model çıktısına bakmaya gerek YOKTUR.** Gereken tek bağlam şudur: bugün `G2` ve `G2-L` *"tedarik kaynağı yok"* diye **değil**, **"henüz sorulmadı"** diye kapalıdır. Havuz hazırdır (26 tedarikçi tanımlı, RFQ şablonu yazılı, 3 forwarder belirli). |
+| **Test — belirlenmezse TUR 3B'de hangi çıktı üretilemez?** | **Dürüst cevap: TUR 3B teknik olarak koşar.** Alış fiyatı zaten parametriktir. Üretilemeyen şey TUR 3B'nin bir çıktısı değil, **TUR 7'nin tamamıdır** — ve `G2`. |
+| **Duyarlılık ekseni olarak taşınabilir mi?** | **HAYIR — ve bu, listedeki diğer iki kalemden farklı bir nedenledir.** Taşınacak şey bir sayı değil, **bir sürecin başlangıcıdır.** RFQ cevapları haftalar sürer; izin ne kadar geç verilirse TUR 7 o kadar geç başlar. Bu bir **model blokeri değil, TAKVİM blokeridir** — ve takvim ertelenerek yönetilemez. |
+| **Ertelenirse ne olur** | `T-466` (CRITICAL) açık kalır; gerçek `EXW`/`FOB` hiçbir zaman gelmez; TUR 6'da elde yalnızca *"tedarikçilere sorulmadı"* kaydı olur. **Bu bir `KILL` gerekçesi olamaz** ve olmadığı TUR 6'da açıkça yazılacaktır. |
+| **Bağlı ticket** | **`T-467`**, **`T-304`** (CRITICAL), `T-466` (CRITICAL), `T-871` |
+| **Tam gerekçe** | `EK-C · I-4` |
+
+---
+
+## `N-3` — HEDEF MERDİVENİN HANGİ `L8` ALT KATMANI OLDUĞU
+
+> **Bu, `D-14`'ün İKİYE BÖLÜNMÜŞ hâlidir.**
+> `D-14a` (**hangi basamak `PRIMARY`**) → **`CAN DECIDE LATER`**
+> `D-14b` (**hangi `L8` alt katmanı**) → **`MUST DECIDE NOW`**
+
+| Alan | İçerik |
+|---|---|
+| **Nedir** | Bir **netleştirme.** Yatırımcı merdiveni (`599 / 699 / 799 / 899 / 999`, KDV dahil) **zaten beyan etmiştir** (`INVESTOR_ASSUMPTION`, `tur-25-preflight.md` §3). Sorulan şey **yeni bir eşik değil**, o beyanın hangi rafı kastettiğidir. |
+| **Karar formatı** | **Katman seçimi — üç seçenekten biri:**<br>`L8_CHAIN_RETAIL` *(zincir market rafı)* · `L8_METRO_CASH_CARRY` *(toptancı/cash&carry)* · `L8_ONLINE_UZMAN_PERAKENDE`<br>*Tek kelimelik bir cevap yeterlidir. Bir sayı istenmemektedir.* |
+| **Karar için gereken bağlam** | ⚠ **Model çıktısına bakmaya gerek YOKTUR** — bakılacak şey **kendi beyanınızdır.** Faydalı olabilecek tek bağlam: elimizdeki **473 fiyat gözleminin `L8_CHAIN_RETAIL`'deki sayısı SIFIRDIR** (`T-859`, `T-603`, `T-917`). Yani `L8_CHAIN_RETAIL` seçilirse, seçilen katmanda **hiç gözlem olmadığı** bilinerek seçilmiş olur. |
+| **Test — belirlenmezse TUR 3B'de hangi çıktı üretilemez?** | Üretilemeyen bir çıktı yoktur — **ama üretilen HER parasal sayının ANLAMI belirsiz kalır.** Aynı `799 TL` farklı `L8` alt katmanlarında **farklı bir `m_retail` zinciri**, **farklı `d`/`f`** ve dolayısıyla **farklı bir `MAX_CIF`** üretir. Çıktı bir sayı verir ama *"neyin fiyatı"* sorusuna cevap veremez. |
+| **Duyarlılık ekseni olarak taşınabilir mi?** | **HAYIR.** Üç alt katman için ayrı ayrı koşulabilir görünüyor — ama `L8_CHAIN_RETAIL` kolunda **sıfır gözlem** vardır. Yani "eksen olarak taşımak", eksenin bir kolunu **tamamen boş veriyle** koşmak demektir. **Bu bir eksen değil, bir tanım boşluğudur** — ve `S-1` gereği tanım boşlukları ertelenemez. |
+| **`D-14a` neden ertelenebilir de bu ertelenemez** | Basamak (`599`…`999`) **aynı katman içinde bir noktadır** → gerçek bir eksendir, model beşini de taşır. Alt katman ise **noktanın hangi uzayda olduğudur** → eksen değil, koordinat sistemidir. |
+| **Bağlı ticket** | **`T-859`** (HIGH), `T-701`, `T-603`, `T-917`, `T-871` |
+| **Tam gerekçe** | `EK-B · D-14` |
+
+---
+
+## §A.4 — MUST DECIDE NOW özeti
+
+| # | Kalem | Format | Model çıktısına bakılır mı | Ertelenemez çünkü |
+|---|---|---|---|---|
+| **`N-1`** | `fx` | 3 sayı + tarih + kaynak + LOW/BASE/HIGH | **hayır** | Erteleme **hiçbir bilgi satın almıyor**, yalnızca maliyet üretiyor; ülke ayrıştırmasının ön koşulu |
+| **`N-2`** | dış temas izni | 2 × EVET/HAYIR (+ sınırlar) | **hayır** | **Takvim** blokeri; taşınacak şey bir sayı değil, bir **sürecin başlangıcı** |
+| **`N-3`** | hedef merdivenin `L8` alt katmanı | katman seçimi (3'ten 1) | **hayır** | Bir **eksen değil, koordinat sistemi**; bir kolunda sıfır gözlem var |
+
+> **Üçünün de ortak özelliği: hiçbiri model çıktısına bakılarak verilmez.**
+> Bu, tesadüf değil — `S-1`'in doğrudan sonucudur. Çıktıya bakılarak verilen
+> her karar **ertelenebilir** karardır.
+
+---
+
+# §B — **CAN DECIDE LATER** *(TUR 3B'den sonra verilebilir — 21 kalem)*
+
+> Aşağıdakilerin **tamamının tam gerekçesi, katman analizi ve seçenek yapısı
+> `EK-B` ve `EK-C`'de AYNEN korunmuştur.** Hiçbiri silinmemiştir; yalnızca
+> **sırası** değişmiştir.
+>
+> **Tetikleyici** sütunu, kalemin `MUST` hâline geldiği anı verir.
+
+## B.1 — Duyarlılık ekseni olarak taşınanlar *(çoğunluk)*
+
+| id | Kalem | Hangi eksen taşıyor | `MUST` olma tetikleyicisi |
+|---|---|---|---|
+| `D-01`(i) | brüt marj tabanı **yüzdesi** | model üç tanımı **yan yana** raporlar → **`T-952`** | Senaryo **eleme** yapılacağı an (TUR 3B çıktısı okunurken) |
+| `D-02`(i) | asgari katkı payı **seviyesi** | `break_even_volume`, eşiğin **fonksiyonu** (eğri) olarak üretilir → **`T-953`** | Pilot hacmi seçilirken (TUR 6) |
+| `D-03`(ii) | **μ seviyesi** | μ ekseni **zaten ölçülü**: `0 → %30` = **−108,56 TL/şişe** | **RFQ'ya hedef fiyat yazılacağı an** (`N-2` verilirse) |
+| `D-04` | distribütör marjı **tavanı** | model `MODEL A ↔ B` gridini parametrik üretir | Gerçek bir distribütör teklifi masaya geldiğinde |
+| `D-05` | toplam sermaye tavanı | model `peak_cash_requirement`'ı **hesaplar**; tavan sonra karşılaştırılır | `peak_cash` sayısı elde olduğunda (TUR 3B çıktısı) |
+| ⚠ | *(`D-05` / `D-13` için ek gerekçe)* | **`T-614`:** alacak matrahı `L6` değil **`L6×(1+v)`** olmalı → bugünkü `peak_cash` **%20 eksik**; ayrıca **vade finansman maliyeti modelde SIFIR** (60→120 gün ≈ **−27,55 TL/şişe**, tornadoda hiç yok) | **Bugün tavan yazmak, HATALI hesaplanmış bir sayıyla karşılaştırılacak bir tavan yazmak olurdu.** Önce sayı düzelir, sonra tavan konur |
+| `D-06` | işletme sermayesi tavanı | aynı — hacim senaryoları **sıralanabilir**, eşiksiz de | `SCALE` tartışılırken |
+| `D-07` | azami payback | kümülatif nakit eğrisi eşiksiz üretilir | TUR 6 |
+| `D-08` | azami stok günü | ⚠ **alt sınırı zaten `UNKNOWN`** (`T-301`, CRITICAL) — eşik koymak bugün **anlamsız** | `T-301` kapandığında |
+| `D-09` | kabul edilebilir pilot kaybı | pilot ekonomisi parametrik üretilir | **`IMPORT PILOT` tartışılırken (TUR 6)** |
+| `D-10` | asgari yıllık hacim | hacim **zaten bir eksen** (5k/10k/25k/50k/100k) | TUR 6 |
+| `D-11` | SKU sayısı / gam | SKU sayısı bir eksen olarak taşınabilir | RFQ metni yazılırken (`N-2`'ye bağlı) |
+| `D-12` | `d` + `f` tavanı | `d`/`f` **zaten eksen** (`3/8/18%` bandı) | Zincir müzakeresi başlarken |
+| `D-13` | azami kanal vadesi | `BASE 60 / STRESS 120` **zaten iki senaryo** | `T-601` (CRITICAL) kapandığında — **yasal tavan** o zaman bilinecek |
+| `D-14a` | **hangi basamak `PRIMARY`** | model **beş basamağı da** taşır *(zaten taşıyor)* | RFQ çapası yazılırken (`T-871`) |
+| `D-15` | segment tavanı (manda) | `999` satırı **`OUT OF MANDATE` etiketiyle üretilir**, silinmez | TUR 6 — manda tartışması |
+| `D-16` | **abort rule** | — *(bir eşik değil, bir kural)* | **`IMPORT PILOT` kararı verilirse ZORUNLU** (`CLAUDE.md §9`) |
+| `I-2` | model hedef tarihi | **zaten kaydedildi** (`BASE 2027-04-01`); `EARLY`/`LATE` iki eksen | `T-202`/`C-202` (T0 takvimi) kapandığında |
+| `I-3` | ÖTV `λ` (Yİ-ÜFE) varsayımı | **λ zaten bir eksen**; varsayımsız çıktı `UPPER_BOUND` kalır — ve bu **dürüst bir etikettir** | ⚠ **`IMPORT PILOT` düşünülürse `MUST` olur** — `UPPER_BOUND` bir `KILL`'i destekler, bir `PILOT`'ı **destekleyemez** |
+| `I-5` | antrepo/bandrolleme tesisinin yeri | iç nakliye bir eksen olarak taşınır (2,7–3,2 TRY/şişe bandı) | Liman/antrepo seçimi yapılırken; **`N-2` iznine bağlı** |
+| `I-6` | finansman / sermaye maliyeti | bugün `0` alınmış; oran bir eksen olarak taşınır | `peak_cash` süresi bilindiğinde |
+| `I-7` | iş modeli önceliği (marka ↔ private label) | RFQ **ikisini birden** sorabilir | **RFQ metni yazılırken** (`N-2`'ye bağlı); `OQ-902` |
+
+## B.2 — Neden `D-08`, `I-3` ve `D-16` özel
+
+| id | Not |
+|---|---|
+| **`D-08`** | Ertelenmesi bir tercih değil, bir **zorunluluktur**: zorunlu antrepo bekleme süresi `UNKNOWN` olduğu için (`T-301`, CRITICAL, iki turdur açık) eşiğin **alt sınırı bile bilinmiyor.** Bugün bir gün sayısı yazmak, bilinmeyen bir zemine eşik koymaktır. |
+| **`I-3`** | Ertelenebilir **ama sonucu asimetriktir.** `λ ≥ 1` olduğu için gerçek ÖTV daha yüksek, gerçek `MAX_CIF` daha düşüktür. **Vergi tarafında yukarı sürpriz yoktur.** Bu yüzden `UPPER_BOUND` çıktı bir `KILL`'i **destekleyebilir**, bir `IMPORT PILOT`'ı **destekleyemez.** |
+| **`D-16`** | TUR 3B için hiç gerekmez — **ama `IMPORT PILOT` kararı verilirse `CLAUDE.md §9` onu ZORUNLU kılar** (*"hacim, bütçe, başarı kriteri ve durdurma kriteri yazılır"*). Yani ertelenmesi TUR 6'ya kadardır, ötesine değil. |
+
+---
+
+# §C — YATIRIMCI LİSTESİNDEN **TAMAMEN ÇIKARILANLAR** *(3 kalem — ajan ticket'ına dönüştürüldü)*
+
+> Bunlar TUR 2.5'te yatırımcıya soruluyordu. **Sorulmamalıydılar** — hiçbiri
+> bir risk iştahı sorusu değildir; üçü de bir **tanım** sorusudur ve tanımın
+> sahibi ajandır. Yatırımcıya sorulmaları, bir modelleme boşluğunu bir karara
+> dönüştürerek gizlemek olurdu — bu, `EK-D §5`'in kendi koyduğu sınırın
+> ihlaliydi.
+
+| Eskiden | Gerçek niteliği | Nereye taşındı |
+|---|---|---|
+| **`D-01`(ii)** — brüt marjın **katman çifti** (`L5→L6` / `L5→L7_eff` / `L5→L8`) | Bir **raporlama tanımı.** Model üçünü de **yan yana** raporlayabilir; kolon sayısı 3'e çıkar, senaryo sayısı değişmez. | **`T-952`** *(finans-fizibilite, MEDIUM)* |
+| **`D-02`(ii)** — hangi kalem **sabit**, hangisi **değişken** | Bir **maliyet muhasebesi sınıflandırması.** 9 kalem zaten sınıflandırılmıştı; tartışmalı 3'ü de (`f`, `d`, devreden KDV finansmanı) bir tercih değil, bir tanım sorusudur. Sınıflandırma olmadan `break_even_volume` **tanımsızdır** — eşik verilse bile hesaplanamaz. | **`T-953`** *(finans-fizibilite, HIGH)* |
+| **`D-03`(i)** — **μ'nün MATRAHI** (`L6` / `L7_eff` / `L5`) | Bir **model tanımıdır**, bir risk iştahı değil. Bugün `L6` alınmış ve **gerekçelendirilmemiştir** (`ters_model.py:392`); μ=0 olduğu için **hiç test edilmemiştir.** | **`T-944`** *(finans-fizibilite, HIGH — zaten açık)* |
+
+> ⚠ **Bu üçü çıkarılmadan `MUST DECIDE NOW` 3 kaleme inemezdi.** Çıkarılmaları
+> listeyi kısaltmak için değil, **yanlış masaya konmuş oldukları için**dir.
+> `D-01`(i), `D-02`(i) ve `D-03`(ii) — yani **seviyeler** — yatırımcıda kalır
+> ve `CAN DECIDE LATER`'dadır.
+
+---
+
+# §D — ERTELEMENİN BEDELİ: `P-5` KAPISI *(bağlayıcı)*
+
+**21 kalemin ertelenmesi ancak bir şartla meşrudur.** Aksi hâlde erteleme,
+`IR-4` (hedef kaydırma) riskini **yönetmez — gizler.**
+
+> ### `P-5` — POST-OUTPUT THRESHOLD DAMGASI
+>
+> | # | Kural |
+> |---|---|
+> | **P-5.1** | TUR 3B çıktısı **tek bir "baz senaryo" / "önerilen değer" / "en olası sonuç"** olarak sunulamaz. Çıktı, **eksenleri açıkça etiketlenmiş bir yüzeydir.** |
+> | **P-5.2** | Ertelenen her eşik çıktıda **açık bir eksen olarak** görünür — bir varsayılan değerin arkasına gizlenmez. |
+> | **P-5.3** | Bir eksende nokta seçildiği an, seçim **`INVESTOR_DECISION`** olarak **tarihiyle** kaydedilir (`IR-2`: `FACT` değil, `ESTIMATE` değil, `evidence_id` yok). |
+> | **P-5.4** | Seçim **ilgili çıktı üretildikten SONRA** yapılmışsa, ondan türeyen **her satır** `POST_OUTPUT_THRESHOLD` damgası taşır. |
+> | **P-5.5** | `seytanin-avukati` TUR 4'te bu damgayı **`IR-4` saldırı vektörü** olarak kullanır. **Damganın varlık nedeni budur.** |
+> | **P-5.6** | Bir eşik çıktıdan **ÖNCE** yazılırsa damga taşımaz. **Erteleme zorunlu değil, izinlidir.** |
+>
+> Uygulama: **`T-954`** *(finans-fizibilite, HIGH)*
+
+## Bir tutum değişikliği — gizlenmiyor
+
+TUR 2.5'te (`EK-A · IR-4`) başkan eşiklerin **çıktıdan ÖNCE** yazılmasını
+savunmuştu. `00-charter/karar-esikleri.md`'nin kendi önerisi ise **TUR 3
+sonrasıydı.** **Bu sadeleştirme fiilen charter'ın tarafına geçmektedir.**
+
+| | TUR 2.5 tutumu | TUR 3A tutumu |
+|---|---|---|
+| Eşikler ne zaman yazılır | **önce** (`IR-4` riski yönetilir) | **çoğu sonra** (`S-1` gereği) |
+| Bedeli | yatırımcı **bilgisiz** eşik koyar ve projeyi haksız yere öldürebilir | **hedef kaydırma** riski |
+| Nasıl yönetiliyor | — | **`P-5` damgası** |
+
+**Bu bir ödünleşmedir, bir üstünlük değildir.** Değişen şey, ödünleşmenin
+hangi tarafının seçildiğidir — ve seçim burada **açıkça kayda geçirilmiştir.**
+
+---
+
+# §E — SÜRÜM 1 → SÜRÜM 2 EŞLEME TABLOSU
+
+| Sürüm 1 | Sürüm 2 | Not |
+|---|---|---|
+| `I-1` | **`N-1`** | değişmedi — `MUST` |
+| `I-4` | **`N-2`** | değişmedi — `MUST` |
+| `D-14` | **`N-3`** *(alt katman)* + `D-14a` *(basamak, `LATER`)* | **BÖLÜNDÜ** |
+| `D-01` | `D-01`(i) `LATER` · `D-01`(ii) → **`T-952`** | bölündü |
+| `D-02` | `D-02`(i) `LATER` · `D-02`(ii) → **`T-953`** | bölündü |
+| `D-03` | `D-03`(ii) `LATER` · `D-03`(i) → **`T-944`** | bölündü |
+| `D-04` … `D-13`, `D-15`, `D-16` | `LATER` | değişmedi |
+| `I-2`, `I-3`, `I-5`, `I-6`, `I-7` | `LATER` | değişmedi |
+| `I-8` *(TUR 3A/3B tarihi)* | **KAPANDI** | Başkan hükmü `P-3b-DATED` olarak `T-913`'e yazıldı |
+| — | **`P-5`** *(yeni kapı)* | `T-954` |
+
+> **`I-8` neden listeden düştü:** o bir yatırımcı girdisi değil, bir **başkan
+> zamanlama kararıydı** ve TUR 3A'da verilmiştir (`T-913` § BAŞKAN
+> DEĞERLENDİRMESİ). Yatırımcıya sorulacak bir tarafı kalmamıştır.
+
+---
+
+---
+
+# **EK — SÜRÜM 1 (TUR 2.5) TAM METİN**
+
+> Aşağıdaki bölümlerin tamamı **sürüm 1'den değiştirilmeden korunmuştur.**
+> Sadeleştirme hiçbir gerekçeyi, katman analizini veya seçenek yapısını
+> silmemiştir. `CAN DECIDE LATER` kalemlerinin **tam gerekçesi burada**dır.
+>
+> | Ek | İçerik |
+> |---|---|
+> | **`EK-A`** | §0 (neden şimdi) + §1 (okuma kuralları `IR-1`…`IR-6`) |
+> | **`EK-B`** | §2 — 16 eşiğin tam metni (`D-01` … `D-16`) + §2.9 özet |
+> | **`EK-C`** | §3 — 8 eşik dışı girdi (`I-1` … `I-8`) |
+> | **`EK-D`** | §4 bağımlılık haritası + §5 **yatırımcıya SORULMAYACAKLAR** |
+> | **`EK-E`** | §6 sürüm 1 minimum açılış seti *(6 kalem — **`§A` ile SUPERSEDED`**)* + §7 `OQ-901` |
+
+---
+
+# EK-A
+
 ## 0. NEDEN ŞİMDİ — VE NEDEN "TUR 3B"
 
 `OQ-901` **2026-08-09**'da açıldı ve **iki turdur ele alınmadı**. TUR 2.5'e
@@ -93,7 +342,12 @@ TUR 2.5 ters modeli üç şeyi aynı anda gösterdi:
 
 ---
 
-# §2 — EŞİKLER (`D-01` … `D-16`)
+# EK-B · §2 — EŞİKLER (`D-01` … `D-16`)
+
+> *(Sürüm 1 metni. Bu 16 eşiğin **hiçbiri** artık `MUST DECIDE NOW`
+> listesinde değildir — bkz. `§A`, `§B`, `§C`. Aşağıdaki gerekçeler,
+> ertelenen eşiklerin **tam dayanağıdır** ve karar anı geldiğinde
+> okunacaktır.)*
 
 > Sütun anlamları:
 > **Ne işe yarar** = hangi model çıktısını kilitler, hangi senaryoyu eler ·
@@ -371,7 +625,11 @@ TUR 2.5 ters modeli üç şeyi aynı anda gösterdi:
 
 ---
 
-# §3 — EŞİK DIŞI YATIRIMCI GİRDİLERİ (`I-1` … `I-8`)
+# EK-C · §3 — EŞİK DIŞI YATIRIMCI GİRDİLERİ (`I-1` … `I-8`)
+
+> *(Sürüm 1 metni. `I-1` → **`N-1`**, `I-4` → **`N-2`** olarak
+> `MUST DECIDE NOW`'a taşınmıştır; `I-8` **kapanmıştır** (`T-913`);
+> kalan beşi `CAN DECIDE LATER`'dadır.)*
 
 > Bunlar **eşik değildir** — bir risk iştahı ifade etmezler. Ama yine de
 > yatırımcıdan gelirler ve hiçbir ajan bunları araştırarak kapatamaz.
@@ -497,7 +755,7 @@ nitelik: IZIN ve ZAMANLAMA sorunu ; VERI EKSIKLIGI DEGIL
 
 ---
 
-# §4 — HANGİ EŞİK HANGİ ÇIKTIYI AÇIYOR (BAĞIMLILIK HARİTASI)
+# EK-D · §4 — HANGİ EŞİK HANGİ ÇIKTIYI AÇIYOR (BAĞIMLILIK HARİTASI)
 
 | Model çıktısı | Bugünkü durum | Açan girdi(ler) |
 |---|---|---|
@@ -521,7 +779,15 @@ nitelik: IZIN ve ZAMANLAMA sorunu ; VERI EKSIKLIGI DEGIL
 
 ---
 
-# §5 — YATIRIMCIYA **SORULMAMASI** GEREKENLER (SINIR BEYANI)
+# EK-D · §5 — YATIRIMCIYA **SORULMAMASI** GEREKENLER (SINIR BEYANI)
+
+> ⚠ **TUR 3A notu:** Bu liste sürüm 1'de doğru kurulmuş **ama kendi kuralına
+> tam uyulmamıştı.** `D-01`(ii), `D-02`(ii) ve `D-03`(i) de bu listeye ait
+> olmalıydı — üçü de bir tanım sorusuydu, bir risk iştahı sorusu değil.
+> TUR 3A'da üçü de yatırımcı listesinden çıkarılıp ajan ticket'ına
+> dönüştürülmüştür (`§C`: `T-952`, `T-953`, `T-944`).
+> **Bu, başkanın kendi sürüm 1 hatasının düzeltilmesidir; hiçbir ajanın
+> bulgusu değişmemiştir.**
 
 Aşağıdakiler yatırımcı kararı **değildir** ve bu belgede yer almazlar.
 Bunları yatırımcıya sormak, bir araştırma boşluğunu bir karara dönüştürerek
@@ -539,7 +805,24 @@ gizlemek olurdu:
 
 ---
 
-# §6 — MİNİMUM AÇILIŞ SETİ
+# EK-E · §6 — MİNİMUM AÇILIŞ SETİ *(SÜRÜM 1 — **`SUPERSEDED` by `§A`**)*
+
+> ⚠ **Bu 6 kalemlik set, TUR 3A'da `§A`'daki 3 kalemlik set ile
+> değiştirilmiştir.** Silinmemiştir; hangi kalemin neden düştüğü
+> `§B` ve `§C`'de kalem kalem yazılıdır. Eşleme: `§E`.
+>
+> | Sürüm 1 sırası | Sürüm 2'deki yeri |
+> |---|---|
+> | 1 · `I-1` fx | ✅ **`N-1`** — kaldı |
+> | 2 · `D-03` μ **ve matrahı** | matrah → **`T-944`** *(ajan işi)* · seviye → **`CAN DECIDE LATER`** |
+> | 3 · `D-01` marj **+ katman çifti** | katman → **`T-952`** *(ajan işi)* · yüzde → **`CAN DECIDE LATER`** |
+> | 4 · `D-05` sermaye tavanı | **`CAN DECIDE LATER`** — `peak_cash` **eşiksiz hesaplanır**, tavan sonra karşılaştırılır |
+> | 5 · `I-4` dış temas izni | ✅ **`N-2`** — kaldı |
+> | 6 · `D-14` PRIMARY basamak | **BÖLÜNDÜ**: alt katman → ✅ **`N-3`** · basamak → **`CAN DECIDE LATER`** |
+
+---
+
+## §6 (sürüm 1 metni — korundu)
 
 > Yatırımcı **hepsini** cevaplamak zorunda değildir. TUR 3B'nin **başlaması**
 > için gereken asgari set aşağıdadır; kalanı TUR 3B çıktısı görüldükten sonra
@@ -559,7 +842,34 @@ gizlemek olurdu:
 
 ---
 
-# §7 — `OQ-901` GÜNCELLEMESİ
+# EK-E · §7 — `OQ-901` GÜNCELLEMESİ
+
+## Sürüm 2 durumu *(TUR 3A, 2026-08-10 — BAĞLAYICI)*
+
+```yaml
+oq_id:            OQ-901
+onceki_durum:     OPEN — SPECIFIED
+yeni_durum:       OPEN — MINIMIZED        # HALA KAPATILMADI
+guncelleme:       2026-08-10 (TUR 3A)
+belge:            90-karar/investor-decisions-required.md  (surum 2)
+kapsam_degisikligi: "16 esik + 8 girdi  ->  MUST DECIDE NOW = 3 kalem"
+kapanis_kosulu:   "§A'daki UC kalemin (N-1 fx, N-2 dis temas izni,
+                   N-3 L8 alt katmani) cevaplanmasi.
+                   Ucunden herhangi biri icin 'belirlemiyorum' denirse
+                   sonucu §A'da yazilidir ve TUR 6'ya tasinir."
+bloke_ettigi:     "TUR 3B (ileri model) + TUR 6 (nihai karar)"
+yeni_kapi:        P-5     # ertelenen 21 kalemin bedeli — T-954
+not:              "MUST DECIDE NOW listesinde TEK BIR ESIK DEGERI YOKTUR:
+                   bir kayit, bir izin, bir netlestirme."
+```
+
+> **`OQ-901` neden hâlâ kapanmadı:** sürüm 2 soruyu **cevaplanabilir**
+> hâle getirir; **cevaplamaz.** Kapanışı yalnızca yatırımcı yapabilir —
+> hiçbir ajan, başkan dahil, `OQ-901`'i kapatamaz.
+
+---
+
+## §7 (sürüm 1 metni — korundu)
 
 ```yaml
 oq_id:            OQ-901
@@ -580,7 +890,56 @@ kapatamaz.
 
 ---
 
-## Bu kararı ne çürütür?
+## Bu kararı ne çürütür? — **SÜRÜM 2 (TUR 3A)**
+
+*(Bu belge bir yatırım kararı içermez. Aşağıdaki soru sürüm 2'nin tek
+hükmüne ilişkindir: **"24 kalemlik yatırımcı listesi 3 kaleme indirilebilir,
+çünkü kalanların hepsi duyarlılık ekseni olarak taşınabilir."**)*
+
+### En güçlü tek çürütücü bulgu
+
+> ### **TUR 3B'nin bir YÜZEY üretememesi.**
+
+`S-1` sıralama kuralının tamamı tek bir varsayıma dayanır: **model, ertelenen
+her eşiği bir eksen olarak taşıyabilir.** Bu varsayım yanlışsa —yani ileri
+model bir eksen eklendiğinde kombinatoryal olarak patlıyorsa, veya bir eksen
+diğerlerinden ayrılamıyorsa (etkileşimliyse)— o zaman ertelenen 21 kalemin bir
+kısmı **fiilen zorunlu** hâle gelir ve bu sadeleştirme yatırımcıyı yanıltmış
+olur.
+
+**Somut kırılganlık:** `D-03` (μ) ile `D-04` (distribütör marjı) modelde
+**TOPLANIRLAR** (`reverse-price-model.md` §7.1). Etkileşimli eksenler bağımsız
+eksenler gibi taşınamaz. Ters modelde bugün ikisi de `0` alınmıştır — yani
+**etkileşim hiç ölçülmemiştir.**
+
+**Nasıl ararız:** `T-954`'ün ilk çıktısı. `finans-fizibilite` TUR 3B'de eksen
+sayısını ve satır sayısını raporladığında görülür. Satır sayısı yönetilemez
+çıkarsa **`§B`'deki en az üç kalem `§A`'ya geri döner** ve bu belge sürüm 3
+olarak yeniden yazılır.
+
+### İkinci çürütücü — `N-3`'ü hedefler
+
+> **Yatırımcının merdiveni belirli bir kanalı KASTETMEDEN beyan etmiş olması.**
+
+`N-3`, merdivenin bir `L8` alt katmanını *"zaten kastettiği"* varsayımına
+dayanır. Yatırımcı *"ben sadece bir fiyat noktası söyledim, kanalı siz
+bulun"* derse, `N-3` bir **netleştirme** değil **yeni bir karar** olur — ve o
+zaman `MUST DECIDE NOW` listesinde bir *karar* bulunur, üç değil iki
+*"karar olmayan"* kalem kalır. Bu, listenin **büyümesi** anlamına gelmez ama
+**niteliğinin** değişmesi anlamına gelir.
+
+### Sürüm 2'nin kör noktası
+
+**Sürüm 1'in kör noktası aynen devam ediyor: TALEP.** Projede talep
+elastikiyeti için tek bir veri yoktur ve bu belgede **hâlâ tek bir eşik
+yoktur.** Sadeleştirme bu boşluğu **görünmez hâle getirmedi ama küçültmedi
+de** — 24 kalemden 3'e inen bir listede, olmayan bir kalem daha da az
+görünür. *"Kaç şişe satılır"* sorusu `D-10`'da bir **hedef** olarak duruyor;
+bir **tahmin** olarak hiçbir yerde durmuyor.
+
+---
+
+## Bu kararı ne çürütür? — **SÜRÜM 1 (TUR 2.5, korundu)**
 
 *(Bu belge bir yatırım kararı içermez. Aşağıdaki soru bu belgenin tek
 hükmüne ilişkindir: **"TUR 3B'nin blokeri bir veri eksikliği değil, bir karar

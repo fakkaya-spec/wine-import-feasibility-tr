@@ -629,10 +629,14 @@ DOC_OK (g=0,50) · λ=1` tabanında. `L7_eff = 499,3750` · `L6 = 542,7989` ·
 
 | `μ` | (a)→(b) | (b)→(c) | **(a)→(c) TOPLAM** | (a)'ya göre |
 |---|---|---|---|---|
-| %10 | +2,90 | +2,70 | **+5,60 TL/şişe** | +2,4% |
+| %10 | +2,90 | +3,03 | **+5,92 TL/şişe** | +2,5% |
 | **%20** | +5,79 | +11,10 | **+16,89 TL/şişe** | **+8,4%** |
 | %30 | +8,69 | +23,05 | **+31,73 TL/şişe** | **+19,3%** |
-| %50 | +14,48 | +55,49 | **+69,97 TL/şişe** | **+130,0%** |
+| %50 | +14,48 | +55,49 | **+69,96 TL/şişe** | **+76,1%** |
+
+*(Kontrol: `μ=%10`/`%20`/`%30`/`%50`'de (a) sütunu sırasıyla **236,64 · 200,46 ·
+164,27 · 91,90** — `reverse-price-model.md` §9.2 gridiyle **birebir aynıdır**.
+Yani (b) ve (c) sütunları da aynı motorla tutarlı üretilmiştir.)*
 
 > ### ÜÇ SONUÇ
 >
@@ -777,6 +781,23 @@ K6  L6_gross     = L6 * (1 + v)            [ALACAK TUTARI — vade ve peak_cash 
 
 CIKTI: L5_max  -> ters modelin R6'sina girer
 ```
+
+### 9.1 `R8-K` — kanal round-trip assertion (⚠ `T-942`'nin önerdiği hâlde DEĞİL)
+
+```
+K1'  L7_eff_geri = L5_max + mu_kesintisi + m_dist_kesintisi + iade_kaybi
+K2'  L8_net_geri = L7_eff_geri / (1 - m)        [HORECA: * k]
+K3'  L8_geri     = L8_net_geri * (1 + v)
+assert  | L8_geri - L8_gross | < 0,01 TL
+```
+
+> ⛔ **`T-942`'nin `adim K1 : L6_geri = (L5_max + mu*L6)` satırı HATALIDIR.**
+> `L5_max + μ·L6` `L6`'ya değil **`L7_eff`'e** eşittir; `L6` etiketiyle
+> devam edilince `K2`'de `×(1−d) − f` **ikinci kez** uygulanır ve
+> assertion **tersine döner**: doğru formül `735,08` üretip **reddedilir**,
+> naif formül `799,00` üretip **kabul edilir**.
+> `T-942`'nin **teşhisi doğrudur** (kanal bacağında doğrulama yoktur);
+> düzeltilmesi gereken tek şey `K1` adımının etiketidir. → **`T-619`**
 
 **Her adımda kimin maliyeti (`T-943` kriter 3):**
 
