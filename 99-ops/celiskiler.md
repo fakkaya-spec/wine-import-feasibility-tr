@@ -2694,3 +2694,175 @@ düşülebilir ve `cif_try_max_UPPER_BOUND` gerçek bir `cif_try_max`'a döner.
 | `C-602` (tekel marjı) | kanal-marj | `T-856`'nın tabanı |
 
 ---
+
+---
+
+# TUR 3A ÇELİŞKİ FRAGMENT'LERİ
+
+> Ajanların `99-ops/_parts/*-tur3a.md` fragment'lerinden değiştirilmeden aktarıldı.
+
+## gumruk-vergi-uzmani (TUR 3A)
+
+---
+
+### KAYNAKLAR ARASI ÇELİŞKİ: **YOK**
+
+Bu turda taranan tüm T1/T2 kaynaklar **birbiriyle tutarlıdır**:
+
+| Kaynak A | Kaynak B | Sonuç |
+|---|---|---|
+| RG 24/11/2023-32379, 7846 s. CBK tam metni (OCR) | KDVGUT III/C-2.6'daki resmî alıntı | **KELİME KELİME AYNI** — çapraz doğrulama sağlandı |
+| KDVK md.29/1-b (kanun) | KDVGUT III/C-1 (tebliğ) | Aynı sonuç |
+| KDVK md.30 tahdidi liste | GİB özelgesi 20/08/2011 | Aynı sonuç |
+| TUR 1 gözetim araması (`EV-2026-08-09-125`, mevzuat.gov.tr) | TUR 3A gözetim taraması (`EV-2026-08-10-860`, RG) | **Farklı yöntem, aynı sonuç** |
+
+Bu nedenle `C-171 … C-189` bloğundan **hiçbir conflict_id açılmamıştır.**
+
+---
+
+### PROJE İÇİ TUTARSIZLIK (çelişki değil, **düzeltme**) — kayda geçirilir
+
+#### D-1 · TUR 1.5'in olasılık değerlendirmesi YANLIŞ ÇIKTI
+
+`EV-2026-08-10-114` ve `T-151` şunu yazıyordu:
+
+> *"Olasılık **DÜŞÜK** değerlendirilmiştir — böyle bir kısıtlama sektörde
+> bilinir olurdu ve md.30'un tahdidi listesiyle sistematik olarak çelişirdi."*
+
+**Gerçek:** md.36'ya dayanan bir Cumhurbaşkanı Kararı **vardır** (7846 s.,
+yürürlük 2023-11-24) ve md.30'un tahdidi listesiyle **hiç çelişmez** —
+çünkü md.30 değil, **md.36 ayrı bir yetki hükmüdür.**
+
+**Ders (yöntemsel):** *"böyle bir şey olsa duyulurdu"* bir kanıt değildir ve
+bu projede bir kez daha yanlış çıkmıştır. `EV-2026-08-10-114`'ün `status`
+alanı `UNKNOWN` kalır (kanıt kartları immutable'dır) ancak artık
+`EV-2026-08-10-852` ile **cevaplanmıştır.**
+
+#### D-2 · `finans-fizibilite`'nin %22,7 rakamı FAZLA KÖTÜMSER
+
+`rapor-tur25-finans.md` §9.1 ve `T-947`, kısıt hâlinde `MAX_CIF_TRY`'nin
+**%22,7** düşeceğini yazmıştı. Bu **tam kısıt** varsayımıdır.
+
+7846 **kısmi kısıt** getirir (`EV-2026-08-10-854`): yalnız tevsik edilemeyen
+artış kısmına isabet eden KDV indirilemez.
+
+**Bu bir çelişki değil, bir varsayım düzeltmesidir** → `T-171` ile
+`finans-fizibilite`'ye bildirildi. Rakamın kendisi **onun alanıdır**;
+ben yeni bir tavan hesaplamadım.
+
+#### D-3 · Ters modelin gözetim uyarı metni ARTIK YANLIŞ
+
+`ters-model-vergi-bacagi.md` §11 ve `vergi.yaml`'daki eski `cikti_kurali`:
+
+> *"gözetim eşiği doğrulanmamıştır; `CIF_TRY_max` bir alt sınırla test
+> EDİLMEMİŞTİR"*
+
+**Artık test edilmiştir ve alt sınır YOKTUR.** `vergi.yaml` güncellendi;
+`ters-model-vergi-bacagi.md` §11 metni bu turda **değiştirilmemiştir**
+(TUR 2.5 belgesidir, tarihsel kayıt olarak durur) — güncel otorite
+`vergi.yaml` ve `gozetim-kiymet-kontrolu.md`'dir. Bu ayrım `T-171`'de
+açıkça yazılmıştır.
+
+---
+
+## kanal-marj-uzmani (TUR 3A)
+
+<!-- 99-ops/celiskiler.md'ye BASKAN tarafindan birlestirilir. Bu dosya bir PART'tir. -->
+
+### C-611 — DIŞ DİSTRİBÜTÖR MARJININ MODELDEKİ YERİ, KANAL BELGESİYLE ÇELİŞİYOR
+
+```yaml
+conflict_id:   C-611
+acan:          kanal-marj-uzmani
+tarih:         2026-08-10
+durum:         OPEN
+impact:        HIGH
+```
+
+| | **Kaynak A** | **Kaynak B** |
+|---|---|---|
+| Belge | `70-kanal/kanal-marj-yapisi.md` §6 (TUR 2, **bu ajan**) | `80-model/outputs/reverse-price-model.md` §7.1 + `ters_model.py:392` (TUR 2.5) |
+| Tier | repo-içi spesifikasyon | repo-içi model uygulaması |
+| İddia | *"distribütör marjı **`L6` ile `L7` arasına girer**"* — yani distribütör **bir katman olarak araya girer** ve zincir bedellerini **kendisi üstlenir** | Distribütör marjı, ithalatçının `L5` bütçesinden **`m_dist × L6`** olarak düşülür; **`d` ve `f` aynı anda ithalatçıda kalır** ve *"aynı anda ikisi birden uygulanırsa **TOPLANIRLAR**"* |
+
+#### Neden çelişiyor
+
+İki okuma **aynı ekonomik dünyayı tarif etmiyor**:
+
+- **A**: distribütör → perakendeci ilişkisini distribütör yönetir; zincirle
+  yıllık anlaşmayı (`EV-2026-08-10-612`) o imzalar; ciro primini ve
+  listeleme bedelini **o öder**. Bizim yükümüz `m_dist`'tir, `d` **değildir**.
+- **B**: her iki yük de bizde. Yani zincire hem `d·L6 + f` ödüyoruz hem
+  distribütöre `m_dist·L6` ödüyoruz.
+
+**Bu bir hesap farkı değil, bir DÜNYA farkıdır.** Üstelik `B` altında
+distribütörün ne sattığı belirsizdir: `L6` hem *bizim* fatura fiyatımız
+hem *distribütörün* fatura fiyatı gibi kullanılmaktadır — **modelde
+distribütör için ayrı bir katman YOKTUR.**
+
+#### Büyüklük
+
+`TGT_799 · CHAIN BASE · d = %8`: `d·L6 = 43,4239 TL/şişe`
+→ `MAX_CIF`'te **28,95 TL/şişe** (g=0,50).
+**`R5` hatasıyla tam olarak aynı büyüklük, ters yön** — bu kez model
+**aşırı kötümser** olabilir.
+
+#### Bu ajan sessizce seçim YAPMAMIŞTIR
+
+Distribütörün zincir bedellerini üstlenip üstlenmediği **sözleşmeye
+bağlıdır ve hiçbir kanıtımız yoktur** (`kanal.yaml`: *"TUR 2'DE HİÇBİR
+KANITLI DEĞER BULUNAMAMIŞTIR"*). Bu ajan bir taraf **seçmemiş**, iki alt
+senaryo tanımlamıştır:
+
+```
+A1 : d ve f BIZDE          + m_dist    (modelin bugunku davranisi)
+A2 : d ve f DISTRIBUTORDE  + m_dist    (m_dist buyur, d ve f sifirlanir)
+```
+
+#### Çözüm yolu
+
+`T-617` (`finans-fizibilite`) — iki alt senaryonun **ayrı ayrı**
+koşulması ve §7.1'deki *"özdeştir / toplanırlar"* ifadesinin
+kaldırılması veya koşullandırılması. **Nihai çözüm ancak gerçek bir
+distribütör görüşmesiyle gelir** (`T-604`, TUR 7).
+
+---
+
+### C-602'YE EKLEME — TEKEL BAYİ MARJININ **MATRAH** BOYUTU
+
+```yaml
+conflict_id:   C-602 (mevcut — kapatilmadi, GENISLETILDI)
+ekleyen:       kanal-marj-uzmani
+tarih:         2026-08-10
+```
+
+`C-602` bugüne kadar **seviye** çelişkisiydi (T5 kaynaklar birbiriyle
+çelişiyor: *"alkolde ~%17"*, *"rakı %8"*, *"brüt %10–15"*,
+*"ciro üzerinden %18–30"*).
+
+**TUR 3A eklemesi — bu bir MATRAH çelişkisidir de:** bağımsız alkollü içki
+noktasında ticari dil üç farklı olabilir ve **ikisi aynı, biri farklı sonuç
+verir** (`L8_net = 665,83`, oran %18 illüstratif):
+
+| Konuşma biçimi | Matrah | `L7_eff` |
+|---|---|---|
+| *"marjım %18"* (margin on selling price) | `L8_net` | **546,00** |
+| *"tavsiye fiyattan %18 iskonto"* | `L8_net` | **546,00** *(aynı)* |
+| *"maliyetin üstüne %18 koyarım"* (markup) | `L7_eff` | **564,27** *(+18,28)* |
+
+`MAX_CIF` farkı **+12,19 TL/şişe** (g=0,50).
+
+**Model bugün birinci okumayı kullanıyor ve bunu gerekçelendirmiyor.**
+`kanal.yaml → tekel_bayi.marj_pct.margin_mi_markup_mi` alanı **`null`**'dır
+— yani M1 kuralı gereği o sayı zaten geçersizdir.
+→ `kanal-katman-matrah-haritasi.md` §4.1, `B-10`.
+
+---
+
+### C-551'E NOT — kapatılmadı, hatırlatılıyor
+
+`C-551` (599,90 TL'nin KDV dahil olup olmadığı) **açıktır** ve bu turda
+**ele alınmamıştır.** `kanal-katman-matrah-haritasi.md` bu sayıyı hiçbir
+yerde kullanmamıştır (`M2`/`M3` gereği).
+
+---

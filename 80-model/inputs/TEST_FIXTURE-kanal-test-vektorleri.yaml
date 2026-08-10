@@ -1,0 +1,283 @@
+# =====================================================================
+#  ⛔⛔⛔  TEST_FIXTURE — GERÇEK GİRDİ DEĞİLDİR  ⛔⛔⛔
+# =====================================================================
+#
+#  BU DOSYA BİR MODEL GİRDİSİ DEĞİLDİR.
+#  İçindeki hiçbir sayı bir fiyat, bir marj, bir oran veya bir kanıt DEĞİLDİR.
+#  Tek amacı: kanal bacağının CEBRİNİ test etmektir.
+#
+#  KORUMA MEKANİZMASI (üç katmanlı):
+#    1) DOSYA ADI       : "TEST_FIXTURE" içerir ->
+#                         kalem_defteri.guvenli_girdi_yukle() bu dosyayi REDDEDER
+#                         (FixtureSizintisi istisnasi firlatir).
+#    2) DEĞİŞKEN ADI    : test modulunde TEST_FIXTURE_* on ekiyle okunur.
+#    3) STATUS ETİKETİ  : sentetik degerler `status: TEST_FIXTURE` tasir ->
+#                         MaliyetKalemi._fixture_denetimi() uretim defterine
+#                         girmesini ENGELLER.
+#
+#  Beklenen değerler UYDURULMAMIŞTIR: `kanal-marj-uzmani`'nın
+#  70-kanal/kanal-bacagi-hata-listesi.md "BIRIM TEST VEKTORLERI" bölümünden
+#  ve 70-kanal/kanal-katman-matrah-haritasi.md §6.2 gridinden BİREBİR
+#  aktarılmıştır. Kaynak bir SPESİFİKASYONDUR, bir kanıt değildir.
+# =====================================================================
+
+TEST_FIXTURE: true
+uretim_girdisi_mi: false
+sahibi: finans-fizibilite
+tur: "TUR 3A"
+tarih: 2026-08-10
+kaynak_spesifikasyon:
+  - 70-kanal/kanal-bacagi-hata-listesi.md      # TVK-1 .. TVK-P6
+  - 70-kanal/kanal-katman-matrah-haritasi.md   # §6.2 mu gridi, §9 kapali formul seti
+  - 99-ops/tickets/T-619.md                    # DOGRU R8-K
+yeni_evidence: "YOK — hicbir dis kaynak taranmamistir"
+
+# ---------------------------------------------------------------------
+#  TABAN
+#  v, m, d : gercek girdi dosyalarindaki BASE degerlerle AYNIDIR
+#            (vergi.yaml kdv=%20 FACT ; kanal.yaml m=%25, d=%8 ASSUMPTION)
+#  f, F_total, mu, r, m_dist : SENTETIKTIR -> TEST_FIXTURE
+# ---------------------------------------------------------------------
+taban:
+  L8_gross:
+    value: 799.00
+    status: INVESTOR_ASSUMPTION
+    kaynak: "senaryolar.yaml/hedef_raf_fiyati_merdiveni (PRIMARY hedef)"
+  v:
+    value: 0.20
+    status: FACT_MIRROR
+    kaynak: "vergi.yaml/matrah_sirasi[KDV].oran_pct — BURADAN OKUNMAZ, aynadir"
+  m_retail:
+    value: 0.25
+    status: ASSUMPTION_MIRROR
+    kaynak: "kanal.yaml/duyarlilik_senaryolari.m_retail_zincir_pct.base"
+  d_var:
+    value: 0.08
+    status: ASSUMPTION_MIRROR
+    kaynak: "kanal.yaml/duyarlilik_senaryolari.d_geri_akan_bedeller_pct.base"
+  TEST_FIXTURE_f_per_bottle:
+    value: 6.00
+    status: TEST_FIXTURE
+    gerekce: "ILLUSTRATIF. kanal.yaml f_listeleme_bedeli_sise_basi = null/UNKNOWN."
+  TEST_FIXTURE_f_sifir_tabani:
+    value: 0.00
+    status: TEST_FIXTURE
+    gerekce: "TVK-P1/P2/P3 beklenen degerleri f=0 tabanindadir (reverse-price-model §9.2 ile capraz)."
+
+# ---------------------------------------------------------------------
+#  POZİTİF VEKTÖRLER
+# ---------------------------------------------------------------------
+vektorler:
+
+  - kod: TVK-1
+    tip: POZITIF
+    aciklama: "temel zincir — K1..K5"
+    kanal: CHAIN_RETAIL
+    girdi: {L8_gross: 799.00, v: 0.20, m: 0.25, d_var: 0.08, f_per_bottle: 6.00, mu: 0.00}
+    fixture_alanlari: [f_per_bottle]
+    beklenen:
+      L8_net: 665.8333
+      L7_eff: 499.3750
+      L6: 549.3207
+      L5_max: 499.3750
+
+  - kod: TVK-2
+    tip: POZITIF
+    aciklama: "R8-K geri insa — TVK-1 ciktisindan L8'e DONMELI"
+    kanal: CHAIN_RETAIL
+    girdi: {L8_gross: 799.00, v: 0.20, m: 0.25, d_var: 0.08, f_per_bottle: 6.00, mu: 0.00}
+    fixture_alanlari: [f_per_bottle]
+    beklenen: {L8_geri: 799.0000, tolerans: 0.01}
+
+  - kod: TVK-3
+    tip: POZITIF
+    aciklama: "HoReCa — carpanin matrahi L7_eff"
+    kanal: HORECA
+    girdi: {L8_gross: 799.00, v: 0.20, k: 3.0, d_var: 0.00, f_per_bottle: 0.00, mu: 0.00}
+    fixture_alanlari: []
+    beklenen: {L7_eff: 221.9444, L6: 221.9444}
+
+  - kod: TVK-4
+    tip: POZITIF
+    aciklama: "f=0 ve d=0 (tekel) -> L6 == L7_eff TAM ESIT"
+    kanal: INDEPENDENT_TEKEL
+    girdi: {L8_gross: 799.00, v: 0.20, m: 0.18, d_var: 0.00, f_per_bottle: 0.00, mu: 0.00}
+    fixture_alanlari: []
+    beklenen: {L6_esit_L7_eff: true}
+
+  - kod: TVK-P1
+    tip: POZITIF
+    aciklama: "mu matrahi = L6 (motorun bugunku davranisi)"
+    kanal: CHAIN_RETAIL
+    girdi: {L8_gross: 799.00, v: 0.20, m: 0.25, d_var: 0.08, f_per_bottle: 0.00, mu: 0.20, mu_matrahi: L6}
+    fixture_alanlari: [mu]
+    beklenen: {L5_max: 390.8152, MAX_CIF: 200.4574}
+
+  - kod: TVK-P2
+    tip: POZITIF
+    aciklama: "mu matrahi = L7_EFF"
+    kanal: CHAIN_RETAIL
+    girdi: {L8_gross: 799.00, v: 0.20, m: 0.25, d_var: 0.08, f_per_bottle: 0.00, mu: 0.20, mu_matrahi: L7_EFF}
+    fixture_alanlari: [mu]
+    beklenen: {L5_max: 399.5000, MAX_CIF: 206.2473}
+
+  - kod: TVK-P3
+    tip: POZITIF
+    aciklama: "mu matrahi = L5_MARKUP — UCU DE FARKLI OLMALI"
+    kanal: CHAIN_RETAIL
+    girdi: {L8_gross: 799.00, v: 0.20, m: 0.25, d_var: 0.08, f_per_bottle: 0.00, mu: 0.20, mu_matrahi: L5_MARKUP}
+    fixture_alanlari: [mu]
+    beklenen: {L5_max: 416.1458, MAX_CIF: 217.3445}
+
+  - kod: TVK-P4
+    tip: POZITIF
+    aciklama: "SCALE_MONOTONICITY — f_per_bottle TUREVDIR, f*Q SABITTIR (K7)"
+    kanal: CHAIN_RETAIL
+    girdi:
+      L8_gross: 799.00
+      v: 0.20
+      m: 0.25
+      d_var: 0.08
+      TEST_FIXTURE_F_total: 300000
+      Q_listesi: [5000, 100000]
+      mu: 0.00
+    fixture_alanlari: [TEST_FIXTURE_F_total]
+    beklenen: {f_at_5000: 60.00, f_at_100000: 3.00, f_carpi_Q_sabit: 300000}
+
+  - kod: TVK-P5
+    tip: POZITIF
+    aciklama: "Q_ithal != Q_satilan (K11) — sabitler Q_ithal'e bolunur"
+    kanal: CHAIN_RETAIL
+    girdi:
+      L8_gross: 799.00
+      v: 0.20
+      m: 0.25
+      d_var: 0.08
+      Q_ithal: 5000
+      TEST_FIXTURE_r: 0.05
+      mu: 0.00
+    fixture_alanlari: [TEST_FIXTURE_r]
+    beklenen: {Q_satilan: 4750, sabit_bolen: 5000}
+
+  - kod: TVK-P6
+    tip: POZITIF
+    aciklama: "vade matrahi L6_gross (K12a) + VADE_MALIYETI_MODELLENMEDI (K12b)"
+    kanal: CHAIN_RETAIL
+    girdi:
+      L8_gross: 799.00
+      v: 0.20
+      m: 0.25
+      d_var: 0.08
+      f_per_bottle: 0.00
+      odeme_vadesi_gun: 60
+      finansman_orani_yillik: null
+      mu: 0.00
+    fixture_alanlari: []
+    beklenen: {L6_gross: 651.3587, bayrak: VADE_MALIYETI_MODELLENMEDI}
+
+# ---------------------------------------------------------------------
+#  NEGATİF VEKTÖRLER — hatalı formül REDDEDİLMELİDİR
+# ---------------------------------------------------------------------
+  - kod: TVK-N1
+    tip: NEGATIF
+    aciklama: "naif R5: L5_max = L6*(1-mu) -> R8-K REDDETMELI (K1)"
+    kanal: CHAIN_RETAIL
+    girdi: {L8_gross: 799.00, v: 0.20, m: 0.25, d_var: 0.08, f_per_bottle: 6.00, mu: 0.00}
+    fixture_alanlari: [f_per_bottle]
+    beklenen: {reddedilmeli: true, L8_geri: 878.9130, sapma: 79.9130}
+
+  - kod: TVK-N1b
+    tip: NEGATIF
+    aciklama: >
+      T-942'nin BIREBIR R8-K spesifikasyonu. DOGRU formulu REDDEDER, NAIF
+      formulu KABUL EDER -> spesifikasyon TERSTEN CALISIR (T-619).
+      Bu vektor KALICIDIR: gelecekte biri ayni spesifikasyonu yeniden yazarsa
+      test KIRILIR.
+    kanal: CHAIN_RETAIL
+    girdi: {L8_gross: 799.00, v: 0.20, m: 0.25, d_var: 0.08, f_per_bottle: 6.00, mu: 0.00}
+    fixture_alanlari: [f_per_bottle]
+    beklenen:
+      T942_dogru_formulu_kabul_eder_mi: false     # <-- TERSTEN CALISIYOR
+      T942_naif_formulu_kabul_eder_mi: true       # <-- TERSTEN CALISIYOR
+      dogru_R8K_dogru_formulu_kabul_eder_mi: true
+      dogru_R8K_naif_formulu_kabul_eder_mi: false
+      T942_dogru_formulde_urettigi_L8: 725.4800
+      T942_dogru_formulde_urettigi_L8_f_sifir: 735.0800
+
+  - kod: TVK-N2
+    tip: NEGATIF
+    aciklama: "margin<->markup: L7_eff = L8_net/(1+m) -> R8-K REDDETMELI (K2)"
+    kanal: CHAIN_RETAIL
+    girdi: {L8_gross: 799.00, v: 0.20, m: 0.25, d_var: 0.08, f_per_bottle: 6.00, mu: 0.00}
+    fixture_alanlari: [f_per_bottle]
+    beklenen: {reddedilmeli: true, L8_geri: 852.2667, sapma: 53.2667}
+
+  - kod: TVK-N3
+    tip: NEGATIF
+    aciklama: "f girildi ama kdv_dahil_mi BOS -> engine UNKNOWN donmeli (K10)"
+    kanal: CHAIN_RETAIL
+    girdi:
+      L8_gross: 799.00
+      v: 0.20
+      m: 0.25
+      d_var: 0.08
+      TEST_FIXTURE_F_total: 300000
+      Q_ithal: 5000
+      F_total_kdv_dahil_mi: null
+      mu: 0.00
+    fixture_alanlari: [TEST_FIXTURE_F_total]
+    beklenen: {status: UNKNOWN, damga: BLOCKED_INPUT, eksik_alan: kdv_dahil_mi}
+
+  - kod: TVK-N4
+    tip: NEGATIF
+    aciklama: "mu != 0 ama importer_katki_matrahi null -> UNKNOWN (K5, varsayilana DUSMEZ)"
+    kanal: CHAIN_RETAIL
+    girdi: {L8_gross: 799.00, v: 0.20, m: 0.25, d_var: 0.08, f_per_bottle: 0.00, mu: 0.20, mu_matrahi: null}
+    fixture_alanlari: [mu]
+    beklenen: {status: UNKNOWN, damga: BLOCKED_INPUT, eksik_alan: importer_katki_matrahi}
+
+  - kod: TVK-N5
+    tip: NEGATIF
+    aciklama: "ZERO_PARITY — CHAIN (n sifir) vs TEKEL (n+2 sifir) (K3)"
+    kanal: "CHAIN_RETAIL vs INDEPENDENT_TEKEL"
+    beklenen: {bayrak: KANALLAR_KARSILASTIRILAMAZ}
+
+  - kod: TVK-N6
+    tip: NEGATIF
+    aciklama: "MODEL A: m_dist ve d ayni anda, d_kimde BOS -> UNKNOWN (K6d)"
+    kanal: CHAIN_RETAIL
+    girdi:
+      L8_gross: 799.00
+      v: 0.20
+      m: 0.25
+      d_var: 0.08
+      TEST_FIXTURE_m_dist: 0.15
+      dagitim_modeli: MODEL_A
+      d_kimde: null
+      mu: 0.00
+    fixture_alanlari: [TEST_FIXTURE_m_dist]
+    beklenen: {status: UNKNOWN, damga: BLOCKED_INPUT, eksik_alan: d_kimde}
+
+  - kod: TVK-N7
+    tip: NEGATIF
+    aciklama: "kanal_karmasi ucu de null, birlesik cikti istendi -> KARMA_UNKNOWN (K9c)"
+    beklenen: {bayrak: KARMA_UNKNOWN, birlesik_cikti_uretilmeli_mi: false}
+
+# ---------------------------------------------------------------------
+#  MAX_CIF donusumu (TVK-P1/P2/P3 icin) — vergi bacagi sabitleri
+#  Bunlar `vergi.yaml`'dan gelen GERCEK degerlerin AYNASIDIR, fixture DEGIL.
+# ---------------------------------------------------------------------
+max_cif_donusumu:
+  L5_kalemleri_toplami:
+    value: 36.6772
+    status: MIRROR
+    kaynak: "calistir_tur25.py l5_kalemleri(5000, BASE) -> bandrol+TADAB+ruhsat+TR lojistik"
+  otv_per_sise:
+    value: 53.4519
+    status: MIRROR
+    kaynak: "vergi.yaml/ters_model_vergi_bacagi.birim_test_vektorleri.sabitler.otv_per_sise"
+  gv_orani:
+    value: 0.50
+    status: MIRROR
+    kaynak: "vergi.yaml/mense_tarife_eslemesi (ES, DOC_OK)"
+  formul: "MAX_CIF = (L5_max - 36.6772 - 53.4519) / (1 + 0.50)"

@@ -909,7 +909,7 @@ Mevcut modelde **en geniş nefes payı** sırasıyla **ES · MD · CL · PT · I
 
 ---
 
-## 11. GÖZETİM — TAVAN BİR ALT SINIRLA TEST EDİLMEDİ
+## 11. GÖZETİM — ~~TAVAN BİR ALT SINIRLA TEST EDİLMEDİ~~ → **ALT SINIR YOKTUR** *(TUR 3A'da SUPERSEDED)*
 
 ```
 ters model uretir :  MAX_CIF_TRY        <- UST SINIR (ticari)
@@ -917,12 +917,31 @@ gozetim dayatir   :  CIF_beyan >= esik  <- ALT SINIR (hukuki)
 esik > MAX_CIF_TRY  =>  ARADA COZUM YOKTUR
 ```
 
-`vergi.yaml → gozetim.birim_kiymet_esigi` = **`null` / `UNKNOWN`**
-(`EV-2026-08-09-125` — **negatif arama sonucu, yokluğun kanıtı değil**).
+> ### ⛔ TUR 3A DÜZELTMESİ (`T-171`) — BU BÖLÜMÜN ESKİ HÂLİ YÜRÜRLÜKTEN KALKTI
+> `gumruk-vergi-uzmani` RG 31/12/2025-33124 (4. mükerrer) gözetim tebliğ
+> setinin **tamamını** (47 tebliğ, 305 farklı GTİP) taradı: **22. fasıl hiç
+> geçmiyor** (`EV-2026-08-10-860`). Korunma önlemleri (11 önlem, tamamı sanayi
+> ürünü — `EV-2026-08-10-861`) ve dampinge karşı vergi listesi (1.015 GTİP —
+> `EV-2026-08-10-862`) de negatiftir.
+>
+> Bu bir **negatif arama** değil, **pozitif tarama** sonucudur:
+> `gozetim.uygulama_var_mi` = **`false` / `FACT`**,
+> `gozetim.birim_kiymet_esigi.status` = **`UNKNOWN` DEĞİL, `N/A`** —
+> ölçülecek bir eşik **yoktur**.
+>
+> **`CIF_TRY_max` üzerinde HUKUKİ BİR ALT SINIR BULUNMAMAKTADIR.**
+>
+> Model artık şu ibareyi basmaktadır (metin `vergi.yaml →
+> `gozetim_ters_model_mantigi.cikti_kurali`'ndan **okunur**, koda gömülü değildir):
+> *"2204.21 için gözetim / korunma önlemi / dampinge karşı vergi TARANMIŞ VE
+> BULUNMAMIŞTIR (`EV-2026-08-10-860/-861/-862`, BASE_DATE 2026-08-10, ttl 30d).
+> Kalan kıymet riski GK md.23–31 idari takdiridir ve MODELLENMEMİŞTİR.
+> Model hedef tarihi 2027 olduğundan bu bulgu HEDEF TARİHTE DOĞRULANMIŞ DEĞİLDİR."*
 
-> **Model bu uyarıyı her çalıştırmada basmaktadır:**
-> *"GÖZETİM: eşik doğrulanmamıştır. `cif_try_max` BİR ALT SINIRLA
-> TEST EDİLMEMİŞTİR."*
+~~`vergi.yaml → gozetim.birim_kiymet_esigi` = `null` / `UNKNOWN`
+(`EV-2026-08-09-125`).~~ *(SUPERSEDED — yukarı bkz.)*
+
+> ÖTV maktu olduğu için gözetimden **etkilenmez** (`EV-2026-08-09-113`);
 >
 > ÖTV maktu olduğu için gözetimden **etkilenmez** (`EV-2026-08-09-113`);
 > itirazın etkisi **yalnız `g` ve KDV matrahı kanalıyladır** ve **DÜ menşede

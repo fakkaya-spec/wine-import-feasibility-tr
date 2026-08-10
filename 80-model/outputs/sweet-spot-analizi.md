@@ -346,7 +346,7 @@ yönünde bir teşvik üretir.**
 | 4 | **`segment.fiyat_performans_ust_try` revize edilirse** | 999 `OUT OF MANDATE` olmaktan çıkar; ekonomik olarak **en dayanıklı basamak base case adayı olur** (`T-857`) |
 | 5 | **`OQ-901` yüksek bir minimum katkı payı belirlerse** | Alt basamaklar (599, 699) **matematiksel olarak elenebilir**: %30 katkıda 599'un tavanı **108,11 TL/şişe**'ye iner |
 | 6 | **Kendi dağıtım kararı verilirse (`MODEL B`)** | 5.000 şişede tek kişi bile 599'un tavanının **%34'ünü** siler → pilot ölçekte 599 **fiilen kapanır** |
-| 7 | **KDV indirim hakkı alkolde kısıtlanmışsa** (`T-151`, `OQ-G10`) | Tüm tavanlar **~%22,7 düşer**; sıralama korunur ama **seviye çöker** — bu belgenin **tüm sayıları yeniden hesaplanmalıdır** |
+| 7 | ~~**KDV indirim hakkı alkolde kısıtlanmışsa**~~ (`T-151`, `OQ-G10`) | ⛔ **KAPANDI — TUR 3A (`T-947`/`T-171`).** Sonuç `(A) CONFIRMED`: md.36'ya dayanan 7846 s. CBK **vardır ama 2204.21'e değmez** (`EV-2026-08-10-852/-860/-861/-862`). **Etki `0,00 TL/şişe`; bu belgenin hiçbir sayısı değişmedi.** Ayrıca `~%22,7` **tam kısıt** varsayımıydı; 7846 **kısmi** kısıt getirir (`EV-2026-08-10-854`) — tetiklense bile etki bundan **belirgin ölçüde küçüktür.** |
 
 > **En sinsi olan #7'dir:** menşe ve basamak **karşılaştırmasını bozmaz**,
 > yalnızca **seviyeyi** bozar — yani bu belgedeki sıralama doğru kalır ve

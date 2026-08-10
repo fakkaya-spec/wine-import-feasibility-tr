@@ -117,53 +117,112 @@ SISE_LT = D(str(VERGI["urun_parametreleri"]["sise_hacmi_litre"]["value"]))
 
 
 def l5_kalemleri(volume: int, senaryo: str) -> list[L5Kalemi]:
+    """
+    ⛔ TUR 3A — ZORUNLU METADATA (`kanal-katman-matrah-haritasi.md` §2).
+
+    Dokuz alanın dokuzu DOLU olan kalem `OK` damgası alır ve DÜŞÜLÜR.
+    Bir alanı bile eksik olan kalem `BLOCKED_INPUT` damgası alır ve
+    **DÜŞÜLMEZ, 0 DA SAYILMAZ** — çıktıda ADIYLA görünür.
+
+    Aşağıdaki metadata **UYDURULMAMIŞTIR**: `payer`/`receiver`/`layer`/
+    `tax_treatment` alanları `ruhsat.yaml`, `vergi.yaml` ve
+    `40-lojistik/lojistik-senaryolari-tur25.md`'de zaten yazılı olan
+    yapısal bilgilerin AKTARIMIDIR. Tutarı `UNKNOWN` olan sekiz kalemin
+    metadata'sı BİLEREK doldurulmamıştır — çünkü eksik olan şey tutardır
+    ve kalem zaten `BLOCKED_INPUT`'tur.
+    """
     tr = TR_LOJISTIK_LCL_TRY[volume][senaryo]
     return [
         L5Kalemi("bandrol", BANDROL, "TRY", "FACT", BANDROL_EV,
-                 not_="KDV haric; vergi matrahina GIRMEZ (ters-model §4.2)"),
-        L5Kalemi("tadab_hizmet_bedeli", TADAB, "TRY", "ESTIMATE", TADAB_EV),
+                 not_="KDV haric; vergi matrahina GIRMEZ (ters-model §4.2)",
+                 payer="ithalatci", receiver="Hazine (bandrol bedeli)", layer="L5",
+                 fixed_or_variable="VARIABLE", per_bottle_or_total="PER_BOTTLE",
+                 tax_treatment="KDV HARIC liste fiyati; ITHALAT VERGI MATRAHINA GIRMEZ "
+                               "(ruhsat.yaml bandrol_birim_bedeli.kdv_durumu)",
+                 kdv_dahil_mi="HARIC"),
+        L5Kalemi("tadab_hizmet_bedeli", TADAB, "TRY", "ESTIMATE", TADAB_EV,
+                 not_="211,60 TL/1000 lt x 0,75 lt; aylik satis raporu hacmi uzerinden",
+                 payer="ithalatci", receiver="TADAB", layer="L5",
+                 fixed_or_variable="VARIABLE", per_bottle_or_total="PER_BOTTLE",
+                 tax_treatment="surekli yukumluluk hizmet bedeli; ITHALAT VERGI "
+                               "MATRAHINA GIRMEZ (satis sonrasi dogar)",
+                 kdv_dahil_mi="HARIC"),
         L5Kalemi(f"ruhsat_sabit_ilk_yil_per_sise@{volume}", ruhsat_per_sise(volume),
                  "TRY", "ESTIMATE", RUHSAT_EV,
                  not_="dagitim yetki belgesi + toptan satis belgesi; ILK YIL; "
-                      "haric_tutulan_kalemler UNKNOWN -> yon: YUKARI"),
+                      "haric_tutulan_kalemler UNKNOWN -> yon: YUKARI",
+                 payer="ithalatci", receiver="TADAB (belge harclari)", layer="L5",
+                 fixed_or_variable="FIXED", per_bottle_or_total="TOTAL",
+                 tax_treatment="belge harci; ITHALAT VERGI MATRAHINA GIRMEZ",
+                 kdv_dahil_mi="HARIC",
+                 yon="ASAGI (haric tutulan kalemler UNKNOWN)"),
         L5Kalemi(f"TR_yurt_ici_lojistik_LCL_{senaryo}", tr, "TRY", "ESTIMATE", TR_LOJISTIK_EV,
-                 not_="ordino+musavirlik+lab+X-ray+ic nakliye; rota bagimsiz"),
+                 not_="ordino+musavirlik+lab+X-ray+ic nakliye; rota bagimsiz. "
+                      "⚠ TESLIM NOKTASI TANIMI YAZILI DEGIL -> B-13 / T-618 "
+                      "(zincirin lojistik bedeliyle ORTUSME riski)",
+                 payer="ithalatci", receiver="lojistik saglayicilar / musavir", layer="L5",
+                 fixed_or_variable="VARIABLE", per_bottle_or_total="PER_BOTTLE",
+                 tax_treatment="KDV'ye tabi hizmet; ithalat KDV'si indirilebilir "
+                               "(kdv_perspektifleri A CONFIRMED)",
+                 kdv_dahil_mi="HARIC",
+                 ticket="T-618", yon="CIFT (teslim noktasi BLOCKED)"),
+
+        # ---- TUTARI BİLİNMEYEN SEKİZ KALEM -> BLOCKED_INPUT ----
+        # Bunlar TUR 2.5'te SESSİZCE 0 geçiyordu. Artık ADIYLA görünürler.
         L5Kalemi("varis_local_charges_USD", None, "USD", "UNKNOWN", None,
-                 not_="THD/devanning/CFS/ardiye — fx null (T-912)"),
+                 not_="THD/devanning/CFS/ardiye — fx null (T-912)",
+                 ticket="T-912", yon="ASAGI"),
         L5Kalemi("mense_local_charges_EUR", None, "EUR", "UNKNOWN", None,
-                 not_="yalniz Ispanya icin bilinir; fx null (T-912)"),
+                 not_="yalniz Ispanya icin bilinir; fx null (T-912)",
+                 ticket="T-912", yon="ASAGI"),
         L5Kalemi("musavirlik_cif_kademesi", None, "USD", "UNKNOWN", None,
-                 not_="CIF 15.001-225.000 USD ustu %0,3 — CIF USD gerekir"),
-        L5Kalemi("bandrolleme_operasyonu", None, "TRY", "UNKNOWN", None, not_="T-314"),
-        L5Kalemi("antrepo_bekleme", None, "TRY", "UNKNOWN", None, not_="T-301 CRITICAL"),
+                 not_="CIF 15.001-225.000 USD ustu %0,3 — CIF USD gerekir",
+                 ticket="T-911", yon="ASAGI"),
+        L5Kalemi("bandrolleme_operasyonu", None, "TRY", "UNKNOWN", None, not_="T-314",
+                 ticket="T-314", yon="ASAGI"),
+        L5Kalemi("antrepo_bekleme", None, "TRY", "UNKNOWN", None, not_="T-301 CRITICAL",
+                 ticket="T-301", yon="ASAGI"),
         L5Kalemi("devreden_kdv_finansman_maliyeti", None, "TRY", "UNKNOWN", None,
-                 not_="RC4 — KDV'nin KENDISI degil, kilitlendigi surenin finansmani"),
+                 not_="RC4 — KDV'nin KENDISI degil, kilitlendigi surenin finansmani",
+                 ticket="T-912", yon="ASAGI"),
         L5Kalemi("fire_zayi_kdv_maliyeti", None, "TRY", "UNKNOWN", None,
-                 not_="RC5 — KDVK md.30/c; fire orani UNKNOWN (T-314)"),
-        L5Kalemi("listeleme_bedeli_f", None, "TRY", "UNKNOWN", None,
-                 not_="kanal bacaginda f=0 alindi (kanal.yaml f_listeleme UNKNOWN)"),
+                 not_="RC5 — KDVK md.30/c; fire orani UNKNOWN (T-314, K11)",
+                 ticket="T-615", yon="ASAGI"),
+        L5Kalemi("kanal_alacagi_vade_finansmani", None, "TRY", "UNKNOWN", None,
+                 not_="K12 — MATRAH L6_gross (L6 DEGIL); makro.finansman_orani null. "
+                      "60 gunde -27,55 TL/sise mertebesinde (kanal-bacagi-hata-listesi K12)",
+                 ticket="T-614", yon="ASAGI"),
     ]
 
 
-def kanal_girdisi(kanal_kodu: str, senaryo: str) -> KanalGirdisi:
+def kanal_girdisi(kanal_kodu: str, senaryo: str,
+                  mu_matrahi: str | None = None) -> KanalGirdisi:
     if kanal_kodu == "CHAIN_RETAIL":
         return KanalGirdisi(kanal_kodu, senaryo, m_retail=M_ZINCIR[senaryo],
-                            d=D_GERI[senaryo], f_per_bottle=D("0"))
+                            d=D_GERI[senaryo], f_per_bottle=D("0"),
+                            mu_matrahi=mu_matrahi)
     if kanal_kodu == "INDEPENDENT_TEKEL":
         return KanalGirdisi(kanal_kodu, senaryo, m_retail=M_TEKEL[senaryo],
-                            d=D("0"), f_per_bottle=D("0"), d_unknown_sifir_alindi=True)
+                            d=D("0"), f_per_bottle=D("0"), d_unknown_sifir_alindi=True,
+                            mu_matrahi=mu_matrahi)
     return KanalGirdisi(kanal_kodu, senaryo, k_horeca=K_HORECA[senaryo],
-                        d=D("0"), f_per_bottle=D("0"))
+                        d=D("0"), f_per_bottle=D("0"), mu_matrahi=mu_matrahi)
 
 
 def kos(hedef: Decimal, country: str, kanal_kodu: str, senaryo: str,
         volume: int, belge_ok: bool, importer_katki: Decimal = D("0"),
         otv_senaryo: str = OTV_SENARYO_UPPER_BOUND_LAMBDA_1,
-        lam: Decimal | None = None):
+        lam: Decimal | None = None,
+        mu_matrahi: str | None = None):
+    """
+    ⛔ TUR 3A / K5 / T-616: `mu_matrahi` VARSAYILANA DUSMEZ.
+    `importer_katki != 0` iken `mu_matrahi` verilmezse engine `UNKNOWN` doner.
+    Duyarlilik gridleri matrahi ACIKCA gecmek ZORUNDADIR.
+    """
     return ters_zincir(
         VERGI,
         l8_kdv_dahil=hedef,
-        kanal=kanal_girdisi(kanal_kodu, senaryo),
+        kanal=kanal_girdisi(kanal_kodu, senaryo, mu_matrahi=mu_matrahi),
         country=country,
         l5_kalemleri=l5_kalemleri(volume, senaryo),
         tercihli_belge_ibraz_edildi=belge_ok,
@@ -172,6 +231,10 @@ def kos(hedef: Decimal, country: str, kanal_kodu: str, senaryo: str,
         importer_katki_orani=importer_katki,
         otv_senaryo=otv_senaryo,
         lambda_katsayisi=lam,
+        # TUR 3A: `kanal-marj-uzmani`nin 15 kalemlik BLOCKED envanteri
+        # (kanal.yaml -> blocked_envanteri) kalem defterine BAGLANIR.
+        # 15'inin 15'i bugune kadar SESSIZCE 0 geciyordu; artik ADIYLA gorunur.
+        kanal_yaml=KANAL,
     )
 
 
@@ -183,11 +246,12 @@ def q(x, n="0.01"):
 # 1) ANA CSV
 # ---------------------------------------------------------------------------
 
-def csv_uret() -> tuple[int, int]:
+def csv_uret() -> tuple[int, int, int]:
     OUTPUTS.mkdir(parents=True, exist_ok=True)
     yol = OUTPUTS / "country-buying-ceilings.csv"
     satirlar = 0
     r8_fail = 0
+    r8k_fail = 0
     with yol.open("w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
         w.writerow([
@@ -199,7 +263,8 @@ def csv_uret() -> tuple[int, int]:
             "L4_ECON_MAX_TRY", "L4_CASH_MAX_TRY", "OTV_TRY_PER_BOTTLE",
             "KDV_ITHAL_CASH_TRY", "MAX_CIF_TRY_PER_LITRE",
             "IMPLIED_BREAKEVEN_USDTRY_VS_OBSERVED_CIF",
-            "R8_ROUNDTRIP_OK", "STATUS", "LABEL", "CONFIDENCE", "MISSING_INPUTS",
+            "R8_ROUNDTRIP_OK", "R8K_ROUNDTRIP_OK", "BLOCKED_INPUT_COUNT",
+            "STATUS", "LABEL", "CONFIDENCE", "MISSING_INPUTS",
         ])
         for tid, hedef in HEDEFLER:
             for country, kosullu in ULKELER:
@@ -213,6 +278,8 @@ def csv_uret() -> tuple[int, int]:
                                         volume, belge_ok)
                                 if s.r8_gecti_mi is False:
                                     r8_fail += 1
+                                if s.r8k_gecti_mi is False:
+                                    r8k_fail += 1
                                 cif = s.cif_try_max_upper_bound
                                 cif_lt = (cif / SISE_LT) if cif is not None else None
                                 anahtar = ULKE_ADI_ESLEME.get(country)
@@ -230,6 +297,8 @@ def csv_uret() -> tuple[int, int]:
                                     q(cif_lt, "0.0001"),
                                     q(implied, "0.01") if implied else "UNKNOWN",
                                     "EVET" if s.r8_gecti_mi else "HAYIR",
+                                    "EVET" if s.r8k_gecti_mi else "HAYIR",
+                                    str(len(s.blocked_input)),
                                     s.status,
                                     "TARGET / MODEL_DERIVED / UPPER_BOUND — FACT DEGIL",
                                     "LOW",
@@ -238,7 +307,7 @@ def csv_uret() -> tuple[int, int]:
                                     "OTV(2027) FUTURE_UNKNOWN",
                                 ])
                                 satirlar += 1
-    return satirlar, r8_fail
+    return satirlar, r8_fail, r8k_fail
 
 
 # ---------------------------------------------------------------------------
@@ -359,14 +428,23 @@ def tablo_lambda() -> None:
 def tablo_importer_marj() -> None:
     bolum("F) İTHALATÇI KATKI PAYI EKSENİ — INVESTOR_DECISION_REQUIRED")
     print("MAXIMUM STRUCTURAL BUY PRICE = katki 0 satiri. Digerleri PARAMETRIKTIR.")
+    print("⛔ TUR 3A / K5 / T-616: mu'nun MATRAHI bir YATIRIMCI KARARIDIR ve")
+    print("   kanal.yaml -> dagitim_modeli.importer_katki_matrahi = null'dir.")
+    print("   Engine VARSAYILANA DUSMEZ: matrah verilmezse UNKNOWN doner.")
+    print("   Asagidaki grid, UC MATRAHTAN BIRI (L6) ACIKCA SECILEREK kosulmustur.")
     yuzdeler = [D("0"), D("0.10"), D("0.20"), D("0.30"), D("0.40"), D("0.50")]
-    print(f"{'HEDEF':<8}" + "".join(f"{str(int(y*100))+'%':>12}" for y in yuzdeler))
-    for _, hedef in HEDEFLER:
-        hucre = []
-        for y in yuzdeler:
-            s = kos(hedef, "ES", "CHAIN_RETAIL", "BASE", 5000, True, importer_katki=y)
-            hucre.append(q(s.cif_try_max_upper_bound))
-        print(f"{str(hedef):<8}" + "".join(f"{h:>12}" for h in hucre))
+    for matrah in ("L6", "L7_EFF", "L5_MARKUP"):
+        etiket = " <- bugunku engine varsayilani" if matrah == "L6" else ""
+        print(f"\nMATRAH = {matrah}{etiket}")
+        print(f"{'HEDEF':<8}" + "".join(f"{str(int(y*100))+'%':>12}" for y in yuzdeler))
+        for _, hedef in HEDEFLER:
+            hucre = []
+            for y in yuzdeler:
+                s = kos(hedef, "ES", "CHAIN_RETAIL", "BASE", 5000, True,
+                        importer_katki=y, mu_matrahi=matrah)
+                hucre.append(q(s.cif_try_max_upper_bound))
+            print(f"{str(hedef):<8}" + "".join(f"{h:>12}" for h in hucre))
+    print("\nUC MATRAHIN AYRILIGI mu=0'da SIFIRDIR ve mu ile BUYUR (T-944/T-616).")
 
 
 def tablo_distributor() -> None:
@@ -374,12 +452,19 @@ def tablo_distributor() -> None:
     print("Distributor marji L6 ile L7 arasina girer: L6_importer = L6_modelB x (1 - m_dist).")
     print("kanal.yaml -> dagitim_modeli.dis_distributor.marj_pct = min/base/max NULL (UNKNOWN).")
     print("Asagidaki GRID BIR TAHMIN DEGILDIR; saf duyarlilik gridi.")
+    print("⛔ TUR 3A / T-617 / C-611: bu grid A1 (d ve f BIZDE) senaryosudur.")
+    print("   A2 (d ve f DISTRIBUTORDE) senaryosu KOSULMAMISTIR — d_kimde BLOCKED.")
+    print("   Fark d*L6 = 43,42 TL/sise -> MAX_CIF'te 28,95 TL (g=0,50).")
+    print("   mu ile m_dist OZDES DEGILDIR ve TOPLANMAZ (T-617 SPEC_DECISION).")
     grid = [D("0"), D("0.05"), D("0.10"), D("0.15"), D("0.20"), D("0.25"), D("0.30")]
     print(f"\n{'HEDEF':<8}" + "".join(f"{str(int(y*100))+'%':>11}" for y in grid))
     for _, hedef in HEDEFLER:
         hucre = []
         for y in grid:
-            s = kos(hedef, "ES", "CHAIN_RETAIL", "BASE", 5000, True, importer_katki=y)
+            # matrah L6 ACIKCA gecilir: distributor marjinin matrahi
+            # kanal.yaml -> dis_distributor.marj_matrahi = L6 (SPEC_DECISION).
+            s = kos(hedef, "ES", "CHAIN_RETAIL", "BASE", 5000, True,
+                    importer_katki=y, mu_matrahi="L6")
             hucre.append(q(s.cif_try_max_upper_bound))
         print(f"{str(hedef):<8}" + "".join(f"{h:>11}" for h in hucre))
     s0 = kos(D("799"), "ES", "CHAIN_RETAIL", "BASE", 5000, True)
@@ -540,12 +625,13 @@ def tablo_nakit_ortusu() -> None:
 
 
 def main() -> int:
-    satir, r8fail = csv_uret()
+    satir, r8fail, r8kfail = csv_uret()
     print("=" * 100)
     print("TUR 2.5 REVERSE TARGET MODEL — CIKTI URETIMI")
     print("=" * 100)
     print(f"country-buying-ceilings.csv : {satir} satir yazildi")
-    print(f"R8 round-trip BASARISIZ satir sayisi : {r8fail}")
+    print(f"R8   (vergi bacagi) round-trip BASARISIZ satir sayisi : {r8fail}")
+    print(f"R8-K (kanal bacagi) round-trip BASARISIZ satir sayisi : {r8kfail}   <-- T-619 / T-942")
     tablo_katman_izi()
     tablo_hedef_x_kanal()
     tablo_ulke()

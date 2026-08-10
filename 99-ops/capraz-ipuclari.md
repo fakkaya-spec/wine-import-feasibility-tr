@@ -2367,3 +2367,368 @@ kısıtlanmış olabilir ve:
 > `tur-25-preflight.md` §1.7 aynı asimetriyi **üçüncü kez** kaydetmişti.
 
 ---
+
+---
+
+# TUR 3A ÇAPRAZ İPUÇLARI
+
+> Ajanların `99-ops/_parts/*-tur3a.md` fragment'lerinden değiştirilmeden aktarıldı.
+
+## gumruk-vergi-uzmani (TUR 3A)
+
+> Bunlar **sonuç değildir, ipucudur.** Kendi alanım dışında gördüğüm bulgular.
+> İlgili ajan doğrulamadan modele girmez.
+
+---
+
+### Cİ-3A-01 → `kanal-marj-uzmani` · **"HER ŞEY DAHİL" OTEL KANALI YAPISAL OLARAK %20 DAHA ZAYIF**
+
+**Kaynak:** KDV Genel Uygulama Tebliği **III/B-2.5.2** (`EV-2026-08-10-858`, T1)
+
+> *"Geceleme hizmetleri kapsamında sunulan alkollü içeceklere ait **yüklenilen KDV
+> tutarları, konaklama tesisleri tarafından hesaplanan KDV tutarlarından
+> indirilemez.**"*
+
+**Ne demek:** "Her şey dahil" sistemle çalışan bir otel, aldığı şarabın
+KDV'sini **indiremez** → şarabın KDV'si o otel için **gerçek maliyettir.**
+Yani aynı fiyata alan bir market ile bir "her şey dahil" otelin **efektif
+maliyeti farklıdır**: otelinki `fiyat × 1,20`, marketinki `fiyat`.
+
+**Kaçış yolu var (ve bu bir satış argümanıdır):** tesis alkollü içecek
+bedelini **faturada ayrıca gösterirse** genel oran uygular ve **KDV'yi
+indirebilir**. Yani ithalatçı, HoReCa müşterisine *"bedeli ayrıştır"*
+diyerek **%20'lik bir değer yaratabilir.**
+
+**Neden önemli:** kanal marjı modelinde HoReCa'nın ödeme istekliliği,
+"her şey dahil" mi "à la carte" mı olduğuna göre **yapısal olarak ayrışır.**
+Bu bir pazarlık farkı değil, **vergi kaynaklı bir yapı farkıdır.**
+
+> ⛔ **Bu benim alanım değildir. Kanal marjı sonucu ÜRETMİYORUM.**
+> `EV-2026-08-10-858` mevcuttur; `kanal-marj-uzmani` isterse kullanır.
+
+---
+
+### Cİ-3A-02 → `finans-fizibilite` · **%22,7 RAKAMI FAZLA KÖTÜMSER (düzeltme gerekir)**
+
+`rapor-tur25-finans.md` §9.1 ve `T-947`, KDV indirim hakkının kısıtlanması
+hâlinde `MAX_CIF_TRY`'nin **%22,7** düşeceğini yazmıştı.
+
+Bu rakam **tam kısıt** varsayımına dayanır. Bulunan gerçek düzenleme
+(7846 s. CBK + KDVGUT III/C-2.6, `EV-2026-08-10-854`) **kısmi kısıt**
+getirir: **yalnızca tevsik edilemeyen artış kısmına** isabet eden KDV
+indirilemez; CIF ve ona isabet eden GV/İGV üzerinden ödenen KDV
+**indirilebilir kalır.**
+
+→ Ticket **`T-171`** ile resmen bildirildi.
+
+---
+
+### Cİ-3A-03 → `navlun-lojistik-uzmani` + `finans-fizibilite` · **YMM RAPORU: GÖRÜNMEZ BİR L5 KALEMİ**
+
+KDVGUT **III/C-2.6.2** (`EV-2026-08-10-854`), 7846 kapsamında ithalat yapan
+mükellefe **altışar aylık dönemler** itibarıyla ya **vergi dairesine bildirim**
+ya da **Özel Amaçlı YMM Raporu** yükümlülüğü getirir (tam tasdik sözleşmesi
+varsa rapor gerekmez).
+
+**Baz senaryoda tetiklenmez** (gözetim yok). Ama gözetim gelirse:
+`L5`'te **yeni bir gider satırı** doğar. Tutar **UNKNOWN** ve bu benim alanım
+değildir. Ayrıca "tam tasdik sözleşmesi" bir **muhasebe/denetim** kararıdır ve
+maliyeti vardır.
+
+---
+
+### Cİ-3A-04 → `global-sourcing-kasifi` · **GÖZETİM TAZE MEYVEYE UYGULANMIŞTIR**
+
+Gözetim tebliği taramasında (`EV-2026-08-10-860`) 2019/6 sayılı tebliğe ilişkin
+değişiklikte **`0810.10` (çilek)** ve **`0810.50` (kivi)** GTİP'leri görüldü.
+
+**Anlamı:** *"Tarım/gıda ürününe gözetim gelmez"* varsayımı **yanlıştır.**
+Şarapta gözetim bulunmaması bir **kategori bağışıklığı değil**, sadece
+**fiilî listede olmama** durumudur.
+
+→ Çok düşük FOB teklifleriyle çalışan bir sourcing stratejisi, gözetimin
+**gelecekte** getirilebileceğini bir **senaryo riski** olarak taşımalıdır.
+Sonuç üretmiyorum; ipucudur.
+
+---
+
+### Cİ-3A-05 → `yatirim-komitesi-baskani` (yöntem notu) · **RESMÎ PDF'LERDE "METİN VAR" ≠ "METİN OKUNUYOR"**
+
+Gözetim tebliğlerinin taranmasında üç ayrı teknik gerekti:
+
+| Sorun | Nerede görüldü |
+|---|---|
+| PDF metin katmanı **bozuk font kodlamasıyla** geliyor (harf harf şifrelenmiş gibi) | 2026/1, 2024/14 |
+| GTİP tablosu **metin katmanında hiç yok**, ayrı bir **CCITT/JBIG2 görüntü** | 2026/2, 2026/4, 2026/5 ve diğerleri |
+| Sayfa görüntüsü OCR'ı **tabloyu atlıyor** (psm 6 tablo bloğunu görmüyor) | çoğu tebliğ |
+
+**Tek yöntemle yapılan bir tarama YANLIŞ NEGATİF üretirdi.**
+Bu, projede **her "bulamadım" sonucunun yöntemini de sorgulamayı** gerektirir —
+`EV-2026-08-09-125` tam olarak bu türden bir kayıttı.
+
+**Genelleştirilebilir kural önerisi:** resmî bir listede bir GTİP'in
+"olmadığı" iddiası, **listenin kaç kayıt içerdiği** (pozitif kontrol)
+belirtilmeden kabul edilmemelidir.
+
+---
+
+## kanal-marj-uzmani (TUR 3A)
+
+<!-- 99-ops/capraz-ipuclari.md'ye BASKAN tarafindan birlestirilir. Bu dosya bir PART'tir. -->
+
+> Bunlar **sonuç değildir, ipucudur.** Hepsi başka ajanların alanındadır ve
+> bu ajan hiçbirinde sonuç üretmemiştir.
+
+### İP-3A-1 → `gumruk-vergi-uzmani`
+
+**Kanal bacağında KDV üç ayrı yerde vardır, model yalnızca birini
+uyguluyor.** `kanal-katman-matrah-haritasi.md` §3.3:
+
+| Görünüm | Matrah | Modelde |
+|---|---|---|
+| V1 raf/menü KDV'si | `L8_net` | ✅ `R1` |
+| V2 mal faturası KDV'si | `L6` → `L6_gross` | ⚠ yok (alacak matrahı!) |
+| V3 hizmet faturası KDV'si (`f`, `d`) | `d·L6 + f` | ❌ yok |
+
+**Neden önemli:** V3'ün indirilebilirliği `f`+`d`'nin ekonomik maliyetini
+**1,20 katına** çıkarabilir. V2 ise `peak_cash`'i **%20** etkiler.
+→ `T-611`
+
+---
+
+### İP-3A-2 → `gumruk-vergi-uzmani`
+
+**`vergi.yaml`'da HoReCa hizmet KDV oranı için AYRI BİR ALAN YOK.**
+Model `R1`'i HoReCa menü fiyatına da ürün KDV oranıyla uyguluyor.
+`marj-vs-markup.md` §2.3 bu riski TUR 2'de yazmıştı; model uyarıyı
+**kullanmadı**. → `T-612`
+
+---
+
+### İP-3A-3 → `navlun-lojistik-uzmani`
+
+**TR-içi lojistik rakamının TESLİM NOKTASI tanımı yazılı değil.**
+Zincir **merkezi alım** yapar (`EV-2026-08-10-613` dipnot 14) ve ayrıca
+bizden **lojistik bedeli** alır (`EV-2026-08-10-612`). Bu iki bacak
+örtüşüyorsa **çift sayım**, örtüşmüyorsa mevcut model doğru — **ama
+hangisi olduğu bilinmiyor.** → `T-618`
+
+---
+
+### İP-3A-4 → `finans-fizibilite` (ve `seytanin-avukati`)
+
+**`reverse-price-model.md` §0.2'nin *"13 kalemin 13'ü de MAX_CIF'i yukarı
+saptırır"* tespiti kanal bacağında da geçerlidir ve liste 7 kalem daha
+uzuyor:** `f` ölçek asimetrisi · `d`'nin sabit bileşenleri · iade/fire ·
+vade finansmanı · vade matrahı (`L6_gross`) · `f`+`d` KDV'si · tekel
+kanalının üç sıfırı.
+
+**Mertebe:** `K7` (38,00) + `K11` (19,38) + `K12` (27,55) ≈ **85 TL/şişe**
+= `TGT_799 · CHAIN · BASE` tavanının (**272,83**) **%31'i.**
+→ `70-kanal/kanal-bacagi-hata-listesi.md`
+
+---
+
+### İP-3A-5 → `turkiye-pazar-kasifi`
+
+**Kanal karması modelin ölçülmemiş en büyük ekseni olabilir.**
+`kanal_karmasi` üç alanın **üçü de `null`**. Üç kanalın tavanı
+`TGT_799 · BASE`'te **272,83 / 303,90 / 87,88** — yani karma varsayımı
+tek başına birleşik tavanı **3,5 kat** oynatabilir. Tornado'nun
+**hiçbir ekseninde yok.**
+
+**Uyarı:** nokta sayıları (GK 48.956 · ASN 29.218, `EV-2026-08-10-613`)
+**ciro payı DEĞİLDİR** ve öyle kullanılamaz. Modern kanal nokta sayısı
+zaten yoktur. → `T-603`
+
+---
+
+### İP-3A-6 → `yatirim-komitesi-baskani`
+
+**`T-942`'nin önerdiği `R8-K` assertion'ı, birebir kodlanırsa `R5`
+düzeltmesini geri alır.** `L5_max + μ·L6` ifadesi `L6`'ya değil `L7_eff`'e
+eşittir; `L6` etiketiyle devam edilirse `d` ve `f` **iki kez** düşülür ve
+test **tersine döner**: doğru formül reddedilir, naif formül kabul edilir.
+
+**`T-942`'nin teşhisi doğrudur** — düzeltilmesi gereken tek şey `K1`
+adımının etiketidir. Ama kabul kriteri olarak duruyor. → **`T-619`
+(CRITICAL)**
+
+---
+
+### İP-3A-7 → `global-sourcing-kasifi`
+
+**`T-605` (üreticiden alınan "marka/pazarlama katkısı" ↔ listeleme bedeli
+çift sayımı) hâlâ açıktır** ve bu turda `K6c` olarak hata listesine
+girmiştir. RFQ 5.6'daki katkı, `f` ile **aynı satırda netleştirilmelidir**;
+aksi hâlde aynı para hem gelir hem gider olarak modele girer.
+
+---
+
+## global-sourcing-kasifi (TUR 3A)
+
+```yaml
+ajan:   global-sourcing-kasifi
+tur:    TUR 3A — RFQ ZORUNLU TEKNIK ALANLAR
+tarih:  2026-08-10
+not:    "99-ops/capraz-ipuclari.md bu turda DOKUNULMAZ listesindedir.
+         Bulgular CLAUDE.md §11 geregi silinmemis, bu _parts dosyasina
+         birakilmistir. Birlestirme karari baskanindir."
+kaynak: 50-sourcing/rfq-zorunlu-alanlar.md, 50-sourcing/rfq-template.md v2.2
+```
+
+> Bunlar **sonuç değildir, ipucudur.** Hiçbiri kendi alanımda üretilmiş bir
+> karar değildir; zorunlu alanların kabul kriterleri yazılırken karşıma çıkan
+> ve **başka ajanların alanına ait** gözlemlerdir.
+
+| # | Hedef ajan | İpucu | Neden önemli | Ticket |
+|---|---|---|---|---|
+| **İP-881** | `mevzuat-ruhsat-uzmani` | **RFQ artık üreticiden fiziksel etiket taahhüdü istiyor:** ≥18 cm² basılabilir alan, bandrol için boş alan (mm×mm + konum), ABV ≥3 mm karakter. Üçü de **sizin bulgunuz**, benim değil. RFQ'ya rakam yazıldığı anda o rakam **spesifikasyon** hâline gelir. | Yanlış/eksik ölçü sorulursa üretici "evet" der, mal gelir, etiket yetmez — kalem **antrepodayken** geri döner | `T-881` |
+| **İP-882** | `mevzuat-ruhsat-uzmani` | **Bandrol Türkiye'de antrepoda uygulanıyor, ama fiziksel alanı menşede basılan etiket belirliyor.** Bu, `lojistik.yaml → bandrolleme_operasyonu` bloğunun **ölçülmemiş bir ön koşulu** olduğu anlamına geliyor: alan yoksa operasyon yapılamaz, maliyet hesabı da anlamsız olur. | Bandrolleme maliyeti bugün alanın **var olduğu varsayımıyla** hesaplanıyor | `T-881` |
+| **İP-883** | `navlun-lojistik-uzmani` | **Zorunlu alan baskısı uydurma rakamı teşvik edebilir.** "Boş bırakılamaz" alan, tedarikçiyi *bir şey yazmaya* iter. Bu nedenle RFQ'ya bir **çapraz tutarlılık kuralı** yazdım: (dolu şişe × şişe/koli) + ambalaj ≈ koli brüt; (koli brüt × koli/palet) + palet ≈ yüklü palet brüt. **Tutmuyorsa sayı kullanılmıyor.** | Bu, gelen paketleme verisinin **tek doğrulama mekanizmasıdır** — üçüncü taraf kaynağımız yok | `T-882` |
+| **İP-884** | `navlun-lojistik-uzmani` | **2.12 (yaz yükleme / thermal liner / reefer) zorunlu alan YAPILMADI.** `T-302`'nin 13. maddesiydi. Zorunlu alan sayısını kendi başıma artırmadım çünkü her ek zorunlu alan cevap oranını düşürüyor. `lojistik.yaml → sicaklik_riski` bunu gerektiriyorsa **siz söylerseniz** zorunluya çekilir. | Sıcaklık riski modelde ayrı bir blok; girdisi RFQ'dan gelmeli | `T-882` |
+| **İP-885** | `gumruk-vergi-uzmani` | **`T-162` (fatura beyanı değer eşiği) `UNKNOWN` olduğu için RFQ 6.13(b) eşiği rakamsız soruyor.** Eşik bilinirse soru *"X EUR'yu aşan sevkiyatlarda EUR.1 düzenler misiniz"* hâline gelir ve **bağlayıcı** olur. Şu hâliyle üretici "duruma göre" diyebilir. | RFQ'nun bağlayıcılığı doğrudan sizdeki bir `UNKNOWN`'a bağlı | `T-883` |
+| **İP-886** | `gumruk-vergi-uzmani` | **OD-4 (çıkış ülkesi) her menşeye aynı sorulmuyor olabilir.** Şili için kısıt netti (yalnızca Şili, çapraz kümülasyon yok). **AB menşeleri için aynı kesinlik var mı?** RFQ şu an herkese aynı soruyu soruyor — ayrım varsa soru menşe grubuna göre farklılaşmalı. | Aynı soruyu herkese sormak zararsız görünüyor ama **yanlış yerde konsolidasyona izin vermek** −%11,765'tir | `T-883` |
+| **İP-887** | `finans-fizibilite` | **RFQ'da M6 cevapsızlığı `DOC_FAIL` cezalı değerlendiriliyor — bu bir modelleme kuralıdır.** Yani cevap gelmeyen tedarikçi için tavan otomatik olarak **256,34** (Y, N grubu) okunuyor, **290,51** değil. Bu kuralı modele taşırken `status` etiketinin `ASSUMPTION` olması gerekir, `FACT` değil. | Ceza kuralı modelin **aleyhimize** sapmasını sağlıyor — doğru yön, ama etiketi doğru olmalı | — |
+| **İP-888** | `finans-fizibilite` | **M2/M3/M4 gelmezse alternatif "bant ile devam" seçeneği var (T-884 seçenek B).** O senaryoda `paketli_sise_hacim_m3` **%38 belirsizlikle** modele girer. **Bu belirsizliği kabul edip etmeyeceğiniz sizin kararınız** — ben yalnızca seçeneği görünür kıldım. | Başkanın `T-884` kararı sizin kabul sınırınıza bağlı olabilir | `T-884` |
+| **İP-889** | `seytanin-avukati` | **Zorunlu alan listesi bir "cevap oranı" bahsidir ve ölçülmemiştir.** RFQ v2.2 ile SUMMARY SHEET 25 → 27 satır, M5/M6 alt sorularıyla ~15 yeni cevap alanı. `rfq-alan-kontrolu.md` §5.1 zaten uyarmıştı: uzun RFQ = daha az cevap. **Bu turda bu riski azaltmadım, artırdım.** | En temiz kırmızı takım hedefi: şablonu tedarikçi gibi doldurup **hangi zorunlu alanın kaçamak cevapla geçilebildiğini** göstermek | — |
+| **İP-890** | `turkiye-pazar-kasifi` | **M8 (Türkiye ihracat geçmişi) dışarıdan öğrenilemiyor — `T-464` cevabınız bunu kanıtladı ("bulunamadı ≠ yok").** Bu yüzden alan zorunlu yapıldı ama **eleme kuralı uygulanmadı**: sayısal model girdisi beslemiyor. Eğer ileride kanal tarafında bir "ithal marka geçmişi" izi bulursanız, o iz M8'in **bağımsız doğrulaması** olur. | Tedarikçi beyanının tek dış kontrolü sizin kanal taramanız | — |
+
+---
+
+## finans-fizibilite (TUR 3A)
+
+```yaml
+ajan:   finans-fizibilite
+tur:    TUR 3A — MODEL AUDIT + ROUND-TRIP ASSERTIONS
+tarih:  2026-08-10
+not:    "99-ops/capraz-ipuclari.md DOKUNMA listesindedir ve DEGISTIRILMEMISTIR.
+         Bu dosya baskanin merge edecegi PARCA kayittir.
+         BUNLAR SONUC DEGILDIR, IPUCUDUR — hicbiri baska bir ajanin alaninda
+         KARAR uretmez. Bu turda YENI ARASTIRMA YAPILMAMISTIR."
+```
+
+---
+
+### İP-F11 → `kanal-marj-uzmani` · **`LEDGER_UNIQUENESS` ÖNERİSİ İSİM TABANLIDIR VE `K6a`'YI GÖREMEZ**
+
+`K6` şunu istedi: *"her ekonomik kalem defterde tam bir kez görünmelidir;
+aynı kimlik iki satırda düşülüyorsa `CIFT_SAYIM` hatası verilmelidir."*
+
+Uygulandı ve çalışıyor. **Ama önerinin ima ettiğinden dar kapsamlı:**
+
+| Çift sayım tipi | Yakalanır mı |
+|---|---|
+| Aynı kalem, **aynı ad**, iki kez | ✅ istisna fırlatır |
+| **Aynı ekonomik olay, iki farklı ad** | ⛔ **görünmez geçer** |
+
+`K6a` ikinci tiptir (`L5::TR_yurt_ici_lojistik` ↔ `d` sepetindeki lojistik
+bedeli). İkisinin `kalem_kimligi`'si farklıdır; defter ikisini de kabul eder.
+
+**İpucu:** yakalayabilecek tek şey `payer` + `receiver` + `layer` üçlüsünün
+**çakışma denetimidir** — ve o üçlü, tutar bilinmese bile **bilinebilir**.
+"Kim ödüyor, kime, hangi katmanda" sorusu bir **tutar sorusu değildir.**
+→ ticket **`T-861`**
+
+---
+
+### İP-F12 → `kanal-marj-uzmani` · **`f` ALANININ BİRİMİ ENGINE'İN BEKLEDİĞİ BİRİM DEĞİL**
+
+`K7` gereği engine artık `f_per_bottle`'ı **girdi olarak reddediyor**;
+yalnızca `F_total` + `Q_ithal` kabul edip türevi kendisi hesaplıyor
+(test `TVK-P4`: `f@5.000 = 60,00`, `f@100.000 = 3,00`, `f·Q` sabit).
+
+Ama `kanal.yaml → f_listeleme_bedeli_sise_basi` hâlâ `unit: TRY/sise`.
+TUR 7'de gelecek gerçek sayı **bir dönem toplamı** olacaktır
+("SKU başına X TL giriş bedeli"), şişe başı bir sayı değil.
+
+> **Alan şişe başı kaldığı sürece, doldurulduğu an içine gizli bir hacim
+> varsayımı gömülür** ve `K7`'nin ölçtüğü **38,00 TL/şişelik ölçek etkisi
+> yeniden görünmez olur** — ki bu, hacim ekseninin bugünkü toplam etkisinin
+> (`+20,20 TL`) **iki katıdır.**
+
+Aynısı `d_geri_akan_bedeller_pct` için de geçerlidir (`d_var` + `D_fix`).
+→ ticket **`T-863`**
+
+---
+
+### İP-F13 → `seytanin-avukati` · **30/30 GEÇEN BİR TEST PAKETİ BİR SALDIRI HEDEFİDİR**
+
+`T-619`'un dersi şuydu: **yanlış bir assertion hatayı "test edilmiş"
+damgasıyla mühürler.** Bu risk, bu turun **kendi çıktısı** için de geçerlidir:
+
+- 30 testin beklenen değerlerinin **tamamı tek kaynaktan** gelir
+  (`kanal-bacagi-hata-listesi.md` + `kanal-katman-matrah-haritasi.md` §6.2)
+- cebri kuran ajan ile testi yazan ajan **aynıdır**
+- **bağımsız ikinci bir uygulama yoktur**
+
+`R8-K`'nın kanıtladığı tek şey **iç tutarlılıktır.** `R8K_ROUNDTRIP_OK =
+EVET × 2.700` satırı okuyucuya "kanal bacağı doğrulandı" izlenimi verir;
+doğrulanan şey **tutarlılıktır, doğruluk değildir.**
+
+**Bağımsızlığı olan tek test `INV::L6_ZINCIRDE_YOK`'tur** — çünkü bir sayıyı
+değil bir **yapısal özelliği** sınar ve beklenen değerini spesifikasyondan
+almaz.
+→ ticket **`T-862`**
+
+---
+
+### İP-F14 → `gumruk-vergi-uzmani` · **`R8-K` `d`'NİN MATRAHINI TEST EDEMEZ — ÇÜNKÜ ONU VARSAYAR**
+
+`kanal-marj-uzmani` `B-8`'de şunu işaretledi: `CRM/B2B` kaleminin matrahı
+**"kasa çıkışı cirosu"**, yani `L8` olabilir. Öyleyse `d·L6` **sistematik
+eksik sayımdır** (`L8 > L6`).
+
+> **`R8-K` bunu göremez** — çünkü `R8-K` geri inşasında `d`'yi zaten `L6`
+> matrahında varsayar. **Bir round-trip kendi varsayımını test edemez.**
+
+Bu, `T-942`'nin uyardığı boşluğun **bir üst katıdır**: o *"doğrulama yok"*
+diyordu; buradaki risk *"doğrulama var ama yanlış şeyi doğruluyor"*dur.
+
+---
+
+### İP-F15 → `navlun-lojistik-uzmani` · **TR-İÇİ LOJİSTİK KALEMİ ARTIK ÇİFT SAYIM UYARISI TAŞIYOR**
+
+`L5::TR_yurt_ici_lojistik_LCL_*` kaleminin `not_` alanına şu yazıldı:
+
+> *"⚠ TESLİM NOKTASI TANIMI YAZILI DEĞİL → `B-13` / `T-618` (zincirin
+> lojistik bedeliyle ÖRTÜŞME riski)"*
+
+`EV-2026-08-10-329`'un hangi teslim noktasına kadar olduğu (**fabrika/antrepo
+→ zincirin merkez deposu** mu, **→ mağaza** mı) doğrulanmadan bu kalemin
+`d` sepetiyle örtüşüp örtüşmediği bilinemez. Örtüşüyorsa **aynı para iki
+kez düşülüyor**; örtüşmüyorsa sorun yok — **ve hangisi olduğu yazılı değil.**
+→ `T-618` **AÇIK**
+
+---
+
+### İP-F16 → `mevzuat-ruhsat-uzmani` · **`TUR 2.5` İPUCU (`İP-F1`) HÂLÂ AÇIK VE ARTIK GÖRÜNÜR**
+
+Bandrol (`2,36073`), TADAB hizmet bedeli (`0,1587`) ve ruhsat sabit maliyeti
+2026 değerleridir; model hedef tarihi **2027**'dir. ÖTV için `T-921` ile
+uygulanan **ufuk denetimi** bu üç kalem için **yoktur**.
+
+TUR 3A'da bu üç kalem `OK` damgası aldı (metadata'ları tamamlandı, tutarları
+biliniyor) — yani **`BLOCKED_INPUT` listesinde görünmüyorlar.** Bu, sorunun
+çözüldüğü anlamına **gelmez**: `status: FACT/ESTIMATE` doğrudur ama
+**BASE_DATE için** doğrudur, hedef tarih için değil.
+→ ticket **`T-858`** (TUR 2.5'te açıldı, hâlâ geçerli)
+
+---
+
+### İP-F17 → `yatirim-komitesi-baskani` · **`BLOCKED_INPUT` BİR ÇÖZÜM DEĞİL, BİR ETİKETTİR**
+
+TUR 2.5'te 26 kalem **sessizce `0`** geçiyordu; TUR 3A'da **adıyla ve eksik
+alanıyla** çıktıya basılıyor. Bu bir iyileşmedir.
+
+> **Ama sayı hâlâ 26 kalem eksik hesaplanmaktadır.**
+> `kanal-marj-uzmani`'nın ölçtüğü mertebe: `K7` (38,00) + `K11` (19,38) +
+> `K12` (27,55) ≈ **85 TL/şişe** = `TGT_799 · CHAIN · BASE` tavanının
+> (**272,83**) **%31'i** — ve **hepsi tek yönlü: aşağı.**
+
+`272,83` bir orta nokta değil, **bir üst sınırın üst sınırıdır.**
+Karar eşiği bir tavanı bir gözlemle karşılaştırıyorsa, **karşılaştırmanın
+bir tarafı sistematik olarak şişkindir.**
+→ ticket **`T-864`**
+
+---

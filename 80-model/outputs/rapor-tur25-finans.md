@@ -427,6 +427,27 @@ düşer** (her iki menşede de aynı oran), 799/ES/CHAIN/BASE **272,83 → ~211
 TL/şişe** iner, HoReCa sütununun **tamamı** negatife yaklaşır ve
 **bu raporun tüm sayısal çıktısı yeniden hesaplanmalıdır.**
 
+> ### ⛔ TUR 3A DÜZELTMESİ — YUKARIDAKİ PARAGRAF **SUPERSEDED**'DİR (`T-171`)
+> `T-947` **KAPANDI**. Sonuç **`(A) KDV İNDİRİMİ CONFIRMED`**'dir.
+> `gumruk-vergi-uzmani` 32 CBK + 86 BKK'yı **tam sayım** taradı
+> (`EV-2026-08-10-856`): md.36'ya dayanan yürürlükte bir karar **VARDIR**
+> (**7846 s. CBK**, RG 24/11/2023-32379, `EV-2026-08-10-852`) —
+> ama **ürün bazlı değil ÖNLEM bazlıdır** ve 2204.21 üç tetikleyicisinin
+> (gözetim / korunma önlemi / dampinge karşı vergi) **hiçbirine girmez**
+> (`EV-2026-08-10-860/-861/-862`).
+>
+> | Düzeltilen | Eski (TUR 2.5) | Yeni (TUR 3A) |
+> |---|---|---|
+> | Gerekçe | "md.36 kararı ARANMAMIŞTIR" | "md.36 kararı **VAR** ama bu ürüne **DEĞMİYOR**" |
+> | `MAX_CIF_TRY` etkisi | ~**−%22,7** riski | **0,00 TL/şişe** — hiçbir sayı değişmedi |
+> | **`%22,7` rakamı** | **TAM KISIT** varsayımı | ⛔ **YANLIŞ.** 7846 **KISMİ** kısıt getirir: CIF ve ona isabet eden GV/İGV üzerinden ödenen KDV **indirilebilir kalır**; yalnızca **tevsik edilemeyen tutara (`D`)** isabet eden kısım düşer (KDVGUT III/C-2.6, `EV-2026-08-10-854`). Tetiklense bile etki **%22,7'den belirgin ölçüde küçüktür.** |
+>
+> Kısıt artık modelde **koşullu bir dal** olarak durmaktadır
+> (`ters_model.md36_indirilemeyen_kdv_oku`); tetikleyici bugün `false`'tur
+> ve MAKTU kalem olarak `(1+gv)` bölmesinden **önce** çıkarılacak şekilde
+> kodlanmıştır. Tetiklenirse `D` girdisi **yoktur** → model `UNKNOWN` döner,
+> tahminle doldurmaz.
+
 **Bu, saatler içinde ve ~sıfır maliyetle kapatılabilecek en yüksek getirili
 kontroldür ve üç turdur yapılmamıştır.**
 
@@ -508,7 +529,9 @@ uyguladım.
 > ### KALDIRAÇ NOTU
 > **1, 2, 3, 4 ve 6 numaralı doğrulamaların beşi de bir gün içinde ve
 > ~sıfır maliyetle yapılabilir.** Birlikte:
-> - `MAX_CIF`'in **%22,7 çökmesi riskini** kapatır (#1),
+> - `MAX_CIF`'in **%22,7 çökmesi riskini** kapatır (#1) — ⛔ **TUR 3A: bu risk
+>   `T-947`/`T-171` ile KAPANDI, etki `0,00 TL/şişe`; ayrıca `%22,7` rakamı
+>   tam-kısıt varsayımıydı ve 7846 **kısmi** kısıt getirir**,
 > - `MAX_FOB` / `MAX_EXW`'yi **açar** ve **ülke ayrıştırmasını çalıştırır** (#2),
 > - tavanın bir **alt sınırla test edilmesini** sağlar (#3),
 > - `TARGET`/`ACCEPTABLE`/`WALK-AWAY`'i **üretilebilir** kılar (#4),

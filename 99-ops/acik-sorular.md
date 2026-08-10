@@ -2042,3 +2042,148 @@ bağı** kayda geçirilmektedir.
 599 TL downside senaryosu **elenir**.
 
 ---
+
+---
+
+# TUR 3A AÇIK SORULARI
+
+> Ajanların `99-ops/_parts/*-tur3a.md` fragment'lerinden değiştirilmeden aktarıldı.
+
+## gumruk-vergi-uzmani (TUR 3A)
+
+---
+
+### KAPANAN AÇIK SORULAR
+
+| Kod | Soru | Durum | Kanıt |
+|---|---|---|---|
+| **OQ-G10** | md.36'ya dayanan bir CB kararı var mı? | ✅ **KAPANDI** — **VAR** (7846 + 8000), ama önlem bazlı; 2204.21'de tetiklenmiyor | `EV-2026-08-10-852`, `-853`, `-856` |
+| **U1** *(kdv-…-nakit.md §4)* | KDVGUT III/C tam metni taranmadı | ✅ **KAPANDI** — belgenin **tamamı** (397 s.) tarandı | `EV-2026-08-10-854`, `-855`, `-859` |
+| **Gözetim** *(matrah-sirasi.md §2)* | 2204.21'de gözetim var mı? | ✅ **KAPANDI** — **YOK**, pozitif taramayla | `EV-2026-08-10-860` |
+| — | Korunma önlemi / damping var mı? | ✅ **KAPANDI** — **YOK** | `EV-2026-08-10-861`, `-862` |
+| — | Alkolde özel matrah şekli var mı? | ✅ **KAPANDI** — **YOK** (TEKEL'e özgüydü, fiilen kalktı) | `EV-2026-08-10-857` |
+
+---
+
+### YENİ / DEVAM EDEN AÇIK SORULAR
+
+| # | Soru | Kritiklik | Neden kapanmadı | Nasıl kapanır | Ticket |
+|---|---|---|---|---|---|
+| **OQ-G20** | Yıllık pakete girmemiş, daha eski ve hâlâ yürürlükte bir gözetim tebliği var mı? | **MEDIUM** | Yöntem yalnız yıllık paketi görüyor; `mevzuat.gov.tr` erişilemedi | TARA ekranından tek GTİP sorgusu **veya** gümrük müşaviri | `T-172` |
+| **OQ-G21** | Gözetim OLMAKSIZIN, GK md.23–31 kıymet araştırmasıyla artan matraha 7846 uygulanır mı? | **MEDIUM** | Karar ve KDVGUT metinlerinden çıkmıyor; iki okuma mümkün | YMM / gümrük müşaviri | `T-173` |
+| **OQ-G22** | `mevzuat.gov.tr` ile ikinci bağımsız doğrulama | **LOW** | Site bu oturumda tamamen erişilemedi | erişim geri geldiğinde tekrar | `EV-…-864` (ttl 7d) |
+| **OQ-G23** | GVK md.41 (şahıs işletmesi, KVK md.11/1-ı muadili) | **LOW** | `mevzuat.gov.tr` erişilemedi | ithalatçı sermaye şirketi ise **gereksiz** | `T-151` md.4 |
+| **OQ-G24** | 7846 kapsamındaki YMM raporu / bildirim eşiği (46 Sıra No.lu SMMM-YMM Genel Tebliği md.3/1-a tutarı) | **LOW** | Baz senaryoda tetiklenmiyor | tetiklenirse aranır | — |
+| **OQ-G02** *(devam)* | KKDF matrahının tam tanımı | MEDIUM | TUR 1'den beri açık; peşin ödemede etkisiz | gümrük müşaviri | `T-105` |
+| **OQ-G03** *(devam)* | Gümrük beyannamesi damga vergisi 2026 tutarı | LOW | doğrulanmadı; şişe başına ihmal edilebilir | GİB tarifeleri | — |
+| **OQ-G05** *(devam)* | Gümrük beyanında esas alınacak kur kuralı | HIGH | TUR 2.5'te kapatılamadı, TUR 3A kapsamı dışıydı | gümrük müşaviri | `T-911` |
+
+---
+
+### TAZELİK UYARISI — bu turda üretilen bulguların ömrü
+
+| evidence_id | ttl | STALE tarihi | Neden kısa |
+|---|---|---|---|
+| `EV-2026-08-10-860` (gözetim) | **30d** | **2026-09-09** | Gözetim tebliği **yıl içinde de** çıkabilir |
+| `EV-2026-08-10-861` (korunma) | 90d | 2026-11-08 | Soruşturmalar yıl içinde sonuçlanır |
+| `EV-2026-08-10-862` (damping) | 90d | 2026-11-08 | Liste 13/07/2026 tarihli, düzenli güncelleniyor |
+| `EV-2026-08-10-864` (erişim) | **7d** | **2026-08-17** | Site erişimi geri gelebilir |
+
+> ⚠ **Model hedef tarihlerinin üçü de 2027'dedir.** Gözetim bulgusu — tıpkı ÖTV
+> maktu tutarı ve gümrük vergisi oranı gibi — **hedef tarihte doğrulanmış
+> değildir.** `ters-model-vergi-bacagi.md` §13.1'deki asimetri uyarısı
+> **gözetim için de geçerlidir** ve bu turda o listeye eklenmiştir.
+
+---
+
+## kanal-marj-uzmani (TUR 3A)
+
+<!-- 99-ops/acik-sorular.md'ye BASKAN tarafindan birlestirilir. Bu dosya bir PART'tir. -->
+
+> TUR 3A **sınırlı bir denetim turudur** — yeni araştırma yapılmamıştır.
+> Aşağıdaki sorular yeni bulgular değil, **denetimin ortaya çıkardığı
+> yapısal boşluklardır.**
+
+| # | Soru | Kime | Neden kritik | Ticket |
+|---|---|---|---|---|
+| **OQ-611** | `f` ve `d` hizmet faturalarındaki KDV **indirilebilir mi**? Ciro primi KDV'de iskonto mu hizmet mi? | `gumruk-vergi-uzmani` | İndirilemezse `f`+`d`'nin ekonomik maliyeti **1,20 katı** | `T-611` |
+| **OQ-612** | HoReCa **menü fiyatındaki** KDV oranı, ürün KDV oranıyla aynı mı? | `gumruk-vergi-uzmani` | `reverse-price-model.md` §3.2'nin **15 HoReCa hücresinin 15'i** bu doğrulanmamış orandan geçiyor | `T-612` |
+| **OQ-613** | `d` sepetinin kaç puanı gerçekten **oransal**, kaç puanı **sabit TL**? | TUR 7 (kanal görüşmesi) | Hacim plandan saparsa tek-`d` temsili gerçek yükü **göremiyor** | `T-613` |
+| **OQ-614** | Ciro primi **kademeli (tiered)** mi? | TUR 7 | Kademeliyse `d` hacme bağlıdır, sabit oran olarak taşınamaz | `T-613` |
+| **OQ-615** | `f`'nin birimi **SKU × zincir** mi, **SKU × mağaza** mı? | TUR 7 | Mağaza bazlıysa `f_per_bottle` bir mertebe büyür (`B-9`) | `T-604` |
+| **OQ-616** | **CRM/B2B "kasa çıkışı cirosu"** kaleminin matrahı `L6` mı `L8` mi? | TUR 7 | `L8 > L6` → `L6` matrahıyla yazmak **sistematik eksik sayım** | `T-613` |
+| **OQ-617** | İade edilen şişenin **geri kazanılabilir değeri** nedir (0 mı, `L5` mi)? | TUR 7 | İadenin bedeli `L6 − geri_kazanım`; şu an `0` alınıyor | `T-615` |
+| **OQ-618** | `EV-2026-08-10-329`'un TR-içi lojistiği **hangi teslim noktasına** kadar? | `navlun-lojistik-uzmani` | Zincirin lojistik bedeliyle **çift/eksik sayım** riski | `T-618` |
+| **OQ-619** | Dış distribütör, zincir bedellerini (`d`, `f`) **üstlenir mi**? | TUR 7 / **başkan** | `A1` mi `A2` mi — 28,95 TL/şişe fark | `T-617` · `C-611` |
+| **OQ-620** | Yatırımcı `μ`'yü **hangi matrahtan** tanımlıyor? | **yatırımcı** (`D-03`) | Matrahsız `μ` yüzdesi **anlamsızdır**; fark `μ=%30`'da 31,73 TL | `T-616` |
+| **OQ-621** | Tekel bayii marjı **margin / iskonto / markup** hangisi olarak konuşuluyor? | TUR 7 | `C-602`'nin matrah boyutu; +12,19 TL fark | `C-602` |
+| **OQ-622** | **Kanal karması** (zincir / tekel / HoReCa ciro payları) nedir? | `turkiye-pazar-kasifi` / TUR 7 | Üç alan da `null`; birleşik tavan **hesaplanamaz**; tavan 3,5 kat oynayabilir | `T-603` · `K9c` |
+
+---
+
+## global-sourcing-kasifi (TUR 3A)
+
+```yaml
+ajan:  global-sourcing-kasifi
+tur:   TUR 3A — RFQ ZORUNLU TEKNIK ALANLAR
+tarih: 2026-08-10
+```
+
+> Parça dosyadır. `99-ops/acik-sorular.md` ana dosyasına başkan birleştirir.
+> Bu ajan ana dosyaya dokunmadı.
+
+---
+
+### Yeni açık sorular
+
+| # | Ne bilinmiyor | Neden bu turda çözülmedi | Kritik mi | Nasıl bulunabilir |
+|---|---|---|---|---|
+| **OQ-881** | **Zorunlu alan kuralı cevap oranını ne kadar düşürür?** RFQ v2.2 ile SUMMARY SHEET 25 → 27 satıra çıktı ve M5/M6 alt sorularıyla ~15 yeni cevap alanı eklendi. Zorunluluğun **cevap kalitesini artırıp toplam cevabı azaltma** takası ölçülmedi. | Ölçmek için **gerçek gönderim** gerekir; bu turda dış iletişim yasak (`T-467` açık). | **MEDIUM** — model çıktısını değiştirmez, ama TUR 7'nin verimini belirler | ≥8 üreticiye gönderim + **M-doluluk oranı** ölçümü (`rfq-zorunlu-alanlar.md` §4.4). %50'nin altındaysa M1/M5/M7/M8 ikinci aşamaya bırakılır. 2–4 hafta. |
+| **OQ-882** | **M2/M3/M4 için kaç tedarikçi cevabı `paketli_sise_hacim_m3` bandını kapatmaya yeter?** Bugün bant üçüncü taraf palet spec sheet'inden geri hesap (0,00223 / 0,00239 / 0,00360). Tek bir tedarikçi cevabı **kendi ürünü için** kesin değer verir — ama **hangi ürünü alacağımız belli olmadan** bandın kapanıp kapanmadığı bir lojistik sorusudur. | `navlun-lojistik-uzmani`'nın alanı; `T-882` ile soruldu. | **MEDIUM** | `T-882` cevabı. |
+| **OQ-883** | **Zorunlu alan baskısı yanlış rakam üretir mi?** Boş bırakılamayan alan, tedarikçiyi "bir şey yazmaya" iter. Çapraz tutarlılık kuralı (koli↔şişe↔palet) bunu kısmen yakalar, ama **tek bir tutarlı ama yanlış** paketleme setini yakalayamaz. | Ancak gerçek cevaplar + fiziksel numune/spec sheet karşılaştırmasıyla ölçülebilir. | **MEDIUM** | Numune sevkiyatında (RFQ 7.1–7.5) gelen şişenin **fiilen tartılması ve ölçülmesi**; beyanla karşılaştırma. TUR 7. |
+| **OQ-884** | **M6 kabul kriteri fazla mı sıkı?** Bugünkü kural dört koşulu birden arıyor (belge adı + her sevkiyat taahhüdü + dökme bileşen yok + çıkış limanı menşe ülkesinde). Dördü birden gerekli mi, bilinmiyor. | `gumruk-vergi-uzmani`'nın alanı; `T-883` ile soruldu. | **MEDIUM** — fazla sıkıysa model **gereksiz yere aleyhimize** sapar (−%11,765'i hak etmeyen tedarikçilere de uygular) | `T-883` cevabı. |
+
+---
+
+### Bu turda KAPANMAYAN, önceki turlardan devreden ve RFQ'yu doğrudan etkileyen
+
+| # | Soru | Sahibi | Neden RFQ'yu etkiliyor |
+|---|---|---|---|
+| `T-467` | RFQ gönderimi dış iletişim izni gerektiriyor | `yatirim-komitesi-baskani` | İzin yoksa v2.2 hiç test edilmez; zorunlu alan kuralı **kâğıt üzerinde** kalır |
+| `T-871` | Pazarlık çapası hangi basamak / hangi kanal | `yatirim-komitesi-baskani` | `<VOLUME>` doldurulmadan RFQ **geçersizdir** (şablon §0.9) |
+| `T-162` | Fatura beyanı değer eşiği `UNKNOWN` | `gumruk-vergi-uzmani` | RFQ 6.13(b) eşiği **rakamsız** soruyor; bağlayıcılığı düşük |
+| `T-403` | Türkçe arka etiket menşede mi Türkiye'de mi | `mevzuat-ruhsat-uzmani` | M5'in **neden** sorulduğunun cevabı; kabul kriteri `T-881`'e bağlı |
+| `T-206` | Şişelenmiş ithal şarapta zorunlu analiz var mı, parti başı mı | `mevzuat-ruhsat-uzmani` | M7'nin (sertifika seti) parametre listesinin **yeterli olup olmadığı** buna bağlı |
+
+---
+
+## finans-fizibilite (TUR 3A)
+
+<!-- 99-ops/acik-sorular.md'ye BASKAN tarafindan birlestirilir. Bu dosya bir PART'tir. -->
+
+```yaml
+ajan:   finans-fizibilite
+tur:    TUR 3A — MODEL AUDIT + ROUND-TRIP ASSERTIONS
+tarih:  2026-08-10
+not:    "99-ops/acik-sorular.md DOKUNMA listesindedir ve DEGISTIRILMEMISTIR.
+         Bu dosya baskanin merge edecegi PARCA kayittir.
+         Bu tur YENI ARASTIRMA yapmamistir; asagidaki sorular DENETIMIN
+         ortaya cikardigi YAPISAL bosluklardir."
+```
+
+| # | Soru | Kime | Neden kritik | Ticket |
+|---|---|---|---|---|
+| **OQ-F31** | `L7_eff = L6·(1−d) − f` denklemi **ticari gerçekte** böyle mi işliyor? | `kanal-marj-uzmani` / TUR 7 | Bu turda kurulan **30 testin 30'u** bu denklemi test etmez, **onunla test eder**. Denklem yanlışsa testler yanlış bir dünyayı **tutarlı biçimde** doğrular. | `T-862` |
+| **OQ-F32** | Aynı ekonomik olayın **iki farklı adla** iki satırda durması nasıl yakalanır? | `kanal-marj-uzmani` | `LEDGER_UNIQUENESS` **isim tabanlıdır**; `K6a` (`d` içindeki lojistik ↔ `L5` TR-içi lojistik) bu denetimden **görünmez geçer** | `T-861` |
+| **OQ-F33** | `BLOCKED_INPUT_COUNT` kaç olduğunda çıktı `APPROVED` olabilir? | **başkan** | Bugün 26/29/31; kalemlerin **hepsi tavanı aşağı çeker**; eşik **tanımsız** | `T-864` |
+| **OQ-F34** | `kanal.yaml`'daki `f_listeleme_bedeli_sise_basi` alanı **dönem toplamına** çevrilecek mi? | `kanal-marj-uzmani` | Engine artık `f_per_bottle`'ı **girdi olarak reddediyor**; alan doldurulsa bile **okunamaz** | `T-863` |
+| **OQ-F35** | md.36 tetiklenirse `D` (tevsik edilemeyen tutar) **nasıl hesaplanır**? | `gumruk-vergi-uzmani` | Koşullu dal kodlandı ve `false`'ta duruyor; tetiklenirse `D` yok → model **`UNKNOWN`** dönecek, sayı **üretemeyecek** | `T-171` (`ANSWERED`) · `T-173` |
+| **OQ-F36** | `makro.yaml → finansman_orani` ne zaman dolacak? | **yatırımcı** | `L6_gross` matrahı **kuruldu ve test edildi** (`651,3587` vs `L6 542,7989`) ama finansman satırı `BLOCKED_INPUT`. `K12`: 60 gün → **−27,55 TL/şişe** | `T-614` |
+| **OQ-F37** | `μ` matrahı (`L6` / `L7_EFF` / `L5_MARKUP`) hangisi? | **yatırımcı** (`D-03`) | Üçü **kodlandı ve test edildi**; `μ≠0` & matrah `null` → engine **`UNKNOWN`** döner. `μ=%20`'de yayılım **16,89 TL**, `μ=%50`'de **69,96 TL** | `T-616` · `T-851` |
+| **OQ-F38** | `peak_cash_requirement` hangi turda hesaplanacak? | **başkan** | Matrah (`L6_gross`) hazır, vade bandı (`kanal.yaml`) hazır, **finansman oranı yok** → sayı üretilmedi. Bu turda bilinçli olarak **yapılmadı**. | `T-614` · `OQ-F36` |
+
+> ### BU TURUN AÇMADIĞI SORULAR (bilerek)
+> Contribution margin, break-even, EBITDA, ROI, IRR ve tedarikçi tavsiyesi
+> **sorulmadı ve üretilmedi.** Bu bir model bütünlüğü turuydu.
+
+---
