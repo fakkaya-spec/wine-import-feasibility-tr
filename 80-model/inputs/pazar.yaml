@@ -28,6 +28,13 @@ meta:
     tarih: 2026-08-10
     kapsam: "SADECE confidence + kullanim kurali. Deger degisikligi YOK."
     ref: 90-karar/tur-2-preflight-housekeeping.md
+  baskan_mudahalesi_tur25:
+    tarih: 2026-08-10
+    kapsam: >-
+      SADECE K7 kuralinin eklenmesi (TARGET vs OBSERVED ayrimi) + l8_chain_retail
+      altina bir uyari notu. HICBIR DEGER DEGISTIRILMEMISTIR: 599,90 ve 649,90
+      aynen durmaktadir; hicbir confidence, status veya evidence_id degismemistir.
+    ref: 90-karar/tur-25-preflight.md
   durum: KISMI_DOLU
   rapor: 60-pazar/rapor-tur15-turkiye-pazar.md
   tur1_raporu: 60-pazar/rapor-tur1-turkiye-pazar.md
@@ -79,6 +86,45 @@ katman_kurallari:
     confidence degeri MEDIUM'a cekilmistir. MEDIUM olmasi sayinin YANLIS
     okundugu anlamina GELMEZ (fotograftan okuma HIGH'dir); PIYASAYI TEMSIL
     GUCUNUN dusuk oldugu anlamina gelir. Ayrim korunmalidir.
+
+  # --- TUR 2.5 PRE-FLIGHT'ta EKLENDİ (yatirim-komitesi-baskani, 2026-08-10) ---
+  # Kaynak: kurucu girdisi + 90-karar/tur-25-preflight.md §2
+  # BAGLAYICIDIR ve K1-K6 ile ayni statudedir.
+  # ⚠ BU DOSYADA HICBIR DEGER DEGISTIRILMEMISTIR. 599,90 ve 649,90 AYNEN DURUR.
+  K7: >
+    TARGET ≠ OBSERVED — PROJEDEKI EN TEHLIKELI SAYI YAKINLIGI.
+
+    Iki ayri nesne vardir ve BIRBIRININ YERINE KULLANILAMAZ:
+
+      (A) OBSERVED_BENCHMARK = 599,90 TL
+          Nerede yasar : bu dosya -> benchmark_1.raf_fiyati_try
+          Nedir        : Metro Turkiye'de 2026-08-09'da FOTOGRAFTAN OKUNMUS
+                         gercek bir raf fiyati. Bir OLCUMDUR.
+          Katman       : L8_METRO_CASH_CARRY (L8_CHAIN_RETAIL DEGIL — K1)
+          Statu        : FACT (okuma) / MEDIUM (temsil gucu — K6)
+          Kurallar     : K1, K2, K3, K5, K6 TAMAMI GECERLIDIR.
+          evidence_id  : EV-2026-08-09-501
+
+      (B) TARGET_SHELF_PRICE = 599 · 699 · 799 · 899 · 999 TL (KDV DAHIL)
+          Nerede yasar : senaryolar.yaml -> hedef_raf_fiyati_merdiveni
+          Nedir        : KURUCU/YATIRIMCI HEDEFIDIR. Bir ISTEKTIR.
+                         PIYASADA GORULMEMISTIR ve bir gozlem DEGILDIR.
+          Statu        : INVESTOR_ASSUMPTION — FACT DEGIL, ESTIMATE DE DEGIL
+          evidence_id  : YOKTUR ve OLMAYACAKTIR (bir dis olgu degildir)
+
+    599 ile 599,90 arasindaki 0,90 TL'lik yakinlik BIR TEYIT DEGILDIR.
+    Hedefin gozlemi dogruladigi, gozlemin hedefi mumkun kildigi veya ikisinin
+    "ayni sayi" oldugu HICBIR RAPORDA, HICBIR TABLODA, HICBIR MODEL CIKTISINDA
+    YAZILAMAZ. Yakinlik TESADUFTUR ve oyle raporlanir.
+
+    YASAKLAR (ihlali ciktiyi GECERSIZ kilar):
+      - TARGET basamagi bir gozlem gibi alintilanamaz ("piyasada 599 TL" YASAK).
+      - OBSERVED benchmark bir hedef gibi kullanilamaz (K5 zaten yasakliyordu).
+      - Ikisi ayni tabloda ETIKETSIZ gosterilemez.
+      - TARGET merdiveni l8_chain_retail'in yerine gecemez; o alan `null` /
+        `UNKNOWN` KALIR (K1 + T-603). Merdivenin varligi G3'u ACMAZ.
+      - Ters model TARGET uzerinden calistirildiginda cikti
+        "INVESTOR_ASSUMPTION uzerinden" etiketiyle basilir; FACT olamaz.
 
 # =====================================================================
 # GÖZLEM HAVUZUNUN YAPISI — MODELE OKUNMADAN GİRİLMEZ
@@ -376,6 +422,11 @@ benchmark_2:
 # DİĞER FİYAT KATMANLARI — AYRI TUTULUR (K1)
 # =====================================================================
 l8_chain_retail:
+  # TUR 2.5 PRE-FLIGHT NOTU (2026-08-10): senaryolar.yaml'a bir
+  # TARGET_SHELF_PRICE merdiveni (599...999 TL) kaydedilmistir. O merdiven
+  # BU ALANI DOLDURMAZ ve DOLDURAMAZ (K1 + K7). Bu alan `null` / `UNKNOWN`
+  # olarak DURMAYA DEVAM EDER. T-603 ve T-917 ACIKTIR; G3 BLOCKED'dir.
+  tur25_notu: "TARGET merdiveni bu alani doldurmaz — K7. Alan UNKNOWN kalir."
   deger_try:
     value: null
     unit: TRY

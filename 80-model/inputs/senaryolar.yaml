@@ -6,9 +6,19 @@
 
 meta:
   dosya: senaryolar.yaml
-  son_guncelleme: 2026-08-09
-  tur: "TUR 0 — kurulum"
-  durum: ISKELET_HACIMLER_BELIRLI
+  son_guncelleme: 2026-08-10
+  tur: "TUR 0 kurulum (2026-08-09) + TUR 2.5 PRE-FLIGHT YATIRIMCI GIRDISI (2026-08-10)"
+  durum: HACIMLER_BELIRLI_YATIRIMCI_HEDEFLERI_KAYDEDILDI
+  baskan_mudahalesi_tur25:
+    tarih: 2026-08-10
+    yazan: yatirim-komitesi-baskani
+    kapsam: >-
+      Iki YATIRIMCI GIRDISI kaydedildi: (a) tarih_senaryolari (EARLY/BASE/LATE),
+      (b) hedef_raf_fiyati_merdiveni (599/699/799/899/999 TL, KDV DAHIL).
+      IKISI DE ARASTIRMA BULGUSU DEGILDIR ve FACT DEGILDIR.
+      Hicbir mevcut alan silinmemis veya degistirilmemistir.
+    ref: 90-karar/tur-25-preflight.md
+    acilan_ticketlar: [T-921, T-922, T-923]
 
 # ------------------------------------------------------------
 # HACİM SENARYOLARI — charter'da belirlendi, bunlar ASSUMPTION degil KARARDIR
@@ -48,6 +58,150 @@ hacim_senaryolari:
     moq_uyumlu_mu: null
     konteyner_sayisi: null
     status: UNKNOWN
+
+# ============================================================================
+# TARİH SENARYOLARI — YATIRIMCI GİRDİSİ (TUR 2.5 PRE-FLIGHT, 2026-08-10)
+# ============================================================================
+# Kaynak: kurucu/yatirimci beyani. Ayna kayit: vergi.yaml -> meta.tarih_senaryolari
+# BU BLOK TARIH TASIR, TUTAR TASIMAZ.
+tarih_senaryolari:
+  status: INVESTOR_ASSUMPTION          # FACT DEGILDIR
+  evidence_id: null                    # BIR DIS OLGU DEGILDIR -> kanit karti YOKTUR
+  kaynak: "kurucu/yatirimci beyani — TUR 2.5 PRE-FLIGHT"
+  ayna_kayit: "vergi.yaml -> meta.tarih_senaryolari (tek dogruluk kaynagi)"
+  oq: OQ-002                           # KAPANMADI -> INPUT_RECORDED
+  base_secimi: BASE                    # 2027-04-01
+  senaryolar:
+    - id: EARLY
+      tarih: 2027-01-01
+      otv_rejimi: "OCAK 2027 revizyonu — SINIR TARIHI"
+      otv_rejimi_status: UNKNOWN
+      sinir_riski: true
+      otv_tutari: null
+      otv_tutari_status: FUTURE_UNKNOWN
+    - id: BASE
+      tarih: 2027-04-01
+      otv_rejimi: "OCAK 2027 revizyonu — REVIZYON KESIN YURURLUKTE"
+      otv_rejimi_status: REGIME_KNOWN_AMOUNT_UNKNOWN
+      sinir_riski: false
+      otv_tutari: null
+      otv_tutari_status: FUTURE_UNKNOWN
+    - id: LATE
+      tarih: 2027-07-01
+      otv_rejimi: "TEMMUZ 2027 revizyonu — SINIR TARIHI"
+      otv_rejimi_status: UNKNOWN
+      sinir_riski: true
+      otv_tutari: null
+      otv_tutari_status: FUTURE_UNKNOWN
+  baglayici_kurallar:
+    - "UCU DE AYRI AYRI calistirilir. Ortalamasi ALINMAZ."
+    - "BASE tek sonuc olarak sunulamaz (T-104 + M-9 sinifi kural)."
+    - >-
+      UCU DE vergi.yaml -> otv_maktu_zaman_serisi.son_gozlem_gecerlilik_ufku
+      (2026-12-31) OTESINDEDIR. Bu nedenle duyarlilik_eksenleri[OTV] uzerinde
+      acik bir senaryo noktasi SECILMEDEN engine UNKNOWN DONMEK ZORUNDADIR.
+    - >-
+      EARLY ve LATE SINIR TARIHLERIDIR: gozlenen yururluk desenine gore
+      (2025-12-31 ve 2026-07-03) revizyonlar ayin ilk gunune oturmaz. Bu iki
+      senaryo IKI AYRI REJIM altinda ayri ayri calistirilir.
+    - >-
+      CURRENT_CONFIRMED (71,2692 TL/lt) bu uc tarihin HICBIRI icin gecerli
+      tutar olarak kullanilamaz.
+
+# ============================================================================
+# HEDEF RAF FİYATI MERDİVENİ — YATIRIMCI GİRDİSİ (TUR 2.5, 2026-08-10)
+# ============================================================================
+# ⛔ EN TEHLİKELİ TUZAK — OKUMADAN BU BLOKTAN SAYI ALINMAZ:
+#
+#     599    TL  = TARGET_SHELF_PRICE   (yatirimci hedefi, PIYASADA GORULMEDI)
+#     599,90 TL  = OBSERVED_BENCHMARK   (Metro cash & carry gozlemi, L8_METRO_CASH_CARRY)
+#
+# Bu iki sayi SAYISAL OLARAK NEREDEYSE AYNI, EPISTEMOLOJIK OLARAK FARKLI
+# NESNELERDIR. Biri bir ISTEKTIR, digeri bir OLCUMDUR. Birbirinin yerine
+# KULLANILAMAZ, birbirini DOGRULAMAZ, birbirini DESTEKLEMEZ.
+# Yakinliklari BIR TEYIT DEGIL, BIR TESADUFTUR ve oyle raporlanir.
+# Ayrica bkz. pazar.yaml -> katman_kurallari.K7 (baglayici).
+hedef_raf_fiyati_merdiveni:
+  etiket: TARGET_SHELF_PRICE
+  senaryo_sinifi: INVESTOR_TARGET_SCENARIO
+  status: INVESTOR_ASSUMPTION          # FACT DEGILDIR, ESTIMATE DE DEGILDIR
+  evidence_id: null                    # BIR GOZLEM DEGILDIR -> kanit karti YOKTUR
+  kaynak: "kurucu/yatirimci beyani — TUR 2.5 PRE-FLIGHT, 2026-08-10"
+  katman: L8_CONSUMER_SHELF_PRICE      # HEDEF katman; l8_chain_retail ile AYNI DEGIL
+  urun_tanimi: "750 ml still wine (kopuksuz durgun sarap)"
+  para_birimi: TRY
+  kdv_durumu: KDV_DAHIL                # BES BASAMAGIN BESI DE KDV DAHILDIR
+  kdv_orani_kaynak: "vergi.yaml -> matrah_sirasi[sira=5].oran_pct (%20, EV-2026-08-09-118)"
+
+  basamaklar:
+    - id: TGT_599
+      kdv_dahil_try: 599
+      kdv_haric_try: null              # TUREV — engine hesaplar, BASKAN HESAPLAMAZ
+    - id: TGT_699
+      kdv_dahil_try: 699
+      kdv_haric_try: null
+    - id: TGT_799
+      kdv_dahil_try: 799
+      kdv_haric_try: null
+    - id: TGT_899
+      kdv_dahil_try: 899
+      kdv_haric_try: null
+    - id: TGT_999
+      kdv_dahil_try: 999
+      kdv_haric_try: null
+
+  kdv_haric_formulu: "kdv_haric_try = kdv_dahil_try / (1 + matrah_sirasi[sira=5].oran_pct/100)"
+  kdv_haric_notu: >-
+    KDV haric karsiliklar BILINCLI OLARAK BOS BIRAKILMISTIR. Turetme bir MODEL
+    islemidir ve finans-fizibilite'ye aittir; baskan sayi uretmez (CLAUDE.md §1.16).
+
+  baglayici_kurallar:
+    - kod: L1
+      kural: >-
+        BU MERDIVEN MEVCUT PIYASA FIYATI DEGILDIR. Hicbir basamagi bir GOZLEM
+        olarak alintilanamaz, hicbir raporda "piyasada X TL" diye yazilamaz.
+        Bir HEDEFTIR ve her kullanimda "yatirimci hedefi" oldugu yazilir.
+    - kod: L2
+      kural: >-
+        599 (TARGET) ile 599,90 (OBSERVED) BIRBIRININ YERINE KULLANILAMAZ.
+        Ayni tabloda gosterilirlerse ETIKETLERI ZORUNLUDUR ve aralarindaki
+        0,90 TL fark bir "dogrulama" olarak yorumlanamaz.
+    - kod: L3
+      kural: >-
+        BES BASAMAGIN BESI DE AYRI AYRI calistirilir. Ortalamasi ALINMAZ,
+        "tipik hedef" diye tek basamak secilmez. Ters model CIKTISI BIR
+        BANTTIR, bir sayi degildir.
+    - kod: L4
+      kural: >-
+        Merdiven, pazar.yaml -> l8_chain_retail'in YERINE GECMEZ. l8_chain_retail
+        `null` / `UNKNOWN` olarak DURMAYA DEVAM EDER (T-603, K1). Ters model bir
+        HEDEF uzerinden calistirilir; bu, gercek zincir rafinin OLCULDUGU
+        anlamina gelmez.
+    - kod: L5
+      kural: >-
+        Ters model ciktisi her basamak icin ayri ayri ve "TARGET_SHELF_PRICE
+        (INVESTOR_ASSUMPTION) uzerinden hesaplanmistir" etiketiyle basilir.
+        Sonuc ASLA FACT olarak raporlanamaz.
+
+  gozlenen_bantla_tutarlilik_notu: >-
+    KAYIT NOTU (yeni arastirma DEGIL, iki mevcut kaydin karsilastirilmasi):
+    pazar.yaml -> segment.fiyat_performans_alt_try = 600 ve
+    segment.fiyat_performans_ust_try = 900 (IKISI DE ESTIMATE, tek kanala dayali,
+    C-501 ACIK). Bu banda gore merdivenin bes basamagindan UCU (699/799/899)
+    band ICINDE, biri (599) bandin HEMEN ALTINDA, biri (999) bandin USTUNDEDIR.
+    Bu bir dogrulama DEGILDIR — bandin kendisi tek bir online uzman perakendeciye
+    dayanan bir ESTIMATE'tir ve fiziksel magaza turu yapilmadan "pazar bandi"
+    diye okunamaz (gozlem_havuzu.tek_kanal_yogunlasmasi_uyarisi, OQ-502, T-917).
+
+  ters_model_baglantisi:
+    aktif_yon: REVERSE
+    ongereksinim_karsilandi_mi: KISMEN
+    notes: >-
+      master-commercial-input-table.md §5.3 madde 4, ters modelin ya
+      l8_chain_retail'i (T-603) YA DA "acikca ASSUMPTION etiketli bir hedef
+      bandi" gerektirdigini yazmistir. BU BLOK O IKINCI SARTI KARSILAR.
+      BIRINCISI KARSILANMAMISTIR: l8_chain_retail hala `null`'dir ve G3 hala
+      BLOCKED'dir. Bu blok G3'u ACMAZ.
 
 # ------------------------------------------------------------
 # BENCHMARK SENARYOLARI — OPEN QUESTION #001 kapanana kadar ZORUNLU
@@ -123,11 +277,40 @@ duyarlilik_eksenleri:
 
   - eksen: OTV
     min: null
-    base: null
+    base: null                          # BASE SECILMEDI — baskan sayi uretmez
     max: null
     status: UNKNOWN
     kaynak_dosya: vergi.yaml
     notes: "Maktu OTV artisi f/p segmentte en oldurucu tek degiskendir."
+    # ---- TUR 2.5 PRE-FLIGHT EKI (2026-08-10) ----
+    # min/base/max BILINCLI OLARAK `null` BIRAKILDI. Baskan bu sayilari
+    # DOLDURMAZ. Asagidaki senaryo noktalari BASKANIN TAHMINI DEGILDIR —
+    # T-104'te gumruk-vergi-uzmani tarafindan TALEP EDILMIS duyarlilik setidir
+    # ve buraya ajanin talebi olarak, kaynak gosterilerek AKTARILMISTIR.
+    talep_edilen_senaryo_noktalari:
+      kaynak_ticket: T-104
+      kaynak_ajan: gumruk-vergi-uzmani
+      birim: "% artis / 6 ay (Ocak-Temmuz revizyonu basina)"
+      noktalar: [0, 8, 16, 25]
+      status: ASSUMPTION
+      gerekce: >-
+        Gelecekteki Yi-UFE BILINMEZ. 16 noktasinin tarihsel bir capasi vardir
+        (2025-12-31 -> 2026-07-03 arasi gerceklesen +%16,09; EV-2026-08-09-112 ->
+        EV-2026-08-09-111). Diger uc nokta CAPASIZDIR ve saf duyarlilik
+        noktasidir. HICBIRI bir TAHMIN DEGILDIR.
+      uygulama_kurali: >-
+        Dort nokta AYRI AYRI calistirilir; ortalamasi ALINMAZ; bir tanesi
+        "beklenen" diye sunulamaz. Cikti "PROJEKSIYON (ASSUMPTION)" etiketiyle
+        basilir ve ASLA FACT olarak raporlanmaz
+        (vergi.yaml -> otv_maktu_zaman_serisi.engine_okuma_kurali adim 3).
+      capraz_carpim_zorunlulugu: >-
+        Bu eksen tarih_senaryolari ile CAPRAZ calistirilir:
+        3 tarih (EARLY/BASE/LATE) x 4 artis noktasi. EARLY ve LATE sinir
+        tarihleri oldugu icin ikisinde de iki rejim ihtimali ayri ayri
+        gosterilir. Tek bir OTV sayisi UREITLEMEZ.
+      makro_bagi: >-
+        Yi-UFE varsayimi makro.yaml'da HALA YOKTUR (T-104 ikinci ayagi,
+        acik). Bu blok o boslugu KAPATMAZ; yalnizca ekseni tanimlar.
 
   - eksen: PRICE
     min: null

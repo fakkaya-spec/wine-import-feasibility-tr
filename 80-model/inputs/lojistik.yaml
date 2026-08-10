@@ -1788,3 +1788,353 @@ tur2:
     thd_ile_terminal_kapi_cikis_cift_sayim: "C-313"
     ruhsat_bandrol_bekleme_suresi: "T-301 (CRITICAL) — baska ajanin alani"
     fx_kuru: "T-311 — uc para birimi toplanamiyor"
+
+# =====================================================================
+# =====================================================================
+# TUR 2.5 EKLERI — TERS MODEL ICIN LOW/BASE/HIGH SENARYOLARI
+# Sahibi: navlun-lojistik-uzmani
+# Tarih:  2026-08-10
+# Detay:  40-lojistik/lojistik-senaryolari-tur25.md
+#         40-lojistik/rapor-tur25-navlun-lojistik.md
+#
+# KURAL: Yukaridaki TUR 1 ve TUR 2 bloklari DEGISTIRILMEMISTIR. Bu blok EKTIR.
+# KURAL: Bu turda YENI KANIT ACILMADI. Butun degerler mevcut kanitlardan
+#        TURETILMISTIR (ESTIMATE). Hicbiri FACT DEGILDIR.
+# KURAL: M-5 — USD/EUR/TRY TOPLANAMAZ (makro.yaml -> fx null).
+# KURAL: M-6 — FCL bandinin ORTALAMASI ALINAMAZ. FCL'in BASE'i YOKTUR.
+# =====================================================================
+# =====================================================================
+
+tur25_senaryolar:
+
+  _meta:
+    tur: "TUR 2.5 — tazelik kontrolu + senaryo hazirligi"
+    tarih: 2026-08-10
+    amac: "ters (reverse) fiyat modeline sise basi lojistik girdisi"
+    yeni_kanit_acildi_mi: false
+    kapsam: "L1 (FOB) -> L3 (pre-tax landed) arasi lojistik kalemleri"
+    dahil_degil: "sigorta, bandrolleme operasyonu, antrepo bekleme (7 gun ustu), demurrage, kanala dagitim, TUM VERGILER, musavirlik CIF kademesi"
+    para_birimi_kurali: "USD / EUR / TRY AYRI. Toplama finans-fizibilite'nindir (T-311, M-5)."
+    fcl_kurali: "FCL'in BASE senaryosu YOKTUR. Iki kose (LOW/HIGH) AYRI calistirilir (M-6, C-311 ACIK)."
+    genel_confidence: LOW
+    genel_confidence_gerekce: >
+      En iyi bacak (LCL okyanus) MEDIUM ve 6 gunluk omre sahip; ikinci bacak
+      (FCL okyanus) UNKNOWN; ucuncu bacak (Turkiye ici) T3 ama ordino ve ic
+      nakliye ESTIMATE. Zincirin gucu en zayif halkasidir.
+
+  # -------------------------------------------------------------------
+  # TAZELIK — BU BLOGUN OLUM TARIHI
+  # -------------------------------------------------------------------
+  tazelik:
+    lcl_kart_sayisi:
+      value: 10
+      status: FACT
+      evidence_id: null
+      notes: >
+        DUZELTME: rota-maliyet-matrisi.md §8 ve T-304 §4 '11 kart' diyor.
+        index.csv kontrolu 10 gosteriyor: EV-2026-08-10-304 (Italya) ttl 14d
+        ve status UNKNOWN, 6d setine ait DEGIL. -> T-801
+    lcl_kartlari:
+      value: [EV-2026-08-10-301, EV-2026-08-10-302, EV-2026-08-10-303,
+              EV-2026-08-10-305, EV-2026-08-10-306, EV-2026-08-10-307,
+              EV-2026-08-10-308, EV-2026-08-10-309, EV-2026-08-10-310,
+              EV-2026-08-10-311]
+      ttl: 6d
+      access_date: 2026-08-10
+      kaynagin_kendi_gecerliligi: 2026-08-16
+      son_gecerli_gun: 2026-08-16
+      stale_tarihi: 2026-08-17
+      bugun_gecerli_mi: true
+      status: FACT
+    bu_blogun_gecerliligi:
+      value: "2026-08-16"
+      status: FACT
+      notes: >
+        2026-08-17 itibariyle LCL'e dayanan TUM satirlar FACT olmaktan cikar,
+        ESTIMATE / LOW'a duser. Turev kartlar (EV-2026-08-10-329, -330) da
+        duser: bir turev kaynagindan daha taze OLAMAZ. -> T-802
+
+  # -------------------------------------------------------------------
+  # SENARYO TANIMI — LOW/BASE/HIGH NEREDEN GELIYOR
+  # -------------------------------------------------------------------
+  senaryo_tanimi:
+    sise_hacmi_m3:
+      low: 0.00223
+      base: 0.00231
+      high: 0.00239
+      kaynak: "EV-2026-08-09-307 — LOW=12'li koli, HIGH=6'li koli, BASE=orta. Koli formati UNKNOWN (T-302)."
+      status: ESTIMATE
+    kapasite_20dv_paletsiz:
+      low: 13700
+      base: 12750
+      high: 11800
+      kaynak: "EV-2026-08-09-320 bandinin uclari"
+      status: ESTIMATE
+    kapasite_40hc_paletsiz:
+      low: 21500
+      base: 20300
+      high: 19100
+      kaynak: "EV-2026-08-09-321 (karayolu 44 t GVW ile sinirli)"
+      status: ESTIMATE
+    sevkiyat_sayisi_yillik:
+      "5000": 1
+      "25000": 2
+      "50000": 3
+      "100000": 5
+      kaynak: "40-lojistik/lcl-vs-fcl-pilot.md §7 (TUR 2 kadansi)"
+      status: ASSUMPTION
+    origin_charges_ispanya_eur:
+      low: 349
+      base: 464
+      high: 554
+      kaynak: "EV-2026-08-10-313, -314 (T3, HIGH conf). LOW = THO 287 + B/L 62 (zorunlu). BASE = LOW + Food Quality Container 115 (sarap GIDADIR). HIGH = + VGM 50 + equipment 40."
+      status: ESTIMATE
+    thd_usd:
+      low: 165
+      base: 192
+      high_20dv: 261
+      high_40hc: 298
+      kaynak: "EV-2026-08-10-315 (T3). LOW=Izmir, BASE=Istanbul (tum LCL kotasyonlari TRIST varisli -> rota ile tutarli), HIGH=Mersin."
+      status: FACT
+    lcl_cfs_usd_per_cbm:
+      low: 0
+      base: 30
+      high: 80
+      kaynak: "EV-2026-08-09-324 (30-80 USD/CBM, iki taraf). LOW=0 TUR 2'nin 'base'e dahil' kosesini korumak icin."
+      status: ASSUMPTION
+      uyari: >
+        TUR 2'DEN BILINCLI SAPMA. EV-2026-08-10-301 metni CFS'i HARIC sayiyor.
+        30-80 USD/CBM, 123-133 USD/CBM'lik okyanus navlununun %25-65'idir.
+        LCL'in EN BUYUK TEK BELIRSIZLIGI artik okyanus navlunu DEGIL, CFS'in
+        dahil olup olmadigidir.
+    ardiye_gun_varsayimi:
+      value: 5
+      status: ASSUMPTION
+      notes: "Uc senaryoda da SABIT. Gecikme AYRI bir eksendir (T-301), senaryoya karistirilmadi."
+
+  # -------------------------------------------------------------------
+  # ROTA x SENARYO — LCL BASE OKYANUS, USD/SISE (HACIMDEN BAGIMSIZ)
+  # Yalnizca base ocean freight. CFS ve local charge'lar HARIC.
+  # -------------------------------------------------------------------
+  lcl_okyanus_usd_per_sise:
+    _meta:
+      status: ESTIMATE
+      turetme: "USD/CBM (Flexport kotasyonu) x m3/sise (senaryoya gore)"
+      confidence: MEDIUM
+      confidence_son_gecerlilik: 2026-08-16
+      included_charges: "base ocean freight, port-to-port"
+      excluded_charges: "CFS, origin locals, destination locals, ordino, gumrukleme, ic nakliye, sigorta, antrepo, vergiler"
+    ispanya_valencia:   {low: 0.275, base: 0.296, high: 0.318, evidence_id: EV-2026-08-10-301}
+    ispanya_barcelona:  {low: 0.275, base: 0.296, high: 0.411, evidence_id: EV-2026-08-10-302,
+                         notes: "HIGH = ayni port pair'de IKINCI teklif (%31 fark)."}
+    portekiz_lizbon:    {low: 0.423, base: 0.450, high: 0.478, evidence_id: EV-2026-08-10-303}
+    italya:             {low: null, base: null, high: null, status: UNKNOWN, evidence_id: EV-2026-08-10-304}
+    fransa_marsilya:    {low: 0.637, base: 0.671, high: 0.724, evidence_id: EV-2026-08-10-305}
+    sili_sanantonio:    {low: 0.433, base: 0.460, high: 0.663, evidence_id: EV-2026-08-10-306}
+    guney_afrika:       {low: 0.767, base: 0.806, high: 0.846, evidence_id: EV-2026-08-10-307}
+    california_oakland: {low: 0.553, base: 0.584, high: 0.616, evidence_id: EV-2026-08-10-308}
+    california_la:      {low: 0.505, base: 0.535, high: 0.631, evidence_id: EV-2026-08-10-309}
+    arjantin:           {low: 0.513, base: 0.543, high: 0.574, evidence_id: EV-2026-08-10-310}
+    avustralya:         {low: 0.529, base: 0.560, high: 1.217, evidence_id: EV-2026-08-10-311,
+                         notes: "HIGH = ikinci teklif (%110 fark)."}
+
+  # -------------------------------------------------------------------
+  # HACIM x MOD x SENARYO — ISPANYA -> ISTANBUL, SISE BASINA
+  # UC PARA BIRIMI AYRI. TOPLANMAZ.
+  # -------------------------------------------------------------------
+  hacim_senaryolari_ispanya:
+    _meta:
+      rota: "Ispanya (Valencia/Barcelona) -> Istanbul"
+      status: ESTIMATE
+      birim: "sise basina"
+      toplanabilir_mi: false
+      fcl_okyanus_kosesi_low: "20DV 300 USD / 40HC 411 USD, +%15 BAF"
+      fcl_okyanus_kosesi_high: "20DV 1200 USD / 40HC 1776 USD, +%25 BAF"
+
+    v5000:
+      sevkiyat: 1
+      lcl:
+        low:  {usd: 0.325, eur: 0, try: 2.60}
+        base: {usd: 0.450, eur: 0, try: 3.99}
+        high: {usd: 0.630, eur: 0, try: 4.99}
+        confidence: MEDIUM
+        confidence_son_gecerlilik: 2026-08-16
+      fcl_20dv_okyanus_haric:
+        low:  {usd: 0.112, eur: 0.070, try: 3.60}
+        base: {usd: 0.140, eur: 0.093, try: 4.99}
+        high: {usd: 0.182, eur: 0.111, try: 6.46}
+      fcl_20dv_kose_low:  {usd: 0.181, eur: 0.070, try: 3.60, confidence: LOW, conflict_id: C-311}
+      fcl_20dv_kose_high: {usd: 0.482, eur: 0.111, try: 6.46, confidence: LOW, conflict_id: C-311}
+      fcl_20dv_base:      {value: null, status: UNKNOWN, notes: "M-6: FCL bandinin ortalamasi ALINAMAZ."}
+      fcl_40hc_kose_low:  {usd: 0.233, eur: 0.070, try: 4.10, confidence: LOW,
+                           notes: "40HC 5.000 sisede %25 dolu -> her senaryoda kaybeder."}
+      fcl_40hc_kose_high: {usd: 0.669, eur: 0.111, try: 7.24, confidence: LOW}
+
+    v25000:
+      sevkiyat: 2
+      lcl:
+        low:  {usd: 0.295, eur: 0, try: 1.04, konteyner: 2}
+        base: {usd: 0.399, eur: 0, try: 1.60, konteyner: 2}
+        high: {usd: 0.558, eur: 0, try: 2.57, konteyner: 3}
+        confidence: MEDIUM
+        confidence_son_gecerlilik: 2026-08-16
+      fcl_20dv_okyanus_haric:
+        low:  {usd: 0.045, eur: 0.028, try: 1.44, konteyner: 2}
+        base: {usd: 0.056, eur: 0.037, try: 2.00, konteyner: 2}
+        high: {usd: 0.109, eur: 0.067, try: 3.45, konteyner: 3}
+      fcl_20dv_kose_low:  {usd: 0.073, eur: 0.028, try: 1.44, confidence: LOW, conflict_id: C-311}
+      fcl_20dv_kose_high: {usd: 0.289, eur: 0.067, try: 3.45, confidence: LOW, conflict_id: C-311}
+      fcl_20dv_base:      {value: null, status: UNKNOWN}
+      fcl_40hc_kose_low:  {usd: 0.093, eur: 0.028, try: 1.64, confidence: LOW}
+      fcl_40hc_kose_high: {usd: 0.267, eur: 0.044, try: 2.90, confidence: LOW}
+      uyari_konteyner_basamagi: >
+        HIGH senaryosunda konteyner sayisi 2 -> 3 CIKAR: kapasite bandinin alt
+        ucunda (11.800 sise/20DV) 25.000 sise iki konteynere SIGMAZ. Sise basi
+        TRY %73 artar. T-302 (koli formati) bunu dogrudan etkiler.
+
+    v50000:
+      sevkiyat: 3
+      lcl:
+        low:  {usd: 0.290, eur: 0, try: 0.91, konteyner: 4}
+        base: {usd: 0.391, eur: 0, try: 1.42, konteyner: 4}
+        high: {usd: 0.546, eur: 0, try: 2.07, konteyner: 5}
+        confidence: MEDIUM
+        confidence_son_gecerlilik: 2026-08-16
+      fcl_20dv_kose_low:  {usd: 0.073, eur: 0.028, try: 1.31, confidence: LOW, conflict_id: C-311}
+      fcl_20dv_kose_high: {usd: 0.241, eur: 0.055, try: 2.80, confidence: LOW, conflict_id: C-311}
+      fcl_40hc_okyanus_haric:
+        low:  {usd: 0.042, eur: 0.021, try: 1.23, konteyner: 3}
+        base: {usd: 0.054, eur: 0.028, try: 1.66, konteyner: 3}
+        high: {usd: 0.067, eur: 0.033, try: 2.17, konteyner: 3}
+      fcl_40hc_kose_low:  {usd: 0.070, eur: 0.021, try: 1.23, confidence: LOW}
+      fcl_40hc_kose_high: {usd: 0.201, eur: 0.033, try: 2.17, confidence: LOW}
+      fcl_base: {value: null, status: UNKNOWN}
+
+    v100000:
+      sevkiyat: 5
+      lcl:
+        low:  {usd: 0.287, eur: 0, try: 0.84, konteyner: 8}
+        base: {usd: 0.387, eur: 0, try: 1.32, konteyner: 8}
+        high: {usd: 0.540, eur: 0, try: 1.82, konteyner: 9}
+        confidence: MEDIUM
+        confidence_son_gecerlilik: 2026-08-16
+      fcl_20dv_kose_low:  {usd: 0.073, eur: 0.028, try: 1.24, confidence: LOW, conflict_id: C-311}
+      fcl_20dv_kose_high: {usd: 0.217, eur: 0.050, try: 2.48, confidence: LOW, conflict_id: C-311}
+      fcl_40hc_okyanus_haric:
+        low:  {usd: 0.035, eur: 0.018, try: 1.03, konteyner: 5}
+        base: {usd: 0.045, eur: 0.023, try: 1.39, konteyner: 5}
+        high: {usd: 0.067, eur: 0.033, try: 2.07, konteyner: 6}
+      fcl_40hc_kose_low:  {usd: 0.058, eur: 0.018, try: 1.03, confidence: LOW}
+      fcl_40hc_kose_high: {usd: 0.201, eur: 0.033, try: 2.07, confidence: LOW}
+      fcl_base: {value: null, status: UNKNOWN}
+
+  # -------------------------------------------------------------------
+  # OLCEK EGRISI — TUR 2'NIN "3-4 KAT DUSER" IDDIASININ TESTI
+  # -------------------------------------------------------------------
+  olcek_egrisi_duzeltmesi:
+    lcl_usd_5000_to_100000_pct:
+      value: -13
+      unit: "%"
+      status: ESTIMATE
+      notes: "0,450 -> 0,387 USD/sise (BASE). LCL'de USD bacagi NEREDEYSE HIC olcek ekonomisi gostermez."
+    lcl_try_5000_to_100000_pct:
+      value: -67
+      unit: "%"
+      status: ESTIMATE
+    fcl_usd_5000_to_100000_pct:
+      value: -68
+      unit: "%"
+      status: ESTIMATE
+      notes: "20DV kose-LOW 0,181 -> 40HC kose-LOW 0,058."
+    duzeltme:
+      value: >
+        TUR 2'nin 'sise basi lojistik 5.000 -> 100.000 arasinda 3-4 KAT duser'
+        iddiasi YALNIZCA FCL ICIN DOGRUDUR. LCL'de USD bacagi %12-14 duser,
+        cunku LCL maliyeti neredeyse tamamen DEGISKENDIR (m3 basina).
+        'Buyursek navlun ucuzlar' beklentisi LCL varsayimiyla YANLISTIR.
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-329
+
+  # -------------------------------------------------------------------
+  # C-311'IN SISE BASI MALIYETI — OKYANUS BELIRSIZLIGININ FIYATI
+  # -------------------------------------------------------------------
+  c311_belirsizlik_usd_per_sise:
+    v5000_20dv:   {low: 0.069, high: 0.300, belirsizlik: 0.231}
+    v5000_40hc:   {low: 0.095, high: 0.444, belirsizlik: 0.350}
+    v25000_20dv:  {low: 0.028, high: 0.180, belirsizlik: 0.152}
+    v50000_20dv:  {low: 0.028, high: 0.150, belirsizlik: 0.122}
+    v50000_40hc:  {low: 0.028, high: 0.133, belirsizlik: 0.105}
+    v100000_40hc: {low: 0.024, high: 0.133, belirsizlik: 0.110}
+    status: ESTIMATE
+    conflict_id: C-311
+    notes: >
+      C-311 TEK BASINA sise basina 0,10-0,35 USD belirsizlik uretir. Olcek
+      buyudukce kuculur ama SIFIRLANMAZ. T-304 kapanmadan daralmaz.
+
+  # -------------------------------------------------------------------
+  # LCL = FCL ICIN UST SINIR CAPASI (kosullu iddia)
+  # -------------------------------------------------------------------
+  lcl_ust_sinir_capasi:
+    iddia: "Kirilma noktasinin (~5.900 sise/sevkiyat) USTUNDEKI hacimlerde LCL'in sise basi maliyeti FCL'in UST SINIRIDIR."
+    status: ESTIMATE
+    confidence: LOW
+    evidence_id: EV-2026-08-10-330
+    dogrulama_25000_sise: "LCL LOW 0,295 > FCL kose-LOW ~0,10 ; LCL HIGH 0,558 > FCL kose-HIGH ~0,36 (EUR/USD 1,00-1,20 ASSUMPTION)"
+    kosullar:
+      - "EV-2026-08-10-330 kirilma hesabi dogru olmali"
+      - "EUR/USD 1,00-1,20 araliginda olmali (fx UNKNOWN, T-311)"
+      - "LCL kotasyonu TAZE olmali -> 2026-08-16'dan sonra iddia da olur"
+      - "5 CBM kotasyonunun 55-239 CBM'e dogrusal uzatimi (gercekte LCL birim fiyati hacimle DUSER -> uzatim MUHAFAZAKARDIR)"
+    kullanim: "Ters model, lojistik maliyetine '<= LCL_BASE' seklinde bir TAVAN koyarak calisabilir. Bu, 'navlun bilinmiyor, model calismaz' ile 'navlunu uyduralim' arasindaki UCUNCU yoldur."
+
+  # -------------------------------------------------------------------
+  # AYRI EKSENLER — SENARYOYA KARISTIRILMADI
+  # -------------------------------------------------------------------
+  ayri_duyarliliklar:
+    antrepo_depolama_eur_per_sise:
+      gun_7:  0.0034
+      gun_30: 0.0147
+      gun_60: 0.0294
+      status: ESTIMATE
+      confidence: LOW
+      evidence_id: EV-2026-08-10-327
+      bulgu: >
+        Antrepo DEPOLAMA ucreti sise basina IHMAL EDILEBILIR (60 gunde 0,03 EUR).
+        Ruhsat/bandrol gecikmesinin maliyeti antrepoda DEGIL, LIMANDA dogar.
+        Yanlis yere bakilmamalidir.
+    limanda_bekleme_usd_per_sise:
+      gun_21: 0.157
+      gun_60: 0.61
+      status: ESTIMATE
+      evidence_id: EV-2026-08-09-344
+      notes: "20DV, 13.200 siseye bolunmus. Demurrage + ardiye IKI SAYAC. 60 gun beklemek EN PAHALI FCL okyanus navlunundan PAHALIDIR."
+
+  # -------------------------------------------------------------------
+  # TERS MODELE ONERILEN GIRDI SETI
+  # -------------------------------------------------------------------
+  ters_model_onerilen_girdi:
+    _kural_1: "Uc sutun TOPLANAMAZ (M-5). fx null."
+    _kural_2: "FCL'in BASE'i YOKTUR (M-6). Koseler ayri calistirilir."
+    _kural_3: "2026-08-17'den sonra LCL satirlari FACT olmaktan cikar -> ESTIMATE/LOW."
+    _kural_4: "Sigorta, bandrolleme, antrepo bekleme, demurrage ve VERGI bu sette YOKTUR."
+    _kural_5: "Ispanya disi rotalar icin YALNIZCA okyanus bacagi kullanilabilir; origin locals UNKNOWN oldugu icin TOPLAM lojistik maliyeti HESAPLANAMAZ."
+    v5000:   {girdi: "LCL BASE", usd: 0.450, eur: 0, try: 3.99, status: ESTIMATE, confidence: MEDIUM}
+    v25000:  {girdi: "LCL BASE = TAVAN", usd: 0.399, eur: 0, try: 1.60, status: ESTIMATE, confidence: LOW_MEDIUM}
+    v50000:  {girdi: "LCL BASE = TAVAN", usd: 0.391, eur: 0, try: 1.42, status: ESTIMATE, confidence: LOW_MEDIUM}
+    v100000: {girdi: "LCL BASE = TAVAN", usd: 0.387, eur: 0, try: 1.32, status: ESTIMATE, confidence: LOW_MEDIUM}
+    genel_confidence: LOW
+
+  # -------------------------------------------------------------------
+  # FINANS-FIZIBILITE'YE BIRAKILAN HESAPLAR
+  # -------------------------------------------------------------------
+  devredilen_hesaplar:
+    - "USD + EUR + TRY toplami -> fx null (T-311)"
+    - "Musavirlik CIF kademesi: CIF 15.001-225.000 USD icin asan kismin %0,3'u (EV-2026-08-09-342). CIF bilinmeden hesaplanamaz."
+    - "Navlunun gumruk kiymetine girmesi ve vergi matrahini buyutmesi -> gumruk-vergi-uzmani"
+    - "Lead time'in isletme sermayesine etkisi -> finans-fizibilite (sure benden)"
+    - "Sigorta priminin CIF'e etkisi -> T-304 acik, ayrica cift sayim riski"
+
+  # -------------------------------------------------------------------
+  # TUR 2.5'TE ACILAN TICKETLAR
+  # -------------------------------------------------------------------
+  acilan_ticketlar: [T-801, T-802]

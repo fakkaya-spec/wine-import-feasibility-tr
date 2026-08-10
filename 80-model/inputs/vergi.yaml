@@ -22,8 +22,19 @@
 meta:
   dosya: vergi.yaml
   son_guncelleme: 2026-08-10
-  tur: "TUR 1 (2026-08-09) + TUR 1.5 BLOCKER REMEDIATION (2026-08-10) + TUR 2 MENSE-TARIFE ESLEMESI (2026-08-10)"
+  tur: "TUR 1 (2026-08-09) + TUR 1.5 BLOCKER REMEDIATION (2026-08-10) + TUR 2 MENSE-TARIFE ESLEMESI (2026-08-10) + TUR 2.5 PRE-FLIGHT YATIRIMCI GIRDISI (2026-08-10)"
   durum: KISMEN_DOLDURULDU
+  # TUR 2.5 PRE-FLIGHT'ta baskan tarafindan DOKUNULAN TEK YERLER:
+  #   (1) meta.model_hedef_tarihi* — yatirimci girdisi kaydedildi (INVESTOR_ASSUMPTION)
+  #   (2) meta.tarih_senaryolari   — YENI blok (EARLY/BASE/LATE, TUTAR ICERMEZ)
+  #   (3) otv_maktu_zaman_serisi.epistemik_ayrim — YENI blok (yalnizca etiket)
+  # HICBIR VERGI ORANI, TUTARI VEYA MATRAH TANIMI DEGISTIRILMEMISTIR.
+  # otv_maktu_zaman_serisi'nin mevcut yapisi BOZULMAMISTIR.
+  baskan_mudahalesi_tur25:
+    tarih: 2026-08-10
+    kapsam: "YATIRIMCI GIRDISI + ETIKET. Vergi degeri degisikligi YOK."
+    ref: 90-karar/tur-25-preflight.md
+    acilan_ticket: T-921
   a1_dogrulama_yapildi_mi: true
   a1_notu: >-
     Gumruk vergisi, OTV (oran + asgari maktu + birim + hesap kurali), KDV orani ve
@@ -65,25 +76,115 @@ meta:
     - "2027-01 ve sonrasi OTV tutarlari -> BILINMIYOR, YAZILMAZ"
 
   # OQ-002 / OQ-G08 — YATIRIMCI GIRDISI. Bu ajanin alani DEGIL, DOLDURULMAZ.
-  # DEGER "TBD"DIR (belirlenmedi). CLAUDE.md §12 eksik girdinin `null` + `UNKNOWN`
-  # olarak durmasini emrettigi ve 80-model/engine/matrah_sirasi.py:217 bu alani
-  # `is None` ile denetledigi icin, TBD durumu `null` + ayri bir durum alani ile
-  # temsil edilmistir. Literal "TBD" string'i yazilsaydi engine'in guvenlik
-  # kontrolu SESSIZCE GECERDI. Bkz. ticket T-153.
-  model_hedef_tarihi: null
-  model_hedef_tarihi_durum: TBD
-  model_hedef_tarihi_status: UNKNOWN
+  #
+  # ---- ONCEKI HALI (2026-08-09 -> 2026-08-10 TUR 2 SONU) ----
+  #   model_hedef_tarihi: null
+  #   model_hedef_tarihi_durum: TBD
+  #   model_hedef_tarihi_status: UNKNOWN
+  # Gerekce (korunur): DEGER "TBD"YDI. CLAUDE.md §12 eksik girdinin `null` +
+  # `UNKNOWN` olarak durmasini emrettigi ve 80-model/engine/matrah_sirasi.py:217
+  # bu alani `is None` ile denetledigi icin TBD durumu `null` + ayri bir durum
+  # alani ile temsil edilmisti. Literal "TBD" string'i yazilsaydi engine'in
+  # guvenlik kontrolu SESSIZCE GECERDI. Bkz. ticket T-153.
+  #
+  # ---- TUR 2.5 PRE-FLIGHT (2026-08-10, yatirim-komitesi-baskani) ----
+  # KURUCU/YATIRIMCI GIRDISI KAYDEDILDI. Bu bir ARASTIRMA BULGUSU DEGILDIR ve
+  # bir FACT DEGILDIR. Bir YATIRIMCI VARSAYIMIDIR ve oyle etiketlenmistir.
+  # Alani dolduran gumruk-vergi-uzmani DEGIL, baskandir; ajanin "doldurmam"
+  # karari DOGRULANMISTIR ve ihlal edilmemistir.
+  #
+  # ⚠ BU DEGERIN DOLDURULMASI MODELI DAHA GUVENLI YAPMAZ — DAHA TEHLIKELI YAPAR.
+  # Cunku engine (matrah_sirasi.py:217) yalnizca `is None` denetler; bu alan
+  # dolduktan sonra o uyari SUSAR. Engine su anda otv_maktu_zaman_serisi'ni
+  # HIC OKUMAMAKTADIR (dogrulandi: 80-model/engine/*.py icinde tek referans yok).
+  # 2027-04-01 > son_gozlem_gecerlilik_ufku (2026-12-31) oldugu icin ENGINE'IN
+  # UNKNOWN DONMESI ZORUNLUDUR. Bkz. ticket T-921 (CRITICAL) — bu ticket
+  # kapanmadan hicbir OTV sayisi uretilemez.
+  model_hedef_tarihi: 2027-04-01
+  model_hedef_tarihi_durum: KAYDEDILDI
+  model_hedef_tarihi_status: INVESTOR_ASSUMPTION     # FACT DEGILDIR
+  model_hedef_tarihi_kaynak: "kurucu/yatirimci beyani — TUR 2.5 PRE-FLIGHT, 2026-08-10"
+  model_hedef_tarihi_kayit_belgesi: 90-karar/tur-25-preflight.md
+  model_hedef_tarihi_evidence_id: null              # BIR DIS OLGU DEGILDIR -> kanit karti YOKTUR
+  model_hedef_tarihi_oq: OQ-002                     # KAPANMADI -> INPUT_RECORDED
   model_hedef_tarihi_notu: >-
-    TBD (belirlenmedi) olarak BILINCLI birakilmistir. Doldurulmasi yatirimciya/
-    baskana aittir (OQ-002). gumruk-vergi-uzmani bu alani DOLDURMAZ ve tahmin ETMEZ.
-    Model bu alan bos iken de BASE_DATE senaryosu ile calisabilir; cikti
-    "BASE_DATE 2026-08-10 mevzuatiyla" etiketlenir ve APPROVED olamaz.
+    2027-04-01 bir OLCUM veya TURETME degil, bir YATIRIMCI BEYANIDIR. Duyarlilik
+    ZORUNLUDUR: tarih_senaryolari bloğundaki EARLY / BASE / LATE senaryolarinin
+    UCU DE ayri ayri calistirilir. BASE tek sonuc olarak sunulamaz. Tarih
+    degisirse bu alan degistirilir; OTV hicbir yerde sabitlenmez.
   model_hedef_tarihi_uyarisi: >-
     OTV maktu tutari Ocak ve Temmuz aylarinda Yi-UFE ile otomatik guncellenir
-    (EV-2026-08-09-114). model_hedef_tarihi 2027-01-01 veya sonrasi ise
-    otv.asgari_maktu_tutar SABIT ALINAMAZ; endekslenmelidir (ticket T-104, CRITICAL).
-    Model model_hedef_tarihi == TBD iken de CALISABILIR: bu durumda BASE_DATE
-    senaryosu calisir ve cikti "BASE_DATE (2026-08-10) mevzuatiyla" etiketlenir.
+    (EV-2026-08-09-114, T1). 2027-04-01 tarihinde yururlukte olacak OTV tutari
+    BILINMIYOR ve BU DOSYAYA YAZILAMAZ (BASE_DATE_kurali). Bilinen TEK gercek
+    deger 71,2692 TL/lt'dir (eff 2026-07-03, EV-2026-08-09-111) ve gecerliligi
+    2026-12-31'de biter. Model bu tarih icin OTV'yi ancak PROJEKSIYON
+    (ASSUMPTION) etiketiyle ve senaryolar.yaml -> duyarlilik_eksenleri[OTV]
+    uzerinden uretebilir; FACT olarak ASLA raporlayamaz.
+
+  # ============================================================
+  #  TARIH SENARYOLARI — YATIRIMCI GIRDISI (TUR 2.5)
+  # ============================================================
+  # Ucu de AYRI AYRI calistirilir. Ortalamasi ALINMAZ. BASE tek sonuc DEGILDIR.
+  # Her uc tarih de son_gozlem_gecerlilik_ufku'nun (2026-12-31) OTESINDEDIR:
+  # UCUNDE DE dogrulanmis OTV tutari YOKTUR.
+  tarih_senaryolari:
+    status: INVESTOR_ASSUMPTION
+    kaynak: "kurucu/yatirimci beyani — TUR 2.5 PRE-FLIGHT, 2026-08-10"
+    kural: >-
+      Bu blok TARIH tasir, TUTAR TASIMAZ. Hicbir senaryonun altina gelecek OTV
+      tutari yazilamaz (BASE_DATE_kurali). Tutar yalnizca senaryolar.yaml
+      duyarlilik ekseni uzerinden PROJEKSIYON olarak uretilir.
+    senaryolar:
+      - id: EARLY
+        tarih: 2027-01-01
+        otv_rejimi: "OCAK 2027 revizyonu — SINIR TARIHI, BELIRSIZ"
+        otv_rejimi_status: UNKNOWN
+        otv_tutari: null
+        otv_tutari_status: FUTURE_UNKNOWN
+        sinir_riski: true
+        notes: >-
+          GOZLENEN DESEN DUZENSIZDIR: onceki tutar 2025-12-31'de, guncel tutar
+          2026-07-03'te yururluge girmistir — yani revizyonlar 1 Ocak / 1 Temmuz
+          tarihlerine BIREBIR OTURMAZ (OTVK md.12/3 "degisimin ilani gununden
+          gecerli olmak uzere" der). Bu nedenle 2027-01-01, Ocak 2027 revizyonunun
+          ONCESINE de SONRASINA da dusebilir. Iki farkli tutar ihtimali vardir ve
+          hangisinin gecerli olacagi BILINMEZ. Modelde tek rejime kilitlenemez.
+      - id: BASE
+        tarih: 2027-04-01
+        otv_rejimi: "OCAK 2027 revizyonu — REVIZYON KESIN YURURLUKTE"
+        otv_rejimi_status: REGIME_KNOWN_AMOUNT_UNKNOWN
+        otv_tutari: null
+        otv_tutari_status: FUTURE_UNKNOWN
+        sinir_riski: false
+        notes: >-
+          UC SENARYONUN ICINDE REJIM ACISINDAN TEK NET OLANIDIR: 2027-04-01, Ocak
+          2027 ile Temmuz 2027 revizyonlarinin TAM ARASINDADIR ve hicbir sinira
+          degmez. Hangi REJIMIN gecerli olacagi bellidir; o rejimin TUTARI
+          bilinmemektedir. BASE_DATE'ten (2026-08-10) itibaren araya giren
+          dogrulanmamis revizyon sayisi: 1 (Ocak 2027).
+      - id: LATE
+        tarih: 2027-07-01
+        otv_rejimi: "TEMMUZ 2027 revizyonu — SINIR TARIHI, BELIRSIZ"
+        otv_rejimi_status: UNKNOWN
+        otv_tutari: null
+        otv_tutari_status: FUTURE_UNKNOWN
+        sinir_riski: true
+        notes: >-
+          2026 gozlemi (yururluk 2026-07-03) Temmuz revizyonunun ayin ILK GUNUNDE
+          DEGIL, birkac gun SONRA yururluge girebildigini gosterir. Bu nedenle
+          2027-07-01, hala OCAK 2027 rejiminde olabilir. Araya giren dogrulanmamis
+          revizyon sayisi: 1 VEYA 2. Bu senaryo AYNI ANDA iki rejim altinda
+          calistirilmalidir.
+    baglayici_kural: >-
+      Uc senaryonun UCU DE > son_gozlem_gecerlilik_ufku'dur. Bu nedenle
+      otv_maktu_zaman_serisi.engine_okuma_kurali adim 3 UCUNDE DE devrededir:
+      senaryolar.yaml'da acik bir OTV artis ASSUMPTION'i secilmeden engine
+      UNKNOWN DONMEK ZORUNDADIR. model_hedef_tarihi'nin dolu olmasi bu
+      zorunlulugu KALDIRMAZ.
+    yasak: >-
+      CURRENT_CONFIRMED (71,2692 TL/lt, eff 2026-07-03, EV-2026-08-09-111)
+      degeri bu uc tarihin HICBIRI icin "gecerli tutar" olarak KULLANILAMAZ.
+      Kullanilirsa cikti GECERSIZDIR (CLAUDE.md §1.1 + §12).
 
 gtip:
   kod:
@@ -361,6 +462,42 @@ otv_maktu_zaman_serisi:
     artis varsayimi makro.yaml'da (Yi-UFE) ASSUMPTION olarak tutulur ve senaryolar.yaml'da
     bir DUYARLILIK EKSENI olarak calistirilir. vergi.yaml yalnizca GERCEKLESMIS tutari
     tasir. Tarihsel referans (TAHMIN DEGIL): 2025-12-31 -> 2026-07-03 arasi +%16,09.
+
+  # ---- TUR 2.5 PRE-FLIGHT EKI (2026-08-10, yatirim-komitesi-baskani) ----
+  # BU BLOK YALNIZCA ETIKET EKLER. Yukaridaki hicbir alan DEGISTIRILMEMISTIR:
+  # gozlenen_degerler, son_gozlem_gecerlilik_ufku, gelecek_degerler ve
+  # gelecek_deger_kurali AYNEN durmaktadir.
+  epistemik_ayrim:
+    CURRENT_CONFIRMED:
+      value: 71.2692
+      unit: "TRY/litre"
+      effective_date: 2026-07-03
+      evidence_id: EV-2026-08-09-111
+      tier: T2
+      status: FACT
+      gecerlilik_bitisi: 2026-12-31
+      ttl: 30d
+      stale_tarihi: 2026-09-08
+      tanim: >-
+        Projenin sahip oldugu TEK GERCEK OTV tutari. gozlenen_degerler[1] ile
+        AYNI KAYITTIR — burada tekrarlanmasinin sebebi yeni bir otorite yaratmak
+        DEGIL, asagidaki FUTURE_UNKNOWN ile karsitligini gorunur kilmaktir.
+        Otorite hala gozlenen_degerler'dir (engine_yasak kurali gecerlidir).
+    FUTURE_UNKNOWN:
+      kapsam: "meta.tarih_senaryolari -> EARLY (2027-01-01), BASE (2027-04-01), LATE (2027-07-01)"
+      value: null
+      status: UNKNOWN
+      temsil_bicimi: SENSITIVITY_ONLY
+      tanim: >-
+        2027 OTV tutarlari BILINMIYOR. Bu dosyaya SAYI YAZILMAZ. Uc hedef tarihin
+        UCU DE son_gozlem_gecerlilik_ufku'nun (2026-12-31) otesindedir. Bu tutarlar
+        modelde yalnizca senaryolar.yaml -> duyarlilik_eksenleri[OTV] uzerinden,
+        "PROJEKSIYON (ASSUMPTION)" etiketiyle ve ASLA tek sayi olarak degil,
+        senaryo noktalari halinde temsil edilir.
+      yasak: >-
+        FUTURE_UNKNOWN yerine CURRENT_CONFIRMED konulamaz. Konulursa cikti
+        GECERSIZDIR. Tarihsel artis orani (+%16,09) bir GOZLEMDIR, bir
+        TAHMIN GIRDISI DEGILDIR (gelecek_deger_kurali).
 
   # ---- ENGINE ICIN BAGLAYICI OKUMA KURALI ----
   engine_okuma_kurali: >-
@@ -1049,3 +1186,321 @@ hesap_sozlesmesi:
     Model calistirilirken hangi tarih setinin kullanildigi ciktida yazilir:
     model_hedef_tarihi == TBD ise cikti "BASE_DATE 2026-08-10 mevzuatiyla" etiketlenir
     ve GELECEK OTV/kur TAHMINI YAPILMAZ.
+
+# ============================================================
+#  TERS (REVERSE) MODEL — VERGI BACAGI
+#  TUR 2.5 · sahibi: gumruk-vergi-uzmani · tarih: 2026-08-10
+#  Ana belge: 30-vergi-gumruk/ters-model-vergi-bacagi.md
+# ============================================================
+# BU BLOK YENI VERGI VERISI ICERMEZ. Mevcut bloklardaki (matrah_sirasi,
+# mense_tarife_eslemesi, otv_maktu_zaman_serisi, kdv_perspektifleri)
+# degerlerin TERS YONDE nasil uygulanacagini tanimlar.
+# HICBIR ORAN/TUTAR BURADA TEKRARLANMAZ — hepsi ALAN REFERANSIDIR.
+ters_model_vergi_bacagi:
+  belge: "30-vergi-gumruk/ters-model-vergi-bacagi.md"
+  sahibi: gumruk-vergi-uzmani
+  tur: "TUR 2.5"
+  tarih: 2026-08-10
+  tuketici: finans-fizibilite
+  yeni_evidence_uretildi_mi: false
+  notu: >-
+    Bu blok bir SPESIFIKASYONDUR. engine/ altindaki kod bu blogu okur;
+    burada tanimlanan sira ve kurallar KODA GOMULMEZ, bu dosyadan okunur.
+
+  # ---- KATMAN TANIMI: L4 CIPLAK TOKENI YASAK ----
+  katman_tanimlari:
+    L4_econ:
+      formul: "cif_try + gv + kkdf + otv"
+      kdv_dahil_mi: false
+      kullanim: "TERS MODELIN EKONOMIK DALI — CIF_TRY_max buradan cozulur"
+    L4_cash:
+      formul: "L4_econ + kdv_ithal"
+      kdv_dahil_mi: true
+      kullanim: "NAKIT GORUNUMU — peak_cash_requirement. Ekonomik zincirde KULLANILMAZ."
+      ozdeslik: "X_pre = 0 iken L4_cash = (1 + kdv_orani) * L4_econ  (BASE_DATE'te 1.20 x L4_econ)"
+    yasak_token: "L4"
+    yasak_gerekcesi: >-
+      30-vergi-gumruk/matrah-sirasi.md §4'teki 'L4 POST-TAX LANDED' KDV DAHILDIR
+      (= L4_cash). Ters modelin ekonomik dalinda kullanilirsa KDV maliyet sayilir
+      ve azami CIF ~%22,7 eksik cikar. Bkz. hata H3.
+
+  # ---- ANA TERS FORMUL ----
+  ana_formul: "cif_try_max = ( L4_econ_max - otv_per_sise - kkdf - X_pre ) / (1 + gv_orani)"
+
+  adimlar:
+    - kod: R1
+      islem: "L8_net = L8_target_kdv_dahil / (1 + matrah_sirasi[sira=5].oran_pct/100)"
+      not: "ZINCIRDEKI TEK KDV ISLEMI. Ithalat KDV'si ekonomik dalda SIFIR kez gorunur."
+      sahibi: gumruk-vergi-uzmani
+    - kod: R2_R4
+      islem: "L8_net -> L7_eff -> L6   (m_retail, d, f)"
+      not: "VERGI BACAGI DEGIL. Hicbir vergi matrahini etkilemez."
+      sahibi: kanal-marj-uzmani
+    - kod: R5
+      islem: "L6 -> L5_max (ithalatci hedef katki payi)"
+      not: "VERGI BACAGI DEGIL."
+      sahibi: finans-fizibilite
+    - kod: R6
+      islem: "L4_econ_max = L5_max - toplam(L5_kalemleri)"
+      not: >-
+        L5 kalemlerinin HICBIRI vergi matrahina girmez (bandrol, TADAB, antrepo,
+        ic nakliye, musavirlik). Bandrol turetmesi: ters-model-vergi-bacagi.md §4.2.
+      sahibi: "gumruk-vergi-uzmani (matrah siniri) + diger ajanlar (tutarlar)"
+    - kod: R7a
+      islem: "A := L4_econ_max"
+      sahibi: gumruk-vergi-uzmani
+    - kod: R7b
+      islem: "A := A - otv_per_sise            # MAKTU — BOLMEDEN ONCE"
+      sahibi: gumruk-vergi-uzmani
+    - kod: R7c
+      islem: "A := A - kkdf - X_pre            # MAKTU/SABIT — BOLMEDEN ONCE"
+      sahibi: gumruk-vergi-uzmani
+    - kod: R7d
+      islem: "cif_try_max := A / (1 + gv_orani)   # ORANSAL — EN SON"
+      sahibi: gumruk-vergi-uzmani
+    - kod: R8
+      islem: "ZORUNLU: assert |ileri_model(cif_try_max).L4_econ - L4_econ_max| < 0.01"
+      not: "Saglanmazsa model UNKNOWN doner ve hangi adimin tutmadigini raporlar."
+      sahibi: finans-fizibilite
+    - kod: R9
+      islem: >-
+        NAKIT ORTUSU (ayri cikti, R7 ile TOPLANMAZ):
+        kdv_ithal = kdv_orani * L4_econ_max ; L4_cash = L4_econ_max + kdv_ithal ;
+        gumrukte_nakden = gv + kkdf + otv + kdv_ithal
+      sahibi: gumruk-vergi-uzmani
+    - kod: R10_R11
+      islem: "cif_try_max -> fob_try_max -> doviz"
+      not: "DOVIZ ADIMI UNKNOWN — makro.yaml fx null (T-912) + gumruk kuru kurali UNKNOWN (T-911)."
+      sahibi: navlun-lojistik-uzmani + finans-fizibilite
+
+  # ---- BAGLAYICI KURALLAR ----
+  kurallar:
+    - kod: R7-K1
+      kural: >-
+        MAKTU kalemler (OTV, X_pre, sabit KKDF) HER ZAMAN bolmeden ONCE cikarilir.
+        Kod oransal ve maktu kalemleri AYRI listelerde tutmali ve maktu listesini
+        bolme isleminden once tuketmelidir.
+      ihlal_maliyeti: "azami CIF -17.8173 TL/sise (gv %50) / -22.0096 TL/sise (gv %70)"
+    - kod: R7-K2
+      kural: >-
+        Ithalat KDV'si ekonomik dalda HICBIR cikarma isleminde kullanilmaz.
+        kdv_ekonomik_maliyet = 0 (A1 baz senaryo, EV-2026-08-10-101/-102/-103).
+      ihlal_maliyeti: "azami CIF -26.67 TL (gv %50) / -23.53 TL (gv %70) @ L4_econ_max=200"
+    - kod: R7-K3
+      kural: "Ciplak L4 tokeni yasaktir. Cikti semasi l4_econ ve l4_cash alanlarini AYRI tasir."
+      ihlal_maliyeti: "azami CIF -L4_econ_max/(6*(1+gv_orani))"
+    - kod: R7-K4
+      kural: "(1+gv_orani) bolmesi zincirde TAM BIR KEZ ve YALNIZ R7d'de yapilir."
+      dayanak: "GK md.28/a — yurt ici masraflar gumruk vergisine tabi degildir (EV-2026-08-09-121)"
+    - kod: R7-K5
+      kural: >-
+        OTV oransal gibi tasinamaz. Nispi OTV orani %0'dir (EV-2026-08-09-110).
+        Tek dogru duyarlilik: d(cif_max)/d(otv) = -1/(1+gv_orani).
+      katsayilar:
+        gv_50_per_1_TL: -0.6667
+        gv_70_per_1_TL: -0.5882
+        gv_50_per_1_pct: -0.3563     # 71.2692 x 0.75 tabaninda, TL/sise
+        gv_70_per_1_pct: -0.3144
+    - kod: R7-K6
+      kural: >-
+        ES/PT/IT/FR/CL icin gv_orani bir VERI DEGIL SENARYO SONUCUDUR.
+        {0.50 ; 0.70} iki senaryo ZORUNLU calistirilir (EV-2026-08-10-157).
+      kapali_form: "cif_max(0.70)/cif_max(0.50) = 1.50/1.70 = 0.88235 -> tercih kaybi azami CIF'i tam %11.765 dusurur"
+    - kod: RC1
+      kural: "cif_try_max YALNIZCA ECONOMIC COST VIEW'dan uretilir. CASH VIEW onu DEGISTIRMEZ."
+    - kod: RC2
+      kural: "CASH VIEW, ECONOMIC VIEW bittikten SONRA bulunan cif_try_max uzerinde calisir (R9)."
+    - kod: RC3
+      kural: "Iki gorunumun sayilari ayni tabloda TOPLANMAZ (CLAUDE.md §6)."
+    - kod: RC4
+      kural: >-
+        Devreden KDV'nin FINANSMAN MALIYETI ekonomik dalda L5_kalemleri icinde AYRI
+        satirdir (C3). KDV'nin KENDISI degildir; karistirilirsa H2'ye donusur.
+    - kod: RC5
+      kural: "fire orani f varsa f x kdv_ithal ekonomik dalda GERCEK maliyettir (KDVK md.30/c). f UNKNOWN (T-314) -> 0 alinirsa CIKTIDA YAZILIR."
+    - kod: RC6
+      kural: "Devreden KDV IADE EDILMEZ (EV-2026-08-10-104); nakit dalda gelir gibi gosterilemez."
+
+  # ---- MATRAH SINIRI: NELER VERGI MATRAHINA GIRMEZ ----
+  matrah_disi_kalemler:
+    bandrol:
+      vergi_matrahina_girer_mi: false
+      status: ESTIMATE             # HUKUKI TURETME — yeni dis kaynak taranmadi
+      tier: T1                     # turetmenin dayandigi iki kanit T1'dir
+      turetme: >-
+        KDVK md.21/c KDV matrahina yalnizca "VERGILENDIRILMEYEN" tescile-kadarki
+        gider/odemeleri alir (EV-2026-08-10-108). Bandrol bedeli Darphane listesinde
+        "%20 KDV haric"tir, yani KDV'ye TABIDIR = vergilendirilendir
+        (EV-2026-08-09-213) -> md.21/c KAPSAMINA GIRMEZ. Ayrica saticiya odenen
+        fiyatin parcasi olmadigi icin GUMRUK KIYMETINE de girmez (GK md.27).
+        OTV matrahi KDV matrahi unsurlarindan olustugu icin (EV-2026-08-09-115)
+        OTV matrahina da girmez.
+      evidence_ids: [EV-2026-08-10-108, EV-2026-08-09-213, EV-2026-08-09-120, EV-2026-08-09-115]
+      ticket: T-203
+      karsi_senaryo_model_etkisi: >-
+        Bandrol KDV matrahina GIRSEYDI: ek OTV 0 (maktu), ek KDV = bandrol x 0.20 =
+        0.4721 TL/sise, EKONOMIK etki 0 (KDV indirilebilir). Yani T-203'un model
+        etkisi <= 0.4721 TL/sise ve TAMAMEN NAKIT tarafindadir. cif_try_max'i
+        SIFIR etkiler -> T-203 ters modeli BLOKE ETMEZ.
+    tadab_hizmet_bedeli:
+      vergi_matrahina_girer_mi: false
+      status: ESTIMATE
+      turetme: "Bandrol ile ayni gerekce (md.21/c 'vergilendirilmeyenler')."
+      ticket: T-203
+    yurt_ici_lojistik_ordino_musavirlik_antrepo:
+      vergi_matrahina_girer_mi: false
+      status: ESTIMATE
+      turetme: >-
+        Hepsi KDV'ye tabi hizmetlerdir -> md.21/c'nin "vergilendirilmeyenler" sartini
+        SAGLAMAZLAR -> KDV matrahina girmezler. GK md.28/a geregi gumruk kiymetine
+        de girmezler (EV-2026-08-09-121).
+      evidence_ids: [EV-2026-08-10-108, EV-2026-08-09-121]
+
+  X_pre:
+    tanim: "Tescile kadarki, KDV'ye TABI OLMAYAN diger gider/odeme (TRY/sise)"
+    varsayilan: 0
+    status: ASSUMPTION
+    gerekce: >-
+      Tespit edilen tum tescile-kadarki yurt ici kalemler KDV'ye tabidir ->
+      md.21/c disinda kalir. TEK ISTISNA ADAYI: gumruk beyannamesi DAMGA VERGISI,
+      md.21/b uyarinca KDV matrahina GIRER ama tutari UNKNOWN'dir
+      (matrah-sirasi.md §4 sira 6). Beyanname basina maktu oldugu icin 5.000+
+      siselik partide sise basi etkisi ihmal edilebilir.
+    cikti_kurali: "X_pre = 0 alinirsa MODEL CIKTISINDA ACIKCA YAZILIR."
+
+  # ---- OTV VE HEDEF TARIH (BASE 2027-04-01 / EARLY 2027-01-01 / LATE 2027-07-01) ----
+  otv_hedef_tarih_tasima:
+    parametrelestirme: "otv_per_sise = CURRENT_CONFIRMED x urun_parametreleri.sise_hacmi_litre x lambda"
+    CURRENT_CONFIRMED:
+      alan_referansi: "otv_maktu_zaman_serisi.gozlenen_degerler[effective_date=2026-07-03]"
+      effective_date: 2026-07-03
+      status: FACT
+      evidence_id: EV-2026-08-09-111
+    lambda:
+      value: null
+      status: FUTURE_UNKNOWN
+      tanim: "BASE_DATE ile hedef tarih t arasindaki KUMULATIF OTV artis katsayisi"
+      alt_sinir: 1.0
+      kural: >-
+        lambda >= 1 (Yi-UFE negatif olmadikca). BU DOSYAYA DEGER YAZILMAZ.
+        lambda icin sayi secmek gumruk-vergi-uzmani'nin alani DEGILDIR; Yi-UFE
+        varsayimi makro.yaml'da ASSUMPTION olarak durur ve senaryolar.yaml'da
+        bir DUYARLILIK EKSENI olarak calistirilir.
+      tarihsel_referans_TAHMIN_DEGIL: >-
+        Tek gerceklesmis adim 2025-12-31 -> 2026-07-03 arasi +%16,09'dur
+        (EV-2026-08-09-111, -112). BU SAYI lambda OLARAK KULLANILAMAZ.
+    senaryolar:
+      - kod: EARLY
+        model_hedef_tarihi: 2027-01-01
+        arada_kalan_planli_guncelleme_sayisi: 1
+        otv_durumu: FUTURE_UNKNOWN
+      - kod: BASE
+        model_hedef_tarihi: 2027-04-01
+        arada_kalan_planli_guncelleme_sayisi: 1
+        otv_durumu: FUTURE_UNKNOWN
+      - kod: LATE
+        model_hedef_tarihi: 2027-07-01
+        arada_kalan_planli_guncelleme_sayisi: 1
+        otv_durumu: FUTURE_UNKNOWN
+        ucurum_riski: >-
+          2026'da Temmuz ayarlamasi 3 TEMMUZ'da yururluge girmistir. 2027-07-01 bu
+          esigin IKI GUN ONCESIDIR. Vergi TESCIL tarihinde dogar (EV-2026-08-09-122);
+          antrepoda bekleme veya gumruk gecikmesi esigi TEK BASINA gecirebilir.
+          LATE senaryosu lambda_1adim ve lambda_2adim olmak uzere IKI ALT KOSULLA
+          raporlanir. Bagli ticket: T-301 (antrepo bekleme suresi, CRITICAL).
+    calistirma_kurallari:
+      - kod: O-1
+        kural: "Uc senaryo da lambda = 1 (CURRENT_CONFIRMED) ile calistirilir — tek DOGRULANMIS deger budur."
+      - kod: O-2
+        kural: >-
+          Cikti her uc senaryoda su etiketi ZORUNLU tasir:
+          "OTV = CURRENT_CONFIRMED (71,2692 TL/lt, eff 2026-07-03) —
+           HEDEF TARIHTE YURURLUKTE OLMASI BEKLENMEZ".
+      - kod: O-3
+        kural: >-
+          lambda >= 1 oldugu icin lambda=1 sonucu bir TAHMIN DEGIL UST SINIRDIR.
+          Cikti alani adi cif_try_max DEGIL cif_try_max_UPPER_BOUND olmalidir.
+      - kod: O-4
+        kural: "lambda > 1 yalnizca senaryolar.yaml'da ACIK ASSUMPTION ile, DUYARLILIK EKSENI olarak."
+      - kod: O-5
+        kural: >-
+          otv_maktu_zaman_serisi.engine_okuma_kurali DELINMEZ: t > 2026-12-31 ve
+          senaryolar.yaml'da acik OTV ASSUMPTION'i yoksa engine ya UNKNOWN doner ya da
+          O-2/O-3 etiketleriyle CAPA (ANCHOR) modunda calisir. Iki durumda da cikti
+          FACT olarak raporlanamaz.
+      - kod: O-6
+        kural: "OTV cikitisi ASLA FACT etiketiyle raporlanmaz (hedef tarih icin)."
+      - kod: O-7
+        kural: "LATE senaryosu iki alt kosulla raporlanir (bkz. ucurum_riski)."
+    duyarlilik_katsayilari:
+      formul: "delta_cif_max = -(lambda - 1) * 53.4519 / (1 + gv_orani)"
+      not: "53.4519 = 71.2692 x 0.75 — BASE_DATE turevi, ILLUSTRATIF. Otorite formuldur."
+
+  # ---- GOZETIM: TERS MODELDE ALT SINIR ----
+  gozetim_ters_model_mantigi:
+    aciklama: >-
+      Ters model UST SINIR uretir (cif_try_max). Gozetim ALT SINIR dayatir
+      (beyan >= esik). esik > cif_try_max ise ARADA COZUM YOKTUR: tedarikci bedava
+      verse bile beyan esigin altina inemez. Ileri modelde bu "maliyet artti" gibi
+      gorunur ve pazarlikla kurtarilabilirmis izlenimi verir; ters modelde
+      kurtarilamayacagi HEMEN gorulur.
+    gozetim_esigi:
+      value: null
+      status: UNKNOWN
+      evidence_id: EV-2026-08-09-125
+    cikti_kurali: >-
+      Model, gozetim esigi null iken "cif_try_max BIR ALT SINIRLA TEST EDILMEMISTIR"
+      uyarisini basmak ZORUNDADIR.
+    otv_etkilenir_mi: false        # maktu — EV-2026-08-09-113
+
+  # ---- UNKNOWN DONULMESI GEREKEN HALLER ----
+  unknown_donme_kosullari:
+    - "odeme_sekli != 'pesin' -> KKDF matrahi UNKNOWN (T-105)"
+    - "mense tablosunda yoksa -> DU fallback %70 + 'DU FALLBACK' etiketi"
+    - "t > 2026-12-31 ve senaryolar.yaml'da OTV ASSUMPTION yok -> O-5"
+    - "L8_target null -> tum ters zincir UNKNOWN (T-603)"
+    - "R8 round-trip assertion tutmuyor -> UNKNOWN + tutmayan adim"
+    - "doviz cinsinden CIF/FOB istenirse -> UNKNOWN (T-911, T-912)"
+    - "gozetim_esigi > cif_try_max -> 'YAPISAL OLARAK IMKANSIZ'"
+
+  # ---- BIRIM TEST VEKTORLERI (finans-fizibilite icin) ----
+  # GERCEK VERI DEGILDIR. L4_econ_max = 200.0000 KEYFIDIR; yalniz cebri test eder.
+  birim_test_vektorleri:
+    sabitler: {otv_per_sise: 53.4519, kkdf: 0, X_pre: 0, kdv_orani: 0.20}
+    vektorler:
+      - kod: TV-1
+        girdi: {L4_econ_max: 200.0000, gv_orani: 0.50}
+        beklenen_cif_try_max: 97.6987
+      - kod: TV-2
+        girdi: {L4_econ_max: 200.0000, gv_orani: 0.70}
+        beklenen_cif_try_max: 86.2048
+      - kod: TV-3
+        kontrol: "TV-2 / TV-1 == 0.88235  (= 1.50/1.70)"
+      - kod: TV-4
+        kontrol: "kdv_ithal == 40.0000 her iki mensede — MENSEDEN BAGIMSIZ (= 0.20 x L4_econ_max)"
+      - kod: TV-5
+        kontrol: "L4_cash == 240.0000 == 1.20 x L4_econ_max"
+      - kod: TV-6
+        kod_tipi: HATA_TESTI
+        hata: H1
+        yanlis_sonuc: 79.8814
+        dogru_sonuc: 97.6987
+      - kod: TV-7
+        kod_tipi: HATA_TESTI
+        hata: H1
+        yanlis_sonuc: 64.1952
+        dogru_sonuc: 86.2048
+      - kod: TV-8
+        kod_tipi: HATA_TESTI
+        hata: H3
+        yanlis_sonuc: 75.4765
+        dogru_sonuc: 97.6987
+      - kod: TV-9
+        girdi: {odeme_sekli: "mal mukabili", gv_orani: 0.50}
+        beklenen: UNKNOWN
+        not: "KKDF matrahi UNKNOWN (T-105) — model SAYI URETMEZ"
+      - kod: TV-10
+        girdi: {t: 2027-04-01, otv_assumption_var_mi: false}
+        beklenen: "97.6987 + ZORUNLU UPPER_BOUND etiketi (O-2/O-3/O-5)"
+        not: "Etiket yoksa cikti GECERSIZDIR"
+    kritik_not: "TV-9 ve TV-10 'model uydurmaz' kilidinin testleridir (CLAUDE.md §12)."

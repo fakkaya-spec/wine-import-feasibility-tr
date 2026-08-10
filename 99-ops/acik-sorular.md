@@ -101,12 +101,15 @@ BM_D (zincir L8 > Metro L8):  YENI SENARYO   # katman ayrimi
 
 ```yaml
 id:              OQ-002
-durum:           OPEN
+durum:           INPUT_RECORDED        # 2026-08-10 — KAPANMADI
+onceki_durum:    OPEN
 acilis_tarihi:   2026-08-09
+guncelleme:      2026-08-10 (TUR 2.5 PRE-FLIGHT)
 acan:            TUR 0 kurulum
 sorumlu_ajan:    mevzuat-ruhsat-uzmani (T0 takvimi) -> yatirim-komitesi-baskani
 impact:          HIGH
 bloke_ettigi:    vergi.yaml/meta.model_hedef_tarihi
+kayit_belgesi:   90-karar/tur-25-preflight.md
 ```
 
 ### Soru
@@ -125,6 +128,86 @@ Bu, `seytanin-avukati`'nın **regülasyon şoku** vektörünün doğrudan konusu
 ### Nasıl kapatılır
 
 `mevzuat-ruhsat-uzmani`'nın T0 → ilk konteyner takviminden türetilir.
+
+---
+
+### GÜNCELLEME — 2026-08-10, TUR 2.5 PRE-FLIGHT (`yatirim-komitesi-baskani`)
+
+#### Yatırımcı girdisi KAYDEDİLDİ
+
+```
+BASE_TARGET_DATE = 2027-04-01
+status           = INVESTOR_ASSUMPTION      # FACT DEGILDIR
+
+EARLY = 2027-01-01
+BASE  = 2027-04-01
+LATE  = 2027-07-01
+```
+
+Yazıldığı yerler: `80-model/inputs/vergi.yaml → meta.model_hedef_tarihi` +
+`meta.tarih_senaryolari` · `80-model/inputs/senaryolar.yaml →
+tarih_senaryolari`.
+
+#### ⚠ NEDEN `CLOSED` DEĞİL — üç gerekçe
+
+**1. Kaydedilen şey bir olgu değil, bir beyandır.** `2027-04-01`
+ölçülmemiş, türetilmemiş ve bir T0 takviminden çıkarılmamıştır. Sorunun
+orijinal kapanış yolu (*"`mevzuat-ruhsat-uzmani`'nın T0 → ilk konteyner
+takviminden türetilir"*) **kullanılmamıştır**; o takvim hâlâ
+`ASSUMPTION` sıralamasına dayanmaktadır (`C-202`, `T-202` açık) ve
+dağıtım yetki belgesinin **işlem süresi mevzuatta tanımsızdır**.
+Yani tarihin **gerçekçiliği** doğrulanmamıştır.
+
+**2. Sorunun asıl blokeri tarih değil, o tarihteki ÖTV tutarıydı.** Üç
+senaryonun **üçü de** `otv_maktu_zaman_serisi.son_gozlem_gecerlilik_ufku`
+(**2026-12-31**) ötesindedir. Yani tarih dolduruldu ama **hiçbiri için
+doğrulanmış bir ÖTV tutarı yoktur.** `OQ-G08` bu yüzden **aynen açıktır**.
+
+**3. Tarih kaydı modeli güvenlileştirmedi — tehlikeyi artırdı.**
+`80-model/engine/matrah_sirasi.py:217` bu alanı yalnızca `is None` ile
+denetliyordu; alan dolduğu için **o tek uyarı sustu**, yerine hiçbir
+denetim gelmedi ve engine `otv_maktu_zaman_serisi`'ni **hiç okumuyor**.
+→ **`T-921` (CRITICAL, OPEN)** bu yüzden açıldı ve `OQ-002`'nin kapanışı
+artık ona bağlıdır.
+
+#### ÖTV rejimi eşlemesi (tarih senaryosu → hangi rejim)
+
+| Senaryo | Tarih | ÖTV rejimi | Rejim netliği | Tutar |
+|---|---|---|---|---|
+| **EARLY** | 2027-01-01 | Ocak 2027 revizyonu | ❌ **SINIR TARİHİ** — belirsiz | `FUTURE_UNKNOWN` |
+| **BASE** | 2027-04-01 | Ocak 2027 revizyonu | ✅ **NET** — iki revizyonun tam arasında | `FUTURE_UNKNOWN` |
+| **LATE** | 2027-07-01 | Temmuz 2027 revizyonu | ❌ **SINIR TARİHİ** — belirsiz | `FUTURE_UNKNOWN` |
+
+**Sınır belirsizliğinin gerekçesi (gözlem, tahmin değil):** doğrulanmış iki
+yürürlük tarihi **2025-12-31** ve **2026-07-03**'tür — yani revizyonlar
+1 Ocak / 1 Temmuz'a **birebir oturmaz** (ÖTVK md.12/3 *"değişimin ilanı
+gününden geçerli olmak üzere"* der, `EV-2026-08-09-114`, T1). Bu nedenle
+`EARLY` ve `LATE` **iki ayrı rejim altında ayrı ayrı** çalıştırılmalıdır.
+
+#### Bilinen tek gerçek değer ve yasak
+
+```
+CURRENT_CONFIRMED : 71,2692 TL/lt · eff 2026-07-03 · EV-2026-08-09-111 · T2
+                    gecerlilik bitisi 2026-12-31 · ttl 30d (STALE: 2026-09-08)
+
+FUTURE_UNKNOWN    : 2027 tutarlari BILINMIYOR. SAYI YAZILMAZ.
+                    Yalnizca duyarlilik ekseni olarak temsil edilir
+                    (senaryolar.yaml -> duyarlilik_eksenleri[OTV]).
+```
+
+**YASAK:** `CURRENT_CONFIRMED`, üç hedef tarihin **hiçbiri** için "geçerli
+tutar" olarak kullanılamaz. Kullanılırsa çıktı **geçersizdir**
+(CLAUDE.md §1.1 + §12).
+
+#### `OQ-002`'yi ne kapatır
+
+| # | Koşul |
+|---|---|
+| 1 | **`T-921` `RESOLVED`** — engine seriyi okur ve ufuk denetimi yapar |
+| 2 | Tarihin **T0 takviminden doğrulanması** — `T-202`/`C-202` kapanışı (dağıtım yetki belgesi işlem süresi) |
+| 3 | Hedef tarihte geçerli ÖTV tutarının **fiilen yayımlanması** (yani takvimin o noktaya gelmesi) — **veya** kararın açıkça `PROJEKSIYON` üzerine kurulduğunun kabulü |
+
+**1 ve 2 olmadan `OQ-002` kapanmaz.** 3 bu araştırmayla kapanamaz.
 
 ---
 
@@ -1601,5 +1684,16 @@ tekrar işaretlenir:
 
 | id | Soru | Sahibi | Neyi bloke ediyor |
 |---|---|---|---|
-| **`OQ-002`** | `model_hedef_tarihi` **`null`** | **yatırımcı** | **TUR 3** — ÖTV serisinin hangi noktadan okunacağı belirsiz (`T-104`); `t > 2026-12-31` ise engine tasarım gereği `UNKNOWN` döner |
+| **`OQ-002`** | ~~`model_hedef_tarihi` **`null`**~~ → **2026-08-10: `INPUT_RECORDED`** (`2027-04-01`, `INVESTOR_ASSUMPTION`) | **yatırımcı** | **TUR 3 blokeri KALKMADI, YER DEĞİŞTİRDİ.** Tarih artık dolu; ama üç senaryonun üçü de `2026-12-31` ufkunun ötesinde ve engine seriyi **hiç okumuyor** → **`T-921` (CRITICAL)** |
 | **`OQ-901`** | `00-charter/karar-esikleri.md`'deki karar eşiklerinin **tamamı `TBD`** | **yatırımcı** | **TUR 6** — eşik yoksa "yeterli mi?" sorusu cevaplanamaz. **Araştırmayla kapanmaz.** |
+
+---
+
+## TUR 2.5 PRE-FLIGHT — AÇIK SORU DURUMU DEĞİŞİKLİKLERİ (2026-08-10)
+
+| id | Önce | Sonra | Not |
+|---|---|---|---|
+| **`OQ-002`** | `OPEN` | **`INPUT_RECORDED`** | Yatırımcı girdisi kaydedildi; **kapanmadı** (gerekçe yukarıda, §OQ-002 güncellemesi) |
+| **`OQ-G08`** | `OPEN` | **`OPEN` — DEĞİŞMEDİ** | Sorunun kendisi *"hedef tarihte hangi ÖTV tutarı geçerli olacak"*tır. Tarih girildi, **tutar hâlâ `UNKNOWN`**. Bu soru tarih girilerek kapanmaz |
+| **`OQ-912`** | `OPEN` | **`OPEN` — KISMEN CEVAPLANDI** | Model çalıştırma tarihi: **2026-08-16'dan önce**. Gerekçe: 10 canlı LCL kotasyonu o gün STALE olur (**6 gün kaldı**). Kart sayısı düzeltmesi: 11 değil **10** → `T-923` |
+| **`OQ-901`** | `OPEN` | **`OPEN` — DEĞİŞMEDİ** | Karar eşikleri `TBD`; TUR 6 blokeri. Bu turda **ele alınmadı** |
