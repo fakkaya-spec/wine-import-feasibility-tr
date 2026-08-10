@@ -1,5 +1,120 @@
 # INVESTOR DECISIONS REQUIRED BEFORE TUR 3B
 
+> ## ⚠ GÜNCEL SÜRÜM: **SÜRÜM 3** (TUR 3.25, 2026-08-10) — bkz. **`§Z`** *(hemen aşağıda)*
+> Sürüm 2'nin `§A` … `§E` bölümleri **silinmemiştir** ve aynen aşağıda
+> durmaktadır. `§Z` yalnızca **`MUST DECIDE NOW` listesini günceller**;
+> sürüm 2'nin gerekçeleri, `CAN DECIDE LATER` tablosu ve ekleri
+> **yürürlüktedir.**
+
+---
+
+# §Z — SÜRÜM 3: KURUCU KARARLARINDAN SONRA *(TUR 3.25, 2026-08-10)*
+
+```yaml
+surum:                  3
+yazan:                  yatirim-komitesi-baskani
+tarih:                  2026-08-10
+tur:                    TUR 3.25 §0
+kapsam:                 "Kurucu kararlarinin listeye islenmesi — MUST DECIDE NOW guncellemesi"
+onceki_surum:           2  # TUR 3A — SILINMEDI, asagida aynen duruyor
+must_decide_now:        1   # (+1 KOSULLU)
+karar_iceriyor_mu:      false
+esik_degeri_yazildi_mi: false
+arastirma_yapildi_mi:   false
+ajan_cagrildi_mi:       false
+yeni_kanit_uretildi_mi: false
+karar_gunlugune_dokunuldu_mu: false
+kaynak_belge:           90-karar/investor-kararlari-tur325.md
+yeni_kapi:              P-6   # DIS TEMAS ONAY KAPISI
+```
+
+## Z.1 — Ne değişti
+
+| # | Kalem | Sürüm 2 | **Sürüm 3** |
+|---|---|---|---|
+| **`N-1a`** | **gözlenen** spot kur | `MUST` | ✅ **LİSTEDEN ÇIKTI** — yanlış masadaydı. Bu bir yatırımcı kararı değil, **ajan gözlemidir** (`T-852`/`T-912`); TUR 3.25'te `gumruk-vergi-uzmani` alıyor |
+| **`N-1b`** | **hedef tarih** kuru / `LOW-BASE-HIGH` | *(ayrılmamıştı)* | ◐ **KOŞULLU** — `T-964` cevabına bağlı: ülke ayrıştırması tek gözlenen kurla yapılabiliyorsa `CAN DECIDE LATER` (FX ekseni, `P-5` damgalı); yapılamıyorsa **`MUST`** |
+| **`N-2`** | dış temas izni | `MUST` | ✅ **VERİLDİ (koşullu)** — `P-6` kapısı; `T-467` `ANSWERED`, `T-304` izin ayağı kapandı |
+| **`N-3a`** *(= `D-14a`)* | hangi basamak `PRIMARY` | `LATER` | ✅ **VERİLDİ — 799 TRY** |
+| **`N-3b`** *(= eski `D-14b`)* | hangi **`L8` alt katmanı** | **`MUST`** | ⛔ **AÇIK — tek kalan `MUST DECIDE NOW` kalemi** |
+| **`N-3c`** | `TARGET_CHANNEL` | *(yoktu)* | ⚠ **AÇIK — ama önce AJANA** (`T-966`): `N-3b`'den türeyip türemediği bilinmiyor. Türemiyorsa yatırımcıya **ikinci** bir soru olarak gelir |
+
+## Z.2 — **MUST DECIDE NOW = 1 KALEM**
+
+```
+N-3b — 799 TL HANGI RAFIN FIYATIDIR?
+
+  [ ] L8_CHAIN_RETAIL             (zincir market rafi)
+  [ ] L8_METRO_CASH_CARRY         (toptanci / cash & carry)
+  [ ] L8_ONLINE_UZMAN_PERAKENDE   (online uzman perakende)
+  [ ] KANAL KARMASI               -> agirliklari da yaziniz
+
+  Format : tek kelime. Bir SAYI istenmemektedir.
+  Model ciktisina bakmaya gerek YOKTUR — bakilacak sey KENDI BEYANINIZDIR.
+  Bilgi notu: elimizdeki 473 fiyat gozleminin L8_CHAIN_RETAIL'deki sayisi
+  SIFIRDIR (T-859, T-603, T-701, T-917). Bu katman secilirse, secilen
+  katmanda HIC GOZLEM OLMADIGI BILINEREK secilmis olur.
+```
+
+> ⚠ **"Kanal karması" seçeneği sürüm 2'de YOKTU.** Bu turda eklendi, çünkü
+> kurucu üç katmandan birini söylemeyerek dördüncü ihtimali açık
+> bırakmıştır. **Başkan bu boşluğu kendi doldurmamıştır.**
+
+> ### VE BİR UYARI — LİSTENİN KISALMASI BİR İLERLEME RAPORU DEĞİLDİR
+> Liste **3 → 1**'e indi. Ama inen iki kalemin biri **verildi** (`N-2`),
+> diğeri **zaten yanlış masadaydı** (`N-1a`). Kalan tek kalem, TUR 3A'da da
+> `MUST` olan ve **hâlâ cevaplanmamış** olandır. **`N-3b` iki turdur
+> açıktır.**
+
+## Z.3 — Kurucunun verdiği kararlar *(kayıt — bu bölüm bir talep değildir)*
+
+| Karar | İçerik | `status` |
+|---|---|---|
+| **Hedef raf fiyatları** | `PRIMARY 799` · `SECONDARY 699` · `STRETCH 899` · `599 = DOWNSIDE/FLOOR TEST` · `999 = UPPER SEGMENT TEST`; son ikisi **ana RFQ stratejisini belirlemez** | `INVESTOR_TARGET` |
+| **RFQ hacim kademeleri** | `V1=5.000 · V2=10.000 · V3=25.000 · V4=50.000` + **`FULL_20FT` ayrı fiyat**; **100.000 ilk RFQ'da sorulmayacak**; amaç **price-volume curve** | `INVESTOR_DECISION` |
+| **Dış temas** | **Prensip onayı VERİLDİ**; bu turda yalnızca mesaj + alıcı listesi finalize; gönderim öncesi `RECIPIENT`+`SUBJECT`+`PREVIEW` açık onayı; **otomatik toplu mail YOK** | `P-6` |
+
+**Hiçbiri `FACT` değildir, hiçbiri `evidence_id` taşımaz.** Bir kurucu
+kararı bir dış olgu değildir.
+
+## Z.4 — `P-6` — DIŞ TEMAS ONAY KAPISI *(bağlayıcı)*
+
+| # | Kural |
+|---|---|
+| **P-6.1** | Prensip izni **VERİLDİ**; iki bacak: RFQ (`T-467`) + forwarder (`T-304`). |
+| **P-6.2** | **Bu turda hiçbir mesaj GÖNDERİLMEZ**; yalnızca metin + alıcı listesi final hâline getirilir (`T-967`, `T-968`). |
+| **P-6.3** | Gönderim öncesi **`RECIPIENT` + `SUBJECT` + `MESSAGE PREVIEW`** → **açık onay**, tarihiyle kaydedilir. |
+| **P-6.4** | **OTOMATİK TOPLU MAİL YOKTUR.** |
+| **P-6.5** | Onaysız temastan gelen veri **kanıt kartı açamaz**, modele giremez. |
+| **P-6.6** | Prensip izni **`G2`'yi AÇMAZ.** `G2`'yi açan şey cevaplardır. |
+| **P-6.7** | `T-884` (RFQ eleme kuralı) kararı ilk `P-6.3` onayından **ÖNCE** kayda geçer. |
+
+## Z.5 — `CAN DECIDE LATER`'da değişen tek satır
+
+| id | Sürüm 2 | Sürüm 3 |
+|---|---|---|
+| `D-14a` | `LATER` — tetikleyici: *"RFQ çapası yazılırken (`T-871`)"* | ✅ **KAPANDI — 799** |
+| `D-03`(ii) *(μ seviyesi)* | `LATER` — tetikleyici: *"RFQ'ya hedef fiyat yazılacağı an (`N-2` verilirse)"* | ⚠ **TETİKLENDİ.** `N-2` verildi → μ seviyesi artık **`T-851` (CRITICAL) ile birlikte** `P-6.3` onayından önce masaya gelir |
+| `D-09`/`D-10` *(pilot hacmi / asgari hacim)* | `LATER` — TUR 6 | ⚠ **KISMİ TETİK:** `rfq-template.md` `<PILOT VOLUME>` alanı bir sayı istiyor. Şablon eğriyi taşıyacak biçimde yeniden yapılandırılabilirse tetik **düşer** → `T-961` |
+
+Diğer 18 kalem **değişmedi.**
+
+## Z.6 — Bu kararların **KAPATMADIĞI** şeyler *(en kritik bölüm)*
+
+| İddia | Doğru mu | Neden |
+|---|---|---|
+| "`G2` açıldı" | ❌ | `G2`'yi açan ≥5 gerçek RFQ cevabıdır (`P-6.6`) |
+| "`G3` açıldı" | ❌ | `l8_chain_retail` hâlâ `null`; `OPEN QUESTION #001` açık |
+| "`T-851` kapandı" | ❌ | Hedef **RAF** fiyatı ≠ hedef **ALIŞ** fiyatı. `TARGET_DISCOUNT_FROM_MAX` / `REQUIRED_IMPORTER_MARGIN` hâlâ `INVESTOR_DECISION_REQUIRED` — **CRITICAL, OPEN** |
+| "`OQ-901` kapandı" | ❌ | Karar eşikleri hâlâ `TBD`. `OQ-901` bir **eşik** sorusudur; bir hedef fiyat seçimi onu kapatmaz |
+| "`T-859` kapandı" | ❌ | `L8` alt katmanı = `N-3b` = **açık** |
+| "`T-304` kapandı" | ❌ | Doğrulanmış navlun yok — **CRITICAL, OPEN** |
+| "Model artık tek bir senaryo koşabilir" | ❌ | `L3`, `P-2`/`T-948`, `P-5.1` yürürlükte: **beş basamak ayrı ayrı** koşar |
+
+---
+
+---
+
 > ## SÜRÜM 2 — **SADELEŞTİRİLMİŞ** (TUR 3A, 2026-08-10)
 > Sürüm 1 (TUR 2.5) yatırımcıya **16 eşik + 8 girdi = 24 kalemlik** bir liste
 > sunuyordu. **Bu bir anketti, bir karar talebi değil.**

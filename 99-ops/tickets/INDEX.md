@@ -4,11 +4,33 @@
 > Kaynak: `99-ops/tickets/T-*.md` — dosya sistemi tam sayımı.
 > Önceki derleme: TUR 3A sonu (125 ticket).
 
-**Toplam: 133 ticket** — impact: CRITICAL 14, HIGH 79, MEDIUM 38, LOW 1, CONSTRAINT 1
+**Toplam: 145 ticket** — impact: CRITICAL 15, HIGH 83, MEDIUM 44, LOW 2, CONSTRAINT 1
 
-**status:** ANSWERED 15, OPEN 112, RESOLVED 6
+**status:** ANSWERED 17, OPEN 122, RESOLVED 6
 
-**Açık CRITICAL: 11** *(değişmedi — TUR 3.25'te açılan 8 ticket'ın hiçbiri `CRITICAL` değildir)*
+**Açık CRITICAL: 12** *(`OPEN` + `ANSWERED`)*
+
+> ## ⚠ ÜÇÜNCÜ KAYIT HATASI — VE BU SEFER NEDENİ FARKLI
+>
+> TUR 3A indeksi **125 ticket** sayıyordu; dosya sistemi bugün **145**
+> saymaktadır. Fark **20**'dir: **8**'i bu belgede açılan yeni ticket'lar
+> (`T-961`…`T-968`), **12**'si ise indekse **hiç girmemiş** dosyalardır:
+> `T-821`, `T-822`, `T-823`, `T-885` … `T-893`.
+>
+> **Bu 12 ticket TUR 3.25'te PARALEL ÇALIŞAN ajanlar tarafından açılmıştır**
+> (`navlun-lojistik-uzmani`, `global-sourcing-kasifi`). Yani bu bir
+> *"unutuldu"* hatası değil, **eşzamanlılık** olgusudur: indeks derlendiği
+> anda doğru olabilir ve bir saat sonra yanlış olur.
+>
+> **Bu sayılar `2026-08-10` itibarıyla ve bu derlemenin yapıldığı an için
+> geçerlidir.** Onikisi de aşağıya eklenmiştir.
+>
+> ### ⚠ VE BU, AÇIK `CRITICAL` SAYISINI DEĞİŞTİRİR: **11 → 12**
+> **`T-885`** (`global-sourcing-kasifi` → başkan, **CRITICAL, OPEN**):
+> 10 tedarikçilik RFQ paketi hazırlandı, 7 hedef `READY_TO_SEND`, **hiçbir
+> mesaj gönderilmedi**; fiili gönderim her hedef için `RECIPIENT` +
+> `SUBJECT` + `PREVIEW` onayına bağlı. **Bu, `P-6.3`'ün ticket
+> karşılığıdır ve tam olarak kurucunun koyduğu koşuldur.**
 
 ## TUR 3.25 §0 DEĞİŞİKLİKLERİ *(2026-08-10)*
 
