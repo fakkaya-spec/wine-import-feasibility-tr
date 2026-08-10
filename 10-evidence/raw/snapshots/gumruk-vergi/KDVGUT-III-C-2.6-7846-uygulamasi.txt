@@ -1,0 +1,87 @@
+        2.6. İthalatta Gözetim Uygulanması, Korunma Önlemleri ve İthalatta Haksız Rekabetin
+Önlenmesi Hakkında İlgili Mevzuat Kapsamında Ödenen KDV’nin İndirimi581
+        24/11/2023 tarihli ve 32379 sayılı Resmî Gazete’de yayımlanan 23/11/2023 tarihli ve 7846 sayılı
+Cumhurbaşkanı Kararı eki Kararda;
+        “(1) İthalatta gözetim uygulanması hakkında ilgili mevzuat uyarınca, gözetim uygulamasına tabi
+tutulan mallara ilişkin gümrük beyannamelerinde beyan olunan ve tevsik edilemeyen tutarlar ile bu tutarlar
+nedeniyle doğan ve katma değer vergisi matrahına dâhil olan her türlü vergi, resim, harç ve paylar
+dolayısıyla ödenen katma değer vergisinin indirim hakkı kaldırılmıştır.
+        (2) İthalatta korunma önlemleri uygulanması hakkında ilgili mevzuat uyarınca korunma önlemi
+olarak uygulanan gümrük vergisi ve/veya ek mali mükellefiyetler, ithalatta haksız rekabetin önlenmesi
+hakkında ilgili mevzuat kapsamında uygulanan dampinge karşı vergi ve telafi edici vergiler ile bu tutarlar
+nedeniyle doğan ve katma değer vergisi matrahına dâhil olan her türlü vergi, resim, harç ve paylar
+dolayısıyla ödenen katma değer vergisinin indirim hakkı kaldırılmıştır.”
+        hükmüne yer verilmiştir.
+        2.6.1. Genel Açıklama
+        7846 sayılı Cumhurbaşkanı Kararına göre, ithalatta gözetim uygulaması, ithalatta korunma
+önlemleri ve ithalatta haksız rekabetin önlenmesine ilişkin mevzuat kapsamında ithal edilen malların KDV
+matrahında bu uygulamalar nedeniyle ortaya çıkan artış tutarları ile bu artış tutarlarına ilişkin her türlü
+vergi, resim, harç ve paylar dolayısıyla ödenen KDV’nin indirim konusu yapılması mümkün değildir.
+        Ancak, söz konusu uygulamalar kapsamında ithal edilen mallara ilişkin KDV matrahında bu
+uygulamalar dışında kalan bedeller ile bu bedellere ilişkin her türlü vergi, resim, harç ve paylar dolayısıyla
+ödenen KDV’nin indirim konusu yapılması mümkündür.
+        Örnek: (A) A.Ş. ithalatta gözetim uygulaması kapsamında CIF bedeli 4.000.000 TL, gözetim
+bedeli ise 10.000.000 TL olan (Z) ürününü ithal etmektedir. İthal edilen ürüne ilişkin %10 oranında
+gümrük vergisi (GV), %15 oranında ilave gümrük vergisi (İGV) ve %20 oranında KDV ödenmiştir.
+Gözetim uygulaması nedeniyle oluşan ve tevsik edilemeyen tutar ithalata ilişkin gümrük beyannamesinde
+yurt dışı gider olarak beyan edilmiştir. Buna göre ithalatta gözetim uygulaması kapsamında
+indirilemeyecek KDV ile indirilebilecek KDV tutarları aşağıdaki şekilde hesaplanacaktır:
+
+          Gümrük Vergisi Matrahı                                      :10.000.000 TL
+          Gümrük Vergisi (%10)                                        :1.000.000 TL
+          İlave Gümrük Vergisi (%15)                                  :1.500.000 TL
+          KDV Matrahı                                                 :12.500.000 TL
+          KDV (%20)                                                   :2.500.000 TL
+
+          Yurt Dışı Gider (Tevsik Edilemeyen Gider)                   :6.000.000 TL
+          (10.000.000-4.000.000)
+          Yurt Dışı Gidere İsabet Eden GV                             :600.000 TL
+          (6.000.000*%10)
+          Yurt Dışı Gidere İsabet Eden İGV                            :900.000 TL
+          (6.000.000*%15)
+          İndirilemeyecek KDV Matrahı                                  :7.500.000 TL
+          (6.000.000+600.000+900.000)
+          İndirilemeyecek KDV                                          :1.500.000 TL
+          (7.500.000*%20)
+
+          CIF Bedeli                                                  :4.000.000 TL
+          CIF Bedeli Üzerinden Hesaplanan GV                          :400.000 TL
+          (4.000.000*%10)
+          CIF Bedeli Üzerinden Hesaplanan İGV                         :600.000 TL
+          (4.000.000*%15)
+
+581 57 Seri No.lu Tebliğ ile başlığıyla birlikte eklenen bölüm. (Yürürlük tarihi: 31/1/2026)
+    26 Nisan 2014 – Sayı : 28983                       RESMİ GAZETE
+        İndirilecek KDV Matrahı                         :5.000.000 TL
+        (4.000.000+400.000+600.000)
+        İndirilecek KDV                                  :1.000.000 TL
+        (5.000.000*%20)
+         2.6.2. 7846 Sayılı Cumhurbaşkanı Kararı Kapsamında İndirimi Kabul Edilmeyen KDV’nin
+İndirim Konusu Yapılıp Yapılmadığının Tespiti
+         7846 sayılı Cumhurbaşkanı Kararı kapsamında;
+         - İthalatta gözetim uygulanması hakkında ilgili mevzuat uyarınca, gözetim uygulamasına tabi
+tutulan mallara ilişkin gümrük beyannamelerinde beyan olunan ve tevsik edilemeyen tutarlar,
+         - İthalatta korunma önlemleri uygulanması hakkında ilgili mevzuat uyarınca korunma önlemi
+olarak uygulanan gümrük vergisi ve/veya ek mali mükellefiyetler,
+         - İthalatta haksız rekabetin önlenmesi hakkında ilgili mevzuat kapsamında uygulanan dampinge
+karşı vergi ve telafi edici vergiler,
+         ile bu tutarlar nedeniyle doğan ve KDV matrahına dâhil olan her türlü vergi, resim, harç ve paylar
+dolayısıyla ödenen KDV'nin indirimi mümkün değildir.
+         Bu kapsamda ithalat yapan mükellefler;
+         - Takvim yılının altışar aylık dönemleri itibarıyla ithalat bedeli 46 Sıra No.lu Serbest Muhasebeci
+Mali Müşavirlik ve Yeminli Mali Müşavirlik Kanunu Genel Tebliğinin 3 üncü maddesinin birinci
+fıkrasının (a) bendinde belirlenen tutarı aşmayan ithalatlara ilişkin KDV’nin, işlemin yapıldığı döneme ait
+KDV beyannamesinde mezkur Karar kapsamında doğru bir şekilde indirim konusu yapılıp yapılmadığını
+altışar aylık dönemleri izleyen ayın sonuna kadar bağlı oldukları vergi dairesine bildirirler.
+         - Takvim yılının altışar aylık dönemleri itibarıyla ithalat bedelinin belirlenen tutarı aşması halinde,
+söz konusu uygulamalar nedeniyle ödenen KDV’nin, mezkur Karar kapsamında doğru bir şekilde indirim
+konusu yapılıp yapılmadığı altışar aylık dönemleri izleyen ayın sonuna kadar ibraz edilecek Özel Amaçlı
+YMM Raporu ile tevsik edilir. Şu kadar ki, mükellefin ithalatın yapıldığı yıl için süresinde düzenlenmiş
+tam tasdik sözleşmesinin bulunması ve düzenlenecek raporda 7846 sayılı Cumhurbaşkanı Kararı
+kapsamında gerçekleştirilen ithalata ilişkin ödenen KDV’nin indirim konusu yapılıp yapılmadığına
+yönelik açıklama bulunması halinde Özel Amaçlı YMM Raporu ibrazına gerek bulunmamaktadır.
+         3. İstisna Edilmiş İşlemlerde İndirim
+         3065 sayılı Kanunun 32 nci maddesinde, Kanunun 11, 13, 14, 15 inci maddeleri ile (17/4-s)
+maddesi uyarınca vergiden istisna edilmiş bulunan işlemlerle ilgili fatura ve benzeri vesikalarda gösterilen
+KDV’nin, mükellefin vergiye tabi işlemleri üzerinden hesaplanan KDV’den indirilebileceği, vergiye tabi
+işlemlerin mevcut olmaması veya hesaplanan verginin indirilecek vergiden az olması hallerinde

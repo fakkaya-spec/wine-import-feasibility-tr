@@ -1,0 +1,23 @@
+KDVGUT (GIB konsolide, 397 sayfa, dosya tarihi 2026-04-15) TAM METIN TARAMASI
+Arama: alkol | icki | sarap (buyuk/kucuk harf duyarsiz, Turkce karakterli)
+Toplam eslesen satir: 19
+
+satir   6562 | istatistik pozisyon numarasında sınıflandırılan biracılık ve damıtık içki sanayinin posa ve artıkları hariç),
+satir   6662 | sınıflandırılan biracılık ve damıtık içki sanayinin posa ve artıkları istisna kapsamında değildir.
+satir  12352 | dâhil), lokanta, içkili lokanta, kebapçı ve benzeri yerlerde verilen hizmetlerde KDV oranı (% 10) olarak
+satir  12354 | İndirimli oran uygulanan yerlerde verilen hizmetler içinde alkollü içecek servisinin de bulunması
+satir  12355 | halinde, hizmetin alkollü içeceklere ilişkin kısmına (% 20) KDV oranı uygulanır. Alkollü içecekler, Özel
+satir  12357 | ifade etmektedir. Yukarıda sayılan işletmeler toplam hizmet bedeli içinde alkollü içeceklere ilişkin olan
+satir  12358 | ve olmayan kısmı hesaplayarak faturada ayrıca gösterirler ve alkollü içeceklere isabet eden kısım
+satir  12386 | satışında %10 (alkollü içeceklerde %20) oranında KDV hesaplanır.
+satir  12448 | gibi mekanlarda verilen hizmetlerde (% 8) oranında KDV uygulanır. Bu yerlerde alkollü içecek
+satir  12483 | 2.5.2. Konaklama İşletmelerinde Kullanılan Alkollü İçecekler Dolayısıyla Yüklenilen KDV
+satir  12484 | Yukarıda kapsamı belirtilen geceleme hizmetleri kapsamında sunulan alkollü içeceklere ait
+satir  12490 | isabet eden alkollü içeceklere ilişkin yüklenilen KDV tutarları konaklama tesisleri tarafından indirim
+satir  12491 | konusu yapılamayacaktır. Alkollü içecekler, Özel Tüketim Vergisi Kanununa ekli (III) sayılı listenin (A)
+satir  12495 | Konaklama tesislerinin alkollü içeceklere isabet eden hizmet bedelini ayrıca fatura etmesi veya bu
+satir  12496 | tutarı faturada ayrıca göstermesi halinde ise hizmet bedelinin alkollü içeceklere isabet eden kısmı
+satir  12497 | üzerinden (% 18) KDV hesaplanır ve bu hizmete konu olan alkollü içecekler dolayısıyla yüklenilen KDV
+satir  12500 | - Alkollü içecekler ve bunların iktisabı dolayısıyla yüklenilen KDV ayrıca açılacak yardımcı
+satir  12502 | - Ay içinde tüketilen alkollü içeceklerden indirimli orana ve genel orana tabi hizmetlerde kullanılan
+satir  12504 | - İndirimli oran uygulanan hizmetlerde kullanılan alkollü içeceklerin alımında yüklenilen KDV,
