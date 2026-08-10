@@ -21,20 +21,66 @@
 
 meta:
   dosya: vergi.yaml
-  son_guncelleme: 2026-08-09
-  tur: "TUR 1 — gumruk-vergi-uzmani dolduruldu"
+  son_guncelleme: 2026-08-10
+  tur: "TUR 1 (2026-08-09) + TUR 1.5 BLOCKER REMEDIATION (2026-08-10)"
   durum: KISMEN_DOLDURULDU
   a1_dogrulama_yapildi_mi: true
   a1_notu: >-
     Gumruk vergisi, OTV (oran + asgari maktu + birim + hesap kurali), KDV orani ve
     matrahi, KKDF orani, gumruk kiymeti unsurlari ve vergi dogus ani T1/T2 ile
-    dogrulandi. KKDF matrahi, mense ispat belgesi turu, gozetim, antrepo kismi cekis,
-    ithalat KDV indirilebilirligi ve damga vergisi UNKNOWN olarak birakildi.
-  model_hedef_tarihi: null   # Vergiler BU tarihte gecerli olan haliyle kullanilir
+    dogrulandi. TUR 1.5'te ITHALAT KDV'SININ INDIRILEBILIRLIGI T1 ile KAPATILDI
+    (KDVK md.29/1-b, md.34/1, md.30 tam metin; EV-2026-08-10-101/-102/-103).
+    KKDF matrahi, mense ispat belgesi turu, gozetim, antrepo kismi cekis,
+    fiili vergilendirme donemi ve damga vergisi UNKNOWN olarak kalmistir.
+
+  # ============================================================
+  #  IKI AYRI TARIH — KARISTIRILMAZ
+  # ============================================================
+  #
+  # BASE_DATE ve model_hedef_tarihi AYNI SEY DEGILDIR.
+  #
+  #  BASE_DATE           = "Bugun hangi mevzuat yururlukte?"  -> DOGRULANMIS OLGU
+  #  model_hedef_tarihi  = "Ilk konteyner ne zaman gumrukten cikacak?" -> YATIRIMCI GIRDISI
+  #
+  BASE_DATE: 2026-08-10
+  BASE_DATE_kurali: >-
+    BASE_DATE senaryosunda YALNIZCA 2026-08-10 tarihinde YURURLUKTE OLAN ve
+    T1/T2 ile DOGRULANMIS vergi/mevzuat degerleri kullanilir.
+    GELECEK OTV, KUR VEYA MEVZUAT TAHMINI YAPILMAZ VE BU DOSYAYA YAZILMAZ.
+    OTV'nin Ocak/Temmuz'da Yi-UFE ile artacagi bilgisi (EV-2026-08-09-114) bir
+    RISK NOTUDUR, bir TAHMIN GIRDISI DEGILDIR. BASE_DATE altina gelecek deger
+    yazilamaz; boyle bir deger gerekirse ayri bir senaryo dosyasinda ve
+    ASSUMPTION etiketiyle tutulur (senaryolar.yaml).
+  BASE_DATE_kapsami:
+    - "matrah_sirasi[*] (GV, IGV, KKDF, OTV, KDV) — 2026-08-10 itibariyla yururlukte"
+    - "gumruk_vergisi_oranlari_by_mense — Ithalat Rejimi Karari 2026, eff 2026-01-01"
+    - "otv.asgari_maktu_tutar = 71.2692 TL/lt — eff 2026-07-03 (EV-2026-08-09-111)"
+    - "kdv.oran_pct = 20 — eff 2023-07-10 (EV-2026-08-09-118)"
+    - "kdv_perspektifleri.* — KDVK konsolide metin, TUR 1.5 kanitlari"
+  BASE_DATE_disinda_kalan:
+    - "7524 s.K. md.30/(f) 5 takvim yili devreden KDV siniri — eff 2030-01-01 -> BASE_DATE'te YURURLUKTE DEGIL"
+    - "2027-01 ve sonrasi OTV tutarlari -> BILINMIYOR, YAZILMAZ"
+
+  # OQ-002 / OQ-G08 — YATIRIMCI GIRDISI. Bu ajanin alani DEGIL, DOLDURULMAZ.
+  # DEGER "TBD"DIR (belirlenmedi). CLAUDE.md §12 eksik girdinin `null` + `UNKNOWN`
+  # olarak durmasini emrettigi ve 80-model/engine/matrah_sirasi.py:217 bu alani
+  # `is None` ile denetledigi icin, TBD durumu `null` + ayri bir durum alani ile
+  # temsil edilmistir. Literal "TBD" string'i yazilsaydi engine'in guvenlik
+  # kontrolu SESSIZCE GECERDI. Bkz. ticket T-153.
+  model_hedef_tarihi: null
+  model_hedef_tarihi_durum: TBD
+  model_hedef_tarihi_status: UNKNOWN
+  model_hedef_tarihi_notu: >-
+    TBD (belirlenmedi) olarak BILINCLI birakilmistir. Doldurulmasi yatirimciya/
+    baskana aittir (OQ-002). gumruk-vergi-uzmani bu alani DOLDURMAZ ve tahmin ETMEZ.
+    Model bu alan bos iken de BASE_DATE senaryosu ile calisabilir; cikti
+    "BASE_DATE 2026-08-10 mevzuatiyla" etiketlenir ve APPROVED olamaz.
   model_hedef_tarihi_uyarisi: >-
     OTV maktu tutari Ocak ve Temmuz aylarinda Yi-UFE ile otomatik guncellenir
     (EV-2026-08-09-114). model_hedef_tarihi 2027-01-01 veya sonrasi ise
-    otv.asgari_maktu_tutar SABIT ALINAMAZ; endekslenmelidir.
+    otv.asgari_maktu_tutar SABIT ALINAMAZ; endekslenmelidir (ticket T-104, CRITICAL).
+    Model model_hedef_tarihi == TBD iken de CALISABILIR: bu durumda BASE_DATE
+    senaryosu calisir ve cikti "BASE_DATE (2026-08-10) mevzuatiyla" etiketlenir.
 
 gtip:
   kod:
@@ -69,11 +115,25 @@ gtip:
       effective_date: 2026-07-03
 
 urun_parametreleri:
+  # ---- T-906 (a) DUZELTMESI — 2026-08-10 ----
+  # ONCEKI HALI: value: 0.75 / status: FACT / evidence_id: null  -> CLAUDE.md §1.6 ihlali.
+  # Bu bir DIS OLGU (FACT) degil, PROJE KAPSAM KARARIDIR -> status: ASSUMPTION.
+  # urun.yaml ile hizalanir. Kanit karti acilmistir: EV-2026-08-10-116.
   sise_hacmi_litre:
     value: 0.75
-    status: FACT
-    evidence_id: null
-    notes: "Kapsam tanimindan gelir (00-charter/kapsam.md, 750 ml ana format). Vergi kanitı degil, urun tanimidir."
+    status: ASSUMPTION
+    evidence_id: EV-2026-08-10-116
+    tier: T5                       # TIER DISI: kaynak proje ici charter dokumanidir
+    kaynak: "00-charter/kapsam.md — '750 ml ana format'"
+    gerekce: >-
+      Charter'da belirlenen ana urun formati. Dogrulanmis bir dis olgu degil,
+      kapsam kararidir. Baska bir format degerlendirilecekse BU ALAN degistirilir;
+      OTV/sise hicbir yerde sabitlenmez.
+    duyarlilik: >-
+      OTV/sise = sise_hacmi_litre x matrah_sirasi[OTV].asgari_maktu_tutar.
+      0.75 lt -> 53.4519 TL/sise | 1.00 lt -> 71.2692 TL/sise (+%33) |
+      3.00 lt (bag-in-box) -> 213.8076 TL/ambalaj VE GTIP 2204.22'ye kayar.
+    notes: "Vergi kaniti degil, urun tanimidir. Model bu degeri PARAMETRE olarak okur."
 
 gumruk_kiymeti:
   baz_incoterm:
@@ -194,11 +254,16 @@ matrah_sirasi:
     vergi: OTV
     matrah_tanimi: "CIF + Gumruk Vergisi + ithalatta odenen diger vergi/resim/harc/pay (KKDF dahil) + tescile kadarki diger giderler; OTV ve KDV HARIC"
     oran_pct: 0               # nispi OTV orani
-    asgari_maktu_tutar: 71.2692
+    asgari_maktu_tutar: 71.2692        # <-- BU DOSYADAKI TEK OTORITE. Baska yerde TEKRARLANMAZ.
+    asgari_maktu_tutar_effective_date: 2026-07-03
     asgari_maktu_para_birimi: TRY
     maktu_birim: "litre"
     hesap_kurali: "max(nispi_oran * otv_matrahi ; asgari_maktu_tutar * hacim_litre)"
-    hesaplanan_otv_try_per_750ml: 53.4519
+    # T-906(b) genisletmesi: turev deger SABIT YAZILMAZ, formulle tanimlanir.
+    hesaplanan_otv_try_per_sise:
+      value: null
+      formul: "asgari_maktu_tutar * urun_parametreleri.sise_hacmi_litre"
+      notes: "BASE_DATE 2026-08-10'da 71.2692 x 0.75 = 53.4519 TL/sise. Bu sayi ILLUSTRATIFTIR, otorite formuldur."
     tip: KARMA_YUKSEK_OLAN
     status: FACT
     tier: T2
@@ -358,16 +423,78 @@ tercihli_tarife:
 # ------------------------------------------------------------
 # KDV — İKİ AYRI PERSPEKTİF (CLAUDE.md §6)
 # ------------------------------------------------------------
+# TUR 1.5'te DOLDURULDU. Tam analiz: 30-vergi-gumruk/kdv-ekonomik-maliyet-vs-nakit.md
+# A ve B ASLA TOPLANMAZ, ASLA BIRBIRININ YERINE KULLANILMAZ.
 kdv_perspektifleri:
+
   a_ekonomik_maliyet:
     ithalat_kdv_indirilebilir_mi:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
+      value: true
+      status: FACT
+      tier: T1
+      evidence_id: EV-2026-08-10-101
+      destekleyici_evidence_ids: [EV-2026-08-10-102, EV-2026-08-10-103, EV-2026-08-09-118]
+      effective_date: 1985-01-01
+      dayanak: "3065 s. KDVK md.29/1-b (indirim) + md.34/1 (belge sarti) + md.30 (tahdidi yasak listesi, alkol YOK)"
       notes: >-
-        Bu turda dogrulanmadi. Model IKI SENARYO ile calistirilmalidir:
-        (A1) indirilebilir -> KDV L5'e tasinmaz, yalniz nakit akisinda gorunur.
-        (A2) indirilemez -> KDV ekonomik maliyettir.
+        OQ-G01 (CRITICAL) KAPANDI. Model artik A1/A2 IKI SENARYO ile calistirilmaz.
+        A1 (indirilebilir) BAZ SENARYODUR. A2 asagidaki dort kosula bagli RISK senaryosudur.
+    ekonomik_kdv_maliyeti_try_per_sise:
+      value: 0.0
+      status: FACT
+      tier: T1
+      evidence_id: EV-2026-08-10-117
+      notes: "KDV L4'te gosterilir, L5'e TASINMAZ. Ekonomik maliyet 0 TL/sise."
+    indirim_belge_sarti:
+      value: "gumruk makbuzunda ayrica gosterim + kanuni deftere kayit"
+      status: FACT
+      tier: T1
+      evidence_id: EV-2026-08-10-102
+      effective_date: 1985-01-01
+    indirim_zamanasimi:
+      value: "vergiyi doguran olayin vuku buldugu takvim yilini takip eden takvim yili sonu"
+      status: FACT
+      tier: T1
+      evidence_id: EV-2026-08-10-105
+      effective_date: 2019-01-01
+    alkole_ozgu_indirim_kisiti_var_mi:
+      value: false
+      status: FACT
+      tier: T1
+      evidence_id: EV-2026-08-10-103
+      effective_date: 2019-01-01
+      kapsam_notu: >-
+        KDVK md.30 TAHDIDI bir listedir; burada yer almamak HUKMEN yer almamaktir.
+        TEK DOLAYLI ISTISNA: KVK md.11/1-(i) alkollu icki ILAN/REKLAM giderlerinin
+        %50'si KKEG oldugu icin, md.30/d uyarinca O GIDERLERE ait KDV indirilemez
+        (EV-2026-08-10-113). MALIN KENDISINE ait ithalat KDV'sini ETKILEMEZ.
+    kdv_ekonomik_maliyete_donusme_kosullari:
+      # A2 senaryosu YALNIZCA bunlardan biri gerceklesirse devreye girer
+      - kod: K1
+        kosul: "Ithalatci KDV mukellefi degilse / faaliyeti istisna ise"
+        dayanak: "KDVK md.30/a"
+        evidence_id: EV-2026-08-10-103
+        baz_senaryoda_mi: false
+      - kod: K2
+        kosul: "Mal ZAYI olursa (kirilma / bozulma / imha) — o partiye ait KDV indirilemez"
+        dayanak: "KDVK md.30/c"
+        evidence_id: EV-2026-08-10-103
+        baz_senaryoda_mi: "KISMEN — fire orani kadar"
+        model_notu: >-
+          fire_orani x kdv_per_sise GERCEK ekonomik maliyettir. fire_orani
+          navlun-lojistik-uzmani alanindadir -> vergi.yaml'da tutulmaz.
+      - kod: K3
+        kosul: "2030-01-01'den itibaren 5 takvim yili eritilemeyen devreden KDV"
+        dayanak: "7524 s.K. md.20 -> KDVK md.30/(f)"
+        evidence_id: EV-2026-08-10-112
+        effective_date: 2030-01-01
+        baz_senaryoda_mi: false
+        notes: "BASE_DATE (2026-08-10) itibariyla YURURLUKTE DEGILDIR."
+      - kod: K4
+        kosul: "md.29/3'teki iki takvim yili indirim suresi kacirilirsa"
+        dayanak: "KDVK md.29/3"
+        evidence_id: EV-2026-08-10-105
+        baz_senaryoda_mi: false
     otv_indirilebilir_mi:
       value: false
       status: FACT
@@ -377,34 +504,149 @@ kdv_perspektifleri:
       notes: >-
         OTVK md.1/1 "bir defaya mahsus" + md.9 indirim yalniz ayni listedeki malin
         imalinde kullanimda. Siselenmis bitmis urunu ithal edip satan icin OTV MALIYETTIR.
+        KDV ILE FARK: ayni gun odenir, ama ASLA GERI GELMEZ.
+    ekonomik_otv_maliyeti_try_per_sise:
+      value: null            # TUREV — engine hesaplar, sabitlenmez
+      formul: "urun_parametreleri.sise_hacmi_litre * matrah_sirasi[OTV].asgari_maktu_tutar"
+      status: FACT
+      evidence_id: EV-2026-08-09-111
+      notes: "BASE_DATE'te 0.75 x 71.2692 = 53.4519 TL/sise. SABITLENMEZ, hesaplanir."
 
   b_cash_tax_timing:
-    kdv_odeme_ani:
-      value: "gumrukte, gumruk vergisi ile birlikte"
+    vergiyi_doguran_olay:
+      value: "gumruk vergisi odeme mukellefiyetinin baslamasi = serbest dolasima giris beyannamesinin TESCILI"
       status: FACT
-      evidence_id: EV-2026-08-09-126
-      tier: T2
-    kdv_mahsup_gecikmesi_gun:
-      value: null
-      unit: gun
-      status: UNKNOWN
-      evidence_id: null
-      notes: "peak_cash_requirement'i DOGRUDAN buyutur."
+      tier: T1
+      evidence_id: EV-2026-08-10-106
+      destekleyici_evidence_ids: [EV-2026-08-09-122]
+      effective_date: 1998-07-29
+    kdv_odeme_ani:
+      value: "gumrukte, gumruk vergisi ile BIRLIKTE VE AYNI ZAMANDA"
+      status: FACT
+      tier: T1                      # TUR 1'de T2 idi (EV-2026-08-09-126); T1'e yukseltildi
+      evidence_id: EV-2026-08-10-107
+      supersedes_tier_of: EV-2026-08-09-126
+      effective_date: 1985-01-01
+      dayanak: "KDVK md.46/2 + md.47 + md.43/4"
     otv_odeme_ani:
       value: "ithalat vergileri ile AYNI ZAMANDA, gumrukte"
       status: FACT
       evidence_id: EV-2026-08-09-123
       tier: T1
       effective_date: 2002-08-01
+    vergilendirme_donemi_ay:
+      value: 1
+      status: ASSUMPTION
+      evidence_id: EV-2026-08-10-111
+      tier: T1
+      gerekce: >-
+        KDVK md.39/1 kanuni donem UCER AYLIKTIR; Bakanlik birer aylik donem tespit
+        etmeye yetkilidir ve kurumlar vergisi mukellefleri icin fiilen AYLIK donem
+        uygulanir. Bu FIILI durum T1/T2 ile DOGRULANMADI -> ASSUMPTION.
+      duyarlilik: "3 aylik donemde mahsup gecikmesi 28 -> ~118 gune cikar; peak_cash_requirement ciddi artar."
+      ticket: T-152
+    beyanname_gunu:
+      value: 28
+      unit: "takip eden ayin gunu"
+      status: FACT
+      tier: T2
+      evidence_id: EV-2026-08-10-109
+      effective_date: null           # 149 No.lu VUK Sirkuleri tarihi DOGRULANAMADI
+      kanuni_sure_evidence_id: EV-2026-08-10-110   # md.41/1 = 24, md.46/1 = 26 (T1)
+      notes: >-
+        GIB idari uzatmasi (149 No.lu VUK Sirkuleri). Kanuni sure 24/26'dir.
+        Model 28'i kullanir cunku DAHA UZUN gecikme = MUHAFAZAKAR.
+    kdv_mahsup_gecikmesi_gun:
+      value: null                    # TUREV — asagidaki formulle hesaplanir
+      formul: "(ay_uzunlugu_N - tescil_gunu_D) + beyanname_gunu"
+      alt_sinir: 28
+      ust_sinir: 59
+      ortalama: 44
+      unit: gun
+      status: ESTIMATE
+      tier: T1
+      evidence_id: EV-2026-08-10-118
+      notes: >-
+        BU, MAHSUP IMKANININ ILK ANIDIR — FIILI GERI KAZANIM ANI DEGILDIR.
+        Fiili geri kazanim o donemde HESAPLANAN KDV'nin (yurt ici satisin) yeterli
+        olmasina baglidir. Ilk konteynerde satis baslamamissa tamami devreden KDV olur.
     devreden_kdv_olusur_mu:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
+      value: true
+      status: FACT
+      tier: T1
+      evidence_id: EV-2026-08-10-104
+      effective_date: 2004-01-01
+      notes: "Ilk konteynerde hesaplanan KDV ~0 oldugu icin ithalat KDV'sinin tamami devreden olur."
+    devreden_kdv_nakden_iade_edilir_mi:
+      value: false
+      status: FACT
+      tier: T1
+      evidence_id: EV-2026-08-10-104
+      effective_date: 2004-01-01
+      dayanak: "KDVK md.29/2: 'sonraki donemlere devrolunur ve IADE EDILMEZ'"
+      istisna_notu: >-
+        Iade hakki YALNIZCA md.28 uyarinca vergi nispeti INDIRILEN teslimlerde dogar.
+        Sarabin yurt ici teslimi GENEL ORAN %20'dir (EV-2026-08-09-118) -> istisna UYGULANMAZ.
+        md.32 kapsaminda (ihracat vb.) iade hakki doguran islem de yoktur.
     iade_sureci_gun:
       value: null
       unit: gun
-      status: UNKNOWN
-      evidence_id: null
+      status: "N/A"
+      evidence_id: EV-2026-08-10-104
+      notes: "IADE SURECI YOKTUR — iade hakki dogmuyor. UNKNOWN degil, N/A."
+    devreden_kdv_sure_siniri:
+      value: null
+      status: FACT
+      tier: T1
+      evidence_id: EV-2026-08-10-112
+      effective_date: 2030-01-01
+      notes: >-
+        BASE_DATE (2026-08-10) itibariyla sure siniri YOKTUR. 7524 s.K. md.20 ile
+        1/1/2030'dan itibaren 5 TAKVIM YILI siniri gelir (KDVK md.30/f); ozel hesaba
+        alinir, 3 yil icinde talep + vergi incelemesi ile GIDER yazilabilir, nakden
+        iade YINE YOKTUR. KUYRUK RISKIDIR, baz senaryo parametresi DEGILDIR.
+    kaldirilamaz_kdv_tabani_try_per_sise:
+      value: null              # TUREV
+      formul: "ekonomik_otv_maliyeti_try_per_sise * matrah_sirasi[KDV].oran_pct / 100"
+      status: ESTIMATE
+      tier: T1
+      evidence_id: EV-2026-08-10-119
+      notes: >-
+        OTV, KDV matrahinda oldugu icin (KDVK md.21/b) CIF sifira gitse bile KDV dogar.
+        BASE_DATE'te 53.4519 x 0.20 = 10.6904 TL/sise. Ekonomik maliyet DEGILDIR ama
+        gumrukte NAKDEN odenir ve peak_cash_requirement'a girer.
+
+    # ---- ENGINE ICIN BAGLAYICI KURALLAR ----
+    engine_kurallari:
+      - kod: C1
+        kural: >-
+          Devreden KDV HICBIR KOSULDA nakit iade satiri olarak modellenmez (KDVK md.29/2).
+          Yalnizca gelecek donem HESAPLANAN KDV'sinden mahsup edilir.
+      - kod: C2
+        kural: >-
+          KDV L4'te gosterilir, L5'e TASINMAZ; ancak peak_cash_requirement hesabina
+          TAM TUTARIYLA girer. Bu iki sayi ayni degildir ve toplanmaz.
+      - kod: C3
+        kural: >-
+          Devreden KDV'nin FINANSMAN MALIYETI (devreden x finansman_orani x sure)
+          L5'te GERCEK bir maliyettir ve modelde AYRI SATIR olmalidir.
+          finansman_orani bu dosyanin alani degildir (makro.yaml).
+      - kod: C4
+        kural: >-
+          KDV ve OTV ayni "vergi yuku" satirinda toplanip P&L'e yazilamaz.
+          Ekonomik vergi yuku = GV + KKDF + OTV. KDV bir FINANSMAN kalemidir.
+      - kod: C5
+        kural: >-
+          fire/zayi olan mal orani f ise, f x kdv_per_sise GERCEK ekonomik maliyettir
+          (KDVK md.30/c). f girdisi lojistik.yaml'dan gelir; burada tanimlanmaz.
+    peak_cash_requirement_sozlesmesi: >-
+      her t icin:
+        nakit_cikis(t)  = KDV_ithal(t) + GV(t) + OTV(t) + KKDF(t) + diger
+        devreden(t)     = max(0, devreden(t-1) + KDV_ithal(t) - hesaplanan_KDV(t))
+        geri_kazanim(t) = min(devreden(t-1) + KDV_ithal(t), hesaplanan_KDV(t))
+                          -> beyanname_gunu'nde realize olur
+      peak_cash_requirement = max_t ( devreden(t) + kalici_vergiler_kumulatif(t)
+                                      + isletme_sermayesi(t) )
 
 antrepo_rejimi:
   vergi_dogus_ani:
@@ -440,18 +682,38 @@ antrepo_rejimi:
 # MODEL ICIN HESAP FONKSIYONU TANIMI (engine bu siraya uyar)
 # ------------------------------------------------------------
 hesap_sozlesmesi:
+  # ---- T-906 (b) DUZELTMESI — 2026-08-10 ----
+  # ONCEKI HALI: adimlar metninde 71.2692 ve 0.20 LITERAL olarak tekrar ediyordu.
+  # DESENKRONIZASYON RISKI: OTV Ocak/Temmuz'da degistiginde iki yerde guncelleme gerekiyordu.
+  # DUZELTME: tum literaller ALAN REFERANSINA cevrildi. Bu dosyada bir oran/tutar
+  # ARTIK YALNIZCA TEK BIR YERDE yasar (matrah_sirasi[*]).
   girdi: ["cif_try", "hacim_litre", "mense", "odeme_sekli"]
   adimlar:
-    - "gv = cif_try * gumruk_vergisi_oranlari_by_mense[mense].oran_pct / 100"
-    - "igv = 0"
-    - "kkdf = 0 if odeme_sekli == 'pesin' else UNKNOWN_MATRAH * 0.06"
+    - "gv          = cif_try * gumruk_vergisi_oranlari_by_mense[mense].oran_pct / 100"
+    - "igv         = cif_try * matrah_sirasi[sira=2].oran_pct / 100"
+    - "kkdf        = 0 if odeme_sekli == 'pesin' else UNKNOWN_MATRAH * matrah_sirasi[sira=3].oran_pct / 100"
     - "otv_matrahi = cif_try + gv + igv + kkdf"
-    - "otv = max(otv_matrahi * 0.00, 71.2692 * hacim_litre)"
+    - "otv         = max( otv_matrahi * matrah_sirasi[sira=4].oran_pct / 100 ,
+                          matrah_sirasi[sira=4].asgari_maktu_tutar * hacim_litre )"
     - "kdv_matrahi = cif_try + gv + igv + kkdf + otv"
-    - "kdv = kdv_matrahi * 0.20"
-    - "L4 = cif_try + gv + igv + kkdf + otv + kdv"
-  cikti: ["gv", "igv", "kkdf", "otv", "kdv", "L4"]
+    - "kdv         = kdv_matrahi * matrah_sirasi[sira=5].oran_pct / 100"
+    - "L4          = cif_try + gv + igv + kkdf + otv + kdv"
+  # ---- KATMAN VE PERSPEKTIF AYRIMI (CLAUDE.md §6) ----
+  turev_ciktilar:
+    - "ekonomik_vergi_yuku = gv + igv + kkdf + otv        # KDV DAHIL DEGIL — L5'e tasinan kisim"
+    - "kdv_nakit_cikisi    = kdv                          # L5'e TASINMAZ, peak_cash'e girer"
+    - "kdv_ekonomik_maliyet = 0                           # A1 baz senaryo (EV-2026-08-10-101)"
+    - "kdv_ekonomik_maliyet_A2 = kdv                      # YALNIZCA K1..K4 kosullarinda"
+    - "kdv_fire_maliyeti   = fire_orani * kdv             # KDVK md.30/c — fire_orani lojistik.yaml'dan"
+  cikti: ["gv", "igv", "kkdf", "otv", "kdv", "L4",
+          "ekonomik_vergi_yuku", "kdv_nakit_cikisi", "kdv_ekonomik_maliyet"]
   uyari: >-
-    Bu sozlesme metindir, kod degildir. engine/ altindaki kod oranlari BU DOSYADAN
-    okumalidir. odeme_sekli 'pesin' degilse model KKDF matrahi UNKNOWN oldugu icin
-    UNKNOWN donmelidir.
+    Bu sozlesme METINDIR, kod degildir. engine/ altindaki kod TUM oranlari ve tutarlari
+    BU DOSYADAN okur; hicbir oran/tutar kodda hard-code edilmez (CLAUDE.md §12).
+    odeme_sekli 'pesin' degilse model KKDF matrahi UNKNOWN oldugu icin UNKNOWN donmelidir.
+    L4 icinde KDV VARDIR; L5'e gecerken KDV DUSULUR (A1 baz senaryo). Bu gecis
+    cikti raporunda ACIKCA gosterilmelidir.
+  tarih_kurali: >-
+    Model calistirilirken hangi tarih setinin kullanildigi ciktida yazilir:
+    model_hedef_tarihi == TBD ise cikti "BASE_DATE 2026-08-10 mevzuatiyla" etiketlenir
+    ve GELECEK OTV/kur TAHMINI YAPILMAZ.

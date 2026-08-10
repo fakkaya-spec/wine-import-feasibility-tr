@@ -91,7 +91,7 @@ Sıra numarası **hesaplama sırasıdır.**
 | 2 | İlave Gümrük Vergisi (İGV) | — | **YOK** (2204 İGV listelerinde yer almıyor) | YOK | FACT | EV-2026-08-09-107 | 2026-01-01 |
 | 3 | KKDF | Vadeli ödenen ithalat bedeli (**tam matrah tanımı UNKNOWN**) | Kabul kredili / vadeli akreditif / mal mukabili ⇒ **%6**. Peşin ödemede **doğmaz** | ORANSAL (koşullu) | FACT (oran) / UNKNOWN (matrah) | EV-2026-08-09-119 | 2011-10-13 |
 | 4 | ÖTV | CIF + Gümrük Vergisi + ithalat sırasında ödenen diğer vergi/resim/harç/pay (KKDF dahil) + tescile kadarki diğer giderler — **ÖTV ve KDV hariç** | Nispi **%0**; asgari maktu **71,2692 TL/litre** ⇒ 750 ml için **53,4519 TL/şişe** | KARMA — kanunen "asgari maktudan az olmamak üzere yalnızca nispi"; nispi %0 olduğu için **fiilen MAKTU** | FACT | EV-2026-08-09-110, -111, -113, -115, -116 | 2026-07-03 |
-| 5 | KDV | CIF + Gümrük Vergisi + KKDF + **ÖTV** + tescile kadarki diğer gider ve ödemeler | **%20** | ORANSAL | FACT | EV-2026-08-09-117, -118 | 2023-07-10 (oran) |
+| 5 | KDV | CIF + Gümrük Vergisi + KKDF + **ÖTV** + tescile kadarki diğer gider ve ödemeler | **%20** | ORANSAL | FACT | EV-2026-08-09-117, -118 · **matrah T1 teyidi: EV-2026-08-10-108** | 2023-07-10 (oran) · 1985-01-01 (matrah) |
 | 6 | Damga vergisi (gümrük beyannamesi) | Beyanname başına maktu | UNKNOWN (2026 tutarı doğrulanmadı) | MAKTU | UNKNOWN | — | — |
 | 6b | TRT bandrolü / diğer fonlar | — | UNKNOWN (şarapta uygulanabilirliği doğrulanmadı; TRT bandrolü radyo-TV cihazlarına özgüdür) | UNKNOWN | UNKNOWN | — | — |
 
@@ -220,22 +220,39 @@ CIF = 100,00 TL/şişe (keyfî, sadece zinciri göstermek için), peşin ödeme 
 
 ## 8. KDV — İKİ PERSPEKTİF
 
-| Soru | Cevap | status | evidence_id |
-|------|-------|--------|-------------|
-| İthalatta ödenen KDV indirilebilir mi? | **UNKNOWN (bu turda doğrulanmadı).** KDV Kanunu md.29 vd. genel indirim mekanizması mevcuttur ancak alkollü içki ticaretine özgü bir sınırlama olup olmadığı doğrulanmadı | UNKNOWN | — |
-| İndirilebiliyorsa ne zaman mahsup edilir? | UNKNOWN | UNKNOWN | — |
-| Devreden KDV oluşur mu, iade süreci nedir? | UNKNOWN | UNKNOWN | — |
-| ÖTV indirilebilir mi? | **HAYIR** — ithalatçı-satıcı için ÖTV maliyettir | FACT | EV-2026-08-09-124 |
-| KDV ödeme anı | Gümrükte, gümrük vergisi ile birlikte | FACT (yapısal) | EV-2026-08-09-126 |
+> **GÜNCELLEME — TUR 1.5 (2026-08-10):** Bu bölümün beş satırından **üçü**
+> `UNKNOWN`'dan `FACT`'e çevrildi. Tam analiz:
+> **`30-vergi-gumruk/kdv-ekonomik-maliyet-vs-nakit.md`** (ana çıktı).
+> OQ-G01 (CRITICAL) **KAPANDI**.
 
-**A) Ekonomik maliyet:** KDV indirilebiliyorsa P&L'e girmez → L4'te gösterilir
-ama L5'e taşınmaz. **Bu, doğrulanmadığı sürece modelde iki senaryo olarak
-çalıştırılmalıdır.**
-**B) Nakit akışı (`cash_tax_timing`):** Gümrükte ödeme anı ile mahsup/tahsilat
-anı arasındaki gecikme `peak_cash_requirement`'ı büyütür. Gecikme gün sayısı
-**UNKNOWN**.
+| Soru | Cevap | status | tier | evidence_id | effective_date |
+|------|-------|--------|------|-------------|----------------|
+| İthalatta ödenen KDV indirilebilir mi? | **EVET.** KDVK **md.29/1-b**: *"İthal olunan mal ve hizmetler dolayısıyla **ödenen** KDV"* indirilir. Şart: **md.34/1** — gümrük makbuzunda ayrıca gösterilmek + kanuni deftere kaydedilmek | **FACT** | T1 | EV-2026-08-10-101, -102 | 1985-01-01 |
+| Alkollü içki ticaretine özgü bir indirim yasağı var mı? | **HAYIR.** KDVK **md.30** (indirilemeyecek KDV) **tam metni** tarandı — a/b/c/d/e bentlerinin hiçbiri alkole değinmiyor. md.30 **tahdidi** bir listedir; burada yer almamak hukmen yer almamaktır | **FACT** | T1 | EV-2026-08-10-103 | 2019-01-01 |
+| İndirim hangi dönemde yapılır? | Gümrük makbuzunun **kanuni deftere kaydedildiği** vergilendirme dönemi (md.34/1); süre sınırı: vergiyi doğuran olayın vuku bulduğu **takvim yılını takip eden takvim yılı** (md.29/3) | **FACT** | T1 | EV-2026-08-10-102, -105 | 2019-01-01 |
+| Devreden KDV oluşursa iade edilir mi? | **HAYIR.** md.29/2: *"sonraki dönemlere devrolunur ve **iade edilmez**"*. İade istisnası yalnız md.28 **indirimli oran** teslimleri için; şarap **genel oran %20**'dir → iade hakkı **YOK**, yalnız ileriye taşıma | **FACT** | T1 | EV-2026-08-10-104 | 2004-01-01 |
+| Devreden KDV'nin süre sınırı var mı? | **Şu an YOK.** 7524 s.K. md.20 ile **1/1/2030**'dan itibaren "beş takvim yılı süresince indirim yoluyla giderilemeyen KDV" md.30/(f) ile indirilemez hale gelir; özel hesaba alınır, 3 yıl içinde talep + vergi incelemesi ile **gider** yazılabilir (nakden iade yine yok) | **FACT** | T1 | EV-2026-08-10-112 | 2030-01-01 |
+| ÖTV indirilebilir mi? | **HAYIR** — ithalatçı-satıcı için ÖTV maliyettir | FACT | T1 | EV-2026-08-09-124 | 2002-08-01 |
+| KDV ödeme anı | KDVK **md.46/2**: *"İthalde alınan KDV, gümrük vergisi ile birlikte ve aynı zamanda ödenir"* | **FACT** | **T1** | EV-2026-08-10-107 | 1985-01-01 |
+| Vergiyi doğuran olay | KDVK **md.10/ı**: gümrük vergisi ödeme mükellefiyetinin başlaması = serbest dolaşıma giriş beyannamesinin **tescili** | **FACT** | T1 | EV-2026-08-10-106 | 1998-07-29 |
+| Ödeme → ilk mahsup gecikmesi | **28–59 gün** (ortalama ~44). Formül: `(N − D) + 28`. 3 aylık dönemde 28→~118 gün | ESTIMATE | T1 (türetme) | EV-2026-08-10-118 | 2026-08-10 |
 
-Bu ikisi **asla tek satırda** gösterilmez.
+**A) ECONOMIC COST VIEW:** KDV **ekonomik maliyet DEĞİLDİR** → L4'te gösterilir,
+**L5'e taşınmaz**. Şişe başına ekonomik KDV maliyeti = **0,00 TL**.
+*İki senaryo (A1/A2) çalıştırma zorunluluğu KALKMIŞTIR;* A2 artık bir baz senaryo
+değil, dört koşullu bir **risk senaryosudur** (md.30/a mükellefiyet, md.30/c zayi
+olan mal/fire, md.30/f 2030 sonrası 5 yıl, md.29/3 süre kaçırma).
+
+**B) CASH FLOW VIEW (`cash_tax_timing`):** KDV gümrükte **tam tutarıyla nakden**
+ödenir ve `peak_cash_requirement`'a **tam girer**. Devreden KDV **iade edilmez**,
+yalnız gelecek dönem hesaplanan KDV'sinden mahsup edilir → geri kazanım
+**satış hızına kilitlidir**. Devreden KDV'nin **finansman maliyeti L5'te gerçek
+bir maliyettir** ve ayrı satır olmalıdır.
+
+**Kaldırılamaz KDV tabanı:** ÖTV, KDV matrahında olduğu için (md.21/b) CIF sıfıra
+gitse bile `53,4519 × 0,20 = **10,6904 TL/şişe**` KDV doğar (EV-2026-08-10-119).
+
+Bu ikisi **asla tek satırda** gösterilmez ve toplanmaz.
 
 ---
 
@@ -256,7 +273,11 @@ Bu ikisi **asla tek satırda** gösterilmez.
 | Menşe ispat belgesi türü | ❌ UNKNOWN |
 | Antrepo vergi doğuş anı | ✅ FACT |
 | Antrepo kısmi çekiş | ❌ UNKNOWN (T-101) |
-| İthalat KDV'sinin indirilebilirliği | ❌ UNKNOWN |
+| İthalat KDV'sinin indirilebilirliği | ✅ **FACT — TUR 1.5'te kapandı** (EV-2026-08-10-101/-102/-103) |
+| Devreden KDV'nin iade edilmemesi (md.29/2) | ✅ **FACT — TUR 1.5** (EV-2026-08-10-104) |
+| KDV ödeme → mahsup gecikmesi | ✅ **ESTIMATE 28–59 gün — TUR 1.5** (EV-2026-08-10-118) |
+| Fiili vergilendirme dönemi (1 ay / 3 ay) | ❌ UNKNOWN → ASSUMPTION=1 ay (T-152) |
+| KDVGUT III/C + md.36 CB kararı taraması | ❌ UNKNOWN (T-151) |
 | Damga vergisi tutarı | ❌ UNKNOWN |
 
 ---
