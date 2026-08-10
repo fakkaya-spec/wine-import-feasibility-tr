@@ -1551,3 +1551,55 @@ kapanmaz: ticari veri sağlayıcıları (volza, exportgenius) bu oturumda **403*
 - `T-205`'in statüsü **değiştirilmedi**; yalnızca sonuna bir **kullanım kaydı** eklendi.
 
 ---
+
+---
+
+# TUR 2 KONSOLİDASYONU — BAŞKAN TARAFINDAN AÇILAN SORULAR
+
+```yaml
+acan:    yatirim-komitesi-baskani
+tarih:   2026-08-10
+belge:   90-karar/tur-2-konsolidasyon.md §5.2
+not:     "Bu sorular ARASTIRMA sonucu degildir; iki ajanin ciktisinin kesistigi
+          ve hicbirinin sahiplenmedigi bosluklardir."
+```
+
+---
+
+## OQ-911 — Antrepo / bandrolleme tesisi nerede olacak?
+
+| Alan | İçerik |
+|---|---|
+| **Soru** | Bandrolleme ve antrepo operasyonu **hangi şehirde/limanda** yapılacak? Bu belirlenmeden **varış limanı seçilemez.** |
+| **Sahibi** | **kurucu / yatırımcı** *(+ `navlun-lojistik-uzmani` maliyet tarafı)* |
+| **Neden açıldı** | `EV-2026-08-10-332` (varış limanı kuralı) bir **büyüklük mertebesi karşılaştırması** yapmış ve şu sonuca varmıştır: varış limanı **terminal tarifesine göre değil**, **antrepo/bandrolleme tesisinin ve hedef pazarın yerine göre** seçilir. Ama o tesisin yeri **hiçbir yerde tanımlı değildir.** |
+| **Sayısal kaldıraç** | THD farkı (İzmir 165 ↔ Mersin 40' 298 USD) = **max 133 USD/konteyner = 0,006–0,011 USD/şişe**. İç nakliye farkı (Ambarlı→İzmir 37.500 TL) = **2,7–3,2 TRY/şişe**. **~2 kat mertebe farkı.** |
+| **Neyi kilitliyor** | (1) `lojistik.yaml → ic_lojistik.*` — TRY bacağının **en büyük tek kalemi**; (2) `C-312`'nin hangi terminalin tarifesine göre okunacağı (**bu turda `RESOLVED — KAPSAM`**: free time terminale özgüdür); (3) `T-313`'ün hedefi; (4) bandrolleme kapasitesi ve süresi (`T-314`, `T-301`) |
+| **Nasıl kapanır** | Yatırımcı beyanı veya 2–3 antrepo/3PL teklifi. **Araştırmayla kapanmaz.** |
+| **Kritik mi** | **HIGH** — modeli bloke etmez ama TRY bacağının en büyük kalemini belirsiz bırakır |
+
+---
+
+## OQ-912 — TUR 3 hangi tarihte çalıştırılacak?
+
+| Alan | İçerik |
+|---|---|
+| **Soru** | Finans modeli **hangi tarihte** çalıştırılacak? Projenin kanıt tabanı **dar bir tazelik penceresi** içindedir ve bu soru şimdiye kadar **hiç sorulmamıştır.** |
+| **Sahibi** | **`yatirim-komitesi-baskani`** *(karar)* |
+| **Tazelik penceresi** | `EV-2026-08-10-301…311` (**11 LCL kotasyonu**, `ttl: 6d`) → **2026-08-16** · `EV-2026-08-10-312`, `-322`, `-323`, `-324`, `-329`, `-330`, `-331` (`ttl: 14d`) → **2026-08-24** · `EV-2026-08-09-111` (**ÖTV 71,2692 TL/lt**, `ttl: 30d`) → **2026-09-08** |
+| **Neden önemli** | **2026-08-16'dan sonra** çalıştırılan bir model, **projedeki tek gerçek navlun verisini bayatlatarak** çalışır: 9 rotanın navlun bacağı `UNKNOWN`'a döner, `T-304`'ün LCL ayağı **yeniden açılır** ve LCL/FCL kırılma noktası hesabının **kanıtlı tarafı da** kaybolur. **2026-09-08'den sonra** ÖTV serisi yeniden doğrulanmalıdır. |
+| **İkinci sıra etkisi** | Model bayat girdiyle çalışırsa `seytanin-avukati` TUR 4'te **haklı olarak** tüm çıktıyı reddedebilir. |
+| **Nasıl kapanır** | Başkan kararı: **(a)** TUR 3'ü 2026-08-16'dan önce çalıştır, **(b)** `T-913` ile kotasyonları yeniden doğrulat, veya **(c)** navlun bacağını bilinçli olarak `UNKNOWN` kabul ederek çalıştır ve bunu çıktıda **açıkça yaz.** |
+| **Kritik mi** | **HIGH** — bir zamanlama kararıdır, bir veri eksiği değildir |
+
+---
+
+## TUR 2 KONSOLİDASYONUNDA KAYDA GEÇİRİLEN — YATIRIMCI GİRDİSİ BEKLEYEN İKİ SORU
+
+Bu ikisi **yeni değildir**, ama TUR 3/TUR 6 blokeri oldukları için burada
+tekrar işaretlenir:
+
+| id | Soru | Sahibi | Neyi bloke ediyor |
+|---|---|---|---|
+| **`OQ-002`** | `model_hedef_tarihi` **`null`** | **yatırımcı** | **TUR 3** — ÖTV serisinin hangi noktadan okunacağı belirsiz (`T-104`); `t > 2026-12-31` ise engine tasarım gereği `UNKNOWN` döner |
+| **`OQ-901`** | `00-charter/karar-esikleri.md`'deki karar eşiklerinin **tamamı `TBD`** | **yatırımcı** | **TUR 6** — eşik yoksa "yeterli mi?" sorusu cevaplanamaz. **Araştırmayla kapanmaz.** |

@@ -1,23 +1,51 @@
-# TICKET İNDEKSİ — TUR 2 SONU
+# TICKET İNDEKSİ — TUR 2 KONSOLİDASYONU SONRASI
 
-> Otomatik üretildi (başkan tur sonu derlemesi, 2026-08-10).
+> Güncellendi: **2026-08-10, TUR 2 konsolidasyonu** (`yatirim-komitesi-baskani`).
 > Kaynak: `99-ops/tickets/T-*.md`. Tek doğruluk kaynağı ticket dosyalarının kendisidir.
+> Karar kaydı: `90-karar/tur-2-konsolidasyon.md`
 
-**Toplam: 63 ticket** — impact: CRITICAL 6, HIGH 32, MEDIUM 24, CONSTRAINT 1
+**Toplam: 71 ticket** — impact: CRITICAL 7, HIGH 38, MEDIUM 25, CONSTRAINT 1
 
-**status:** ANSWERED 4, OPEN 55, RESOLVED 4
+**status:** ANSWERED 8, OPEN 59, RESOLVED 4
 
-**Açık CRITICAL: 5**
+**Açık CRITICAL: 6**
 
 | ticket | status | hedef | konu |
 |---|---|---|---|
-| `T-104` | ANSWERED | `finans-fizibilite` | Şarapta ÖTV maktu tutarı Ocak ve Temmuz aylarında Yİ-ÜFE ile kendiliği |
-| `T-301` | OPEN | `mevzuat-ruhsat-uzmani` | "Ruhsat / uygunluk / analiz / bandrol nedeniyle malin gumrukte + antre |
-| `T-304` | OPEN | `yatirim-komitesi-baskani` | "Hicbir rotamiz icin dogrulanmis navlun YOKTUR. Model tek bir navlun r |
-| `T-466` | OPEN | `finans-fizibilite` | "TUR 2'de bulunan TEK yayinlanmis sise fiyati (2.85+/sise) PARA BIRIMI |
-| `T-601` | OPEN | `mevzuat-ruhsat-uzmani` | "Siselenmis sarap, 6585 s. Perakende Ticaretin Duzenlenmesi Hakkinda K |
+| `T-104` | ANSWERED | `finans-fizibilite` | ÖTV maktu tutarı Yİ-ÜFE ile 6 ayda bir kendiliğinden artar; modelde sabit sayı olamaz. **Veri yapısı ayağı kabul edildi; engine + makro varsayım + `model_hedef_tarihi` eksik** |
+| `T-301` | OPEN | `mevzuat-ruhsat-uzmani` | Ruhsat/analiz/bandrol nedeniyle gümrükte + antrepoda bekleme süresi. **TUR 2'de kapsamı genişledi: artık konteyner modu (LCL↔FCL) blokeri** |
+| `T-304` | OPEN | `yatirim-komitesi-baskani` | Hiçbir rota için doğrulanmış navlun yok. **LCL ayağı `ANSWERED`; çekirdek (FCL) açık — `C-311`** |
+| `T-466` | OPEN | `finans-fizibilite` | Tek yayınlanmış fiyat modele giremez; `exw`/`fob` `null` kalmalı. **İndirim YAPILMADI** |
+| `T-601` | OPEN | `mevzuat-ruhsat-uzmani` | Şişelenmiş şarap 6585 m.7/3 anlamında "tarım ve gıda ürünü" mü? **`C-601`'in çekirdeği buna bağlı** |
+| `T-912` | OPEN | `finans-fizibilite` | **YENİ** — `makro.yaml → fx` `null`; kur olmadan modelin **her parasal çıktısı** `UNKNOWN` döner. **Projedeki en ucuz CRITICAL bloker** |
 
 > **CLAUDE.md §5:** Kritik açık ticket varken finans modeli `APPROVED` olamaz.
+> **TUR 3 çıktısı en fazla `DRAFT` olabilir.**
+
+---
+
+## TUR 2 KONSOLİDASYONUNDA YAPILAN STATÜ DEĞİŞİKLİKLERİ (2026-08-10)
+
+| ticket | önce | sonra | gerekçe |
+|---|---|---|---|
+| `T-464` | OPEN | **ANSWERED** | `turkiye-pazar-kasifi` cevapladı: 7 Model A markasının hiçbirinin TR ithalatçısı **bulunamadı**. `RESOLVED` değil — **`BULUNAMADI` ≠ `YOK`**; kapanış için `T-505` gerekir |
+| `T-401` | OPEN | **ANSWERED** | `mense-tarife-eslemesi.md` 9 ülkeyi eşledi. `RESOLVED` değil — birincil kaynaklara **erişilemedi**; Şili satırının **belgesi T3** |
+| `T-462` | OPEN | **ANSWERED** | Moldova T1 ile kapatıldı (%70; STA var, 2204.21'i kapsamıyor). `RESOLVED` değil — **Yeni Zelanda ayağı cevaplanmadı** |
+| `T-506` | OPEN | **ANSWERED** | Ciro primi mekaniği alkolde **vardır**; Metro kampanya mekaniği ayrı şeydir. `RESOLVED` değil — **fark büyüklüğü hâlâ `UNKNOWN`** (`OQ-612`) |
+| `T-104` · `T-301` · `T-304` · `T-466` · `T-601` | — | **statü DEĞİŞMEDİ** | Beşine de **başkan kaydı eklendi**; hiçbiri kapatılamadı, hiçbirinin impact'i düşürülmedi |
+
+## TUR 2 KONSOLİDASYONUNDA AÇILAN YENİ TICKET'LAR
+
+| ticket | hedef | impact | konu |
+|---|---|---|---|
+| `T-911` | `gumruk-vergi-uzmani` | HIGH | İthalatta hangi kur uygulanır — **gümrük kuru mu piyasa kuru mu**? `fx.gumruk_kuru_kullanilir_mi` `UNKNOWN` |
+| `T-912` | `finans-fizibilite` | **CRITICAL** | `makro.yaml → fx` **`null`** — her parasal çıktı `UNKNOWN` döner |
+| `T-913` | `navlun-lojistik-uzmani` | HIGH | 11 LCL kotasyon kartı **2026-08-16'da STALE** — projedeki tek gerçek navlun verisi |
+| `T-914` | `gumruk-vergi-uzmani` | HIGH | **Şili × Barcelona aktarması**: `SIL` rejiminin "çıkış ülkesi yalnızca Şili" kuralı bozulur mu? Bozulursa **+24 TL/şişe** |
+| `T-915` | `navlun-lojistik-uzmani` | HIGH | **Fransız adaylarının limanı eşleşmiyor** — tek kotasyon Marsilya, tedarikçiler Bordeaux/Gaskonya |
+| `T-916` | `navlun-lojistik-uzmani` | HIGH | **İtalya'da yanlış kıyı** — test edilen 4 liman Tirren, A-öncelikli tedarikçi Veneto; DFDS Trieste hattı elde ama değerlendirilmemiş |
+| `T-917` | `turkiye-pazar-kasifi` | HIGH | **TEK FİZİKSEL GÖZLEM PAKETİ** — bir mağaza turu `T-504`+`T-603`+`C-551`+`C-501`'i aynı anda kapatır. **P1–P10 protokolü** |
+| `T-918` | `global-sourcing-kasifi` | MEDIUM | `C-401`/`C-402`/`C-403` statü kaydı düzeltmesi (rapor "AÇIK" diyor, gerçek: RESOLVED/RESOLVED/UNRESOLVABLE) |
 
 ## TÜM TICKET'LAR
 
@@ -41,18 +69,18 @@
 | `T-311` | `navlun-lojistik-uzmani` | `finans-fizibilite` | **HIGH** | OPEN | "Lojistik maliyeti UC PARA BIRIMINDEDIR (USD okyanus + EUR mense local charge + TRY Turkiye ope |
 | `T-312` | `navlun-lojistik-uzmani` | `global-sourcing-kasifi` | **HIGH** | OPEN | "Italya rotasi lojistik olarak TAMAMEN UNKNOWN'dir (LCL de FCL de). Ayrica Ispanya disindaki hi |
 | `T-314` | `navlun-lojistik-uzmani` | `yatirim-komitesi-baskani` | **HIGH** | OPEN | "Antrepo ici operasyon (elleclleme, yeniden paletleme, bandrolleme) ve cam kirilma orani iki tu |
-| `T-401` | `global-sourcing-kasifi` | `gumruk-vergi-uzmani` | **HIGH** | OPEN | "Aday mense ulkeleri icin GTIP 2204.21'de Turkiye ile tercihli tarife rejimi var mi ve hangi me |
+| `T-401` | `global-sourcing-kasifi` | `gumruk-vergi-uzmani` | **HIGH** | ANSWERED | "Aday mense ulkeleri icin GTIP 2204.21'de Turkiye ile tercihli tarife rejimi var mi ve hangi me |
 | `T-402` | `global-sourcing-kasifi` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | "20'DV / 40'HC konteynere kac sise 750 ml sarap yuklenir ve aday yukleme limanlarindan Turkiye' |
 | `T-403` | `global-sourcing-kasifi` | `mevzuat-ruhsat-uzmani` | **HIGH** | OPEN | "Turkce arka etiket menside (uretici tesisinde) uygulanabilir mi, yoksa Turkiye'de mi uygulanma |
 | `T-404` | `global-sourcing-kasifi` | `gumruk-vergi-uzmani` | **HIGH** | OPEN | "Tedarikciye pesin odeme ile vadeli odeme arasindaki secim, ithalatta KKDF veya baska bir vergi |
 | `T-461` | `global-sourcing-kasifi` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | "Bir uretici 20ft konteynere PALETSIZ (slipsheet) 14.112 sise girdigini ilan ediyor; PALETLI yu |
-| `T-462` | `global-sourcing-kasifi` | `gumruk-vergi-uzmani` | **HIGH** | OPEN | "TUR 2 havuzuna giren YENI menseler (Moldova, Romanya, Bulgaristan ayni grup icinde; Yeni Zelan |
-| `T-464` | `global-sourcing-kasifi` | `turkiye-pazar-kasifi` | **HIGH** | OPEN | "TUR 2'de bulunan 7 somut MODEL A markasinin Turkiye'de halihazirda ithalatcisi/distributoru VA |
+| `T-462` | `global-sourcing-kasifi` | `gumruk-vergi-uzmani` | **HIGH** | ANSWERED | "TUR 2 havuzuna giren YENI menseler (Moldova, Romanya, Bulgaristan ayni grup icinde; Yeni Zelan |
+| `T-464` | `global-sourcing-kasifi` | `turkiye-pazar-kasifi` | **HIGH** | ANSWERED | "TUR 2'de bulunan 7 somut MODEL A markasinin Turkiye'de halihazirda ithalatcisi/distributoru VA |
 | `T-467` | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | **HIGH** | OPEN | "G2 gate'i 'gercek RFQ cevabi (>=5 tedarikci)' ile aciliyor; RFQ gonderimi ise DIS ILETISIM ger |
 | `T-501` | `turkiye-pazar-kasifi` | `mevzuat-ruhsat-uzmani` | **HIGH** | OPEN | "Fiyat Etiketi Yonetmeligi (RG 28.06.2014/29044) uyarinca perakende satisa arz edilen malin eti |
 | `T-504` | `turkiye-pazar-kasifi` | `yatirim-komitesi-baskani` | **HIGH** | OPEN | "OQ-001'in promosyon ayagi (Soru 5/6) kapatilamadi. Ayni SKU icin ikinci bir Metro magaza gozle |
 | `T-505` | `turkiye-pazar-kasifi` | `mevzuat-ruhsat-uzmani` | **HIGH** | OPEN | "TADAB'in yayinladigi 'ithalat/dagitim uygunluk belgesi' sahipleri listesi veya alkollu icki pi |
-| `T-506` | `turkiye-pazar-kasifi` | `kanal-marj-uzmani` | **HIGH** | OPEN | "Metro magaza (cash&carry) fiyati ile Metro sevkiyat/HoReCa teslimat fiyati FARKLIDIR (Metro'nu |
+| `T-506` | `turkiye-pazar-kasifi` | `kanal-marj-uzmani` | **HIGH** | ANSWERED | "Metro magaza (cash&carry) fiyati ile Metro sevkiyat/HoReCa teslimat fiyati FARKLIDIR (Metro'nu |
 | `T-551` | `turkiye-pazar-kasifi` | `yatirim-komitesi-baskani` | **HIGH** | RESOLVED | "TUR 1'de 'Metro etiketinde KDV haric/dahil CIFTLI gosterim YOKTUR' sonucuna varildi (EV-2026-0 |
 | `T-563` | `turkiye-pazar-kasifi` | `kanal-marj-uzmani` | **HIGH** | OPEN | Turkiye ithal sarap dagitiminda 4 ithalatci grubu ISMEN tespit edildi ve bunlardan biri (Kavakl |
 | `T-602` | `kanal-marj-uzmani` | `finans-fizibilite` | **HIGH** | OPEN | "kanal.yaml'daki marj, vade, geri akan bedel ve listeleme bedeli alanlari TEK SAYI DEGIL SENARY |
@@ -86,3 +114,11 @@
 | `T-905` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | **MEDIUM** | OPEN | "EV-2026-08-09-310 bir MEVZUAT kanitidir (Karayollari Trafik Yonetmeligi md.128, 44 ton), tier  |
 | `T-906` | `yatirim-komitesi-baskani` | `gumruk-vergi-uzmani` | **MEDIUM** | ANSWERED | "Iki model girdisi hijyen sorunu: (a) vergi.yaml -> urun_parametreleri.sise_hacmi_litre = 0.75  |
 | `T-205` | `mevzuat-ruhsat-uzmani` | `kanal-marj-uzmani` | **CONSTRAINT** | RESOLVED | 20/06/2026'da yürürlüğe giren 7584 s.K. m.2 ile alkollü içki marka/logo/ambalaj görsellerinin i |
+| `T-911` | `yatirim-komitesi-baskani` | `gumruk-vergi-uzmani` | **HIGH** | OPEN | Ithalatta hangi KUR uygulanir — gumruk kuru mu serbest piyasa kuru mu? makro.yaml -> fx.gumruk_kuru_kul |
+| `T-912` | `yatirim-komitesi-baskani` | `finans-fizibilite` | **CRITICAL** | OPEN | makro.yaml -> fx (usd_try, eur_try, eur_usd) NULL'dur. Kur TARIHLI ve KANITLI doldurulmadan modelin HER |
+| `T-913` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | EV-2026-08-10-301...-311 (11 LCL kotasyon karti) ttl 6d'dir ve 2026-08-16'da STALE olur. Projedeki EN K |
+| `T-914` | `yatirim-komitesi-baskani` | `gumruk-vergi-uzmani` | **HIGH** | OPEN | Sili menseli sarapta BARCELONA AKTARMASI, SIL rejiminin 'cikis ulkesi YALNIZCA SILI' kuralini bozar mi |
+| `T-915` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | Fransiz adaylarinin LIMANI ESLESMIYOR. Tek FR kotasyonu MARSILYA; tedarikciler Bordeaux/Gaskonya'da |
+| `T-916` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | Italya rotasi test edilen limanlarin TAMAMINDA TIRRENYA'dir; A-oncelikli tedarikci VENETO'dadir. DFDS T |
+| `T-917` | `yatirim-komitesi-baskani` | `turkiye-pazar-kasifi` | **HIGH** | OPEN | TEK FIZIKSEL GOZLEM PAKETI: bir magaza turu T-504 + T-603 + C-551 + C-501/OQ-502'yi AYNI ANDA kapatir |
+| `T-918` | `yatirim-komitesi-baskani` | `global-sourcing-kasifi` | **MEDIUM** | OPEN | rapor-tur2-global-sourcing.md §4, C-401/C-402/C-403'u 'ACIK' raporluyor; gercek: RESOLVED/RESOLVED/UNRE |
