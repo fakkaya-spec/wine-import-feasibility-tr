@@ -4,58 +4,225 @@
 # KURAL: evidence_id'si olmayan sayı modele GİREMEZ.
 # KURAL: Kur donusumu yapilmis bir sayi, orijinal sayinin YERINE GECMEZ.
 #        Her sayi kendi orijinal para biriminde saklanir.
-# Bu turda tüm değerler null / UNKNOWN'dır. UYDURMA.
+# KURAL: Doğrulanamayan değer null / UNKNOWN kalır. UYDURMA.
+#
+# TUR 3.25 §1 (2026-08-10): YALNIZCA `fx` bloğu dolduruldu (gumruk-vergi-uzmani,
+# OBSERVED_FX / NOT_FORECAST). `finansman`, `enflasyon`, `model_donemi` ve
+# `fx_duyarlilik.fiyat_guncelleme_gecikmesi_gun` HÂLÂ null/UNKNOWN'dır ve bu
+# turda BİLEREK doldurulmamıştır (kapsam dışı / başka ajanın alanı).
 
 meta:
   dosya: makro.yaml
-  son_guncelleme: 2026-08-09
-  tur: "TUR 0 — kurulum"
-  durum: BOS_ISKELET
+  son_guncelleme: 2026-08-10
+  tur: "TUR 3.25 §1 — FX SNAPSHOT (fx bloğu dolduruldu)"
+  durum: KISMEN_DOLU
+  doldurulan_bloklar: [fx, fx_duyarlilik]
+  bos_kalan_bloklar: [finansman, enflasyon, model_donemi, fx.gumruk_kuru_kullanilir_mi, fx_duyarlilik.fiyat_guncelleme_gecikmesi_gun]
+  fx_dolduran_ajan: gumruk-vergi-uzmani
+  fx_evidence: [EV-2026-08-10-865, EV-2026-08-10-866, EV-2026-08-10-867, EV-2026-08-10-868]
+  fx_ttl_bitis: 2026-08-17
 
 fx:
-  usd_try:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
-    kur_tarihi: null
-    kaynak: null
+  # =====================================================================
+  # TUR 3.25 §1 — FX SNAPSHOT  (dolduran: gumruk-vergi-uzmani, 2026-08-10)
+  # ETIKET: OBSERVED_FX / NOT_FORECAST
+  # Asagidaki HICBIR sayi bir kur TAHMINI DEGILDIR. `observed` bir GOZLEMDIR;
+  # `senaryolar` bir DUYARLILIK EKSENIDIR (bkz. senaryolar.amac).
+  # T-852 / T-912 bu blok ile ANSWERED'a alinmistir.
+  # =====================================================================
+
+  observed:
+    etiket: [OBSERVED_FX, NOT_FORECAST]
+    kaynak: "TCMB — Gunluk Doviz Kurlari bulteni"
+    bulten_no: "2026/147"
+    kaynak_url: "https://www.tcmb.gov.tr/kurlar/202608/10082026.xml"
+    tier: T2
+    kur_tarihi: 2026-08-10
+    gozlem_zamani_utc: "2026-08-10T19:50:00Z"
+    gozlem_zamani_trt: "2026-08-10T22:50:00+03:00"
+    bulten_gun_ici_sabitlenme_saati: null   # DOGRULANMADI — UNKNOWN. Kaydedilen sey GOZLEM anidir.
     ttl: 7d
-    notes: "Kur tarihi belirtilmeden kullanilan kur gecersizdir."
+    ttl_bitis: 2026-08-17                   # sonrasi STALE -> 99-ops/veri-tazeligi.md
+    snapshot: "10-evidence/raw/snapshots/EV-2026-08-10-865_tcmb-today-kurlar-10082026.xml"
+
+    # DORT KUR TIPI FARKLIDIR VE BIRBIRININ YERINE KULLANILAMAZ.
+    # birincil = doviz_satis: ithalatci dovizi SATIN ALAN taraftir.
+    eur_try:
+      birincil: doviz_satis
+      value: 55.1414
+      doviz_alis: 55.0422        # ForexBuying
+      doviz_satis: 55.1414       # ForexSelling  <- birincil
+      efektif_alis: 55.0037      # BanknoteBuying
+      efektif_satis: 55.2241     # BanknoteSelling
+      spread_try: 0.0992
+      unit: "TRY / 1 EUR"
+      status: FACT
+      evidence_id: EV-2026-08-10-865
+
+    usd_try:
+      birincil: doviz_satis
+      value: 47.7118
+      doviz_alis: 47.6260
+      doviz_satis: 47.7118
+      efektif_alis: 47.5927
+      efektif_satis: 47.7834
+      spread_try: 0.0858
+      unit: "TRY / 1 USD"
+      status: FACT
+      evidence_id: EV-2026-08-10-866
+
+    eur_usd:
+      value: 1.1557
+      unit: "USD / 1 EUR"
+      status: FACT
+      evidence_id: EV-2026-08-10-867
+      notes: >
+        TCMB'nin ilan ettigi capraz kur. IC TUTARLILIK DOGRULANDI:
+        55,1414/47,7118 = 1,1557 (satis) ve 55,0422/47,6260 = 1,1557 (alis).
+        EUR ve USD ayni bultenden, ayni ana aittir.
+
+    notes: >
+      Bunlar TCMB'nin ilan ettigi RESMI GOSTERGE kurlaridir (T2). Bir ithalat
+      beyannamesinde hangi kurun uygulanacagi AYRI BIR SORUDUR ve bu blokta
+      CEVAPLANMAMISTIR -> bkz. fx.gumruk_kuru_kullanilir_mi ve T-911 (ACIK).
+      Bu blok kullanilirken kur tipi (alis/satis/efektif) MUTLAKA belirtilir.
+
+  # --- Motor uyumlulugu icin duz alanlar (observed bloguna OZDESTIR) ----
+  # Bu alanlar observed'in KOPYASIDIR, ALTERNATIFI DEGILDIR. Biri
+  # guncellenirse digeri de guncellenir; yoksa CONFLICT dogar.
+  usd_try:
+    value: 47.7118
+    kur_tipi: doviz_satis
+    status: FACT
+    evidence_id: EV-2026-08-10-866
+    kur_tarihi: 2026-08-10
+    kaynak: "TCMB Gunluk Doviz Kurlari, Bulten No 2026/147"
+    ttl: 7d
+    notes: "Kur tarihi belirtilmeden kullanilan kur gecersizdir. Kur tarihi: 2026-08-10. Alis kuru 47,6260 -> fx.observed.usd_try."
 
   eur_try:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
-    kur_tarihi: null
-    kaynak: null
+    value: 55.1414
+    kur_tipi: doviz_satis
+    status: FACT
+    evidence_id: EV-2026-08-10-865
+    kur_tarihi: 2026-08-10
+    kaynak: "TCMB Gunluk Doviz Kurlari, Bulten No 2026/147"
     ttl: 7d
+    notes: "Alis kuru 55,0422 -> fx.observed.eur_try."
 
   eur_usd:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
-    kur_tarihi: null
+    value: 1.1557
+    status: FACT
+    evidence_id: EV-2026-08-10-867
+    kur_tarihi: 2026-08-10
     ttl: 7d
 
   gumruk_kuru_kullanilir_mi:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "Gumrukte beyan kuru serbest piyasa kurundan farkli olabilir. gumruk-vergi-uzmani dogrulayacak."
+    notes: "Gumrukte beyan kuru serbest piyasa kurundan farkli olabilir. gumruk-vergi-uzmani dogrulayacak. TUR 3.25'te BU SORU ACILMAMISTIR (gorev kapsami: yalnizca gozlem) -> T-911 ACIK KALIR."
+
+  # =====================================================================
+  # DUYARLILIK EKSENLERI — TAHMIN DEGILDIR
+  # =====================================================================
+  senaryolar:
+    etiket: [NOT_FORECAST, SENSITIVITY_AXIS]
+    status: SENSITIVITY_AXIS
+    evidence_id: EV-2026-08-10-868          # eksen TANIMI/turetme kurali
+    baz_evidence_id: [EV-2026-08-10-865, EV-2026-08-10-866]
+    baz_kur_tarihi: 2026-08-10
+    kur_tipi: doviz_satis                   # alis karsiliklari: senaryolar.alis_kuru_ekseni
+    konvansiyon: "A — kotasyon carpani (FX_0 x carpan)"
+
+    amac: >
+      NEGOTIATION TRANSLATION SENSITIVITY. Sorusu sudur: "Tedarikci EUR
+      isterken bizim TL tavanimiz ne kadar dayanir?" Ters modelde tavan
+      (MAX_CIF_TRY) TL cinsindendir ve TL kanal fiyatlarindan turer;
+      tedarikcinin fiyati EUR/USD cinsindendir. Bu eksenler o iki dunya
+      arasindaki CEVIRI KATSAYISININ oynama araligini gosterir.
+      BU BIR YATIRIM BEKLENTISI VEYA KUR TAHMINI DEGILDIR.
+
+    yon_kurali: >
+      Kur "TRY / 1 EUR" seklinde kotedir. TRY ZAYIF ise 1 EUR DAHA COK TL eder
+      -> EUR/TRY ARTAR -> ithalatci maliyeti ARTAR.
+      Ornek: FX_UP_10 = 55,1414 x 1,10 = 60,6555 TRY/EUR; 1 EUR'luk EXW fiyat
+      55,14 TL yerine 60,66 TL olur. FX_DOWN_10'da kotasyon DUSER.
+
+    FX_0:
+      aciklama: "gozlenen (baz)"
+      carpan: 1.00
+      eur_try: 55.1414
+      usd_try: 47.7118
+    FX_UP_10:
+      aciklama: "TRY %10 zayif (kotasyon +%10; TL satin alma gucu -%9,0909)"
+      carpan: 1.10
+      eur_try: 60.6555
+      usd_try: 52.4830
+    FX_UP_20:
+      aciklama: "TRY %20 zayif (kotasyon +%20; TL satin alma gucu -%16,6667)"
+      carpan: 1.20
+      eur_try: 66.1697
+      usd_try: 57.2542
+    FX_DOWN_10:
+      aciklama: "TRY %10 guclu (kotasyon -%10; TL satin alma gucu +%11,1111)"
+      carpan: 0.90
+      eur_try: 49.6273
+      usd_try: 42.9406
+
+    alis_kuru_ekseni:
+      notes: "Ayni carpanlarin DOVIZ ALIS kuruna uygulanmis hali. Satis eksenleriyle KARISTIRILMAZ."
+      FX_0:       { eur_try: 55.0422, usd_try: 47.6260 }
+      FX_UP_10:   { eur_try: 60.5464, usd_try: 52.3886 }
+      FX_UP_20:   { eur_try: 66.0506, usd_try: 57.1512 }
+      FX_DOWN_10: { eur_try: 49.5380, usd_try: 42.8634 }
+
+    eur_usd_tum_eksenlerde:
+      value: 1.1557
+      status: FACT
+      evidence_id: EV-2026-08-10-867
+      notes: >
+        SABITTIR. TL soku EUR/USD paritesini DEGISTIRMEZ; carpan hem paya hem
+        paydaya uygulandigi icin sadelesir. EUR/USD icin bu dosyada AYRI bir
+        duyarlilik ekseni TANIMLANMAMISTIR (ayri bir risktir, ayri acilir).
+
+    kullanilmayan_konvansiyon_B:
+      notes: >
+        REFERANS AMACLIDIR, MODELDE KULLANILMAZ. "TL degerinin tam %10'unu
+        kaybeder" okumasi (FX_0 / 0,90) icin: EUR/TRY 61,2682 · USD/TRY 53,0131;
+        %20 icin (/0,80): EUR/TRY 68,9268 · USD/TRY 59,6398. Konvansiyon A ile
+        farki ~%0,9'dur ve bir VERI farki degil, ADLANDIRMA farkidir.
 
 fx_duyarlilik:
+  # LEGACY ALANLAR — fx.senaryolar'a ESLENMISTIR.
+  # UYARI: "min/base/max" adlari OLASILIK veya BEKLENTI ANLAMINA GELMEZ.
+  # Bunlar eksen UC NOKTALARIDIR (NOT_FORECAST).
   senaryo_min:
-    usd_try: null
-    eur_try: null
-    status: UNKNOWN
+    usd_try: 42.9406
+    eur_try: 49.6273
+    status: SENSITIVITY_AXIS
+    eksen: FX_DOWN_10
+    evidence_id: EV-2026-08-10-868
   senaryo_base:
-    usd_try: null
-    eur_try: null
-    status: UNKNOWN
+    usd_try: 47.7118
+    eur_try: 55.1414
+    status: FACT
+    eksen: FX_0
+    evidence_id: [EV-2026-08-10-865, EV-2026-08-10-866]
+    notes: "Tek gercek GOZLEM budur; diger iki satir turetilmis eksen noktasidir."
   senaryo_max:
-    usd_try: null
-    eur_try: null
-    status: UNKNOWN
+    usd_try: 57.2542
+    eur_try: 66.1697
+    status: SENSITIVITY_AXIS
+    eksen: FX_UP_20
+    evidence_id: EV-2026-08-10-868
+  ara_eksen_FX_UP_10:
+    usd_try: 52.4830
+    eur_try: 60.6555
+    status: SENSITIVITY_AXIS
+    eksen: FX_UP_10
+    evidence_id: EV-2026-08-10-868
+    notes: "Uc noktali legacy semaya sigmayan dorduncu eksen. Kaybolmamasi icin burada."
   notes: >
     KRITIK ASIMETRI: Alis dovizle, satis TL ile yapilir. TL deger kaybettiginde
     maliyet ANINDA artar ama kanal fiyati ANINDA artmaz (fiyat guncelleme gecikmesi).
