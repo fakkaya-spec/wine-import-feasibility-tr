@@ -1213,3 +1213,574 @@ fotoğrafı. `C-551` ve `T-504` **aynı tek eylemle** kapanır.
 `C-301` (MEDIUM, palet bandı — **başkan direktifi aynen geçerli: band korunur**),
 `C-501` (HIGH, feed tutarsızlığı) bu turda **ele alınmamıştır.**
 Durumları **değişmemiştir** ve hiçbiri bu turda çözülmüş sayılmaz.
+
+---
+
+# TUR 2 ÇELİŞKİ KAYITLARI
+
+TUR 2'de 8 yeni çelişki açıldı:
+
+| conflict_id | Konu | impact | Açan |
+|---|---|---|---|
+| **C-311** | FCL base ocean navlunu: 295–650 USD vs 1.200–2.500 EUR — 4–5 kat fark | **CRITICAL** | `navlun-lojistik-uzmani` |
+| C-312 | Terminal ardiye free time 0 gün mü 5 gün mü | MEDIUM | `navlun-lojistik-uzmani` |
+| C-313 | Taşıyıcı THD ile terminal kapı-çıkış ücreti çift sayılıyor olabilir | MEDIUM | `navlun-lojistik-uzmani` |
+| C-461 | "FOB" terimi kaynakta iki ayrı katmana işaret ediyor (FCL'de L1, MOQ siparişinde L0) | HIGH | `global-sourcing-kasifi` |
+| C-462 | Düşük MOQ bandı 3.000–6.000 şişe; 5.000'lik pilot tam ortada | HIGH | `global-sourcing-kasifi` |
+| C-561 | Stok dışı listeleme havuzu iki modlu — C-501 nitelendi, kapatılmadı | MEDIUM | `turkiye-pazar-kasifi` |
+| **C-601** | Vade: yasal tavan 60 gün vs gözlenen Migros DPO ~93 gün | HIGH | `kanal-marj-uzmani` |
+| C-602 | Tekel ve HoReCa marjı kaynaklarda tanımsız ve kendi içinde çelişkili | HIGH | `kanal-marj-uzmani` |
+| C-161 | GTS menşe belgesi Form A mı REX mi (şarapta GTS uygulanmıyor, model etkisi yok) | LOW | `gumruk-vergi-uzmani` |
+
+`navlun-lojistik-uzmani` ayrıca **C-302** için A lehine kapatma önerdi
+(3. bağımsız kaynak bulundu); kapatmadı, başkana bıraktı.
+
+## gumruk-vergi-uzmani (TUR 2)
+
+> CLAUDE.md §1.13: Kaynaklar çelişirse **sessizce seçim yapılmaz.**
+> Çelişki kayda geçirilir ve başkana taşınır.
+
+---
+
+### C-161 — GTS menşe belgesi: **Form A** mı, **REX Menşe Beyanı** mı?
+
+```yaml
+conflict_id:        C-161
+acan:               gumruk-vergi-uzmani
+tarih:              2026-08-10
+impact:             LOW
+model_girdisi_etkisi: YOK
+status:             OPEN
+```
+
+| | Kaynak A | Kaynak B |
+|---|---|---|
+| **Kaynak** | T.C. Ticaret Bakanlığı **Gümrük Rehberi** — "Menşe ispat ve dolaşım belgeleri nelerdir?" ve "Tercihli Ticaret Anlaşmaları" | GGM **BİLGE Sistemi Menşe Kontrol Tablosu**, `EAGZ` / `GYU` / `OTDU` satırları |
+| **Tier** | T2 | T3 (belge GGM'nin, host İGMD) |
+| **Tarih** | Yayın/yürürlük tarihi **yok** | 14.04.2026 · yürürlük **1/1/2026** |
+| **İddia** | GTS kapsamındaki tavizden yararlanmak için **"Form A Menşe Belgesi"** ithalat sırasında gümrük idaresine sunulur | Aranacak belge **"1049 REX Menşe Beyanı"** |
+| **evidence_id** | EV-2026-08-10-155 (aynı sayfa), EV-2026-08-10-163 | EV-2026-08-10-161 (aynı tablo) |
+
+#### Neden çelişiyor
+
+Muhtemel açıklama: AB'nin GTS'de **Form A'dan REX sistemine geçişi**ne uyum
+sağlanmış, Gümrük Rehberi metni **güncellenmemiş**. Ancak bu bir **yorumdur**,
+kanıt değildir — bu yüzden çelişki olarak kaydediyorum.
+
+#### Neden **çözmüyorum**
+
+Çözüm hiyerarşisinin tarih kuralı (B lehine: 1/1/2026 yürürlük) ile tier kuralı
+(A lehine: T2 > T3) **zıt yönü** işaret ediyor. Kendi yorumumla kapatmam
+CLAUDE.md §1.13 ihlali olur.
+
+#### Neden **modeli bloke etmiyor**
+
+**GTS şarapta hiçbir koşulda uygulanmaz** — üç bağımsız kanıtla
+(`EV-2026-08-10-151`, `-153`, `-154`). Dolayısıyla GTS'de hangi belgenin
+arandığı sorusunun `mense_tarife_eslemesi` üzerinde **etkisi yoktur.**
+`model_girdisi_etkisi: YOK`.
+
+#### Ne zaman maddi olur
+
+Kapsam **22.05 (vermut/aromatize)** veya GTS sütunu bulunan başka bir
+II sayılı Liste ürününe genişlerse. O durumda hem GTS uygulanabilir hâle gelir
+hem bu çelişki maddileşir.
+
+#### Ayrıca kayda geçirilen ikincil gözlem
+
+Gümrük Rehberi'nin **hiçbir sayfasında yayın veya güncelleme tarihi
+yayımlanmıyor.** Bu, T2 kaynağın **tazeliğinin ölçülemez** olduğu anlamına
+gelir. Bu turda Gümrük Rehberi'nden alınan **tüm** kanıtlara `ttl: 180d` ve
+`effective_date: -` yazılmıştır. Bu, C-161'in ötesinde **yapısal bir kaynak
+zayıflığıdır** ve TUR 1'de `EV-2026-08-09-126` için not edilen sorunun
+(revizyon 2018, KDV %18 yazıyordu) aynısıdır.
+
+---
+
+## navlun-lojistik-uzmani (TUR 2)
+
+```yaml
+ajan:  navlun-lojistik-uzmani
+tur:   TUR 2
+tarih: 2026-08-10
+not:   "Bu dosya 99-ops/celiskiler.md'ye BASKAN tarafindan islenir. Ben ana dosyaya dokunmadim."
+```
+
+**Hiçbir çelişkide sessizce taraf seçilmemiştir.**
+
+---
+
+### C-311 — FCL base okyanus navlunu: yüzlerce USD mi, binlerce EUR mu?
+
+```yaml
+conflict_id:      C-311
+konu:             "Ispanya/Avrupa -> Turkiye FCL base okyanus navlunu"
+impact:           CRITICAL
+status:           OPEN
+model_girdisi_etkisi: VAR — bandin genisligi 4 kat
+etkiledigi_alan:  lojistik.yaml -> tur2.fcl_navlun.ispanya_turkiye_20dv_base_ocean
+```
+
+#### Kaynak A — marketplace "from" fiyatları (düşük)
+
+| Değer | Rota | tier | tarih | evidence_id |
+|---|---|---|---|---|
+| **295 USD** | Rotterdam → İzmir (13 gün) | T4 | **YOK** | `EV-2026-08-10-322` |
+| **350 USD** | London Gateway → Mersin (13 gün) | T4 | YOK | `EV-2026-08-10-322` |
+| **500 USD** | İstanbul → Barcelona (14 gün) | T4 | YOK | `EV-2026-08-10-322` |
+| **650 USD** | Aarhus → İstanbul (19 gün) | T4 | YOK | `EV-2026-08-10-322` |
+
+#### Kaynak B — blog/rehber bantları (yüksek)
+
+| Değer | Rota | tier | tarih | evidence_id |
+|---|---|---|---|---|
+| **1.200–2.500 EUR** (20ft, ort. 1.800) | İspanya → Türkiye | **T5** | 2025 | `EV-2026-08-10-324` |
+| **1.200–2.500 EUR** (20ft) | İspanya → Türkiye | **T5** | yok | `EV-2026-08-09-333` (TUR 1) |
+
+#### Kaynak C — yayınlanmış taşıyıcı tarifesi (orta-yüksek, ama yanlış yön ve yıl)
+
+| Değer | Rota | tier | yürürlük | evidence_id |
+|---|---|---|---|---|
+| **785–1.030 EUR** (20') | Türkiye → Trieste (**ihracat**) | T4 | **2025-01-01** | `EV-2026-08-10-320` |
+
+#### Neden çelişiyor — üç olası açıklama, hiçbiri doğrulanmadı
+
+| # | Hipotez | Lehine | Aleyhine |
+|---|---|---|---|
+| **H1** | Düşük rakamlar **yalnızca base ocean**, yüksek rakamlar **quasi-all-in** | TUR 2'de origin locals (349–554 EUR) ve destination locals (165–298 USD) ölçüldü; toplamları farkın **büyük kısmını açıklıyor** | Kaynak B "base rate" diyor ve üstüne %15–25 yakıt eklediğini yazıyor — yani kendisi de base olduğunu iddia ediyor |
+| **H2** | Kaynak B **eski/geri dönüştürülmüş** veri | İki T5 kaynak **birebir aynı bandı** veriyor (1.200–2.500 EUR) → bağımsız değiller, biri diğerinden kopyalamış olabilir | Doğrulanamadı |
+| **H3** | "from" fiyatları **gerçekleşmeyen taban fiyatlar** (pazarlama) | Marketplace'lerde yaygın pratik | Doğrulanamadı |
+
+#### Bu turda ne yaptım
+
+- **Taraf seçmedim.** Bandı olduğu gibi taşıdım: **300–1.200 USD**,
+  `status: ESTIMATE`, `confidence: LOW`, `ttl: 14d`.
+- `lojistik.yaml`'a "**merkezî varsayım olarak KULLANILAMAZ**" notu düştüm.
+- LCL/FCL kırılma noktası bandının (2.200–9.800 şişe) **genişliğinin
+  tamamının** bu çelişkiden geldiğini açıkça yazdım.
+
+#### Nasıl çözülür
+
+**Tek yolu var: bir forwarder'dan yazılı kotasyon** — kalem kalem
+`included/excluded` listesiyle (`T-304`). Masabaşında çözülemez.
+
+---
+
+### C-312 — Terminal ardiye free time: 0 gün mü 5 gün mü?
+
+```yaml
+conflict_id:      C-312
+konu:             "Turkiye ithalatinda terminal ardiye free time"
+impact:           MEDIUM
+status:           OPEN
+model_girdisi_etkisi: VAR — 60 gunluk bekleme senaryosunda ~200 USD/konteyner
+etkiledigi_alan:  lojistik.yaml -> tur2.terminal_tarifeleri.ardiye_free_time_gun
+```
+
+| | Kaynak A | Kaynak B |
+|---|---|---|
+| **İddia** | Free time **0 gün** | Free time **5 gün** |
+| **Metin** | "İthalat ardiye günleri **geminin yanaştığı günden itibaren** başlar" | "Ardiye 40–60 USD/gün, **6. günden itibaren**" |
+| **Kaynak** | SafiPort 2026 konteyner ithalat tarifesi | Gümrük müşavirliği 2026 maliyet rehberi |
+| **tier** | T4 (terminalin kendi tarifesi) | T4 (meslek uygulayıcısı) |
+| **evidence_id** | `EV-2026-08-10-317` | `EV-2026-08-10-325` |
+
+#### Değerlendirme
+
+Çözüm hiyerarşisinin hiçbir kuralı uygulanamıyor: **ikisi de T4, ikisi de
+2026.** Ayrıca **ikisi de doğru olabilir** — free time terminale göre
+değişebilir ve Kaynak B bir *ortalama uygulama* anlatıyor olabilir.
+
+#### Bu turda ne yaptım
+
+Muhafazakâr olanı (**0 gün**) kullandım — TUR 1 ile aynı. **Bu bir seçim
+değil, ihtiyattır** ve `lojistik.yaml`'da öyle etiketlendi.
+Yön uyarısı: yanılıyorsam gecikme maliyeti tahminim **yüksektir**, yani hata
+proje **lehine** değil aleyhine çalışıyor.
+
+#### Nasıl çözülür
+
+Kumport / Marport / Mardaş tarife PDF'lerinin doğrudan okunması veya
+terminale yazılı soru (`T-313`).
+
+---
+
+### C-313 — Taşıyıcı THD'si ile terminal kapı-çıkış ücreti aynı olayı mı fiyatlıyor?
+
+```yaml
+conflict_id:      C-313
+konu:             "Varis terminal ellecleme ucreti cift sayiliyor mu"
+impact:           MEDIUM
+status:           OPEN
+model_girdisi_etkisi: VAR — konteyner basina ~115 USD (0,008-0,010 USD/sise)
+etkiledigi_alan:  lojistik.yaml -> tur2.destination_charges_turkiye.thd_limana_gore
+```
+
+| | Kaynak A | Kaynak B |
+|---|---|---|
+| **Kalem** | THD (Terminal Handling Charge Destination) | Kapı çıkış / terminal elleçleme |
+| **Değer** | **165–298 USD** (limana göre) | **113–116 USD** |
+| **Kesen** | Armatör (Hapag-Lloyd) | Terminal (Beldeport / SafiPort) |
+| **tier** | **T3** (taşıyıcının resmî tarifesi) | T4 (terminalin tarifesi) |
+| **evidence_id** | `EV-2026-08-10-315` | `EV-2026-08-10-319`, `-317` |
+
+#### Neden bu bir çelişki
+
+Fiziksel olay tektir: konteyner gemiden indirilir, sahada elleçlenir, kapıdan
+çıkar. Ama **iki farklı taraf iki farklı tarife yayınlıyor.** Üç senaryo:
+
+1. **Armatör terminale öder, importer'a THD olarak yansıtır** → tek kalem
+   (165–298 USD), terminal tarifesi importer'ı ilgilendirmez.
+2. **İkisi ayrı faturalanır** → toplam 278–414 USD.
+3. **Merchant haulage / carrier haulage'a göre değişir** → duruma bağlı.
+
+**TUR 1, Kaynak B'yi (113 USD) tek kalem olarak modele koymuştu.** Bu, Senaryo
+1 doğruysa **%32–62 düşük** bir tahmindir.
+
+#### Bu turda ne yaptım
+
+Muhafazakâr olarak **yalnızca taşıyıcı THD'sini** (165–298 USD) hesaba kattım
+ve çift sayım yapmadım. Terminal tarifesini ayrı bir bilgi olarak kayda
+geçirdim. **Sessiz seçim değildir**: gerekçesi budur — taşıyıcı tarifesi T3,
+terminal tarifesi T4 ve ithalatçının faturasını genellikle taşıyıcı keser.
+
+#### Nasıl çözülür
+
+Bir gerçek ithalat faturası örneği veya forwarder'ın kalem listesi (`T-304`
+RFQ'suyla aynı temasta, `T-313`).
+
+---
+
+### TUR 1 ÇELİŞKİLERİNİN TUR 2 SONRASI DURUMU
+
+#### C-302 — Akdeniz transit süresi → **A LEHİNE KAPATILMASI ÖNERİLİR**
+
+```yaml
+conflict_id:      C-302
+tur2_onerisi:     "A tarafi lehine RESOLVED"
+karar_yetkisi:    yatirim-komitesi-baskani
+oneri_sahibi:     navlun-lojistik-uzmani
+```
+
+**Yeni kanıt:** Flexport (T4, tarihli 2026-08-10, geçerlilik 2026-08-16)
+Valencia/Barcelona → İstanbul için **4 gün** veriyor (`EV-2026-08-10-301`,
+`-302`).
+
+| Taraf | İddia | Kaynak sayısı | Durum |
+|---|---|---|---|
+| **A** | İspanya → İstanbul **4–10 gün** | **3** (JSV T4 + Maersk servis tarifesi T3 + **Flexport T4**) | ✅ güçlendi |
+| **B** | Valencia → İstanbul **32–35 gün**; LA → İstanbul **15 gün** | 1 (BR Logistics T5) | ❌ tek başına |
+
+**Ek olarak B'nin ikinci ayağı da yanlışlandı:** LA → İstanbul gerçek süre
+**20 gün** (kara aktarmalı) veya **44 gün** (deniz aktarmalı)
+(`EV-2026-08-10-309`). **15 gün hiçbir kaynakla doğrulanmadı.**
+
+**Önerim:** `C-302` → `RESOLVED (A lehine)`; B kaynağının (BR Logistics)
+tüm transit iddiaları `REJECTED` sayılsın. **Kapatma yetkisi bende değildir.**
+
+#### C-301 (palet sayısı) — **DEĞİŞMEDİ**, TUR 2'de yeni kanıt bulunamadı, `OPEN`.
+
+#### C-303 (20DV payload) — **DEĞİŞMEDİ**, düşük etkili, `OPEN`.
+
+---
+
+### TUR 1'İN BİR TAHMİNİNİN DÜZELTİLMESİ *(çelişki değil, hata)*
+
+Bu bir çelişki değil, **kendi TUR 1 tahminimin yanlışlanmasıdır** ve kayda
+geçirilmesi gerekir:
+
+| | TUR 1 | **TUR 2 (doğru)** |
+|---|---|---|
+| G. Afrika → Türkiye transit | **~26 gün** | **49 gün** |
+| Dayanak | Türkiye → Cape Town **ters yön** ölçümü | Cape Town → İstanbul doğrudan kotasyon, Hamburg aktarmalı |
+| evidence_id | `EV-2026-08-09-327` | `EV-2026-08-10-307` |
+
+**TUR 1 tahmini yaklaşık 2 kat iyimserdi.** Sebep: ters yön ölçümü, aktarma
+yapısını yansıtmaz. Bu, **ters yön verisinin neden kullanılmaması gerektiğinin
+somut örneğidir** ve `EV-2026-08-09-327`'nin `SUPERSEDED` sayılması önerilir.
+
+---
+
+## global-sourcing-kasifi (TUR 2)
+
+> `99-ops/celiskiler.md` dosyasına **DOKUNULMAMIŞTIR** (başkan birleştirir).
+> **Hiçbiri sessizce çözülmemiştir.**
+> TUR 1'de açılan `C-401`, `C-402`, `C-403` bu turda da **OPEN** kalmıştır.
+
+---
+
+### C-461 — "FOB" terimi iki farklı katmana işaret ediyor
+
+```yaml
+conflict_id:      C-461
+opened_by:        global-sourcing-kasifi
+opened_date:      2026-08-10
+impact:           HIGH
+status:           OPEN
+model_girdisi_etkisi: VAR — L0/L1 ayrımı
+```
+
+| | Kaynak A | Kaynak B |
+|---|---|---|
+| **İddia** | "FOB" = Incoterms® 2020 FOB, **adı belirtilen yükleme limanı bordası** → **L1** | "FOB" = şarap ticaretinde üreticinin ithalatçıya verdiği **ex-cellar** fiyat → fiilen **L0** |
+| **Kaynak** | Incoterms® 2020 (genel kabul) + Harland sayfasının kendi açıklaması ("...until your container is loaded onto the ship") | WineWiki (Wine with Seth) — "FOB — Free on Board" maddesi, `EV-2026-08-10-468` |
+| **Tier/tarih** | T4 / 2026-08-10 | T4 / 2026-08-10 |
+
+**Neden çelişiyor:** Aynı üç harf, maliyet merdiveninin **iki farklı basamağını**
+adlandırıyor ve aralarında iç nakliye + liman + ihracat gümrüklemesi farkı var.
+
+**Somut tetikleyici:** `EV-2026-08-10-451` — Harland aynı fiyatı ("$2.85+") tam
+konteyner siparişinde **FOB**, MOQ siparişinde **ex factory** olarak tanımlıyor.
+Yani **tek yayınlanmış sayı, sipariş büyüklüğüne göre L0 veya L1 oluyor.**
+
+**Bu ajanın uyguladığı geçici kural:** Incoterm metinde açıkça tanımlanmadan
+hiçbir fiyat L0 veya L1 diye etiketlenmez; `supplier-shortlist-v2.csv`'de
+`price_layer` kolonu ayrı tutulur ve belirsizse belirsizliği yazar.
+
+**Nasıl kapanır:** RFQ 3.1 (EXW + **yer**) ve 3.2 (FOB + **adı belirtilen liman**)
+cevaplarıyla, tedarikçi bazında. Genel olarak kapanmaz — **her teklif için ayrı ayrı** kapanır.
+
+**Kime taşınıyor:** `gumruk-vergi-uzmani` (gümrük kıymeti matrahı), `finans-fizibilite` (katman disiplini).
+
+---
+
+### C-462 — Doğrulanmış private label MOQ aralığı, pilot hacmini hem kapsıyor hem aşıyor
+
+```yaml
+conflict_id:      C-462
+opened_by:        global-sourcing-kasifi
+opened_date:      2026-08-10
+impact:           HIGH
+status:           OPEN
+iliskili:         C-401 (TUR 1, OPEN — kapatılmadı)
+model_girdisi_etkisi: VAR — pilot senaryosunun uygulanabilirliği
+```
+
+| | Kaynak A | Kaynak B | Kaynak C |
+|---|---|---|---|
+| **İddia** | MOQ **3.000–3.600** şişe | MOQ **6.000** şişe | MOQ **300–1.200** şişe |
+| **Kaynak** | Interbrosa (ES) `EV-2026-08-09-408`; The Wine Factory (FR) `EV-2026-08-09-410`; Clark Estate (NZ) `EV-2026-08-10-455` | Cantina Danese (IT) `EV-2026-08-10-453`; Harland (AU) `EV-2026-08-10-452` | usetorg.com agregatörü `EV-2026-08-09-424` |
+| **Tier** | T4 (üretici beyanı) | T4 (üretici beyanı) | T5 (agregatör) |
+
+**Neden çelişiyor:** Üst uç ile alt uç arasında **20 kat** fark var. Daha kritiği:
+**charter'ın 5.000 şişelik pilot hacmi tam bu aralığın ortasına düşüyor.**
+Yani MOQ, pilotu ne kesin olarak mümkün ne kesin olarak imkânsız kılıyor —
+**tedarikçiye göre değişiyor.**
+
+**TUR 1'in ifadesinin nitelenmesi (`EV-2026-08-10-471`):**
+TUR 1 raporu B-1'de *"3.000–3.600 şişe … charter'ın 5.000 şişelik pilot hacmiyle
+UYUMLUDUR"* diyordu. Bu **hâlâ doğru ama artık eksiktir**: MOQ'su bilinen beş
+üreticinin **üçüyle** pilot mümkün, **ikisiyle değil.**
+
+**Bu bir CONFLICT'tir, ortalama alınamaz.** 3.000 ile 6.000'in ortalamasını
+almak (4.500) hiçbir üreticinin gerçek MOQ'su değildir ve modele giremez.
+
+**Nasıl kapanır:** RFQ 3.6a/3.6b + 4.2/4.3 ile, **tedarikçi bazında**.
+Genel bir "sektör MOQ'su" yoktur — bu turun bulgusu tam olarak budur:
+**MOQ ülke veya sektör özelliği değil, firma özelliğidir.**
+
+**Kime taşınıyor:** `finans-fizibilite` (5.000 vs 10.000 şişe senaryolarının
+tedarikçi havuzu farkı), `seytanin-avukati` (pilot mantığının kırılganlığı).
+
+---
+
+### TUR 1'DEN DEVREDEN VE HÂLÂ AÇIK OLANLAR
+
+| conflict_id | Konu | TUR 2'de ne oldu |
+|---|---|---|
+| **C-401** | T5 agregatör MOQ 300–1.200 vs doğrulanmış üretici beyanları | **AÇIK.** TUR 2'de doğrulanmış üst sınır 3.600'den 6.000'e çıktı → makas **genişledi**. C-462 bu genişlemeyi kaydeder, C-401'i kapatmaz |
+| **C-402** | Benchmark California menşeli ama ABD→TR ithalatı 18.298 l / ort. CIF 25,19 USD/l | **AÇIK.** TUR 2'de iki ABD private label sağlayıcısı daha bulundu (O'Neill, Bronco adayı) ama **hiçbiri Türkiye'ye ihracat kabiliyeti beyan etmedi** — çelişki derinleşti, çözülmedi |
+| **C-403** | Benchmark ürünün California alt bölgesi: Sierra Foothills mı Central Valley mi | **AÇIK.** `EV-2026-08-10-463` (O'Neill ana tesisi Parlier/Central Valley) "Central Valley" ayağını **dolaylı** destekler ama iki T5 kaynağı arasındaki çelişkiyi **çözmez** |
+
+---
+
+## turkiye-pazar-kasifi (TUR 2)
+
+> Bu dosya `99-ops/celiskiler.md` içine **başkan tarafından** merge edilir.
+> Bu ajan ana dosyaya dokunmamıştır.
+
+---
+
+### C-561 — Stokta olmayan ithal listelemeler tek bir "geçersiz" havuz mudur?
+
+```yaml
+conflict_id:   C-561
+opened_by:     turkiye-pazar-kasifi
+opened_date:   2026-08-10
+status:        OPEN
+ticket:        T-561
+ilgili:        C-501 (TUR 1, OPEN) — bu çelişki onun NİTELENMESİDİR, yerine geçmez
+```
+
+| | Kaynak A | Kaynak B |
+|---|---|---|
+| **Kayıt** | `EV-2026-08-09-509` / `EV-2026-08-10-501` (T4, 2026-08-09) | `EV-2026-08-10-552` (T4, 2026-08-10) |
+| **İddia** | Stokta olmayan ithal listelemelerde "70–450 TL gibi 2026 için gerçeklik dışı fiyatlar" vardır → havuz **bütünüyle** dışlanır (`C-501`) | Aynı havuz sayıldığında **iki modludur**: 44 kayıt < 500 TL (gerçeklik dışı), **62 kayıt 500–1.000 TL** (2026 için makul), 243 kayıt > 1.000 TL |
+| **Tier / tarih** | T4 / 2026-08-09 | T4 / 2026-08-10 |
+
+#### Neden çelişki
+
+`C-501`'in gerekçesi **düşük uçtaki** kayıtlardan türetilmiş, ama sonucu **tüm**
+stokta-olmayan havuza uygulanmıştır. TUR 2 sayımı gösteriyor ki düşük uç havuzun
+yalnızca **%12,6**'sıdır (44/349). Geri kalan kayıtlar için "bakımsız eski fiyat"
+gerekçesi **doğrudan kanıtlanmamıştır**.
+
+Bu, `pazar.yaml → segment.ithal_sku_400_800_uzman_kanal = 0` değerinin dayanağını
+doğrudan etkiler.
+
+#### Çözüm hiyerarşisi bu vakada ne diyor
+
+- **Tarih kuralı:** B daha yenidir (2026-08-10) → B'yi işaret eder.
+- **Kaynak otoritesi:** ikisi de T4, ikisi de aynı feed → ayırt etmiyor.
+- **Kapsam kuralı:** B daha dar ve daha ölçülmüş bir iddiadır → B'yi işaret eder.
+
+**Ama:** B, A'nın *sonucunu* çürütmez. Her iki durumda da **stokta olmayan bir fiyat
+satın alınabilir bir fiyat değildir** ve raf fiyatı sayılamaz. Çelişki, "0 ithal SKU"
+cümlesinin **anlamı** hakkındadır: *yok* mu, *var ama satılmıyor* mu?
+
+#### Bu ajanın yaptığı / yapmadığı
+
+- **Yapmadım:** `pazar.yaml`'da hiçbir değeri değiştirmedim; C-501'i kapatmadım;
+  62 listelemeyi raf fiyatı saymadım.
+- **Yaptım:** Sayımı kanıtladım (`EV-2026-08-10-552`), 62 satırı
+  `raf-fiyat-gozlemleri.csv`'ye `gozlem_yontemi = ONLINE_LISTING_STOKTA_YOK` ve
+  `status = UNKNOWN` ile ekledim, `T-561` ile başkana taşıdım.
+
+#### Karar kime ait
+
+`yatirim-komitesi-baskani` — `T-561`.
+
+---
+
+### İZLEME — TUR 1/1.5'ten devreden ve TUR 2'de ELE ALINMAYANLAR
+
+| conflict_id | Durum | TUR 2 notu |
+|---|---|---|
+| `C-501` | OPEN | `C-561` ile **nitelendi**, çözülmedi |
+| `C-502` | OPEN (izleme) | Ele alınmadı |
+| `C-503` | RESOLVED (başkan) | Ele alınmadı |
+| `C-551` | OPEN / NON_BLOCKING_TUR2 | **Kasten ele alınmadı** — TUR 2 kapsam sınırı: benchmark KDV/promosyon araştırması yasaklandı |
+
+---
+
+### POTANSİYEL ÇELİŞKİ — AÇILMADI, İZ BIRAKILDI
+
+**J.P. Chenet'nin Türkiye ithalatçısı kim?**
+`EV-2026-08-10-562` (T5) **Baron Şarapçılık** diyor. Ancak `interaytrading.com`
+adlı başka bir firma da sitesinde "J.P. CHENET Ürünleri" sayfası tutmaktadır.
+Bu bir alt-bayilik mi, eski bir ithalatçı mı, yoksa gerçek bir çelişki mi
+**doğrulanamadı**. Her iki kaynak da T5/T4-zayıftır ve modele girmemektedir;
+bu nedenle **çelişki kaydı AÇILMAMIŞ**, `OQ-551` altında açık soru olarak
+bırakılmıştır.
+
+---
+
+## kanal-marj-uzmani (TUR 2)
+
+> Bu bir **parça dosyasıdır**. `99-ops/celiskiler.md` ana dosyasına
+> `yatirim-komitesi-baskani` tarafından birleştirilir. Bu ajan ana dosyaya
+> **DOKUNMAMIŞTIR**.
+>
+> CLAUDE.md §1.13: kaynaklar çelişirse **sessizce seçim yapılmaz.**
+> Aşağıdaki iki çelişkide de **seçim yapılmamıştır.**
+
+---
+
+### C-601 — Zincir market ödeme vadesi: yasal tavan vs gözlenen pratik
+
+```yaml
+conflict_id:  C-601
+acan_ajan:    kanal-marj-uzmani
+tarih:        2026-08-10
+durum:        OPEN
+etki:         CRITICAL   # peak_cash_requirement'in en buyuk tek surucusu
+```
+
+| | Kaynak A | Kaynak B | Kaynak C |
+|---|---|---|---|
+| **İddia** | Ödeme süresi **60 günü geçemez** | Organize kanal ortalama vadesi **70 gün** | Migros ticari borçlarının **%34,4'ü 3–12 ay** vadeli; DPO **~93 gün** |
+| **evidence** | `EV-2026-08-10-602` | `EV-2026-08-10-609` | `EV-2026-08-10-617` |
+| **tier** | T3 (içerik T1) | T2 | T4 (denetimden geçmiş) |
+| **tarih** | yürürlük **2024-01-01** | veri **2020** | veri **2025-12-31** |
+| **kategori** | tarım-gıda ürünleri (şarap kapsamı **?**) | **süt ürünleri** | tüm kategoriler, tüm coğrafya |
+
+#### Neden çelişiyor
+
+- **Zaman:** Kaynak B, 60 gün tavanının yürürlüğe girdiği 01.01.2024'ten **önceki**
+  dönemi ölçer. Yani B, A'yı çürütmez — A'nın **niçin çıkarıldığını** açıklar.
+- **Ama Kaynak C 2025 verisidir**, yani **tavan yürürlükteyken** alınmıştır ve
+  borçların üçte biri 3–12 ay vadelidir. Bu, üç şeyden biri anlamına gelir:
+  1. Şarap/gıda **tavan kapsamında değildir** (→ `T-601`),
+  2. Kapsamdadır ama **ölçek testi** (küçük/orta alacaklı + orta/büyük borçlu)
+     ya da **KOBİ Vasfı Belgesi değişimi** (`EV-2026-08-10-607`) yapılmadığı için
+     tavan işlemiyordur,
+  3. Migros'un ticari borçları büyük ölçüde **gıda dışı** ve **yurt dışı** kalemlerden
+     oluşuyordur (bu ayrıştırma finansallarda **yoktur**).
+- Ayrıca Kaynak B'nin **dipnot 69'u** bizzat şunu söyler: bildirilen süreler bazı
+  firmalarda **sözleşmedeki standart sürelerdir** ve *"fiili süreler aslında
+  sözleşmede yer alan sürelerden çok daha uzun olabilmektedir."*
+
+#### Bu ajanın YAPMADIĞI
+
+Sessiz seçim yapılmamış, tek bir vade değeri **modele yazılmamıştır**.
+`kanal.yaml → zincir_market.odeme_vadesi_gun = null / UNKNOWN`.
+Bunun yerine **dört ayrı senaryo** tanımlanmıştır: 45 / **60** / 90 / **120** gün.
+
+#### Nasıl kapanır
+
+`T-601` (şarap "tarım ve gıda ürünü" müdür?) + `T-604` (gerçek yıllık anlaşma
+görüşmesi). İkisi de kapanmadan bu çelişki **çözülemez**.
+
+---
+
+### C-602 — Tekel bayii ve HoReCa marjı: kaynaklar hem çelişiyor hem tanımsız
+
+```yaml
+conflict_id:  C-602
+acan_ajan:    kanal-marj-uzmani
+tarih:        2026-08-10
+durum:        OPEN
+etki:         MEDIUM   # kanal 2 ve 3; charter oncelik sirasi 2 ve 3
+```
+
+#### Tekel bayii
+
+| İddia | Kaynak tipi | Sorun |
+|---|---|---|
+| "alkolde ~%17" | T5 içerik sitesi | margin mi markup mı **belirtilmemiş** |
+| "rakı %8" | T5 içerik sitesi | ürün kategorisi farklı; taban belirtilmemiş |
+| "brüt %10–15" | T5 forum | katman çifti belirtilmemiş |
+| "ciro üzerinden %18–30" | T5 içerik sitesi | "ciro üzerinden" ifadesi **tanımsız** |
+
+`evidence`: `EV-2026-08-10-620` (negatif kayıt)
+
+#### HoReCa
+
+| İddia | Kaynak | Sorun |
+|---|---|---|
+| "perakende fiyatının **2 katı**" | Milliyet / Murat Bozok, 2012 | Çarpan **L8** üzerine |
+| "toptan fiyatının **2,5 katı**" | **aynı yazı** | Çarpan **L7** üzerine |
+| "market fiyatının **4–5 katı**" | **aynı yazı** | Yine **L8** üzerine, ve "gözlenen üst uç" |
+
+`evidence`: `EV-2026-08-10-618`
+
+#### Neden bu bir "çelişki" olarak kaydedildi, "veri yok" olarak değil
+
+Çünkü çelişki **kaynaklar arasında değil, kaynakların KENDİ İÇİNDEDİR.**
+Tek bir yazı çarpanı **iki farklı katmandan** verir. Bu, sayının kendisinden
+daha bilgilendirici bir bulgudur: **bu alanda konuşulan "marj" rakamları
+tanımsız konuşulmaktadır** — ki `M1` kuralının varlık sebebi tam olarak budur.
+
+#### Bu ajanın YAPMADIĞI
+
+Bu sayıların **hiçbiri** `kanal.yaml`'a `value` olarak yazılmamıştır.
+`tekel_bayi.marj_pct` ve `horeca.fiyat_carpani` **UNKNOWN**'dır.
+Duyarlılık bantları `ASSUMPTION` olarak ve **kanıtlı çapası olmadığı açıkça
+yazılarak** ayrı blokta tutulmuştur.
+
+#### Nasıl kapanır
+
+Yalnızca gerçek bayi/HoReCa görüşmesi veya gerçek bir fiyat listesi (`T-604`).
+Masabaşı ile kapanmaz.
+
+---

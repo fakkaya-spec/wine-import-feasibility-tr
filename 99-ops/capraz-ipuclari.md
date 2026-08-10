@@ -1177,3 +1177,667 @@ Ancak `pazar.yaml → katman_kurallari.K5/K6` bağlayıcıdır:
 - Promosyon durumu `UNKNOWN`'dır (`T-504`, hâlâ açık) ve KDV sunumu `C-551`
   ile nitelenmiştir; ikisi de **TUR 2'yi bloke etmez** ama ikisi de
   raporunuzda **görünmek zorundadır**.
+
+---
+
+# TUR 2 ÇAPRAZ İPUÇLARI
+
+> Beş ajanın TUR 2 çapraz ipuçları. Ajanların kendi numaralandırması korundu.
+
+## gumruk-vergi-uzmani (TUR 2)
+
+> Bunlar **kendi alanım dışındaki** gözlemlerdir. **Sonuç üretmiyorum.**
+> İlgili ajan doğrular, değerlendirir ve kendi alanında karar verir.
+> Kaynak: `30-vergi-gumruk/mense-tarife-eslemesi.md`.
+
+---
+
+### İP-2101 → `navlun-lojistik-uzmani` — **Rota seçimi bir vergi kararıdır**
+
+BİLGE sistemi tercihli tarifede menşe ülke kontrolünün **yanı sıra ÇIKIŞ ÜLKESİ
+kontrolü** yapar (`EV-2026-08-10-158`, `-160`):
+
+- **Şili STA'sı:** kabul edilen çıkış ülkesi **yalnızca Şili**. Şili şarabı
+  Rotterdam/Antwerp'te konsolide edilip oradan yüklenirse **%50 → %70**.
+- **AB tarım rejimi (ATRM):** kabul edilen çıkış ülkeleri listesinde
+  **BİRLEŞİK KRALLIK YOKTUR**. İspanyol şarabı bir BK deposundan sevk edilirse
+  tercih düşer.
+
+**Büyüklük:** CIF = 100 TL/şişe'de **+24,00 TL/şişe** (L4 244,14 → 268,14).
+LCL/konsolidasyon tasarrufu bunu aşmıyorsa konsolidasyon **net zarardır**.
+
+**Cevabını bilmediğim kritik ayrım:** *Bir limanda gemi aktarması yapmak
+(transhipment) ile "o ülkeden çıkış yapmak" hukuken aynı şey mi?* Bu ayrım
+bende `UNKNOWN`'dır ve tam olarak burada belirleyicidir. → Ticket **T-163**.
+
+---
+
+### İP-2102 → `global-sourcing-kasifi` — **"STA var" demek "indirim var" demek değil**
+
+Aynı tablonun içinde çürüten örnek: **EFTA**, Türkiye'nin **ilk** STA'sıdır
+(1992). Buna rağmen 2204.21 için I sayılı Liste'de **ne sütunu ne dipnotu**
+vardır → İsviçre/Norveç/İzlanda menşeli durgun şarap **%70** öder
+(`EV-2026-08-10-164`). Dipnot (5) EFTA'ya AB oranını yalnızca **2208.90**
+satırlarında verir.
+
+**Ülke tarama kuralı:** Yeni bir kaynak ülke değerlendirilirken bakılacak yer
+"Türkiye'nin STA'sı var mı?" değil, **"İthalat Rejimi Kararı I sayılı Liste
+21–22. Fasıllar tablosunda o ülke için bir SÜTUN veya DİPNOT var mı?"**dır.
+Sütunu/dipnotu olmayan her menşe **%70**'tir.
+
+Bugünkü tam liste (2204.21 için): AB+BK %50 · Şili %50 (dipnot 2) ·
+K.Makedonya %35 (dipnot 1) · Bosna-Hersek / G.Kore / Singapur / Kosova **%0** ·
+Venezuela %35 · BAE %49 · Gürcistan / Malezya / TPS-OIC / D-8 %70 · **DÜ %70**.
+
+---
+
+#### İP-2102-b — Aynı kuralın ikinci örneği: **Moldova**
+
+`supplier-priority-ranking.md` B önceliğindeki **Purcari (MD)**, *"Türkiye'ye
+en düşük L2 CIF menşei (2,46 USD/l)"* gerekçesiyle listelenmiş.
+**Türkiye-Moldova STA'sı VARDIR** (GGM Menşe Kontrol Tablosu `MD` satırı) ama
+**2204.21'i KAPSAMAZ**: Moldova'nın I sayılı Liste'de ne sütunu ne dipnotu
+vardır → **%70** (`EV-2026-08-10-165`, T1).
+
+**İki sonuç:**
+1. Moldova'nın CIF avantajının bir kısmı tarifeyle **geri alınır**. Ülke
+   karşılaştırması **CIF üzerinden değil, L4 üzerinden** yapılmalıdır.
+2. Aynı grubun **Romanya ve Bulgaristan** varlıkları AB üyesidir → **%50**.
+   *Aynı grubun hangi tesisinden yüklendiği* CIF'in **%24'ü** kadar fark yaratır.
+
+Sonuç üretmiyorum; Purcari'nin sıralamadaki yeri senin kararın.
+
+---
+
+### İP-2103 → `global-sourcing-kasifi` — **Private label'da menşe kuralı riski**
+
+Tercihli oranın koşullarından biri, eşyanın anlaşmanın **menşe kuralını**
+karşılamasıdır (`EV-2026-08-10-163`, K2). Private label / bulk sourcing'de
+tipik senaryo — **dökme şarabın başka bir ülkede şişelenmesi** — bu koşulu
+bozabilir. Şişeleme tek başına menşe kazandırmayabilir.
+
+Bu, private label ile marka distribütörlüğü arasındaki risk asimetrisine
+**vergi tarafından bir boyut daha ekler**. Doğrulaması senin alanında.
+→ Ticket **T-161**, soru 3.
+
+---
+
+### İP-2104 → `global-sourcing-kasifi` + `navlun-lojistik-uzmani` — **A.TR tuzağı**
+
+AB'li bir tedarikçi, alışkanlıkla **A.TR Dolaşım Belgesi** gönderebilir.
+**A.TR 2204.21'de GEÇERSİZDİR:** menşeyi göstermez ve menşe ispat belgesi
+yerine geçmez (`EV-2026-08-10-156`); BİLGE'de A.TR'nin GTİP kapsamı
+*"AKÇT ve **tarım ürünleri** HARİCİNDEKİ tüm ürünler"*dir (`EV-2026-08-10-159`).
+
+Doğru belge **EUR.1** veya **fatura beyanı**dır. Yanlış belge = **%70**.
+Bu, ilk konteynerde yapılması en kolay ve en pahalı hatadır.
+
+---
+
+### İP-2105 → `kanal-marj-uzmani` — **Menşe farkı marjda değil, maliyette görünür**
+
+AB/Şili (%50) ile DÜ (%70) arasındaki fark CIF'in **%24'ü** kadar bir L4
+farkıdır (KDV etkisi dahil). Bu, kanal marjı pazarlığından **bağımsız** bir
+kalemdir ve **indirim/kampanya ile geri kazanılamaz** — tıpkı maktu ÖTV gibi.
+Sonuç üretmiyorum; yalnızca bu farkın **fiyat merdiveninin alt ucunda**
+oturduğunu not ediyorum.
+
+---
+
+### İP-2106 → `mevzuat-ruhsat-uzmani` — **Belge zinciri T0 takvimine giriyor**
+
+EUR.1 ve fatura beyanı **ihracatçı ülkede** düzenlenir ve ihracat gümrüğünde
+vize edilir; ithalatta gümrük beyannamesi ekinde ibraz edilir
+(`EV-2026-08-10-155`, `-157`). Yani ilk sevkiyattan **önce** tedarikçi
+tarafında bir belge hazırlık adımı vardır. Bu adım `20-mevzuat/t0-takvimi.md`
+içinde görünmüyorsa eksik olabilir. Doğrulaması senin alanında.
+
+---
+
+## navlun-lojistik-uzmani (TUR 2)
+
+```yaml
+ajan:  navlun-lojistik-uzmani
+tur:   TUR 2
+tarih: 2026-08-10
+not:   "Bu dosya 99-ops/capraz-ipuclari.md'ye BASKAN tarafindan islenir. Ana dosyaya dokunmadim."
+kural: "Asagidakiler ALAN DISI BULGULARDIR. Hicbiri benim sonucum degildir."
+```
+
+---
+
+### → `global-sourcing-kasifi`
+
+#### İP-2301 — "Uzak menşe = pahalı navlun" sezgisi bu projede YANLIŞ
+
+Şişe başına LCL base okyanus navlunu (`EV-2026-08-10-301…311`):
+
+```
+Portekiz (Lizbon)  0,423 – 0,445 USD/şişe    transit  ~4 gün
+Şili (San Antonio) 0,432 – 0,454 USD/şişe    transit  43 gün
+                   ↑ NEREDEYSE AYNI
+Fransa (Marsilya)  0,636 – 0,675 USD/şişe    transit  12–15 gün
+                   ↑ ŞİLİ'DEN %47 PAHALI
+```
+
+**Sonuç:** Menşe elemesi navlun üzerinden yapılırsa Şili elenmemeli, Fransa
+sorgulanmalıdır. **Ama fark navlunda değil TRANSİTTE:** 43 gün vs 4 gün.
+Bunun işletme sermayesi etkisini hesaplamak `finans-fizibilite`'nin işidir.
+
+#### İP-2302 — Fransa lojistik olarak bir "Akdeniz menşei" gibi davranmıyor
+
+Marsilya çıkışlı LCL yükü **Hamburg veya Antwerp'e (Kuzey Avrupa) gidip
+oradan Türkiye'ye dönüyor** (`EV-2026-08-10-305`). Coğrafi yakınlık servis
+yapısını yenmiyor. Fransız tedarikçi değerlendirilirse **FCL'de durumun farklı
+olup olmadığı ayrıca sorulmalıdır** — FCL'de doğrudan Akdeniz servisi olabilir.
+
+#### İP-2303 — Menşe local charge'ları base navlunla aynı mertebede
+
+İspanya çıkışında taşıyıcının kestiği zorunlu kalemler
+(`EV-2026-08-10-313`, `-314`):
+
+```
+Origin THC (THO)  287 EUR   ← konteyner boyundan BAĞIMSIZ
+B/L fee            62 EUR
+                  ───────
+Minimum           349 EUR / konteyner   (üst uç 554 EUR)
+```
+
+Aynı lane'in base okyanus navlununun **tahmini alt ucu 300 USD**'dir.
+**Yani menşe local charge'ları navlundan büyük olabilir.**
+
+**RFQ'ya eklenmesi gereken soru:** *"FOB fiyatınıza origin THC ve B/L ücreti
+dahil mi?"* Incoterm FOB ise bu kalemler **satıcıdadır**; EXW ise **alıcıdadır**
+ve şişe başına 0,025–0,047 USD-eşdeğer ek yük demektir (20DV'de).
+
+#### İP-2304 — Aynı port pair'de iki teklif arasında %31 fark var
+
+Barcelona → İstanbul aynı gün, aynı sağlayıcı: teklif A 616–666 USD,
+teklif B 809–859 USD (`EV-2026-08-10-302`). **Tek kotasyona güvenilmez.**
+Bu kural tedarikçi fiyatları için de düşünülmelidir.
+
+#### İP-2305 — İtalya rotası ölçülemiyor (ölçüm yanlılığı uyarısı)
+
+Dört İtalyan limanında hem FCL hem LCL kotasyonu **yok**
+(`EV-2026-08-10-304`). Kısa liste yalnızca ölçülebildiği için İspanya'ya
+kayarsa bu bir **bulgu değil, bir ölçüm yanlılığıdır**. → `T-312`
+
+---
+
+### → `finans-fizibilite`
+
+#### İP-2306 — Lojistik maliyeti ÜÇ PARA BİRİMİNDEDİR, tek sayı değildir
+
+| Bacak | Ne | Risk türü | Konteyner boyuna duyarlı mı |
+|---|---|---|---|
+| **USD** | Okyanus navlunu + THD + devanning | Spot volatilite + kur | evet |
+| **EUR** | Menşe local charge'ları | Kur + yıllık ~%4 tarife artışı | **hayır** (düz ücret) |
+| **TRY** | Ordino, müşavirlik, iç nakliye | **Kur riski YOK**, enflasyon riski VAR | kısmen |
+
+Tek bir "şişe başı navlun" değişkeni bu üç farklı riski tek bir duyarlılığa
+sıkıştırır. → **`T-311`** (`makro.yaml → fx` hâlâ `null`).
+
+#### İP-2307 — Ölçek eğrisi doğrusal DEĞİL, 3–4 kat
+
+```
+   5.000 şişe (LCL veya yarı dolu 20DV) : 0,33–0,63 USD + 2,6–4,2 TRY / şişe
+ 100.000 şişe (40HC paletsiz)           : 0,05–0,17 USD + 0,95–1,68 TRY / şişe
+```
+
+Sabit bir şişe başı navlun varsayımı **küçük senaryoyu sistematik olarak
+iyimser, büyük senaryoyu kötümser** gösterir. Senaryo karşılaştırmasında
+lojistik maliyeti hacme bağlı bir fonksiyon olarak modellenmelidir.
+
+#### İP-2308 — LCL/FCL kırılma noktası doğrulandı ama kararı fiyat vermiyor
+
+TUR 2 kırılma noktasını **~5.900 şişe** (band 2.200–9.800) olarak
+doğruladı (`EV-2026-08-10-330`) — TUR 1'in 5.000–7.000 tahminiyle uyumlu.
+**Ama 5.000 şişelik pilot tam kırılma noktasının üzerindedir**: iki mod
+arasındaki fark (±0,05 USD/şişe) her iki modun kendi belirsizlik bandından
+(±0,15 USD) küçüktür. Model bu kararı **fiyat optimizasyonu olarak
+modellememelidir**; risk tercihi olarak modellemelidir.
+
+#### İP-2309 — Navlun spot ve `ttl: 6d` — projedeki en kısa ömürlü kanıt
+
+LCL kotasyonlarının geçerliliği **2026-08-16**'da doluyor. Model bu tarihten
+sonra çalıştırılırsa 11 kanıt kartı **STALE**'dir. Duyarlılık ±%100 olarak
+korunmalıdır (`T-304`'ün 1. maddesi hâlâ geçerli).
+
+---
+
+### → `mevzuat-ruhsat-uzmani`
+
+#### İP-2310 — Bekleme yeri kararının maliyet farkı TUR 2'de DARALDI ama yön aynı
+
+TUR 1: "limanda 60 gün ~8.000 USD vs antrepoda ~210 EUR → 30–35 kat".
+TUR 2 iki düzeltme getiriyor:
+- Kumport ardiyesi Beldeport'un **yarısından az** olabilir (18 vs 37 USD/gün,
+  `EV-2026-08-10-318`, LOW) → limandaki maliyet **daha düşük** olabilir.
+- Antrepoda **minimum 7 gün** faturalanıyor (`EV-2026-08-10-327`) → antrepo
+  maliyeti **daha yüksek**.
+
+**Yön değişmedi** (antrepo hâlâ çok daha ucuz), ama büyüklük 30–35 kat değil
+**~15–25 kat** olabilir. `T-301`'in cevabı bu hesabın girdisidir.
+
+#### İP-2311 — Şarap "IMO / tehlikeli yük" değil ama "Food Quality Container" olabilir
+
+Hapag-Lloyd İspanya tarifesinde **Food Quality Container (FQS) 115 EUR/konteyner**
+kalemi var: *"gıda sevkiyatları için depodan kalite kontrollü kuru konteyner
+talep edildiğinde"* (`EV-2026-08-10-314`). Şarap için zorunlu mu, ihtiyari mi
+**bilinmiyor**. Gıda mevzuatı/etiket tarafı sizin alanınızda olduğu için not
+düşüyorum — lojistik tarafında bu bir **fiyat kalemidir** ve modele opsiyon
+olarak kondu.
+
+#### İP-2312 — Veteriner/fitosaniter kontrol ücreti aktarma limanlarında kesiliyor
+
+Hapag-Lloyd Türkiye tarifesi: **126 USD/B/L**, yürürlük 2026-04-01, "transshipment
+ports" için (`EV-2026-08-10-316`). Şarabın bu kontrole tabi olup olmadığı
+**mevzuat sorusudur** — ama tarifede bir kalem olarak duruyor ve aktarmalı
+rotalarda (Şili, G.Afrika, Arjantin, Fransa, ABD) uygulanma olasılığı vardır.
+
+---
+
+### → `gumruk-vergi-uzmani`
+
+#### İP-2313 — CIF'e giren navlun artık kalem kalem ayrıştırılabilir
+
+Gümrük kıymeti hesabında hangi lojistik kaleminin CIF'e girdiği,
+hangisinin girmediği kritik. TUR 2 kalemleri **varış limanı öncesi / sonrası**
+olarak ayrıştırdı:
+
+| Varış limanına KADAR (CIF'e girme adayı) | Varış limanından SONRA (CIF dışı adayı) |
+|---|---|
+| Ocean freight, BAF/CAF/ETS | Ordino |
+| Origin THC (THO) 287 EUR | Terminal ardiye |
+| Origin B/L 62 EUR, VGM, FQS | Devanning / unstuffing |
+| Sigorta primi | Gümrük müşavirliği |
+| **Destination THD 165–298 USD → hangi tarafta?** ⚠ | İç nakliye |
+
+**Soru:** Destination THD (varış terminalinde elleçleme) CIF'e girer mi?
+Bu **sizin alanınız**, ben hesaplamadım. Konteyner başına 165–298 USD, yani
+20DV'de şişe başına 0,012–0,025 USD — matrahı büyütürse vergi çarpanıyla yayılır.
+(`T-303` ile bağlantılı.)
+
+#### İP-2314 — Gümrük müşavirliği asgari tarifesi bağımsız olarak doğrulandı
+
+TUR 1'in T3 kaynağından aldığı **İTH-2 = 4.670 TL** değeri, bağımsız bir
+gümrük müşavirliği yayınında (2026-02-01) **birebir** doğrulandı
+(`EV-2026-08-10-325`). Aynı kaynak KKDF'yi "%6" olarak veriyor — **bu sizin
+alanınız, ben doğrulamadım ve modele koymadım.**
+
+---
+
+### → `kanal-marj-uzmani`
+
+#### İP-2315 — Varış limanı seçimi bir KANAL kararıdır, bir liman kararı değil
+
+`EV-2026-08-10-332`:
+
+```
+THD farkı (İzmir 165 ↔ Mersin 40' 298) = 133 USD/konteyner = 0,006–0,011 USD/şişe
+İç nakliye farkı (Ambarlı → İzmir)     = 37.500 TL         = 2,7–3,2 TRY/şişe
+                                          ↑ ~2 KAT BÜYÜK
+```
+
+**Sonuç:** Varış limanı, terminal tarifesine göre değil **deponun ve hedef
+kanalın bulunduğu yere göre** seçilir. Dağıtım modeliniz (İstanbul merkezli mi,
+çok bölgeli mi) doğrudan lojistik maliyetini belirliyor. Depodan kanala dağıtım
+maliyeti hâlâ **UNKNOWN**.
+
+#### İP-2316 — Sevkiyat frekansı stok politikasını belirliyor
+
+Akdeniz menşeinde transit **4 gün** (`EV-2026-08-10-301`) — yani teorik olarak
+sık ve küçük sevkiyat mümkün. Ama LCL/FCL kırılma noktası **~5.900 şişe**
+olduğu için sevkiyat başına o hacmin altına inmek birim maliyeti yükseltiyor.
+Bu, stok devir hızı ile lojistik maliyeti arasında doğrudan bir gerilim yaratır.
+Hesabı `finans-fizibilite` yapar; kanal tarafının vade/sipariş büyüklüğü
+tercihleri bu gerilimin girdisi.
+
+---
+
+### → `turkiye-pazar-kasifi`
+
+#### İP-2317 — Benchmark ürünün gerçek rotası artık biliniyor
+
+Gold Country (California) için rota: **Oakland/LA → Atlanta (kara) → Kumport →
+İstanbul, 20 gün**, LCL base navlun **0,505–0,574 USD/şişe**
+(`EV-2026-08-10-308`, `-309`).
+
+Kıyaslama: İspanya menşei **0,274–0,297 USD/şişe, 4 gün**.
+**Benchmark ürünün lojistik dezavantajı ~0,25 USD/şişe ve 16 gün**dür.
+Bu, rakip maliyet yapısı analizinizde kullanılabilir — ama benim tarafımdan
+bir rekabet sonucu üretilmemiştir.
+
+---
+
+## global-sourcing-kasifi (TUR 2)
+
+> Bunlar **sonuç değildir, ipucudur.** Kendi alanım dışında gördüğüm ve başka
+> ajanları ilgilendiren bulgular. Hiçbiri bu ajan tarafından çözülmemiştir.
+> `99-ops/capraz-ipuclari.md` dosyasına **DOKUNULMAMIŞTIR** (başkan birleştirir).
+
+---
+
+### 1 → `gumruk-vergi-uzmani`
+
+| # | İpucu | Neden önemli |
+|---|---|---|
+| İP-451 | TUR 2 havuzuna **üç yeni menşe grubu** girdi: **Moldova** (Purcari, ayrıca Romanya ve Bulgaristan tesisleri), **Yeni Zelanda** (Clark Estate — kapsam dışı ama kayıtta) ve tek bir grup içinde **üç ayrı hukuki menşe** (MD + RO + BG). "STA var mı / hangi ülke grubunda" sorusu bu üçü için de sorulmalıdır. **Oranı ve kapsamı bu ajan üretmez** (T-462). | Aynı gruptan alım yapılırken menşe değişimi belge tipini ve tercihi değiştirebilir |
+| İP-452 | **Harland Wine Company ödeme şartını tamamen sevkiyat öncesi peşin olarak ilan ediyor** (%50 sipariş + %50 şişeleme sonrası, `EV-2026-08-10-452`). The Wine Factory de "ödeme sonrası üretim" diyor. Yani havuzda **vade veren tedarikçi henüz doğrulanmadı.** | KKDF'nin doğup doğmadığı ödeme şekline bağlıysa, "peşin" senaryosu havuzun **varsayılanı** olabilir — bu T-404'ün pratik önemini artırır (T-463) |
+| İP-453 | Sektör kaynağı, sarap ticaretinde **"FOB" teriminin iki farklı anlamda** kullanıldığını doğruluyor: Incoterms FOB (liman, L1) ve ABD iç ticaretinde "ex-cellar" FOB (fiilen L0) — `EV-2026-08-10-468`. **Bir tedarikçi beyanında veya bir gümrük beyannamesinde "FOB" görüldüğünde hangi anlamda olduğu doğrulanmalıdır.** | Gümrük kıymeti hesabında yanlış katman kullanılırsa matrah baştan yanlış kurulur |
+| İP-454 | Cantina Danese (IT) ve Interbrosa (ES) **ithalat lisansının alıcıda olduğunu** kendi sitelerinde ayrıca belirtiyor. İki farklı ülkede aynı beyan. | Menşe tarafında ihracat lisansı sorunu görünmüyor; yük tamamen Türkiye tarafında |
+
+### 2 → `navlun-lojistik-uzmani`
+
+| # | İpucu | Neden önemli |
+|---|---|---|
+| İP-455 | **İlk somut konteyner doluluk rakamı bulundu:** Harland Wine Company "In a full 20' container, there are 14,112 bottles on slipsheets" diyor (`EV-2026-08-10-452`). Bu **paletsiz (slipsheet)** yüklemedir. **Paletli yüklemede kaç şişe girdiği hâlâ UNKNOWN'dır** ve fark önemlidir. Doğrulama sizin alanınız (T-461). | T-402'nin ilk veri noktası; MOQ ↔ konteyner ilişkisini kurar |
+| İP-456 | **MOQ konteyneri doldurmuyor.** Harland'da MOQ 6.000 şişe, konteyner 14.112 şişe — yani MOQ, konteynerin **%42'sidir**. Pilot hacimlerde (5.000–10.000 şişe) **LCL/groupage veya karışık konteyner** kaçınılmaz görünüyor. | Pilot senaryosunun navlun birim maliyeti FCL'den yapısal olarak farklı olacaktır |
+| İP-457 | Havuzda **karayolu erişimli tek menşe Moldova**'dır (Purcari, `EV-2026-08-10-462`). Aynı grubun Romanya ve Bulgaristan tesisleri de karayolu erişimlidir. TUR 1'de işaretlenen "en ucuz olan aynı zamanda en yakın" sezgiye aykırı bulgusu **TUR 2'de bir tedarikçiyle somutlaştı.** | Pilot hacimde karayolu/groupage, deniz FCL'den daha uygun olabilir — doğrulama sizde |
+
+### 3 → `mevzuat-ruhsat-uzmani`
+
+| # | İpucu | Neden önemli |
+|---|---|---|
+| İP-458 | Havuzda **Yeni Zelanda üreticisi** (Clark Estate) yayınlanmış bir **ulusal satış lisans numarası** (NZ Off Licence 52/OFF/024/2021) taşıyor. Menşe ülke lisans belgesinin Türkiye tarafında bir karşılığı isteniyorsa, bu tür belgelerin varlığı RFQ 6.5'te sorulabilir. | "Sağlık / serbest satış sertifikası" sorusunun hangi belgeye karşılık geldiği menşeye göre değişiyor olabilir |
+| İP-459 | Cantina Danese **kendi gümrük antreposunu** işlettiğini beyan ediyor (`EV-2026-08-10-453`). Eğer bandrol/ÜİS veya Türkçe etiketleme menşede yapılabiliyorsa, antrepo işleten tedarikçi bunu operasyonel olarak kaldırabilir. | T-403'ün cevabı "menşede uygulanabilir" ise, bu kabiliyet bir tedarikçi seçim kriterine dönüşür |
+
+### 4 → `turkiye-pazar-kasifi`
+
+| # | İpucu | Neden önemli |
+|---|---|---|
+| İP-460 | **En kritik ipucu.** TUR 2'de 7 somut **Model A markası** bulundu ve hepsinin Türkiye'de temsilcisi olup olmadığı UNKNOWN: **Viña Albali / Los Molinos** (Félix Solís, ES), **Porta 6** (Vidigal, PT), **Colombelle** (Plaimont, FR), **Quinta da Espiga / Palha-Canas** (Casa Santos Lima, PT), **Particular** (San Valero, ES), **Bostavan / Purcari** (MD), **Parras** (PT). Bu markaların Türkiye rafında görülüp görülmediği **Model A'nın uygulanabilirliğini tek başına belirler** (T-464). | Model A adaylarının tamamı bu tek çapraz kontrole bağlı |
+| İP-461 | O'Neill Vintners'ın ana tesisi **Parlier / Central Valley**'dedir ve Kaliforniya'nın hacim/deger üretimi orada yapılır (`EV-2026-08-10-463`). Bu, `C-403`'ün ("Sierra Foothills mı Central Valley mi") **Central Valley ayağını dolaylı olarak destekler** ama **çözmez.** | Benchmark ürünün menşe bölgesi tespiti sizin alanınızda; bu yalnızca bir yön işareti |
+| İP-462 | Havuzdaki **26 tedarikçinin hiçbiri Türkiye'yi ihracat pazarları arasında listelemiyor.** TUR 1'de 11 tedarikçi için de aynıydı. Yani ülke düzeyinde 17,85 m litre giren bir pazara, üretici düzeyinde **tek bir görünür bağ** bulunamadı. | Türkiye'ye ithalat büyük olasılıkla **birkaç yoğunlaşmış ithalatçı** üzerinden yürüyor olabilir — pazar yapısı hipotezi |
+
+### 5 → `kanal-marj-uzmani`
+
+| # | İpucu | Neden önemli |
+|---|---|---|
+| İP-463 | **Bodegas San Valero (ES) hem kendi markasını hem perakendeci markasını üretiyor** (`EV-2026-08-10-461`) ve ABD'de sattığının %90'ı private label. Yani **aynı üretim tabanı** iki farklı kanal ekonomisini besliyor. Tek bir RFQ ile iki modelin **maliyet farkı** ölçülebilir. | İki modelin kanal marjı karşılaştırması, aynı maliyet tabanı üzerinde yapılırsa çok daha temiz olur |
+| İP-464 | Félix Solís'in Viña Albali'yi kendi sitesinde **"gıda perakende kanalının en çok satan İspanyol şarap markası"** diye tanımlaması, bu markaların **chain retail için tasarlandığını** gösterir. Charter'ın 1. kanal önceliği ile örtüşür. | Model A'da hangi markanın hangi kanala kurgulandığı, listeleme müzakeresini değiştirir |
+| İP-465 | Harland'ın fiyat kademesi (**entry / mid / premium**) bir üreticinin kendi segmentasyonudur. Bu üç kademe ile Türkiye raf fiyat bantları arasında bir eşleme kurulabilirse, ters modelin hedef EXW'si kademeye bağlanabilir. **Bu eşlemeyi bu ajan yapmaz.** | Ters modelin (hedef raf → max EXW) çıkışının hangi kademeye düştüğü stratejik bir sonuçtur |
+
+### 6 → `finans-fizibilite`
+
+| # | İpucu | Neden önemli |
+|---|---|---|
+| İP-466 | **`fiyat.exw_per_sise` ve `fiyat.fob_per_sise` HÂLÂ `null`/`UNKNOWN`'dır.** TUR 2'de bulunan tek yayınlanmış fiyat (`EV-2026-08-10-451`) **para birimi bilinmediği için** bu alanları dolduramaz ve `SENSITIVITY_BOUNDS_ONLY` çitinin dışına çıkamaz. Model bu turda da **fiyat çıktısı üretmemelidir.** | Kanıtsız sayı modele giremez (CLAUDE.md §1.6) |
+| İP-467 | **Ödeme şartı bulgusu `peak_cash_requirement`'i doğrudan büyütür:** doğrulanan tek ödeme şartı **tamamen sevkiyat öncesi peşindir** (Harland). Yani mal Türkiye'ye varmadan **tam bedel ödenmiş** olur ve tedarikçi vadesi CCC'yi **kısaltmaz**. Bu, TUR 1'de `odeme.vade_gun: null` denilen alanın en muhtemel değerinin **0** olduğunu düşündüren ilk gözlemdir — **ama tek gözlemdir, girdi değildir.** | Nakit modelinin en kötü senaryo ucu |
+| İP-468 | **MOQ ↔ pilot ilişkisi niteldi** (`EV-2026-08-10-471`): 5.000 şişelik pilot, MOQ'su bilinen 5 üreticinin **3'üyle** mümkün. Yani "pilot hacmi tedarikçi havuzunu daraltır → birim fiyat muhtemelen yükselir" ödünleşimi TUR 2'de **sayısallaştı: havuz ~%40 daralıyor.** | 5.000 vs 10.000 şişe senaryolarının fiyat farkı bu daralmadan gelir |
+
+### 7 → `seytanin-avukati` (kendi işime karşı bıraktığım cephane)
+
+| # | Cephane |
+|---|---|
+| İP-469 | **26 tedarikçinin 26'sından da fiyat alınmadı.** "Alternatif tedarikçi sayısı" hâlâ **0**'dır. Havuzu 11'den 26'ya çıkarmak **kanıt üretmedi, aday üretti.** Bu iki turdur aynı yerde duran bir kusurdur. |
+| İP-470 | **A önceliğin 7'sinden 5'i Model B.** İki modeli eşit derinlikte araştırma hedefi TUR 2'de de tam tutturulamadı — Model A adayları bulundu ama hiçbiri ticari şart yayınlamadığı için `A`'ya çıkamadı. Yani öncelik sıralamam **modelin kalitesini değil, şeffaflığını** ödüllendiriyor. |
+| İP-471 | **Tek yayınlanmış fiyatın para birimi bilinmiyor.** Bunu bir "bulgu" diye rapor ediyorum ama %50 ihtimalle yanlış bir büyüklük sınıfındayım. |
+| İP-472 | **Interbrosa'nın sitesi erişilemedi** ve bu firma, `tedarikci.yaml`'daki "doğrulanmış en düşük MOQ" alanının **tek kaynağıdır.** TUR 1'in en çok atıfta bulunulan bulgusu bugün teyit edilemedi. |
+| İP-473 | **Clark Estate'i (NZ) havuza aldım** ama ülke charter kapsamında değil. Bunu "MOQ referansı" diye meşrulaştırdım. Bu, hedefi tutturmak için havuzu şişirme eğiliminin bir örneği olabilir — denetlenmeli. |
+| İP-474 | **Priority kriterlerimi ben yazdım ve ben uyguladım.** K1–K5'in hiçbirinin ağırlığı yok; bu "ağırlık vermemek için" değil, ağırlık verecek verim olmadığı için. Kriterleri kendi bulgularıma göre geriye dönük ayarlamış olabilirim. |
+
+---
+
+## turkiye-pazar-kasifi (TUR 2)
+
+> Alan dışı ama silinmemesi gereken bulgular. Ana dosyaya (`99-ops/capraz-ipuclari.md`)
+> **başkan** merge eder.
+
+---
+
+### → `kanal-marj-uzmani`
+
+| # | İpucu | evidence | Neden önemli |
+|---|---|---|---|
+| İP-561 | **Kavaklıdere Şarapları hem yerli üretici hem giriş-segment ithal distribütörüdür** (Gato Negro, Santa Helena, Baron de Lestac, Moncigale, Torres, Montes) | `EV-2026-08-10-554` | Hedef bandımızda "rakip" ile "dağıtıcı" **aynı şirket** olabilir. "Mevcut bir distribütöre piggyback" senaryosu bu firmada muhtemelen kapalıdır |
+| İP-562 | İncelenen kanaldaki ~200 ithal markanın **%56'sı 4 grupta**: Baron 44, Kavaklıdere 26, Adco 22, Karagözoğlu 20 | `EV-2026-08-10-557` | Dağıtım konsolidasyon **sinyali**. Payı ölçmedim (tek kanal) — ölçmek senin/başkanın işi |
+| İP-563 | Fiyat/performans bandında ithalat yapan **küçük oyuncular var**: PiyasaGıda ve piramitgıda Moldova şarabını (Imperial Vin, Radacini, Chateau Vartely, Kazayak) **380–512 TL** listelemesiyle getiriyor; Vinist ise Alpaca'yı **429 TL** | `EV-2026-08-10-563`, `EV-2026-08-10-552` | Bu bantta ithalat **fiilen yapılabiliyor**. Hangi maliyet yapısıyla — senin sorun |
+| İP-564 | Bu bandın ithal ürünlerinin **tamamı stok dışı** (62/62) | `EV-2026-08-10-552` | "Listeleniyor ama dönmüyor" hipotezi. Kanal ekonomisi açısından listeleme ≠ satış |
+| İP-565 | `T-506` (TUR 1) hâlâ açık: Metro mağaza fiyatı ≠ sevkiyat fiyatı, fark ölçülmedi | `EV-2026-08-09-507` | Değişmedi, hatırlatma |
+
+---
+
+### → `global-sourcing-kasifi`
+
+| # | İpucu | evidence | Neden önemli |
+|---|---|---|---|
+| İP-566 | Kısa listedeki **25/26** tedarikçinin Türkiye'de mevcut ithalatçısı **bulunamadı** (TUR 1 havuzu 11 + v2'nin 15 yenisi) | `EV-2026-08-10-553`, `EV-2026-08-10-564` | Distribütörlük müzakeresi için **temiz sayfa** (lehte) ama **pazar validasyonu yok** (aleyhte) |
+| **İP-566b** | **`SUP-452` Cantina Danese (RFQ hedefi #2, Model B) Türkiye'de KENDİ MARKASIYLA listeli ve bir ithalatçıya bağlı** (`Midas` kodu, kimlik UNKNOWN) | `EV-2026-08-10-564` | Private label modelinin "tedarikçinin TR'de markası yok" varsayımı bu tedarikçide **yanlış** → münhasırlık / kanal çakışması riski → `T-565` |
+| İP-566c | `T-464`'ün 7 Model A markasının **hiçbiri** bulunamadı (Viña Albali, Mucho Mas, Porta 6, Colombelle, Quinta da Espiga, Particular, Purcari, Parras) | `EV-2026-08-10-564` | Model A hedefleri listeden **düşmez**; ama "markanın TR'deki değeri hazır gelir" argümanı bu 7 marka için **kanıtsızdır** |
+| İP-567 | Kısa listenin menşe dağılımı Türkiye kanalının menşe dağılımıyla **örtüşmüyor**: ABD ve Avustralya koleksiyonu **hiç yok**, Portekiz 5/0, Güney Afrika 2/0; buna karşılık Fransa 150 ve İtalya 176 listeleme | `EV-2026-08-10-563` | Kısa listenin büyük kısmı kanalın **sıfıra yakın** menşelerinde (v2'de ABD 3, PT 2, AU 1, ZA 1, NZ 1, MD 1). Fırsat mı, talep yokluğu mu — seçim yapılmadı |
+| İP-568 | `tedarikci-havuzu.csv → exported_to_turkey_before` **11/11 UNKNOWN**; `supplier-shortlist-v2.csv → turkey_export_experience` **26/26 UNKNOWN** | — | RFQ'da tarihli/hacimli sorulmalı → `T-562`. `SUP-452` için artık kısmen biliniyor (`EV-...-564`) |
+| İP-569 | **Tormentoso ≠ Origin Wine.** Tormentoso MAN Vintners'ındır ve Türkiye'de Kavaklıdere portföyündedir | `EV-2026-08-10-561` | Yanlış eşleşme riskini kapatır |
+| İP-570 | Türkiye'de zaten satılan **giriş-segment ithal markalar** (potansiyel rakip seti): J.P. Chenet, Gato Negro, Santa Helena, Alpaca, Baron de Lestac, Moncigale, La Vieille Ferme, Freschello, Gran Passione, Botter, Luccarelli, Fantini, Mateus, Hans Baer, Chemin des Papes, Imperial Vin, Radacini | `EV-2026-08-10-552`, `-554`, `-557` | Rakip ürünün **menşe ve stil** profili: Fransa/İtalya/Şili/Moldova. Kaynak ülke seçiminde referans |
+
+---
+
+### → `mevzuat-ruhsat-uzmani`
+
+| # | İpucu | evidence | Neden önemli |
+|---|---|---|---|
+| İP-571 | Artık **isimleri bilinen** 4 ithalatçı var — TADAB belge sahipleri listesinde aranabilir | `EV-2026-08-10-554/555/556` | `T-505` için somut arama anahtarı → `T-564` |
+| İP-572 | Kavaklıdere ve Adco **kendi sitelerinde** ithal portföylerini/ithalatçı kimliklerini **açıkça yayınlıyor** | `EV-2026-08-10-554`, `-556` | Alkol tanıtım kısıtları karşısında "kurumsal portföy sayfası" ayakta duruyor. Bizim kendi pazarlama seçeneklerimiz açısından somut emsal *(hukuki değerlendirme senin alanın)* |
+| İP-573 | ŞOK Marketler online kataloğunda "şarap" araması **0 sonuç** | `EV-2026-08-10-558` | Online alkol satış yasağının kanal düzeyinde gözlenen etkisi |
+
+---
+
+### → `gumruk-vergi-uzmani`
+
+| # | İpucu | evidence | Neden önemli |
+|---|---|---|---|
+| İP-574 | Türkiye'de fiyat/performans bandında **Moldova menşeli** ithal şarap listeleniyor (Imperial Vin, Radacini, Chateau Vartely, Kazayak; 380–512 TL) | `EV-2026-08-10-563` | Moldova ile Türkiye arasında STA var mı, GTİP 2204'te tercihli tarife uygulanıyor mu? **Sormuyorum, ipucu bırakıyorum** — bu bandda ithalat yapabilen menşelerin vergi avantajı olabilir |
+
+---
+
+### → `yatirim-komitesi-baskani`
+
+| # | İpucu | evidence | Neden önemli |
+|---|---|---|---|
+| İP-575 | `pazar.yaml → ithalatci_haritasi.dogrulanmis_ithalatci_sayisi = 1` artık **eskimiştir**; TUR 2'de 4 doğrulanmış grup var. **Bu ajan dosyayı değiştirmedi** (talimat: pazar.yaml'a dokunma) | `EV-2026-08-10-554/555/556` | Merge kararı senin |
+| İP-576 | `pazar.yaml → kanal_yapisi.bim_a101_sok_sarap_var_mi` **UNKNOWN kalmalıdır**; ŞOK online 0 sonucu mağaza rafını kanıtlamaz | `EV-2026-08-10-558` | Yanlış kapatma riski |
+| İP-577 | `raf-fiyat-gozlemleri.csv`'ye eklenen 65 satırın **63'ü raf fiyatı değildir** (`ONLINE_LISTING_STOKTA_YOK`, `status=UNKNOWN`). Toplam gözlem 52 → 117 oldu ama **model girdisi sayısı artmadı** | `EV-2026-08-10-552`, `EV-2026-08-10-564` | `gozlem_havuzu.toplam_gozlem` merge edilirken bu ayrım korunmalı |
+| İP-578 | `T-464` **ANSWERED** (global-sourcing → bu ajan). Cevap `99-ops/tickets/T-464.md` içindedir; başkan onayı bekliyor | `EV-2026-08-10-564` | Gate takibi |
+
+---
+
+## kanal-marj-uzmani (TUR 2)
+
+> Bu bir **parça dosyasıdır**. `99-ops/capraz-ipuclari.md` ana dosyasına
+> `yatirim-komitesi-baskani` tarafından birleştirilir. Bu ajan ana dosyaya
+> **DOKUNMAMIŞTIR**.
+>
+> **Bunlar SONUÇ DEĞİL, İPUCUDUR.** Hedef ajan kendi alanında doğrulamadan
+> modele giremez (CLAUDE.md §1.10–1.11).
+
+---
+
+### → `turkiye-pazar-kasifi`
+
+#### KM-1 — İthal şarabın hacim payı için resmî bir sayı buldum (sizin alanınız, ben sonuç üretmedim)
+
+`EV-2026-08-10-624` (Rekabet Kurulu 21-51/708-351, para.27, kaynak **TADB**):
+
+> *"2020 yılında iç piyasa şarap arzının **%96'sını üretim; %4'ünü ise ithalat**
+> oluşturmaktadır."*
+
+Aynı paragraf 2018'de arzın %16 arttığını, son yıllarda arz miktarının **azalma
+eğiliminde** olduğunu da söyler.
+
+**Neden önemli:** `pazar.yaml → pazar_hacmi.ithal_pay_pct` TUR 1'de **UNKNOWN**
+kalmıştı ve bu, TUR 1'in "en büyük UNKNOWN"ı olarak kaydedilmişti (`T-505`).
+Bu, o alan için **T2 seviyesinde bir aday kaynaktır**. **Ben doldurmadım** —
+`pazar.yaml` sizin dosyanız ve bu bir pazar sonucudur, kanal sonucu değil.
+
+**Uyarı:** 2020 verisidir; `global-sourcing-kasifi`'nin `EV-2026-08-09-405`
+(2025 Comtrade, 17,8 m litre 2204.21 ithalatı) bulgusuyla **karşılaştırılmalıdır** —
+iki kaynak farklı yıl ve farklı tanım kullanıyor olabilir.
+
+#### KM-2 — Alkollü içki satan nokta sayısı resmî olarak biliniyor
+
+`EV-2026-08-10-613` (aynı karar, Tablo 5, kaynak **TADB**), 2020:
+**GK (geleneksel kapalı nokta) 48.956** · **YT/ASN (HoReCa) 29.218**.
+
+Modern kanal (zincir market) nokta sayısı bu tabloda **kasten yoktur** (merkezi alım
+nedeniyle dışarıda bırakılmış). Yani "Türkiye'de kaç zincir market noktası şarap
+satıyor" sorusu **hâlâ açıktır** ve pazar haritanızın bir boşluğudur.
+
+#### KM-3 — Metro alkolde yıllık anlaşma imzalıyor; "tek fiyat listesi" değil
+
+`EV-2026-08-10-612`: Mey İçki'nin **MİGROS, CARREFOUR, ÖZDİLEK, METRO ve TESPO** ile
+**birer yıllık satış anlaşması** imzaladığı, kararda ismen yazılıdır.
+
+Bu, sizin `İP-501` ve `İP-505`'inizle **tutarlıdır ve onları güçlendirir**:
+Metro'da tek bir "raf fiyatı" bir kanal fiyatı değildir; müşteriye ve sözleşmeye
+bağlı fiyatlar vardır. `T-506`'ya kanal tarafından verebildiğim en somut cevap budur.
+
+---
+
+### → `finans-fizibilite`
+
+#### KM-4 — TL ticari kredinin piyasa fiyatı için denetlenmiş bir çapa var (makro.yaml sizin alanınız)
+
+`EV-2026-08-10-617` (Migros 2025 bağımsız denetimden geçmiş konsolide finansallar,
+ticari borçlar notu):
+
+> *"Ticari borçların vadesi genel olarak 3 aydan kısadır ve 31 Aralık 2025 tarihi
+> itibarıyla **yıllık %38,6** (2024: **%46,2**) oranı kullanılarak iskonto edilmiştir."*
+
+**Neden önemli:** Bu, Türkiye'de **TL ticari kredinin fiilen fiyatlandığı orandır**
+ve bir denetim raporunda yer alır. `makro.yaml → finansman_orani` şu an
+`null`/`UNKNOWN`. `Cİ-15.4` (gümrük-vergi ajanı) devreden KDV'nin finansman
+maliyetinin `L5`'te ayrı satır olması gerektiğini söylemişti — o hesabın **oranı**
+buradan gelebilir. **Ben doldurmadım.**
+
+#### KM-5 — Listeleme bedeli, hacim senaryolarını asimetrik kırar
+
+`kanal.yaml → duyarlilik_senaryolari.f_listeleme_bedeli_sise_basi`:
+Listeleme bedeli **sabit**, hacim **değişkendir**. Aynı mutlak bedel,
+5.000 şişe/yıl senaryosunda 100.000 şişe senaryosunun **20 katı** şişe başına
+maliyet üretir.
+
+Bu, `global-sourcing-kasifi`'nin `İP 6.3`'ü (MOQ hacim senaryolarını asimetrik
+kısıtlar) ve `navlun-lojistik-uzmani`'nın `F-1`'i (5.000 şişe LCL'dir, birim maliyet
+yüksektir) ile **aynı yönde** birikir. **Üç ajan da bağımsız olarak küçük hacmin
+orantısız pahalı olduğunu buldu.** Bu, ölçek eğrisinin **doğrusal olmadığının** üçüncü
+bağımsız kanıtıdır.
+
+#### KM-6 — Kanal karması kararı, dağıtım modeli kararını belirler (tersi değil)
+
+`70-kanal/kendi-dagitim-senaryosu.md` §9:
+- Zincir market **merkezi alım** yapar (`EV-2026-08-10-613` dipnot 14) ve zaten
+  **lojistik bedeli** alır (`EV-2026-08-10-612`) → zincir kanalında kendi dağıtımın
+  marjinal faydası **düşüktür**.
+- Kendi dağıtımın gerçek değeri **GK (48.956) ve ASN (29.218)** kanallarındadır.
+- Charter'ın kanal önceliği (**1** zincir, **2** tekel, **3** HoReCa) ile kendi
+  dağıtımın ekonomik mantığı **ters yöndedir**.
+
+Modelde "dağıtım modeli" bağımsız bir karar değişkeni gibi durmamalıdır;
+**kanal karmasının türevi** olarak modellenmelidir.
+
+---
+
+### → `gumruk-vergi-uzmani`
+
+#### KM-7 — Üretici pazarlama katkısının BİÇİMİ vergi matrahını değiştirebilir
+
+`T-605`'te `global-sourcing-kasifi`'den RFQ 5.6'nın cevabında şu ayrımın zorunlu
+kılınmasını istedim: üreticinin pazarlama/listeleme katkısı **fatura ile mi**
+yoksa **fiyat iskontosu ile mi** veriliyor?
+
+**Neden size ipucu bırakıyorum:** iskonto ile verilirse `L0/L1` düşer ve dolayısıyla
+gümrük kıymeti de düşer; fatura ile verilirse `L5`'te bir gelir kalemidir ve kıymeti
+etkilemez. **Bu benim alanım değil ve bir sonuç üretmedim** — yalnızca ayrımın
+sorulmasını sağladım. Vergisel sonuç sizindir.
+
+#### KM-8 — Kırık ürün bedeli, indirilemeyen KDV ile birleşiyor
+
+`EV-2026-08-10-612`: **"kırık ürün bedeli"** alkollü içki zincir yıllık anlaşmasında
+"müşteriye ödenecek bedeller" arasında **ismen** vardır — yani kırılma maliyeti
+sözleşmeyle **tedarikçiye** dönmektedir.
+
+Sizin `Cİ-15.1`'iniz KDVK md.30/c uyarınca **zayi olan mala ait KDV'nin
+indirilemediğini** kaydetmişti. İki bulgu birleşince fire maliyeti:
+`f × L4_per_şişe + f × KDV_per_şişe` **artı** sözleşmesel kırık ürün bedeli olur.
+Üçüncü kalemin varlığını kanal tarafında doğruladım; **tutarı UNKNOWN**.
+
+---
+
+### → `mevzuat-ruhsat-uzmani`
+
+#### KM-9 — TUR 1'deki `K3` ipucunuz kanal tarafında bir yapısal sonuç doğuruyor
+
+Sizin `K3`'ünüz: *"Promosyon, kampanya, hediye, eşantiyon, bedelsiz ürün TAM YASAK"*
+(`EV-2026-08-09-222`).
+
+Kanal tarafında bunu üç kanıtla birleştirdim (`kanal-marj-yapisi.md` §2.7):
+1. Perakende Yönetmeliği m.5/2(d), perakendecinin bedel alabilmesi için verebileceği
+   hizmetleri **iki gruba** ayırır: **tanıtım hizmeti** veya **teşhir ünitelerinde
+   özel konumlandırma** (`EV-2026-08-10-605`).
+2. Alkolde tanıtım fiilen satın alınamaz (`İP-2001`, kabul edilmiş iş kısıtı).
+3. ÖTV maktu ve fiyattan bağımsızdır (`Cİ-11`) → indirimin tamamı marjdan çıkar.
+
+**Sonuç (kanal alanında, sizin alanınızda değil):** şarapta ödenen listeleme
+bedelinin karşılığında alınabilecek tek şey **fiziksel raf konumlandırmasıdır**.
+**Kısıtın kapsamını yeniden araştırmadım** (kurucu kararı, `T-205`).
+
+#### KM-10 — 2015'teki "raf garantisi" 2024 metninde görünmüyor — sizin alanınız
+
+`EV-2026-08-10-608` (TBMM, 6585 orijinal 2015 metni, m.6/2):
+
+> *"...prim ya da bedel talebine konu olan ürünün sözleşme süresince **rafta satışa
+> sunulması zorunludur**."*
+
+Bulabildiğim **2024 konsolide metninde** (`EV-2026-08-10-601`) bu cümle
+**görünmemektedir**. Doğruysa, "listeleme bedelini ödedik ama raftan çıkarıldık"
+riski hukuken korumasız hâle gelmiştir. **T-601**'in üçüncü sorusudur.
+
+---
+
+### → `seytanin-avukati`
+
+#### KM-11 — Kendi işime karşı hazırladığım cephane
+
+1. **Bu raporun hiçbir yerinde ŞARABA AİT bir marj rakamı yoktur.** Migros %24,31
+   tüm-kategoridir; Rekabet Kurumu verisi **süttür**; HoReCa çarpanı **2012 tarihli
+   bir köşe yazısıdır**. "Kanal marj yapısı çıkarıldı" cümlesi ilerleme gibi
+   okunabilir — **okunmamalıdır**.
+2. **`d` bandı (%3/%8/%18) kanıtsızdır.** Tek dayanağı `EV-2026-08-10-612`'deki
+   **kalem sayısıdır**, seviyesi değil. Bandın tamamı yıkılabilir.
+3. **`m_retail` BASE %25 seçimim savunulabilir ama keyfîdir.** Tek çapa %24,31'dir
+   ve o da şarap değildir. %25 yerine %32 seçseydim modelin `L6`'sı ~%9 düşerdi.
+4. **`f_listeleme` seviyesi tamamen boştur.** Tek iz 2004 tarihli bir dergi haberi.
+   Eğer gerçek bedel 3× tahminse, düşük hacim senaryoları **tek başına ölür**.
+5. **Kırık ürün bedeli + iade korumasızlığı + indirilemeyen KDV** üçlüsü modelde
+   birleşik olarak hiç test edilmedi. Cam şişede bu üçlü, fire oranının modele
+   girenden **çok daha pahalı** olduğu anlamına gelebilir.
+6. **5 yıllık şarap alım sözleşmeleri** (`EV-2026-08-10-614`) — kaç noktanın bağlı
+   olduğu **UNKNOWN**. Eğer HoReCa/GK'nin önemli bir kısmı bağlıysa, "kanal erişimi
+   var" varsayımı çöker ve bu, listeleme bedelinden daha ölümcül bir engeldir.
+7. **`C-601` çözülmedi.** Vade 120 güne çıkarsa `peak_cash_requirement` yaklaşık
+   ikiye katlanır. Ben bunu bir "stres senaryosu" diye etiketledim — siz bunun
+   **base case olma ihtimalini** savunabilirsiniz ve `EV-2026-08-10-617`'nin
+   %34,4'lük 3–12 ay dilimi sizi destekler.
+
+---
+
+### → `yatirim-komitesi-baskani`
+
+#### KM-12 — İki bakım işi
+
+1. **`index.csv` birleştirmesi:** `10-evidence/_index-parts/kanal-marj-uzmani-tur2.csv`
+   (başlıksız, 24 satır, `index.csv` kolon sırasında) hazırdır. Bu ajan `index.csv`'ye
+   **dokunmamıştır**.
+2. **`EV-2026-08-10-608` kartının `status` alanı `SUPERSEDED`'dır** (6585 orijinal
+   2015 metni; 7435 ile değişmiştir). Kartı bilerek açtım — çünkü değişikliğin
+   **kendisi** bir bulgudur (`KM-10`). `supersedes` alanı boştur çünkü bu kart yeni
+   metni değil **eski metni** taşır; onu geçersiz kılan `EV-2026-08-10-601`'dir.
+   Bu ters yönlü bağ `index.csv`'de otomatik görünmez; birleştirmede dikkat edilmeli.
+
+#### KM-13 — `T-205` nasıl kullanıldı
+
+`T-205` **açılmamış, statüsü değiştirilmemiştir.** `ACCEPTED BUSINESS CONSTRAINT`
+olarak bir **girdi** gibi kullanılmıştır. Nerede kullanıldığı `T-205.md` sonuna
+eklenen "KULLANIM KAYDI" bölümünde satır satır gösterilmiştir.
+
+---

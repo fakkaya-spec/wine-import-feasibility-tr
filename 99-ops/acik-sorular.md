@@ -1053,3 +1053,501 @@ Bu tur **dar kapsamlıydı**; aşağıdakiler araştırılmadı ve `pazar.yaml`'
 | 8 | `kanal_yapisi.bim_a101_sok_sarap_var_mi`, `bizim_toptan_fiyatlari`, `duty_free` | MEDIUM |
 
 ---
+
+---
+
+# TUR 2 AÇIK SORULARI
+
+TUR 2 sonunda kapanamayan yapısal boşluk, ajanların ortak tespitidir:
+**gerçek teklif olmadan kapanmayacak alanlar** artık tek tek listelenmiştir.
+
+| Kaynak | Alan sayısı | Nasıl kapanır |
+|---|---|---|
+| `global-sourcing-kasifi` | **21 alan** (+ Model A'ya özgü 7) | Gerçek RFQ gönderimi (T-467) |
+| `kanal-marj-uzmani` | **12 alan** | Gerçek kanal görüşmesi (T-604) |
+| `navlun-lojistik-uzmani` | FCL navlunu, İtalya rotası, sigorta, bandrolleme | 3 forwarder yazılı kotasyonu (T-304) |
+
+Üçünün ortak özelliği: **daha fazla web araştırması bu alanları kapatmaz.**
+Bu bir veri eksikliği değil, izin/zamanlama sorunudur.
+
+## gumruk-vergi-uzmani (TUR 2)
+
+> Kapsam: menşe → tarife eşlemesi. TUR 1 ve TUR 1.5'in açık soruları
+> `acik-sorular-gumruk-vergi-uzmani.md` ve `…-tur15.md` dosyalarında durmaktadır
+> ve **kapanmamıştır**.
+
+---
+
+### OQ-G12 — 1/98 sayılı Karar'ın **ürün listesi** 2204.21'i gerçekten içeriyor mu?
+
+```yaml
+id:        OQ-G12
+impact:    MEDIUM
+blocks:    -            # G1'i bloke ETMEZ (oran T1 ile sabit)
+sahibi:    gumruk-vergi-uzmani
+```
+
+GGM Menşe Kontrol Tablosu'nun `ATRM` satırı, GTİP kapsamını *"**3 — Yalnızca
+Tarım ürünleri listesindeki** tüm ürünler esas alınacaktır"* diye tanımlıyor
+(`EV-2026-08-10-158`). **O "tarım ürünleri listesi"nin kendisini görmedim.**
+
+2204.21'in o listede olduğunu, İthalat Rejimi Kararı'nın AB sütununda **%50
+taviz bulunmasından türettim**. Türetme mantıklıdır (taviz varsa dayanağı
+1/98'dir) ama **doğrudan gözlem değildir.**
+
+**Neden G1'i bloke etmiyor:** `applicable_customs_rate = 50` değeri
+`EV-2026-08-09-103` (T1, İthalat Rejimi Kararı) ile **doğrudan** sabittir.
+Bu soru oranı değil, **oranın hukuki dayanağının adını** ve dolayısıyla
+belge satırının doğruluğunu ilgilendirir.
+
+**Nasıl kapanır:** 1/98 sayılı OKK'nın ekli ürün listesi (mevzuat.gov.tr /
+ticaret.gov.tr — bu oturumda erişilemedi) veya gümrük müşaviri teyidi.
+Bu, `mense-tarife-eslemesi.md`'nin **en zayıf halkasıdır.**
+
+---
+
+### OQ-G13 — Fatura beyanının değer eşiği ve "onaylanmış ihracatçı" koşulu
+
+```yaml
+id:        OQ-G13
+impact:    LOW
+blocks:    -
+sahibi:    gumruk-vergi-uzmani
+ticket:    T-162
+```
+
+Fatura beyanının belirli bir değer eşiği altında **her** ihracatçıya, üstünde
+ise yalnızca **"onaylanmış ihracatçı"**ya açık olup olmadığı T1/T2 ile
+doğrulanamadı. **Model etkisi yok:** EUR.1 her hâlükârda düzenlenebilir; bu
+yalnızca tedarikçinin hangi belgeyi tercih edeceğini etkiler.
+
+---
+
+### OQ-G14 — DÜ menşede menşe şahadetnamesi **zorunlu** mu?
+
+```yaml
+id:        OQ-G14
+impact:    LOW
+blocks:    -
+sahibi:    gumruk-vergi-uzmani
+ticket:    T-162
+```
+
+Gümrük Rehberi (T2), menşe şahadetnamesinin ibrazını **ticaret politikası
+önlemi** bağlamına bağlıyor (`EV-2026-08-10-162`). 2204.21'de yürürlükte bir
+önlem tespit edilemedi (İGV yok — `EV-2026-08-09-107`; gözetim `UNKNOWN` —
+`EV-2026-08-09-125`). Gümrük Yönetmeliği **md.205** T1 metnine erişilemedi.
+
+**Model etkisi yok:** DÜ'de oran zaten %70; belge oranı değiştirmez.
+
+---
+
+### OQ-G15 — Transhipment ≠ çıkış ülkesi değişimi mi?
+
+```yaml
+id:        OQ-G15
+impact:    HIGH
+blocks:    -            # G1 degil, G2-L / G4 tarafinda
+sahibi:    navlun-lojistik-uzmani
+ticket:    T-163
+```
+
+BİLGE çıkış ülkesi kontrolü (`EV-2026-08-10-158`, `-160`) ile "doğrudan
+nakliyat" koşulu (`EV-2026-08-10-163`) arasındaki tam ilişki bende
+`UNKNOWN`'dır: **bir limanda gemi aktarması yapmak, o ülkeden "çıkış yapmak"
+sayılır mı?**
+
+**Neden HIGH:** Sayılıyorsa, Şili rotasında herhangi bir aktarma tercihli oranı
+düşürür ve şişe başına **+24 TL** getirir. Sayılmıyorsa etki yoktur.
+İki cevap arasındaki fark, tüm Şili senaryosunun ekonomisini değiştirir.
+
+---
+
+### OQ-G16 — Tercihli oran **sonradan geri alınabilir mi**?
+
+```yaml
+id:        OQ-G16
+impact:    MEDIUM
+blocks:    -
+sahibi:    gumruk-vergi-uzmani
+```
+
+Gümrük Rehberi, menşe şahadetnamesinde *"ciddi bir şüphe durumunda gümrük
+idareleri ek kanıtlar istemeye yetkilidir"* diyor. **Tercihli** belgelerde de
+sonradan kontrol (subsequent verification) mekanizması olduğu biliniyor
+(Rehber'de "Menşe ve dolaşım belgeleri üzerinde yapılan kontroller" başlığı
+var) ancak **usulü ve sonucu bu turda incelenmedi.**
+
+**Neden önemli:** İthalat anında ödenmeyen 20 puanın, aylar sonra **cezalı**
+olarak istenmesi senaryosudur. Bu, bir maliyet kalemi değil bir **kuyruk
+riskidir** ve `seytanin-avukati` için hedeftir.
+
+---
+
+### Ulaşılamayan resmî kaynaklar (2026-08-10 — dürüst kayıt)
+
+| Host | Sonuç | Etkilenen soru |
+|---|---|---|
+| `mevzuat.gov.tr` | TLS handshake / connection reset | Gümrük Yönetmeliği md.205, Türkiye-Şili menşe yönetmeliği (No 14805), 1/98 OKK |
+| `resmigazete.gov.tr` | Aynı | Aynı |
+| `ticaret.gov.tr`, `ggm.ticaret.gov.tr`, `ab.ticaret.gov.tr` | Sunucu ara sertifika göndermiyor → TLS zinciri kurulamıyor; WebFetch 503 | STA listesi, Menşe Kontrol Tablosu'nun **resmî** kopyası |
+| `gumrukrehberi.gov.tr` | ✅ Erişildi | T2 kanıtların kaynağı |
+| `files.igmd.org.tr` | ✅ Erişildi | GGM Menşe Kontrol Tablosu PDF'i (T3 host) |
+
+Bu, TUR 1'deki "TGTC taranmış görüntü" ve TUR 1.5'teki "TÜİK erişilemedi"
+kayıtlarıyla aynı türden bir sınırlamadır ve **gizlenmemiştir.**
+
+---
+
+## navlun-lojistik-uzmani (TUR 2)
+
+```yaml
+ajan:  navlun-lojistik-uzmani
+tur:   TUR 2
+tarih: 2026-08-10
+not:   "Bu dosya 99-ops/acik-sorular.md'ye BASKAN tarafindan islenir. Ana dosyaya dokunmadim."
+```
+
+**UNKNOWN yazmak başarısızlık değildir. Uydurmak başarısızlıktır.**
+
+---
+
+### 1. TUR 1'DEN KAPANANLAR *(şeffaflık için)*
+
+| TUR 1 UNKNOWN # | Konu | **TUR 2 durumu** | evidence_id |
+|---|---|---|---|
+| 2 | California → İstanbul transit + navlun | ✅ **KAPANDI** (LCL): 20 gün, 0,505–0,574 USD/şişe | `EV-...-308`, `-309` |
+| 7 | Terminal ardiye free time gün sayısı | ⚠ **KISMEN** — SafiPort 0 gün, ama `C-312` çelişkisi | `EV-...-317` |
+| 8 | Ambarlı terminallerinin tarifesi | ⚠ **KISMEN** — Kumport ardiye bulundu ama `confidence: LOW` | `EV-...-318` |
+| 12 | Origin THC, BAF/CAF, doc fee, ordino | ✅ **KAPANDI**: THO 287 EUR, B/L 62 EUR, ordino 2.000–5.000 TL, BAF %15–25 | `EV-...-313`, `-314`, `-325`, `-324` |
+| 13 | Limandan depoya çekme ücreti | ✅ **DARALDI**: 10.000–15.000 TL (İstanbul içi, 20') | `EV-...-326` |
+| 14 | Antrepo minimum süre | ✅ **KAPANDI**: 7 gün | `EV-...-327` |
+| 17 | İtalya / Fransa → Türkiye transit | ⚠ **YARIM**: Fransa 12–15 gün ✅ / **İtalya UNKNOWN** ❌ | `EV-...-305`, `-304` |
+| 18 | Şili → Türkiye rota yapısı | ✅ **KAPANDI**: 43–49 gün, Barcelona/Hamburg aktarmalı | `EV-...-306` |
+
+**Ayrıca TUR 1'de sorulmamış ama TUR 2'de kapanan:**
+40HC/20DV navlun oranı (**1,37–1,48**, `EV-...-328`) — TUR 1'in tek noktalı
+1,54 eşiğini bir **banda** (1,39–1,82) çevirdi ve karşılaştırmayı mümkün kıldı.
+
+---
+
+### 2. HÂLÂ AÇIK — ÖNCELİK SIRASIYLA
+
+| # | Soru | Neden bulunamadı | Kritik mi | Nasıl kapanır | Ticket |
+|---|---|---|---|---|---|
+| **U-1** | **Rota bazlı FCL navlunu (all-in kalem listesiyle)** | 14 Türkiye varışlı lane'in hiçbirinde kamuya açık FCL kotasyonu yok (`EV-...-312`); dolaylı çapalar 4–5 kat çelişiyor (`C-311`) | **CRITICAL** | 3 forwarder'dan yazılı RFQ | `T-304` |
+| **U-2** | **İtalya → Türkiye navlunu (LCL ve FCL)** | Dört İtalyan limanında "0 offerings"; bulunan tek veri ters yön + 2025 | **HIGH** | Forwarder / armatör servis tarifesi | `T-312` |
+| **U-3** | **İspanya dışı menşelerin origin local charge'ları** | Yalnızca Hapag-Lloyd İspanya tarifesi tarandı | **HIGH** | Menşe başına taşıyıcı local tarifesi | `T-312` |
+| **U-4** | **Beklenen cam kırılma / fire oranı (%)** | Sektör hasar istatistiği kamuya açık değil | **HIGH** | Sigortacı + forwarder | `T-314` |
+| **U-5** | **Bandrolleme birim maliyeti + kapasite (şişe/gün)** | Antrepo hizmet teklifi gerekiyor | **HIGH** | Antrepo işletmecisi teklifi | `T-314` |
+| **U-6** | **Antrepo giriş/çıkış elleçleme (hammaliye)** | Antrepo siteleri fiyat yayınlamıyor (403) | **HIGH** | Aynı teklif | `T-314` |
+| **U-7** | **Çekici + şasi darası (kg)** | Türk nakliyeci verisi kamuya açık değil; TUR 2'de de aranmadı/bulunamadı | **HIGH** | Nakliyeciden ruhsat bilgisi | `T-304` |
+| **U-8** | **Terminal ardiye free time: 0 mı 5 mi** | İki T4 kaynak çelişiyor | MEDIUM | Terminal tarife PDF'i / yazılı soru | `T-313` / `C-312` |
+| **U-9** | **THD ↔ terminal kapı-çıkış çift sayımı** | Taşıyıcı ve terminal ayrı tarife yayınlıyor | MEDIUM | Gerçek fatura örneği | `T-313` / `C-313` |
+| **U-10** | **Kumport/Marport/Mardaş tarifelerinin doğrulanması** | PDF'lere doğrudan erişilemedi | MEDIUM | Terminal/acente | `T-313` |
+| **U-11** | **Thermal liner birim maliyeti** | Hiçbir kaynakta fiyat yok (TUR 1'de de yoktu) | MEDIUM | Forwarder | `T-304` |
+| **U-12** | **Türk sigortacıdan gerçek kotasyon + muafiyet** | Kotasyon gerekli | MEDIUM | Sigorta brokerı | `T-304` |
+| **U-13** | **LCL konsolidasyon beklemesi (gün)** | Veri yok; lead time'a doğrudan giriyor | MEDIUM | Forwarder | `T-304` |
+| **U-14** | **LCL per-CBM fiyatının 5 CBM'den 12 CBM'e doğrusal ölçeklenip ölçeklenmediği** | Flexport yalnızca 5 CBM için kotasyon veriyor | MEDIUM | Forwarder'dan 12 CBM kotasyonu | `T-304` |
+| **U-15** | **Portekiz → İstanbul gerçek transit** | Kaynak "4 gün" diyor ama routing Barcelona aktarmalı → iç tutarsız | MEDIUM | Armatör servis tarifesi | `T-312` |
+| **U-16** | **Şarap "Food Quality Container" (115 EUR) gerektirir mi** | Taşıyıcı tarifesinde kalem var, zorunluluğu belirsiz | LOW | Forwarder / tedarikçi | `T-312` |
+| **U-17** | **Veteriner/fitosaniter kontrol (126 USD/BL) şarapta uygulanır mı** | Mevzuat alanı | LOW | `mevzuat-ruhsat-uzmani` (İP-2312) | — |
+| **U-18** | **Depolama (serbest dolaşım sonrası) m²/palet maliyeti** | Teklif gerekiyor | MEDIUM | Depo işletmecisi | `T-314` |
+| **U-19** | **Depodan kanala dağıtım (şişe başı)** | Kanal modeli belirsiz | MEDIUM | `kanal-marj-uzmani` ile birlikte | — |
+| **U-20** | **FX kuru (USD/TRY, EUR/TRY) ve kur tarihi** | `makro.yaml` boş; benim alanım değil | **HIGH** | `finans-fizibilite` | `T-311` |
+| **U-21** | **Ruhsat/bandrol bekleme süresi (gün)** | Mevzuat alanı | **CRITICAL** | `mevzuat-ruhsat-uzmani` | `T-301` |
+| **U-22** | **Toplam lead time** | U-13 + U-21 + gümrükleme + üretim süresinden türetilir | **CRITICAL** | `T-301` + `T-304` + sourcing | — |
+| **U-23** | Tedarikçinin gerçek koli/palet spec'i | Tedarikçi seçilmedi | HIGH | RFQ spec sheet | `T-302` |
+| **U-24** | Paletsiz yüklemede yeniden paletleme maliyeti | Veri yok (TUR 1'de de yoktu) | MEDIUM | Antrepo teklifi | `T-314` |
+| **U-25** | Diğer armatörlerin (MSC/CMA CGM/Arkas) D&D free time'ı | Sayfalar erişilemedi | MEDIUM | Armatör local info | `T-313` |
+
+---
+
+### 3. BU TURDA DENENİP BAŞARISIZ OLAN YOLLAR *(tekrar denenmesin diye)*
+
+| # | Denenen | Sonuç |
+|---|---|---|
+| 1 | Flexport Rate Explorer — **FCL**, 14 farklı Türkiye lane'i | Hepsinde "0 offerings" |
+| 2 | Flexport — İtalya (ITGOA, ITSPE, ITLIV, ITNAP) → İstanbul | Hepsinde "0 offerings", LCL dahil |
+| 3 | Flexport — Valencia → **Mersin** | "0 offerings" (yalnızca İstanbul lane'leri kotasyonlanıyor) |
+| 4 | Freightos route sayfaları | 302 redirect → `ship.freightos.com` (giriş gerekli) |
+| 5 | SeaRates `/routes/` | 403 |
+| 6 | Globy freight calculator (Türkiye ve Valencia→İstanbul) | 403 |
+| 7 | Hapag-Lloyd Türkiye import charges **web formu** | 403 — **ama PDF tarifesi bulundu ve çalıştı** ✅ |
+| 8 | Kumport tarife sayfası | Yalnızca başlıklar; PDF'lere erişilemedi |
+| 9 | FixAntrepo 2026 fiyat sayfası | 403 — değerler yalnızca arama özetinden |
+| 10 | Erciyes Lojistik 2026 konteyner fiyatları | 403 |
+| 11 | Suaid Global 2026 navlun tabloları | Akdeniz / Türkiye rotaları **yok** |
+| 12 | MoverDB konteyner fiyat tablosu | Veri **2023 sonu**, Türkiye satırı yok |
+| 13 | Nakliyerehberim rota fiyatları (İspanya, Şili) | Yalnızca **Türkiye çıkışlı** (ihracat) satırlar |
+
+> **Kalıp:** Türkiye **ithalat** yönü için kamuya açık FCL fiyatı sistematik
+> olarak yayınlanmıyor. Türkiye **ihracat** yönü için yayınlanıyor. Bu bir
+> arama başarısızlığı değil, **piyasa yapısı**dır: Türk forwarder'ları ihracat
+> odaklı fiyat yayınlıyor; ithalat fiyatı yabancı taraftan geliyor ve
+> kotasyona bağlı.
+
+---
+
+### 4. AÇIK SORULARIN GATE ETKİSİ
+
+| Gate | Sahibi | Bu turdan sonra |
+|---|---|---|
+| **G2-L** — L1→L2→L3 geçişi kanıtla kurulabiliyor mu? | `navlun-lojistik-uzmani` | **BLOCKED — değişmedi.** Açan tek koşul (`T-304`: 3 forwarder kotasyonu) karşılanmadı. **Ama kapsamı daraldı:** L2→L3 geçişinin masraf kalemleri artık büyük ölçüde biliniyor; kilitli olan yalnızca **L1→L2 (ocean freight)**. |
+
+**G2-L'nin bugünkü tam durumu:**
+
+```
+L1 (FOB)  →  L2 (CIF)   : ocean freight UNKNOWN (band 4 kat)  ❌  ← TEK KİLİT
+                           origin locals BİLİNİYOR (İspanya)   ✅
+                           sigorta ESTIMATE (%0,3–0,6)         ⚠
+L2 (CIF)  →  L3 (pre-tax landed) : THD BİLİNİYOR              ✅
+                                   ardiye BİLİNİYOR             ✅
+                                   ordino BİLİNİYOR             ✅
+                                   müşavirlik BİLİNİYOR         ✅
+                                   iç nakliye DARALDI           ⚠
+                                   antrepo bekleme UNKNOWN      ❌ (T-301)
+                                   bandrolleme UNKNOWN          ❌ (T-314)
+```
+
+---
+
+## global-sourcing-kasifi (TUR 2)
+
+> `99-ops/acik-sorular.md` dosyasına **DOKUNULMAMIŞTIR** (başkan birleştirir).
+> **UNKNOWN yazmak başarısızlık değildir. Uydurmak başarısızlıktır.**
+
+---
+
+### A. YALNIZCA GERÇEK RFQ İLE ÖĞRENİLEBİLECEK ALANLAR
+
+Bu, bu turun **en önemli çıktılarından biridir**: hangi bilginin açık kaynak
+araştırmasıyla **prensipte** elde edilemeyeceğinin alan alan listesi.
+Aşağıdaki 21 alan için **daha fazla web araştırması yapmak kaynak israfıdır.**
+
+| # | Alan | CSV kolonu | Neden açık kaynakta yok | RFQ sorusu |
+|---|---|---|---|---|
+| 1 | **EXW şişe fiyatı** | `EXW` | Fiyat listesi ticari sırdır; 26 tedarikçinin **1'i** kademeli gösterge yayınladı | 3.1 / S11 |
+| 2 | **FOB şişe fiyatı + adı belirtilen liman** | `FOB`, `port` | Aynı | 3.2 / S12 |
+| 3 | **Para birimi** | `currency` | Yayınlanan tek fiyatta bile yazılı değil | 3.13 / S11 |
+| 4 | **Hacim bazlı fiyat kırılımı** (5k/10k/25k/50k/100k) | — | Müzakereye açık; hiçbir üretici yayınlamaz | 3.7 |
+| 5 | **Teklifin INDICATIVE mi FIRM mi olduğu** | `price_source_class` | Web sayfası tanım gereği teklif değildir | 3.4 / S25 |
+| 6 | **Teklif geçerlilik tarihi** | `quote_publication_date` | Aynı | 3.5 / S25 |
+| 7 | **Gerçek MOQ** (SKU **ve** konteyner bazında) | `MOQ` | 26'nın **5'i** yayınladı; ikisi farklı birimde | 3.6a/3.6b, 4.2, 4.3 |
+| 8 | **Ödeme şartı — ilk sipariş** | `payment_terms` | 26'nın **1'i** yayınladı (Harland) | 3.8 |
+| 9 | **Ödeme şartı — sonraki siparişler + vade günü** | `payment_terms` | Hiçbiri | 3.9, 3.10 |
+| 10 | **Toplam lead time** (PO → yüklemeye hazır) | `lead_time` | Yalnızca **üretim** süresi yayınlanıyor, toplam değil | 3.11 / S15 |
+| 11 | **Üretim süresinin kırılımı** (şişeleme / etiket / evrak / gemi bekleme) | `production_time` | Hiçbiri | 3.17 |
+| 12 | **Koli konfigürasyonu ve brüt/net ağırlık + dış ölçü** | `case_configuration` | 26'nın **1'i** (Harland, kısmen) | 2.1–2.3 / S8 |
+| 13 | **Palet konfigürasyonu, tipi, ISPM-15, yükseklik** | `pallet_configuration` | Hiçbiri | 2.4–2.7 / S9 |
+| 14 | **Boş ve dolu şişe ağırlığı** | `bottle_weight` | Hiçbiri — cam tedarikçisi verisidir | 1.14, 1.15 / S7 |
+| 15 | **Etiket maliyeti — tek seferlik (klişe/kalıp) + şişe başı** | `label_cost` | Hiçbiri; bir üretici yalnızca "tasarım ücretsiz" diyor | 4.13 / S19 |
+| 16 | **Karton/koli maliyeti ve EXW'ye dahil olup olmadığı** | `carton_cost` | Hiçbiri | 3.18e, 4.14 / S20 |
+| 17 | **Numune politikası** (adet, maliyet, süre, aynı parti mi) | `sample_policy` | Hiçbiri | 7.1–7.5 / S21 |
+| 18 | **Bize ayrılabilecek yıllık kapasite** | `annual_capacity` | Toplam kapasite bazen var; **bize ayrılabilir** olan hiç yok | 3.12, 8.3 / S22 |
+| 19 | **Menşe ispat belgesi tipi** (EUR.1 / fatura beyanı / REX / A.TR) | `certificates` | Hiçbiri | 6.1 / S23 |
+| 20 | **Türkiye'ye ihracat geçmişi** (ithalatçı, yıl, hacim) | `turkey_export_experience` | **26'nın hiçbiri Türkiye'yi ihracat pazarları arasında listelemiyor** | 6.6 / S24 |
+| 21 | **Marka / reçete / artwork IP sahipliği** | — | Sözleşme maddesidir, web'de olmaz | 4.9 |
+
+**Ek olarak yalnızca Model A'da, yalnızca RFQ ile öğrenilebilecekler:**
+münhasırlık koşulları (5.4), münhasırlığı korumak için gereken yıllık hacim (5.5),
+pazarlama/listeleme desteği (5.6), **ithalatçıya markup/yeniden satış fiyatı tavanı
+uygulanıp uygulanmadığı (5.7)**, fesih ve stok koşulları (5.8), marka tescilinin
+kimde olduğu (5.9), fiyat revizyon mekanizması (5.10).
+
+---
+
+### B. AÇIK SORULAR (RFQ dışı yollarla da kapanabilecekler)
+
+| # | Ne bilinmiyor | Neden bulunamadı | Kritik mi | Nasıl bulunabilir |
+|---|---|---|---|---|
+| OQ-451 | **Harland'ın yayınladığı fiyatın para birimi (AUD mi USD mi)** | Kaynakta yalnızca "$" sembolü var | **CRITICAL** | RFQ 3.1/3.13; veya firmanın başka bir sayfasında para birimi beyanı |
+| OQ-452 | **Model A adaylarının Türkiye'de temsilcisi olup olmadığı** — 7 marka | İki yönlü kesişim; ikinci yön `turkiye-pazar-kasifi`'nda | **CRITICAL** | T-464 + raf gözlemi + ithalatçı listesi |
+| OQ-453 | **Hiçbir tedarikçi için EXW/FOB** | Fiyat listeleri yayınlanmaz; dış iletişim bu turda yasaktı | **CRITICAL** | RFQ v2.1, Dalga 1 (7 hedef), 2–3 hafta |
+| OQ-454 | **Interbrosa'nın MOQ'sunun bugün hâlâ 3.000 olup olmadığı** | Site 2026-08-10'da HTTP 503 (`EV-2026-08-10-467`) | HIGH | E-posta/telefon (site erişimine bağlı kalmadan) |
+| OQ-455 | **Havuzda vade veren tedarikçi var mı** | Doğrulanan tek ödeme şartı tamamen peşin | HIGH | RFQ 3.8/3.9/3.10 |
+| OQ-456 | **Côtes de Gascogne'un fiyat seviyesi** — Fransa ortalamasının (6,27 USD/l) altında mı | Bölgesel birim değer verisi bulunamadı; OIV ülke bazında raporluyor | HIGH | RFQ 3.1 (Plaimont) veya FranceAgriMer bölgesel ihracat verisi |
+| OQ-457 | **Zidela'nın kendi kurumsal beyanları** (MOQ, e-posta, kapasite teyidi) | Kurumsal site yaş doğrulama duvarının arkasında | MEDIUM | Doğrudan telefon; veya IBWSS/WorldBulkWine katılımcı profili |
+| OQ-458 | **Parras Wines private label yapıyor mu** | Grup içinde şişeleme tesisi var ama hizmet ilan edilmemiş — bu bir **çıkarımdır** | MEDIUM | RFQ 4.1; Goanvi Bottling ayrı kurumsal kanalı |
+| OQ-459 | **Bronco Wine private label programı var mı** | Kurumsal sitede yok; T5 iddiası doğrulanamadı (`EV-2026-08-10-466`) | MEDIUM | broncowine-trade.com (bu turda okunmadı) |
+| OQ-460 | **Arjantin'de üretici seviyesinde private label** | Kaynak önceliği TIER A ülkelerine verildi (`EV-2026-08-10-469`) | MEDIUM | Wines of Argentina üye dizini; Bodegas de Argentina; ProWein AR katılımcı listesi |
+| OQ-461 | **Luis Felipe Edwards'ın güncel kurumsal sitesi** | lfewines.com/en/ HTTP 404 | LOW | Wines of Chile üzerinden; veya ana domain kök dizini |
+| OQ-462 | **Cantine Sgarzi (IT) private label şartları** | Sayfa iki denemede de boş içerik döndürdü | LOW | Yeniden deneme / doğrudan e-posta |
+| OQ-463 | **Purcari'nin şişe bazında satış hacmi** | Gelir RON cinsinden yayınlanıyor, hacim kırılımı yok | LOW | BVB'ye sunulan yıllık faaliyet raporu |
+| OQ-464 | **Paletli yüklemede 20ft/40HC konteyner doluluğu** | Yalnızca paletsiz (slipsheet) rakam bulundu | HIGH | T-461 + RFQ 2.8/2.9 — alan `navlun-lojistik-uzmani`'nda |
+
+---
+
+### C. TUR 1'DEN DEVREDEN VE HÂLÂ AÇIK OLANLAR
+
+`OQ-401` … `OQ-415`'in **tamamı açıktır.** TUR 2'de kısmen ilerleyenler:
+
+| TUR 1 sorusu | TUR 2'de ne değişti |
+|---|---|
+| OQ-401 (gerçek EXW/FOB) | Bir tedarikçide **gösterge** fiyat bulundu; gerçek teklif hâlâ **0**. Açık |
+| OQ-402 (gerçek MOQ ve yapısı) | Doğrulanan üretici sayısı 3'ten **5'e** çıktı; aralık genişledi (`C-462`). Açık |
+| OQ-404 (Türkiye'de temsilcisi olmayan f/p markalar) | **7 somut marka adayı** bulundu ama temsilci durumu UNKNOWN. **İlerleme var, kapanmadı** (T-464) |
+| OQ-405 (ilk siparişte ödeme vadesi) | Bir tedarikçide ödeme şartı bulundu (%50+%50 peşin). n=1. Açık |
+| OQ-407 (konteynere kaç şişe girer) | **İlk somut rakam bulundu**: 14.112 şişe/20ft (paletsiz). Paletli UNKNOWN (T-461). Kısmen ilerledi |
+| OQ-411 (bize ayrılabilecek kapasite) | Toplam kapasiteler bulundu; **bize ayrılabilir** olan hâlâ hiçbir tedarikçide yok. Açık |
+| OQ-412 (MD/GE/BG tedarikçi tabanı) | **Moldova'da ilk tedarikçi doğrulandı** (Purcari). Gürcistan ve Bulgaristan hâlâ **0**. Kısmen ilerledi |
+| OQ-413 (Les Grands Chais de France) | Bu turda **denenmedi** — kaynak Plaimont'a yönlendirildi. Açık |
+
+---
+
+## turkiye-pazar-kasifi (TUR 2)
+
+> Ana dosyaya (`99-ops/acik-sorular.md`) **başkan** merge eder.
+
+---
+
+### OQ-551 — İthalatçı kodlarının 13/17'sinin karşılığı kim?
+
+```yaml
+id:          OQ-551
+opened_by:   turkiye-pazar-kasifi
+opened_date: 2026-08-10
+status:      OPEN
+impact:      MEDIUM
+evidence:    EV-2026-08-10-557
+```
+
+**Soru:** Perakendeci feed'indeki şu kodların hangi tüzel kişiye karşılık geldiği
+doğrulanmadı: `LUCE`, `frosta`, `Midas`, `demglobal`, `Future`, `MALTİTHAL`,
+`küregıdaithal`, `ADT`, `piramitgıda`, `PiyasaGıda`, `INANC`, `Vinist`, `Nadiya`.
+
+Doğrulananlar: `KVKLDR` = Kavaklıdere (FACT), `KDT` = Karagözoğlu Dış Ticaret (FACT),
+`ADCO` = Adco Gıda (kimlik FACT, portföy ESTIMATE), `BRN` = Baron Şarapçılık (ESTIMATE).
+
+**Neden açık:** Bandımıza en yakın markaları taşıyan kodlar (`PiyasaGıda`,
+`piramitgıda`, `Vinist`, `frosta`) tam da **çözülemeyenler** arasında.
+
+**Nasıl kapanır:** (a) Üretici sitelerinin "distributors" sayfaları (Antinori
+yöntemi — çalışıyor); (b) şişe arka etiketinde ithalatçı satırının fiziksel
+gözlemi; (c) TADAB belge sahipleri listesi (`T-564`).
+
+**Alt soru (çelişki izi):** J.P. Chenet'yi Baron Şarapçılık mı getiriyor, yoksa
+`interaytrading.com` mu? İkisi de sitesinde bu markayı gösteriyor. Çelişki kaydı
+**açılmadı** çünkü ikisi de T5/zayıf ve modele girmiyor.
+
+---
+
+### OQ-552 — 500–1.000 TL bandı "boş" mu, "stoksuz" mu?
+
+```yaml
+id:          OQ-552
+opened_by:   turkiye-pazar-kasifi
+opened_date: 2026-08-10
+status:      OPEN
+impact:      HIGH
+evidence:    EV-2026-08-10-551, EV-2026-08-10-552
+ticket:      T-561
+```
+
+**Soru:** İncelenen kanalda bu bantta **62 ithal ürün tanımlı** ama **0 tanesi
+stokta**. Bu:
+
+- **(a)** Bu ürünlerin Türkiye'de artık satılmadığı anlamına mı geliyor?
+- **(b)** Yoksa bu perakendecinin bu bandı **kasten taşımadığı** (düşük marj /
+  düşük ortalama sepet) anlamına mı geliyor?
+- **(c)** Yoksa bunlar başka kanallarda (Metro, tekel bayii, zincir market)
+  **normal olarak satılıyor** ve sadece bu online kanalda mı yok?
+
+**Neden kritik:** (a) ise hedef bandımızda talep sorunu vardır → `KILL` yönü.
+(b) veya (c) ise bandımız sağlamdır ve gözlem aracımız yanlıştır → yalnızca
+**kanal seçimi** sorunudur.
+
+**Nasıl kapanır:** Fiziksel mağaza turu. Aranacak somut SKU listesi hazır:
+Santa Helena 677 · M. Chapoutier Belleruche 680 · Hans Baer Pinot Noir 702 ·
+Henkell 746 · Terra Mater Reserve 770 · Botter Caleo 838 · Luccarelli Primitivo 864 ·
+Barone Montalto 950 · La Vieille Ferme 979 · Alpaca 429 · Imperial Vin 512.
+Bu isimlerin Metro / Migros / tekel bayii rafında **var olup olmadığı ve fiyatı**,
+`OQ-502` ile aynı ziyarette toplanabilir.
+
+---
+
+### OQ-553 — Kısa listedeki üreticiler Türkiye'ye daha önce ihracat yaptı mı?
+
+```yaml
+id:          OQ-553
+opened_by:   turkiye-pazar-kasifi
+opened_date: 2026-08-10
+status:      OPEN
+impact:      MEDIUM
+evidence:    EV-2026-08-10-553
+ticket:      T-562
+```
+
+**Soru:** 26 tedarikçinin 25'inin ürünü Türkiye'de bulunamadı. Ama private label
+üreticileri için bu **beklenen** sonuçtur. Doğru soru: *"Türkiye'ye daha önce
+ihracat yaptınız mı, kime, ne zaman, ne hacimde?"*
+
+`tedarikci-havuzu.csv → exported_to_turkey_before` alanı **11/11 satırda UNKNOWN**;
+`supplier-shortlist-v2.csv → turkey_export_experience` alanı da **26/26 satırda
+UNKNOWN** (bir satırda "ABD-TR hattı fiilen yok" notu var, ama tedarikçi düzeyinde
+cevap değil).
+
+**TUR 2'nin somut katkısı:** `SUP-452` Cantina Danese için cevap artık kısmen
+biliniyor — **Türkiye'de kendi markasıyla listelidir** (`EV-2026-08-10-564`).
+Yani en az bir tedarikçide `turkey_export_experience` `UNKNOWN` olmamalıdır.
+
+**Nasıl kapanır:** RFQ (`global-sourcing-kasifi`, `T-562` + `T-565`). Masabaşından
+kapanmaz: ticari veri sağlayıcıları (volza, exportgenius) bu oturumda **403** döndü.
+
+---
+
+### DEVREDEN AÇIK SORULAR — TUR 2'DE ELE ALINMADI
+
+| id | Konu | TUR 2 notu |
+|---|---|---|
+| `OQ-001` | Benchmark KDV / promosyon | **Kasten ele alınmadı** — TUR 2 kapsam sınırı (`T-504` açık, fiziksel gözlem gerektiriyor) |
+| `OQ-502` | Zincir market / tekel bayii raf fiyatı | Kapanmadı. `OQ-552` ile **aynı ziyarette** kapanabilir hâle geldi |
+| `OQ-503` | Gold Country / Central Creek ithalatçısı | Kapanmadı. "Gold Country" markasının üretici/sahibi de bulunamadı |
+| `T-505` | Resmî ithalat hacmi + ithalatçı listesi | Kapanmadı; `T-564` ile somut isim listesi eklendi |
+
+---
+
+## kanal-marj-uzmani (TUR 2)
+
+> Bu bir **parça dosyasıdır**. `99-ops/acik-sorular.md` ana dosyasına
+> `yatirim-komitesi-baskani` tarafından birleştirilir. Bu ajan ana dosyaya
+> **DOKUNMAMIŞTIR**.
+>
+> Ticket'a dönüşmeyen, ama kapanmadan modelin güvenilir olmayacağı sorular.
+
+---
+
+| # | Soru | Neden açık kaldı | Kritiklik | Nasıl kapanır |
+|---|---|---|---|---|
+| **OQ-601** | Türkiye'de zincir marketin **şarap kategorisi** brüt marjı nedir? | Rekabet Kurumu'nun beş büyük zincir analizi **"alkol ve tütün hariç"** tanımlıdır ve yayımlanan tüm marj oranları **ticari sır olarak karartılmıştır** (`EV-2026-08-10-611`) | **CRITICAL** | Yalnızca gerçek yıllık anlaşma müzakeresi (`T-604`) |
+| **OQ-602** | Şarapta zincir **listeleme / giriş bedeli** tutarı nedir ve birimi nedir (SKU mu, mağaza mı, zincir mi)? | Güncel kamu kaynağı yok; tek iz 2004 tarihli T5 dergi haberi (`EV-2026-08-10-619`) | **CRITICAL** | `T-604` |
+| **OQ-603** | HoReCa çarpanı hangi katmandan hesaplanır ve gerçek değeri nedir? | Tek kaynak 2012 tarihli köşe yazısı ve **kendi içinde iki farklı katman** verir (`EV-2026-08-10-618`, `C-602`) | HIGH | Gerçek restoran menü örneklemi (fiziksel) + HoReCa görüşmesi |
+| **OQ-604** | Tekel bayii alış-satış farkı nedir? | Yalnızca çelişen T5 kaynaklar; hiçbiri margin/markup ve KDV tabanını belirtmiyor (`EV-2026-08-10-620`, `C-602`) | HIGH | Gerçek bayi görüşmesi / gerçek fiyat listesi |
+| **OQ-605** | Dış distribütör marj oranı nedir? | **Hiçbir kanıt bulunamadı.** Ne T4 ne T5. | **CRITICAL** | Distribütör görüşmesi (`T-604`) — A/B dağıtım kararı bunsuz verilemez |
+| **OQ-606** | Şarapta zincir **iade oranı** ve iade koşulları nedir? | Yasal düzenleme yok (`EV-2026-08-10-606`); tamamen sözleşmesel | HIGH | `T-604` |
+| **OQ-607** | Kaç satış noktası, rakiplerin **5 yıllık şarap alım sözleşmeleri** ile bağlı? | Rekabet Kurulu kararındaki sözleşme sayısı tabloları **karartılmış** (`EV-2026-08-10-614`) | HIGH | Saha gözlemi / bayi görüşmesi. **Bu, listeleme bedelinden daha ölümcül bir erişim engeli olabilir.** |
+| **OQ-608** | Zincirlerin şaraba ayırdığı **raf/SKU kotası** nedir? | Hiçbir kamu kaynağı yok. `EV-2026-08-10-624`: ithalat, iç piyasa şarap arzının **%4'ü** (2020, TADB) → ithal şaraba ayrılan raf da dar olmalı, ama **ölçülmedi** | MEDIUM | Fiziksel mağaza turu (`T-603` ile birlikte) |
+| **OQ-609** | Zincir market **modern kanal** nokta sayısı (alkol satan) kaçtır? | TADB tablosunda modern kanal **kasten yoktur** (merkezi alım) (`EV-2026-08-10-613`) | MEDIUM | TADAB satış belgesi listeleri / zincirlerin kendi beyanı |
+| **OQ-610** | Şarap, 6585 m.7/3 anlamında "tarım ve gıda ürünü" müdür? | Hukuki niteleme bu ajanın alanı değil | **CRITICAL** | `T-601` (`mevzuat-ruhsat-uzmani`) |
+| **OQ-611** | 2015'teki "prim/bedele konu ürün sözleşme süresince rafta satışa sunulmalıdır" koruması 2024 metninde var mı? | Konsolide metinde görünmüyor ama **T1 doğrulaması yapılamadı** (`EV-2026-08-10-622`) | HIGH | `T-601` |
+| **OQ-612** | Metro **mağaza fiyatı** ile **sevkiyat (Gastro Servis) fiyatı** arasındaki fark nedir? | `İP-501` / `T-506`; Metro fiyatları müşteri numarasına özel (`İP-505`) | HIGH | Metro müşteri kaydı + gerçek teklif (`T-604`) |
+| **OQ-613** | HoReCa'da **tadım / eğitim etkinliği** kanal maliyeti olarak modellenebilir mi? | Kabul edilmiş iş kısıtının (`İP-2001`) kapsam belirsizliği; **bu ajan kısıtı yeniden araştırmamıştır** (kurucu kararı) | MEDIUM | Başkan kararı (`T-604` içinde soruldu) — modelleme kararıdır, hukuki soru değildir |
+| **OQ-614** | Satış temsilcisi ücret çarpanı (× asgari ücret), araç maliyeti, 3PL birim fiyatı? | Şirket verisi ve gerçek teklif gerektirir | HIGH | Kurucu + 3PL teklifleri (`kendi-dagitim-senaryosu.md` §11) |
+| **OQ-615** | Şarabın kanal bazında **ciro dağılımı** (zincir / tekel / HoReCa) nedir? | Kamuya açık veri bulunamadı; elde yalnızca **nokta sayısı** var ve nokta sayısı ciro payı değildir | **CRITICAL** | `T-603` — **ağırlıklı ortalama marj bu olmadan hesaplanamaz** |
+
+---
+
+### Bu turda BİLİNÇLİ OLARAK YAPILMAYANLAR
+
+- 7584 s.K. / reklam kısıtının **kapsamı yeniden araştırılmadı** (kurucu kararı,
+  `T-205`, `İP-2001`). Kısıt bir **veri** olarak kullanıldı.
+- Hiçbir perakendeciye, distribütöre, HoReCa işletmesine **e-posta / form / mesaj
+  gönderilmedi** (görev kısıtı).
+- Vergi oranı, navlun tutarı, ruhsat prosedürü, tedarikçi fiyatı konularında
+  **sonuç üretilmedi**.
+- `599,90 TL`'den **geriye marj türetilmedi** (`pazar.yaml` K2/K4).
+- `pazar.yaml`, `10-evidence/index.csv`, `99-ops/*.md` ana dosyaları,
+  `99-ops/tickets/INDEX.md` ve diğer ajanların yaml dosyalarına **dokunulmadı**.
+- `T-205`'in statüsü **değiştirilmedi**; yalnızca sonuna bir **kullanım kaydı** eklendi.
+
+---
