@@ -57,6 +57,65 @@ Tarama 24 arama terimiyle yapıldı; tek eşleşme **yalancı pozitifti**:
 
 ---
 
+## 1B. ÖZET TABLO — `supplier-shortlist-v2.csv` YENİ TEDARİKÇİLERİ (SUP-451…465)
+
+`EV-2026-08-10-564`
+
+| # | Tedarikçi | Ülke | Model | Türkiye'de ürünü bulundu mu? | Mevcut TR ithalatçısı |
+|---|---|---|---|---|---|
+| SUP-451 | Harland Wine Company | Avustralya | B | BULUNAMADI | BULUNAMADI |
+| **SUP-452** | **Cantina Danese s.r.l.** | **İtalya** | **B** | ✅ **BULUNDU** — *Danese Primitivo Puglia "Black Label"*, listeleme 1.419 TL, **stokta değil** | ✅ **VAR** — iç etiket `Midas`, **kimlik UNKNOWN** |
+| SUP-453 | Zidela Worldwide Wines | G. Afrika | B | BULUNAMADI | BULUNAMADI |
+| SUP-454 | Vidigal Wines (**Porta 6**) | Portekiz | A | BULUNAMADI | BULUNAMADI |
+| SUP-455 | Parras Wines | Portekiz | A | BULUNAMADI | BULUNAMADI |
+| SUP-456 | Felix Solis Avantis (**Viña Albali**, Los Molinos, **Mucho Mas**, Marques de Moral) | İspanya | A | BULUNAMADI | BULUNAMADI |
+| SUP-457 | Plaimont (**Colombelle**, BIG) | Fransa | A | BULUNAMADI | BULUNAMADI |
+| SUP-458 | Spanish Origin | İspanya | B | BULUNAMADI | BULUNAMADI |
+| SUP-459 | Clark Estate | Yeni Zelanda | B | BULUNAMADI | BULUNAMADI |
+| SUP-460 | Bodegas San Valero (**Particular**, Monte Ducay) | İspanya | A+B | BULUNAMADI | BULUNAMADI |
+| SUP-461 | Purcari Wineries Group (**Purcari**, **Bostavan**, Crama Ceptura, Domeniile Cuza) | Moldova/RO/BG | A | BULUNAMADI | BULUNAMADI |
+| SUP-462 | O'Neill Vintners (Line 39, Robert Hall, Harken) | ABD | B | BULUNAMADI | BULUNAMADI |
+| SUP-463 | Viña Luis Felipe Edwards | Şili | B | BULUNAMADI | BULUNAMADI |
+| SUP-464 | Bronco Wine Company (Charles Shaw, Forest Glen) | ABD | B | BULUNAMADI | BULUNAMADI |
+| SUP-465 | Geo Vino Wines | ABD (çok menşeli) | B | BULUNAMADI | BULUNAMADI |
+
+**Eşleşme: 1 / 15 (yeni) · 1 / 26 (toplam).**
+
+### 1B.1 Tek eşleşme neden önemli — ve neden beklenmedik
+
+`SUP-452` **Cantina Danese**, `top-10-rfq-targets.md`'de **2. sıradaki RFQ hedefidir**
+ve **Model B (private label)** olarak listelenmiştir. Yani:
+
+> Private label tedarikçisinin de Türkiye'de **kendi markasıyla** mevcut bir
+> ithalatçı ilişkisi olabilir.
+
+Bu, private label modelinin sessiz varsayımını ("tedarikçinin Türkiye'de markası
+yok, dolayısıyla çakışma yok") **bu tedarikçi için yanlışlar**. Ticari sonucu
+`global-sourcing-kasifi`'ye `T-565` ile taşındı: RFQ'ya *"Türkiye'de hâlihazırda
+ithalatçınız var mı, private label işi bu ilişkiyle çakışır mı?"* sorusu eklenmelidir.
+
+> **UYARI:** 1.419 TL bir **raf fiyatı değildir** (stok dışı listeleme). Bu satırda
+> önemli olan **fiyat değil, VARLIKTIR**.
+
+### 1B.2 T-464'ün cevabı (7 Model A markası)
+
+| Marka | Üretici | Sonuç |
+|---|---|---|
+| Viña Albali · Los Molinos · Mucho Mas · Marques de Moral | Felix Solis Avantis | **BULUNAMADI** |
+| Porta 6 (+ Vidigal) | Vidigal Wines | **BULUNAMADI** |
+| Colombelle · BIG | Plaimont | **BULUNAMADI** |
+| Quinta da Espiga · Setencostas · Palha-Canas | Casa Santos Lima | **BULUNAMADI** |
+| Particular | Bodegas San Valero | **BULUNAMADI** |
+| Purcari · Bostavan · Crama Ceptura · Domeniile Cuza | Purcari Wineries Group | **BULUNAMADI** |
+| Parras markaları | Parras Wines | **BULUNAMADI** |
+
+→ `T-464` cevabı: **"hiçbirinin ithalatçısı bulunamadı"** = Model A adayları
+listeden **düşmez**. Ama karşılığında **pazar validasyonu da yoktur**.
+
+Tam cevap: `99-ops/tickets/T-464.md` → CEVAP bölümü.
+
+---
+
 ## 2. MENŞE DÜZEYİNDE DESTEKLEYİCİ BULGU
 
 Kısa listedeki tedarikçilerin menşeleri, incelenen kanalda **yapısal olarak zayıftır**
@@ -144,8 +203,9 @@ alanı **`UNKNOWN` kalmalıdır**.
 
 | Bulgu | Ticari anlamı | Yön |
 |---|---|---|
-| Kısa listedeki 11 tedarikçinin **hiçbirinin** Türkiye'de mevcut ithalatçısı bulunamadı | Yerinden edilecek bir **incumbent distribütör yok** → distribütörlük/private-label müzakeresi **temiz sayfadan** başlar | **LEHTE** |
-| Aynı 11 tedarikçinin **hiçbir ürünü** Türkiye'de görülemedi | Türkiye'de **pazar validasyonu da yok** → talep kanıtı sıfır, listeleme ikna yükü bize ait | **ALEYHTE** |
+| **25 / 26** tedarikçinin Türkiye'de mevcut ithalatçısı bulunamadı (7 Model A markası dahil) | Yerinden edilecek bir **incumbent distribütör yok** → distribütörlük/private-label müzakeresi **temiz sayfadan** başlar | **LEHTE** |
+| Aynı 25 tedarikçinin **hiçbir ürünü** Türkiye'de görülemedi | Türkiye'de **pazar validasyonu da yok** → talep kanıtı sıfır, listeleme ikna yükü bize ait | **ALEYHTE** |
+| **1 / 26 istisna: Cantina Danese (RFQ hedefi #2)** Türkiye'de kendi markasıyla listeli ve bir ithalatçıya bağlı | Bu tedarikçide müzakere **temiz sayfa değildir**: münhasırlık / kanal çakışması / fiyat tabanı riski | **ALEYHTE (o tedarikçide)** → `T-565` |
 | Kavaklıdere gibi **yerli üretici** aynı zamanda giriş-segment ithal distribütörü (Gato Negro, Santa Helena, Baron de Lestac) | Hedef bandda rakip yalnızca yerli şarap değil; **yerli üreticinin ithal portföyü** de rakip. Aynı satış gücü hem yerliyi hem ithali taşıyor | **ALEYHTE** |
 | Fiyat/performans bandında ithalat yapan **küçük oyuncular var** (Moldova: PiyasaGıda, piramitgıda; Şili: Vinist/Alpaca) | Bu bantta ithalat **yapılabiliyor** — model imkânsız değil | **LEHTE** |
 | Bu bandın ithal ürünlerinin **tamamı incelenen kanalda stok dışı** (`EV-2026-08-10-552`) | Bandda ithal ürün **listeleniyor ama dönmüyor** olabilir | **ALEYHTE (güçlü)** |
@@ -168,6 +228,11 @@ alanı **`UNKNOWN` kalmalıdır**.
    "bulunamaması" **beklenen** sonuçtur ve bilgi değeri düşüktür. Gerçek soru
    "bu üreticinin şişesi Türkiye'de var mı" değil, "Türkiye'ye daha önce ihraç etti mi"
    olmalıdır — bu `global-sourcing-kasifi`'nin RFQ sorusudur (`T-562`).
-4. **İthalatçı kodlarının 13/17'si çözülmedi** (`OQ-551`).
+   **Ama Cantina Danese bu kuralın istisnasıdır:** private label üreticisi olmasına
+   rağmen **kendi markasıyla** Türkiye'de görülmüştür. Yani *"private label üreticisi
+   → Türkiye'de görünmez"* kabulü **evrensel değildir**; her tedarikçi ayrı taranmalıdır.
+4. **İthalatçı kodlarının 13/17'si çözülmedi** (`OQ-551`) — bunlardan biri
+   (`Midas`) tam da Cantina Danese'yi getiren gruptur, yani **en kritik eşleşmenin
+   karşı tarafı `UNKNOWN`'dır**.
 5. **Resmî ithalatçı listesi hâlâ yok.** TADAB dağıtım/ithalat uygunluk belgesi
    sahipleri listesi alınamadı — `T-505` (TUR 1) açık kalıyor, `T-564` ile hatırlatıldı.

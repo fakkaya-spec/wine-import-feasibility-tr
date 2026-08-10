@@ -31,15 +31,28 @@ boş*. Bu, "bu bantta ithal şarap yok" cümlesinden **farklı ve daha kötü** 
 cümledir: ürün var, dönmüyor olabilir. `C-561` açıldı, `T-561` ile başkana taşındı.
 **`pazar.yaml`'a dokunulmadı.**
 
-**(2) Kısa liste marka kontrolü.** Sourcing'in TUR 1 havuzundaki **11 tedarikçinin
-ve 15 markanın hiçbiri** erişilebilen kanalın 1.304 listeleme / 274 üreticilik
-kataloğunda **bulunamadı** (`EV-2026-08-10-553`). Tek eşleşme (Tormentoso) **yalancı
+**(2) Kısa liste marka kontrolü.** Kontrol **iki kez** yapıldı: önce TUR 1 havuzu
+(11 tedarikçi), sonra çalışma sırasında oluşan `supplier-shortlist-v2.csv`
+(26 tedarikçi) + `top-10-rfq-targets.md` + `T-464`'ün 7 Model A markası.
+**26 tedarikçinin 25'i ve 30+ marka adının tamamı bulunamadı**
+(`EV-2026-08-10-553`, `EV-2026-08-10-564`). "Tormentoso" eşleşmesi **yalancı
 pozitiftir** — MAN Vintners'ındır, Origin Wine'ın değil (`EV-2026-08-10-561`).
-`supplier-shortlist-v2.csv` bu kontrol yapıldığında **henüz yoktu**; üretilirse
-kontrol tekrarlanmalıdır.
+
+**TEK GERÇEK EŞLEŞME ve beklenmedik yerden geldi:** `SUP-452` **Cantina Danese
+s.r.l.** — `top-10-rfq-targets.md`'nin **2. sıradaki RFQ hedefi** ve **Model B
+(private label)** olarak sınıflanmış tedarikçi — **kendi markasıyla Türkiye'de
+listelenmiştir** (*Danese Primitivo Puglia "Black Label"*, listeleme 1.419 TL,
+**stokta değil**, ithalatçı iç etiketi `Midas`, kimlik `UNKNOWN`).
+Yani private label modelinin sessiz varsayımı ("tedarikçinin Türkiye'de markası
+yok → çakışma yok") **bu tedarikçide yanlıştır** → `T-565`.
+
+`T-464` (global-sourcing → bu ajan) **ANSWERED**: 7 Model A markasının hiçbirinin
+Türkiye'de ithalatçısı bulunamadı → Model A hedefleri listeden **düşmez**, ama
+pazar validasyonu da **yoktur**.
 
 **(3) Mevcut ithalatçı — TURUN EN BÜYÜK KAZANIMI.** Kısa liste için mevcut Türk
-ithalatçısı **bulunamadı (0/11)**. Ama bunu ararken **Türkiye ithal şarap ithalatçı
+ithalatçısı **25/26 tedarikçide bulunamadı**; tek istisna yukarıdaki Cantina Danese.
+Ama bunu ararken **Türkiye ithal şarap ithalatçı
 haritası kısmen açıldı**: perakendeci ürün feed'indeki iç etiketlerin ithalatçı
 grubu olduğu keşfedildi ve hipotez **iki bağımsız üretici/ithalatçı kaynağıyla
 doğrulandı**. TUR 1'de **1** doğrulanmış ithalatçı vardı; artık **4 isimli grup +
@@ -51,10 +64,11 @@ hem **giriş-segment ithal şarabın distribütörü** (Gato Negro, Santa Helena
 Baron de Lestac, Moncigale). Hedef bandımızda rakip ile dağıtıcı **aynı şirket**
 olabilir.
 
-**13 kanıt kartı** (`EV-2026-08-10-551` … `-563`), **4 ticket** (`T-561`…`T-564`),
-**1 çelişki** (`C-561`), **3 açık soru** (`OQ-551`…`OQ-553`) açıldı.
-`raf-fiyat-gozlemleri.csv`'ye **64 satır** eklendi — ama bunların **62'si raf fiyatı
-DEĞİLDİR** ve modele giremez.
+**14 kanıt kartı** (`EV-2026-08-10-551` … `-564`), **5 ticket açıldı**
+(`T-561`…`T-565`), **1 ticket cevaplandı** (`T-464` → `ANSWERED`),
+**1 çelişki** (`C-561`), **3 açık soru** (`OQ-551`…`OQ-553`).
+`raf-fiyat-gozlemleri.csv`'ye **65 satır** eklendi (**OBS-601…665**; OBS-551/552 TUR 1'de kullanıldığı için ID bloğu 601'den başlatıldı) — ama bunların
+**63'ü raf fiyatı DEĞİLDİR** ve modele giremez.
 
 ---
 
@@ -112,26 +126,37 @@ La Vieille Ferme 979.
 
 ---
 
-### B-3: Sourcing kısa listesinin 11/11'i Türkiye'de BULUNAMADI
+### B-3: Sourcing kısa listesinin 25/26'sı Türkiye'de BULUNAMADI — tek istisna Cantina Danese
 
 ```yaml
-claim:          11 tedarikci ve 15 markanin hicbiri 1.304 listeleme / 274 vendor'luk katalogda yok
-value:          0
+claim:          TUR 1 havuzu (11) + shortlist-v2 (15 yeni) = 26 tedarikci ve 30+ marka tarandi; TEK eslesme Cantina Danese s.r.l. (SUP-452)
+value:          "1 / 26 eslesme; T-464'un 7 Model A markasi: 0 / 7"
 unit:           adet eslesme
 status:         FACT
 tier:           T4
-evidence_id:    EV-2026-08-10-553, EV-2026-08-10-561
+evidence_id:    EV-2026-08-10-553, EV-2026-08-10-564, EV-2026-08-10-561
 effective_date: 2026-08-10
 katman:         —
 ```
 
-**Gerekçe:** 24 arama terimi tarandı. Ayrıntı: `60-pazar/marka-turkiye-varlik-kontrolu.md`.
+**Gerekçe:** 24 + 30 arama terimi tarandı. Ayrıntı:
+`60-pazar/marka-turkiye-varlik-kontrolu.md` §1 ve §1B.
+
+**Tek eşleşme neden önemli:** `SUP-452` Cantina Danese, `top-10-rfq-targets.md`'nin
+**2. hedefi** ve **Model B** olarak sınıflanmış. Türkiye'de **kendi markasıyla**
+listeli (*Danese Primitivo Puglia "Black Label"*, 1.419 TL listeleme, **stokta değil**,
+ithalatçı kodu `Midas`). Bu, private label modelinin "tedarikçinin Türkiye'de markası
+yok → çakışma yok" varsayımını **bu tedarikçide yanlışlar**. Fiyat önemli değildir
+(stok dışı listeleme); **varlık** önemlidir → `T-565`.
 
 **Kritik okuma kuralı:** "Bu katalogda yok" ≠ "Türkiye'de yok". Metro, zincir market,
 tekel bayii ve HoReCa görülmedi. Sonuç **`BULUNAMADI` (presence UNKNOWN)**'dır.
 
-Ayrıca private label üreticileri (5/11) için bu sonuç **beklenendir** ve bilgi
+Ayrıca private label üreticileri için bu sonuç genelde **beklenendir** ve bilgi
 değeri düşüktür — doğru soru "Türkiye'ye daha önce ihracat yaptı mı?"dır (`T-562`).
+**Ama Cantina Danese bunun karşı örneğidir:** private label üreticisi olmasına rağmen
+kendi markasıyla görüldü. Yani "private label üreticisi → görünmez" kabulü
+**evrensel değildir**.
 
 ---
 
@@ -269,9 +294,9 @@ kasten ele alınmadı.)*
 | `pazar.yaml` | `segment.ithal_listeleme_500_1000_stok_disi` | *(yok)* | **62** — **RAF FİYATI DEĞİL, MODELE GİREMEZ** | UNKNOWN | `EV-2026-08-10-552` |
 | `pazar.yaml` | `ithalatci_haritasi.dogrulanmis_ithalatci_sayisi` | 1 | **4** (Kavaklıdere, Karagözoğlu, Adco, +Baron ESTIMATE) | FACT | `EV-...-554/555/556` |
 | `pazar.yaml` | `ithalatci_haritasi.konsolidasyon_derecesi` | null | **null (DEĞİŞMEMELİ)** — tek kanaldan pay çıkarılamaz | UNKNOWN | — |
-| `pazar.yaml` | `ithalatci_haritasi.sourcing_shortlist_mevcut_ithalatci` | *(yok)* | **0 / 11** | FACT | `EV-2026-08-10-553` |
+| `pazar.yaml` | `ithalatci_haritasi.sourcing_shortlist_mevcut_ithalatci` | *(yok)* | **1 / 26** (yalnızca Cantina Danese) | FACT | `EV-2026-08-10-553`, `EV-2026-08-10-564` |
 | `pazar.yaml` | `kanal_yapisi.bim_a101_sok_sarap_var_mi` | null | **null (DEĞİŞMEMELİ)** — ŞOK online 0 sonucu mağaza rafını kanıtlamaz | UNKNOWN | `EV-2026-08-10-558` |
-| `pazar.yaml` | `gozlem_havuzu.toplam_gozlem` | 52 | **116** — ama **62'si raf fiyatı değildir**; model girdisi sayısı **artmamıştır** | FACT | `EV-2026-08-10-552` |
+| `pazar.yaml` | `gozlem_havuzu.toplam_gozlem` | 52 | **117** — ama **63'ü raf fiyatı değildir**; model girdisi sayısı **artmamıştır** | FACT | `EV-2026-08-10-552`, `EV-2026-08-10-564` |
 | `pazar.yaml` | `gozlem_havuzu.tek_kanal_yogunlasmasi_uyarisi` | 45/52 | **UYARI GÜÇLENDİ** — 8 alternatif kanal denendi, hepsi kapalı | FACT | `EV-2026-08-10-559` |
 
 **evidence_id'si olmayan satır modele giremez.**
@@ -289,7 +314,8 @@ Kara listeye eklenmesi önerilenler: `EV-2026-08-10-552` (stok dışı listeleme
 | `kanal-marj-uzmani` | Bandımızda ithalat yapan küçük oyuncular var (Moldova 380–512 TL) ama ürünleri stok dışı | "Listeleniyor ama dönmüyor" hipotezi |
 | `global-sourcing-kasifi` | 11/11 tedarikçinin TR ithalatçısı yok → temiz sayfa **ama** pazar validasyonu da yok (`EV-553`) | Distribütörlük müzakeresi açısından çift yönlü |
 | `global-sourcing-kasifi` | Kısa listenin menşe profili kanalın menşe profiliyle örtüşmüyor (`EV-563`) | ABD/AU/PT/ZA kanalda sıfıra yakın |
-| `global-sourcing-kasifi` | `exported_to_turkey_before` 11/11 UNKNOWN → RFQ'da zorunlu sorulmalı | `T-562` |
+| `global-sourcing-kasifi` | `exported_to_turkey_before` UNKNOWN → RFQ'da zorunlu sorulmalı | `T-562` |
+| `global-sourcing-kasifi` | **RFQ hedefi #2 Cantina Danese Türkiye'de kendi markasıyla listeli ve bir ithalatçıya bağlı** | `T-565` — private label müzakeresinde münhasırlık/kanal çakışması riski |
 | `mevzuat-ruhsat-uzmani` | Artık 4 ithalatçının **adı** var → TADAB listesinde aranabilir | `T-564` |
 | `gumruk-vergi-uzmani` | Fiyat/performans bandında **Moldova** menşeli ithal listeleniyor (`EV-563`) | Tercihli tarife ihtimali — sadece ipucu |
 | `yatirim-komitesi-baskani` | CSV'ye eklenen 62 satır **raf fiyatı değildir**; merge'de ayrım korunmalı | Yanlış okuma riski |
@@ -306,11 +332,13 @@ Tam liste: `99-ops/_parts/capraz-ipuclari-turkiye-pazar-kasifi-tur2.md`
 | `T-562` | `global-sourcing-kasifi` | 11/11 tedarikçi TR'de bulunamadı; RFQ'da "TR'ye ihracat geçmişi" zorunlu sorulmalı | MEDIUM | **OPEN** (yeni) |
 | `T-563` | `kanal-marj-uzmani` | 4 ithalatçı ismen tespit edildi; biri aynı zamanda yerli üretici | **HIGH** | **OPEN** (yeni) |
 | `T-564` | `mevzuat-ruhsat-uzmani` | İsimler artık biliniyor → TADAB belge sahipleri listesi | MEDIUM | **OPEN** (yeni) |
+| `T-565` | `global-sourcing-kasifi` | RFQ hedefi #2 Cantina Danese'nin TR'de zaten ithalatçısı var → RFQ'ya 4. soru | MEDIUM | **OPEN** (yeni) |
+| `T-464` | `turkiye-pazar-kasifi` *(bana açıldı)* | 7 Model A markasının TR ithalatçısı var mı | HIGH | **ANSWERED** ✅ |
 | `T-504` | `yatirim-komitesi-baskani` | OQ-001 promosyon ayağı | **CRITICAL** | **OPEN** — bu turda **kasten dokunulmadı** |
 | `T-551` | `yatirim-komitesi-baskani` | `C-551` Metro şarap katalogu çiftli KDV | HIGH | **OPEN** — bu turda dokunulmadı |
 | `T-501`…`T-506` | çeşitli | TUR 1'den devrediyor | — | **OPEN** |
 
-**Bu turda kapanan ticket yoktur.**
+**Bu turda kapanan ticket yoktur; `T-464` cevaplandı (`ANSWERED`) ve başkan onayı bekliyor.**
 
 ---
 
@@ -331,6 +359,7 @@ Tam liste: `99-ops/_parts/capraz-ipuclari-turkiye-pazar-kasifi-tur2.md`
 | `EV-2026-08-10-561` | 180d | 2027-02-06 |
 | `EV-2026-08-10-562` | 180d | 2027-02-06 |
 | `EV-2026-08-10-563` | 30d | 2026-09-09 |
+| `EV-2026-08-10-564` | 30d | 2026-09-09 |
 
 **Uyarı:** Fiyat/stok gözlemlerinin tamamı **2026-09-09**'da STALE olur. İthalatçı
 haritası kartları (554–557, 561–562) daha uzun ömürlüdür — dağıtım anlaşmaları
