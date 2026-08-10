@@ -13,12 +13,27 @@
 
 meta:
   dosya: lojistik.yaml
-  son_guncelleme: 2026-08-09
-  tur: "TUR 1 — navlun-lojistik-uzmani ilk dolum"
+  son_guncelleme: 2026-08-10
+  tur: "TUR 2 — rota bazli maliyet matrisi (TUR 1 uzerine eklendi)"
   durum: KISMI_DOLU
-  rapor: 40-lojistik/rapor-tur1-navlun-lojistik.md
-  acik_ticketlar: [T-301, T-302, T-303, T-304, T-305]
-  acik_celiskiler: [C-301, C-302, C-303]
+  rapor: 40-lojistik/rapor-tur2-navlun-lojistik.md
+  rapor_tur1: 40-lojistik/rapor-tur1-navlun-lojistik.md
+  ek_dosyalar:
+    - 40-lojistik/rota-maliyet-matrisi.md
+    - 40-lojistik/lcl-vs-fcl-pilot.md
+  acik_ticketlar: [T-301, T-302, T-303, T-304, T-305, T-311, T-312, T-313, T-314]
+  acik_celiskiler: [C-301, C-302, C-303, C-311, C-312, C-313]
+  tur2_uyarisi: >
+    TUR 2'de LCL navlunu 9 rota icin GERCEK, TARIHLI, GECERLILIK SURELI
+    kotasyonla dolduruldu (ttl 6d, 2026-08-16'da STALE). FCL navlunu HALA
+    UNKNOWN'dir: test edilen 14 Turkiye varisli lane'in hicbirinde kamuya
+    acik FCL kotasyonu yoktur (EV-2026-08-10-312). T-304'un FCL ayagi
+    KAPANMAMISTIR.
+  para_birimi_uyarisi: >
+    TUR 2 lojistik maliyeti UC PARA BIRIMINDEDIR (USD okyanus + EUR mense
+    local + TRY Turkiye operasyonu) ve TEK SAYIYA INDIRGENMEMISTIR, cunku
+    makro.yaml -> fx.usd_try ve fx.eur_try hala null. Toplama islemi
+    finans-fizibilite'nindir -> T-311.
 
 # =====================================================================
 # URUN FIZIKSEL PARAMETRELERI (kapasite hesabinin girdisi)
@@ -1003,3 +1018,773 @@ sure:
       UNKNOWN VE KRITIK. Isletme sermayesi, CCC ve peak_cash_requirement
       dogrudan buna baglidir. YALNIZ TRANSIT SURESINI lead time sanmak
       modeli sistematik olarak IYIMSER yapar.
+
+# =====================================================================
+# =====================================================================
+# TUR 2 EKLERI — ROTA BAZLI MALIYET (2026-08-10)
+# Sahibi: navlun-lojistik-uzmani
+# Detay: 40-lojistik/rota-maliyet-matrisi.md
+#        40-lojistik/lcl-vs-fcl-pilot.md
+#
+# KURAL: Yukaridaki TUR 1 bloklari DEGISTIRILMEMISTIR. Bu blok EKTIR.
+#        Ayni alan iki yerde varsa TUR 2 degeri gecerlidir ve
+#        tur1_karsiligi alaninda eski deger gosterilir.
+# =====================================================================
+# =====================================================================
+
+tur2:
+
+  # -------------------------------------------------------------------
+  # LCL NAVLUNU — GERCEK KOTASYON (Flexport, T4)
+  # date: 2026-08-10 | validity: 2026-08-16 | ttl: 6d
+  # container_type: LCL, 5 CBM / 750 kg bazli
+  # currency: USD
+  # included_charges: base ocean freight (port-to-port)
+  # excluded_charges: origin local charges, destination local charges,
+  #                   CFS destination, ordino, gumrukleme, ic nakliye,
+  #                   sigorta, antrepo, TUM VERGILER
+  # -------------------------------------------------------------------
+  lcl_navlun_rota_bazli:
+    _meta:
+      basis: "5 CBM / 750 kg sevkiyat"
+      currency: USD
+      date: 2026-08-10
+      validity: 2026-08-16
+      ttl: 6d
+      tier: T4
+      source: "Flexport Rate Explorer"
+      navlun_tipi: SPOT
+      sise_basi_cevrim: "USD/CBM / 449 sise/m3 (EV-2026-08-09-323)"
+      included_charges: "base ocean freight, port-to-port"
+      excluded_charges: "origin locals, destination locals, CFS destination, ordino, gumrukleme, ic nakliye, sigorta, antrepo, vergiler"
+
+    ispanya_valencia_istanbul:
+      value: null
+      band: [616, 666]
+      per_cbm: [123.2, 133.2]
+      per_sise_usd: [0.274, 0.297]
+      transit_gun: 4
+      aktarma_sayisi: 0
+      confidence: MEDIUM
+      status: FACT
+      evidence_id: EV-2026-08-10-301
+    ispanya_barcelona_istanbul:
+      value: null
+      band: [616, 859]
+      per_sise_usd: [0.274, 0.383]
+      transit_gun: 4
+      aktarma_sayisi: 0
+      confidence: MEDIUM
+      status: FACT
+      evidence_id: EV-2026-08-10-302
+      notes: "Ayni port pair'de iki teklif arasi %31 fark -> tek kotasyona guvenilmez."
+    portekiz_lizbon_istanbul:
+      value: null
+      band: [949, 999]
+      per_sise_usd: [0.423, 0.445]
+      transit_gun: null
+      transit_status: LOW_CONFIDENCE
+      aktarma_sayisi: 1
+      confidence: MEDIUM
+      status: FACT
+      evidence_id: EV-2026-08-10-303
+      notes: "Kaynak transit icin 4 gun diyor ama routing Barcelona aktarmali -> IC TUTARSIZ."
+    italya_istanbul:
+      value: null
+      status: UNKNOWN
+      evidence_id: EV-2026-08-10-304
+      notes: "ITGOA, ITSPE, ITLIV, ITNAP dortu de 0 offerings. Oncelikli rota olmasina ragmen UNKNOWN. -> T-312"
+    fransa_marsilya_istanbul:
+      value: null
+      band: [1428, 1515]
+      per_sise_usd: [0.636, 0.675]
+      transit_gun: [12, 15]
+      aktarma_sayisi: 1
+      aktarma_limani: "Hamburg / Antwerp (KUZEY AVRUPA)"
+      confidence: MEDIUM
+      status: FACT
+      evidence_id: EV-2026-08-10-305
+      notes: "KARSI-SEZGISEL: Akdeniz limani olmasina ragmen Kuzey Avrupa uzerinden gidiyor; Sili'den PAHALI."
+    sili_sanantonio_istanbul:
+      value: null
+      band: [970, 1387]
+      per_sise_usd: [0.432, 0.618]
+      transit_gun: [43, 49]
+      aktarma_sayisi: 1
+      confidence: MEDIUM
+      status: FACT
+      evidence_id: EV-2026-08-10-306
+      notes: "KARSI-SEZGISEL: sise basi navlun Portekiz ile ayni bandda. Fark navlunda degil TRANSITTE (43 vs 4 gun)."
+    guney_afrika_capetown_istanbul:
+      value: null
+      band: [1720, 1770]
+      per_sise_usd: [0.766, 0.788]
+      transit_gun: 49
+      aktarma_sayisi: 1
+      confidence: MEDIUM
+      status: FACT
+      evidence_id: EV-2026-08-10-307
+      tur1_karsiligi: "26 gun (TERS YON olcumu) -> TUR 1 ~2 kat IYIMSERDI"
+    california_oakland_istanbul:
+      value: null
+      band: [1239, 1289]
+      per_sise_usd: [0.552, 0.574]
+      transit_gun: 20
+      routing: "Oakland -> Atlanta (kara) -> Kumport -> Istanbul"
+      confidence: MEDIUM
+      status: FACT
+      evidence_id: EV-2026-08-10-308
+      notes: "TUR 1'de CRITICAL UNKNOWN idi (benchmark urun rotasi). LCL duzeyinde KAPANDI."
+    california_la_istanbul:
+      value: null
+      band: [1133, 1320]
+      per_sise_usd: [0.505, 0.588]
+      transit_gun: [20, 44]
+      confidence: MEDIUM
+      status: FACT
+      evidence_id: EV-2026-08-10-309
+    arjantin_buenosaires_istanbul:
+      value: null
+      band: [1150, 1200]
+      per_sise_usd: [0.512, 0.535]
+      transit_gun: 25
+      confidence: MEDIUM
+      status: FACT
+      evidence_id: EV-2026-08-10-310
+    avustralya_melbourne_istanbul:
+      value: null
+      band: [1187, 2545]
+      per_sise_usd: [0.529, 1.133]
+      transit_gun: [36, 56]
+      confidence: MEDIUM
+      status: FACT
+      evidence_id: EV-2026-08-10-311
+
+  # -------------------------------------------------------------------
+  # FCL NAVLUNU — HALA UNKNOWN
+  # -------------------------------------------------------------------
+  fcl_navlun:
+    kamuya_acik_kotasyon_var_mi:
+      value: false
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-10-312
+      ttl: 14d
+      notes: "14 Turkiye varisli lane test edildi, hicbirinde FCL kotasyonu YOK. T-304'un FCL ayagi KAPANMADI."
+
+    ispanya_turkiye_20dv_base_ocean:
+      value: null
+      band: [300, 1200]
+      currency: USD
+      status: ESTIMATE
+      confidence: LOW
+      tier: T4
+      evidence_id: [EV-2026-08-10-322, EV-2026-08-10-320, EV-2026-08-10-324]
+      conflict_id: C-311
+      ttl: 14d
+      included_charges: "base ocean freight, port-to-port"
+      excluded_charges: "BAF, CAF, ETS, PSS, origin locals, destination locals, ordino, gumrukleme, ic nakliye, sigorta, vergiler"
+      notes: >
+        BANDIN GENISLIGI BIR CELISKIDEN GELIYOR (C-311): marketplace 'from'
+        fiyatlari 295-650 USD, T5 bloglar 1200-2500 EUR. 4-5 kat fark.
+        Sessizce taraf SECILMEDI. MERKEZI VARSAYIM OLARAK KULLANILAMAZ.
+
+    ispanya_turkiye_40hc_base_ocean:
+      value: null
+      band: [411, 1776]
+      currency: USD
+      status: ESTIMATE
+      confidence: LOW
+      evidence_id: EV-2026-08-10-328
+      ttl: 14d
+      notes: "20DV bandi x ampirik oran 1,37-1,48. Bagimsiz kotasyon YOK."
+
+    surcharge_baf_caf_ets_pct:
+      value: null
+      band: [15, 25]
+      unit: "%"
+      status: ESTIMATE
+      confidence: LOW
+      tier: T5
+      evidence_id: EV-2026-08-10-324
+      ttl: 14d
+      notes: "Base navlun uzerine. DFDS tarifesi de BAF ve ETS'in HARIC oldugunu ve aylik guncellendigini teyit ediyor (EV-2026-08-10-320)."
+
+    hc40_dv20_navlun_orani:
+      value: null
+      band: [1.37, 1.48]
+      status: ESTIMATE
+      confidence: MEDIUM
+      tier: T4
+      evidence_id: EV-2026-08-10-328
+      ttl: 90d
+      notes: >
+        IKI BAGIMSIZ KAYNAK: DFDS 2025 tarifesi (1,37/1,42/1,48/1,48) ve
+        Cin->Turkiye 2026 (1,43/1,45). TUR 1'de UNKNOWN idi.
+
+    hc40_karlilik_esigi:
+      value: null
+      band: [1.39, 1.82]
+      merkez: 1.59
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-328
+      notes: >
+        Esik = 40HC sise kapasitesi / 20DV sise kapasitesi.
+        AMPIRIK ORAN (1,37-1,48) ESIGIN ALTINDA -> 40HC sise basina AVANTAJLI.
+        TUR 1'in tek noktali 1,54 esigi bir BAND'a cevrildi.
+
+    diger_rotalar:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+      notes: "Portekiz, Italya, Fransa, Sili, G.Afrika, California, Arjantin, Avustralya -> FCL navlunu HICBIR KAYNAKTA YOK."
+
+  # -------------------------------------------------------------------
+  # ORIGIN CHARGES (ISPANYA) — T3 TASIYICI TARIFESI
+  # -------------------------------------------------------------------
+  origin_charges_ispanya:
+    _meta:
+      currency: EUR
+      tier: T3
+      source: "Hapag-Lloyd SPAIN Local Charges/Services Fees"
+      confidence: HIGH
+      ttl: 90d
+      konteyner_boyuna_bagimli_mi: false
+
+    thc_origin_tho:
+      value: 287
+      value_algeciras: 277
+      value_reefer: 355
+      currency: EUR
+      unit: "EUR / konteyner"
+      status: FACT
+      effective_date: 2026-04-01
+      evidence_id: EV-2026-08-10-313
+      notes: "20ft ve 40ft AYNI -> 40HC lehine yapisal avantaj. Onceki kademe 275 EUR (2025-07-01). Terminal Security Fee (15) ve Logistic Fee & Seal (15) DAHIL."
+    dokuman_bl_edi:
+      value: 62
+      currency: EUR
+      status: FACT
+      effective_date: 2026-01-01
+      evidence_id: EV-2026-08-10-314
+    dokuman_bl_manuel:
+      value: 104
+      currency: EUR
+      status: FACT
+      effective_date: 2025-10-01
+      evidence_id: EV-2026-08-10-314
+    vgm_manuel:
+      value: 50
+      currency: EUR
+      status: FACT
+      evidence_id: EV-2026-08-10-314
+    ihracat_gumrukleme:
+      value: 60
+      currency: EUR
+      status: FACT
+      evidence_id: EV-2026-08-10-314
+    food_quality_container:
+      value: 115
+      currency: EUR
+      status: FACT
+      evidence_id: EV-2026-08-10-314
+      notes: "Gida sevkiyatlari icin kalite kontrollu kuru konteyner. SARAPTA GECERLI OLABILIR -> tedarikci/forwarder teyidi gerekli."
+    toplam_minimum:
+      value: 349
+      currency: EUR
+      status: ESTIMATE
+      evidence_id: [EV-2026-08-10-313, EV-2026-08-10-314]
+      notes: "THO 287 + B/L 62."
+    toplam_ust_uc:
+      value: 554
+      currency: EUR
+      status: ESTIMATE
+      evidence_id: [EV-2026-08-10-313, EV-2026-08-10-314]
+      notes: "+ VGM 50 + Equipment assignment 40 + Food quality 115."
+
+    diger_menseler:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+      notes: "Portekiz, Italya, Fransa, Sili, G.Afrika, ABD, Arjantin, Avustralya origin local charge tarifeleri taranmadi -> T-312."
+
+  # -------------------------------------------------------------------
+  # DESTINATION CHARGES (TURKIYE) — T3 TASIYICI TARIFESI
+  # -------------------------------------------------------------------
+  destination_charges_turkiye:
+    _meta:
+      currency: USD
+      tier: T3
+      source: "Hapag-Lloyd TURKEY Local Charges/Services Fees"
+      confidence: HIGH
+      ttl: 90d
+
+    thd_limana_gore:
+      izmir_aliaga:
+        value: 165
+        konteyner_boyu_ayrimi: false
+        effective_date: 2024-10-01
+      gemlik:
+        value: 185
+        konteyner_boyu_ayrimi: false
+        effective_date: 2026-04-01
+      istanbul_izmit_haydarpasa:
+        value: 192
+        konteyner_boyu_ayrimi: false
+        effective_date: 2026-01-01
+      iskenderun:
+        value_20ft: 207
+        value_40ft: 238
+        konteyner_boyu_ayrimi: true
+        effective_date: 2026-03-01
+      mersin:
+        value_20ft: 261
+        value_40ft: 298
+        value_reefer_40ft: 333
+        konteyner_boyu_ayrimi: true
+        effective_date: 2026-02-12
+      currency: USD
+      status: FACT
+      tier: T3
+      evidence_id: EV-2026-08-10-315
+      conflict_id: C-313
+      notes: >
+        TUR 2'nin en onemli liman bulgusu. Izmir/Aliaga ile Mersin (40')
+        arasi %81 fark. Izmir, Istanbul ve Gemlik'te 20ft/40ft AYRIMI YOK.
+        TUR 1'deki tek deger (113 USD) TERMINALIN kapi-cikis ucretiydi;
+        bu TASIYICININ THD'sidir. Ikisinin ayni olayi mi fiyatladigi
+        COZULMEDI -> C-313.
+
+    drop_off_fee:
+      value: 50
+      currency: USD
+      status: FACT
+      effective_date: 2021-04-01
+      evidence_id: EV-2026-08-10-316
+    unstuffing_musteri_tesisinde:
+      value: 172
+      kdv_pct: 20
+      currency: USD
+      status: FACT
+      effective_date: 2024-10-01
+      evidence_id: EV-2026-08-10-316
+    veteriner_fitosaniter_kontrol:
+      value: 126
+      unit: "USD / B/L"
+      currency: USD
+      status: FACT
+      effective_date: 2026-04-01
+      evidence_id: EV-2026-08-10-316
+    fuel_surcharge_destination_truck_pct:
+      value: 39
+      unit: "%"
+      status: FACT
+      effective_date: 2023-10-26
+      evidence_id: EV-2026-08-10-316
+      notes: "UYARI: tasiyicinin ic nakliyesi kullanilirsa transfer ucreti uzerine %39 yakit surprimi biner. Bagimsiz nakliyeci ile karsilastirilmali."
+
+    ordino:
+      value: null
+      band: [2000, 5000]
+      currency: TRY
+      status: ESTIMATE
+      confidence: MEDIUM
+      tier: T4
+      evidence_id: EV-2026-08-10-325
+      ttl: 90d
+      tur1_karsiligi: UNKNOWN
+    xray_gecis:
+      value: null
+      band: [2000, 3000]
+      currency: TRY
+      status: ESTIMATE
+      confidence: MEDIUM
+      tier: T4
+      evidence_id: EV-2026-08-10-325
+
+  # -------------------------------------------------------------------
+  # TERMINAL TARIFELERI — YENIDEN DOGRULAMA VE YENI TERMINAL
+  # -------------------------------------------------------------------
+  terminal_tarifeleri:
+    safiport_ardiye_20ft:
+      value: null
+      kademe: {"1-5": 39, "6-10": 44, "11+": 53}
+      currency: USD
+      unit: "USD/gun"
+      status: FACT
+      tier: T4
+      effective_date: 2026-01-01
+      evidence_id: EV-2026-08-10-317
+      ttl: 90d
+    safiport_ardiye_40ft:
+      value: null
+      kademe: {"1-5": 60, "6-10": 65, "11+": 77}
+      currency: USD
+      status: FACT
+      evidence_id: EV-2026-08-10-317
+    safiport_ardiye_reefer_20ft:
+      value: null
+      kademe: {"1-5": 109, "6+": 120}
+      currency: USD
+      status: FACT
+      evidence_id: EV-2026-08-10-317
+    safiport_thc:
+      value: 116
+      enerji_katki: 10
+      currency: USD
+      status: FACT
+      evidence_id: EV-2026-08-10-317
+    safiport_devanning:
+      value_20ft: 275
+      value_40ft: 365
+      value_20ft_manuel: 405
+      value_40ft_manuel: 475
+      currency: USD
+      status: FACT
+      evidence_id: EV-2026-08-10-317
+
+    kumport_ambarli_ardiye:
+      value: null
+      band_20ft_1_5gun: 18
+      band_40ft_1_5gun: 29
+      band_40ft_16gun_ustu: 46
+      currency: USD
+      unit: "USD/gun"
+      status: ESTIMATE
+      confidence: LOW
+      tier: T4
+      evidence_id: EV-2026-08-10-318
+      ttl: 90d
+      notes: >
+        DIKKAT: tarife PDF'ine dogrudan erisilemedi, arama ozetinden alindi.
+        DOGRUYSA ONEMLI: Ambarli ardiyesi Beldeport/SafiPort'un yarisindan az
+        -> TUR 1'in gecikme maliyeti tahmini ~%40 yuksek olur. -> T-313
+
+    ardiye_free_time_gun:
+      value: 0
+      status: ESTIMATE
+      confidence: LOW
+      tier: T4
+      evidence_id: EV-2026-08-10-317
+      conflict_id: C-312
+      tur1_karsiligi: UNKNOWN
+      notes: >
+        SafiPort tarifesi 'ithalat ardiye gunleri geminin yanastigi gunden
+        itibaren baslar' diyor -> 0 gun. Baska bir kaynak (EV-2026-08-10-325)
+        'ardiye 6. gunden itibaren' diyor -> 5 gun. COZULMEDI -> C-312.
+        Muhafazakar olarak 0 gun kullanildi (TUR 1 ile ayni).
+
+  # -------------------------------------------------------------------
+  # IC LOJISTIK — TUR 1'DEKI BAND DARALDI
+  # -------------------------------------------------------------------
+  ic_lojistik_tur2:
+    limandan_depoya_istanbul_ici_20ft:
+      value: null
+      band: [10000, 15000]
+      currency: TRY
+      kdv_dahil: false
+      status: ESTIMATE
+      confidence: LOW
+      tier: T5
+      evidence_id: EV-2026-08-10-326
+      ttl: 90d
+      tur1_karsiligi: "3.000-30.000 TL (modele girecek kadar dar degil)"
+    limandan_depoya_istanbul_ici_40ft:
+      value: null
+      band: [12500, 18000]
+      currency: TRY
+      kdv_dahil: false
+      status: ESTIMATE
+      confidence: LOW
+      evidence_id: EV-2026-08-10-326
+    mesafeli_seferler:
+      ambarli_bursa: 23000
+      ambarli_ankara: 30000
+      ambarli_izmir: 37500
+      currency: TRY
+      effective_date: 2025-01-15
+      kdv_dahil: false
+      status: ESTIMATE
+      confidence: LOW
+      evidence_id: EV-2026-08-10-326
+      notes: "TARIH 2025-01-15 -> 2026 degeri DEGIL."
+    bekleme_ucretsiz_saat:
+      value: 6
+      sonrasi_saat_basi_try: 1500
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-326
+
+  # -------------------------------------------------------------------
+  # ANTREPO — MINIMUM SURE BULUNDU
+  # -------------------------------------------------------------------
+  antrepo_tur2:
+    depolama_ucreti_palet_gun:
+      value: 0.35
+      currency: EUR
+      status: ESTIMATE
+      confidence: LOW
+      tier: T5
+      evidence_id: EV-2026-08-10-327
+      ttl: 90d
+      notes: "TUR 1'deki degeri BAGIMSIZ olarak dogruluyor (EV-2026-08-09-350)."
+    minimum_sure_gun:
+      value: 7
+      unit: gun
+      status: ESTIMATE
+      confidence: LOW
+      tier: T5
+      evidence_id: EV-2026-08-10-327
+      tur1_karsiligi: UNKNOWN
+      notes: "Kisa kalis planlansa bile en az 7 gun faturalanir."
+    giris_cikis_ellecleme:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+      notes: "TUR 2'de de bulunamadi. -> T-314"
+
+  # -------------------------------------------------------------------
+  # VARIS LIMANI KARARI
+  # -------------------------------------------------------------------
+  varis_limani_karari:
+    thd_farki_max_usd_konteyner:
+      value: 133
+      currency: USD
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-332
+      notes: "Izmir/Aliaga 165 vs Mersin 40' 298."
+    thd_farki_sise_basi_usd:
+      value: null
+      band: [0.006, 0.011]
+      currency: USD
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-332
+    ic_nakliye_farki_sise_basi_try:
+      value: null
+      band: [2.7, 3.2]
+      currency: TRY
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-332
+      notes: "Ambarli->Izmir 37.500 TL, 11.800-13.700 siseye bolunmus."
+    kural:
+      value: "Varis limani, terminal tarifesine gore DEGIL; antrepo/bandrolleme tesisinin ve hedef pazarin yerine gore secilir."
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-332
+      notes: "Buyukluk mertebesi farki ~2 kat, kur ne olursa olsun ayni yonde."
+
+  # -------------------------------------------------------------------
+  # SISE BASI TOPLAM LOJISTIK MALIYETI — UC PARA BIRIMI AYRI
+  # -------------------------------------------------------------------
+  sise_basi_lojistik_maliyeti:
+    _meta:
+      rota: "Ispanya -> Turkiye"
+      kapsam: "L1 (FOB) -> L3 (pre-tax landed) arasi lojistik kalemleri"
+      dahil_degil: "sigorta, bandrolleme operasyonu, antrepo bekleme, kanala dagitim, TUM VERGILER"
+      toplanabilir_mi: false
+      toplanamama_nedeni: "makro.yaml -> fx.usd_try ve fx.eur_try null. -> T-311"
+      status: ESTIMATE
+      confidence: LOW
+      evidence_id: EV-2026-08-10-329
+      ttl: 14d
+
+    dv20_paletsiz:
+      sise_kapasitesi: [11800, 13700]
+      usd_per_sise: [0.066, 0.193]
+      eur_per_sise: [0.025, 0.047]
+      try_per_sise: [1.32, 2.46]
+    dv20_paletli:
+      sise_kapasitesi: [6480, 7200]
+      usd_per_sise: [0.090, 0.310]
+      eur_per_sise: [0.048, 0.086]
+      try_per_sise: [2.50, 4.48]
+    hc40_paletsiz:
+      sise_kapasitesi: [19100, 21500]
+      usd_per_sise: [0.054, 0.169]
+      eur_per_sise: [0.016, 0.029]
+      try_per_sise: [0.95, 1.68]
+    lcl_5000_sise:
+      sise_kapasitesi: 5000
+      usd_per_sise: [0.326, 0.632]
+      eur_per_sise: [0, 0]
+      try_per_sise: [2.60, 4.20]
+    dv20_yalnizca_5000_sise:
+      sise_kapasitesi: 5000
+      usd_per_sise: [0.181, 0.456]
+      eur_per_sise: [0.070, 0.111]
+      try_per_sise: [3.60, 5.80]
+
+    olcek_egrisi_uyarisi:
+      value: "5.000 -> 100.000 sise arasinda sise basi lojistik maliyeti 3-4 KAT duser. SABIT bir 'sise basi navlun' varsayimi kucuk senaryoyu IYIMSER, buyuk senaryoyu KOTUMSER gosterir."
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-329
+
+  # -------------------------------------------------------------------
+  # LCL / FCL KIRILMA NOKTASI — YENIDEN HESAP
+  # -------------------------------------------------------------------
+  lcl_fcl_kirilma_tur2:
+    merkez_sise:
+      value: 5900
+      unit: adet
+      status: ESTIMATE
+      confidence: LOW
+      evidence_id: EV-2026-08-10-330
+      ttl: 14d
+    band_sise:
+      value: null
+      band: [2200, 9800]
+      unit: adet
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-330
+    tur1_karsiligi: "5.000-7.000 (genis band 1.600-9.900) -> DOGRULANDI"
+    band_neden_genis:
+      value: "Bandin genisliginin TAMAMI C-311'den (FCL base ocean 300-1200 USD) geliyor. LCL tarafi artik gercek kotasyona dayaniyor."
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-330
+    pilot_5000_sise_onerisi:
+      value: "20DV FCL, PALETLI, yari dolu"
+      gerekce_tipi: NON_FINANSAL
+      status: ESTIMATE
+      confidence: MEDIUM
+      evidence_id: EV-2026-08-10-330
+      notes: >
+        Fiyat farki (+-0,05 USD/sise) her iki modun kendi belirsizlik
+        bandindan (+-0,15 USD) KUCUK -> karar fiyatla verilemez.
+        Karari veren: cam kirilma riski (LCL'de 2 CFS elleclemesi, oran
+        UNKNOWN) + pilotun operasyon provasi olmasi.
+        TERSINE DONER: T-301 cevabi 30+ gun bekleme cikarsa VEYA FCL base
+        ocean bandin ust ucunda (1200 USD) cikarsa.
+    paletsiz_ne_zaman_anlamli:
+      value: "YALNIZCA konteyner hacim-kisitli oldugunda. 5.000 sisede 20DV %40 dolu -> paletsizin bedeli (devanning 257-275 USD + kirilma + yeniden paletleme) karsiliginda hicbir fayda alinmaz."
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-330
+
+  # -------------------------------------------------------------------
+  # TRANSIT SURE — GUNCELLENMIS
+  # -------------------------------------------------------------------
+  transit_tur2:
+    ispanya_istanbul_gun:
+      value: 4
+      unit: gun
+      status: FACT
+      tier: T4
+      confidence: MEDIUM
+      evidence_id: EV-2026-08-10-301
+      kaynak_sayisi: 3
+      conflict_id: C-302
+      notes: "UCUNCU bagimsiz kaynak, A tarafini (kisa transit) destekliyor. C-302'nin A lehine kapatilmasi ONERILIR."
+    portekiz_istanbul_gun:
+      value: null
+      status: UNKNOWN
+      confidence: LOW
+      evidence_id: EV-2026-08-10-303
+      notes: "Kaynak 4 gun diyor ama routing aktarmali -> ic tutarsiz, UNKNOWN birakildi."
+    italya_turkiye_gun:
+      value: null
+      status: UNKNOWN
+      evidence_id: EV-2026-08-10-304
+    fransa_istanbul_gun:
+      value: null
+      band: [12, 15]
+      unit: gun
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-10-305
+      tur1_karsiligi: UNKNOWN
+    california_istanbul_gun:
+      value: 20
+      unit: gun
+      status: FACT
+      tier: T4
+      evidence_id: [EV-2026-08-10-308, EV-2026-08-10-309]
+      tur1_karsiligi: "UNKNOWN (CRITICAL)"
+      notes: "KAPANDI. Routing: kara aktarmali (Atlanta) + deniz. Deniz-aktarmali alternatif 44 gun."
+    sili_istanbul_gun:
+      value: null
+      band: [43, 49]
+      unit: gun
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-10-306
+      tur1_karsiligi: UNKNOWN
+    arjantin_istanbul_gun:
+      value: 25
+      unit: gun
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-10-310
+    guney_afrika_istanbul_gun:
+      value: 49
+      unit: gun
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-10-307
+      tur1_karsiligi: "26 gun (TERS YON olcumu)"
+      notes: "TUR 1 tahmini ~2 KAT IYIMSERDI. Ters yon olcumunun neden kullanilmamasi gerektiginin somut ornegi."
+    avustralya_istanbul_gun:
+      value: null
+      band: [36, 56]
+      unit: gun
+      status: FACT
+      tier: T4
+      evidence_id: EV-2026-08-10-311
+
+    toplam_lead_time_gun:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+      notes: >
+        HALA UNKNOWN. Transit artik 9 rota icin biliniyor, ama uretim/hazirlik
+        (global-sourcing), gumrukleme, antrepo+analiz+bandrol (T-301) ve
+        bandrolleme operasyonu (T-314) hala UNKNOWN.
+
+  # -------------------------------------------------------------------
+  # SICAKLIK RISKI — ROTA YAPISIYLA
+  # -------------------------------------------------------------------
+  sicaklik_riski_tur2:
+    aktarma_sayisi_rota_bazli:
+      ispanya: 0
+      portekiz: 1
+      fransa: 1
+      california: 2
+      arjantin: 1
+      sili: 1
+      avustralya: 1
+      guney_afrika: 1
+      status: FACT
+      evidence_id: [EV-2026-08-10-301, EV-2026-08-10-303, EV-2026-08-10-305, EV-2026-08-10-306, EV-2026-08-10-307, EV-2026-08-10-308, EV-2026-08-10-310, EV-2026-08-10-311]
+      notes: "Aktarma sayisi = elleclleme sayisi = cam kirilma riski surucusu. Kirilma ORANI hala UNKNOWN."
+    en_riskli_rotalar:
+      value: "G.Afrika (49 gun, ekvator iki kez, Hamburg aktarmali) ve Avustralya (36-56 gun, tropik Singapur aktarmasi)"
+      status: ESTIMATE
+      evidence_id: [EV-2026-08-10-307, EV-2026-08-10-311]
+    en_dusuk_riskli_rota:
+      value: "Ispanya -> Istanbul: 4 gun, 0 aktarma, Akdeniz ici direkt -> kuru konteyner yeterli olabilir"
+      status: ESTIMATE
+      evidence_id: EV-2026-08-10-301
+    thermal_liner_birim_maliyet:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+    beklenen_fire_orani_pct:
+      value: null
+      status: UNKNOWN
+      evidence_id: null
+      notes: "TUR 2'de de bulunamadi. Bu sayi olmadan liner/reefer karari FINANSAL OLARAK VERILEMEZ."
+
+  # -------------------------------------------------------------------
+  # HALA UNKNOWN OLANLAR (TUR 2 SONRASI)
+  # -------------------------------------------------------------------
+  hala_unknown:
+    fcl_navlunu_tum_rotalar: "T-304 (CRITICAL) — kapanmadi"
+    italya_rotasi_tamamen: "T-312 — LCL de FCL de UNKNOWN"
+    origin_charges_ispanya_disi: "T-312"
+    bandrolleme_birim_maliyet: "T-314"
+    bandrolleme_kapasitesi_sise_gun: "T-314"
+    antrepo_giris_cikis_ellecleme: "T-314"
+    beklenen_kirilma_orani: "T-314 — LCL/FCL kararinin tek belirleyicisi"
+    thermal_liner_maliyeti: "T-304"
+    turk_sigortacidan_gercek_kotasyon: "T-304"
+    cekici_sasi_darasi: "T-304 — 40HC karari buna bagli"
+    ardiye_free_time: "C-312 — 0 gun mu 5 gun mu"
+    thd_ile_terminal_kapi_cikis_cift_sayim: "C-313"
+    ruhsat_bandrol_bekleme_suresi: "T-301 (CRITICAL) — baska ajanin alani"
+    fx_kuru: "T-311 — uc para birimi toplanamiyor"

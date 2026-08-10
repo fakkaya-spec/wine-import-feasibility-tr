@@ -13,12 +13,22 @@
 meta:
   dosya: tedarikci.yaml
   son_guncelleme: 2026-08-10
-  tur: "TUR 1.5 — T-902 katman etiketi duzeltmesi (TUR 1 kesfi uzerine)"
+  tur: "TUR 2 — COMMERCIAL VALIDATION (TUR 1.5 katman duzeltmeleri KORUNDU)"
   durum: KISMI_DOLU_TEKLIF_YOK
   teklif_alindi_mi: false
-  havuz_dosyasi: "50-sourcing/tedarikci-havuzu.csv"
-  dogrulanmis_tedarikci_sayisi: 11
+  havuz_dosyasi: "50-sourcing/supplier-shortlist-v2.csv (TUR 2); 50-sourcing/tedarikci-havuzu.csv (TUR 1, korunur)"
+  dogrulanmis_tedarikci_sayisi: 26
   rfq_sablonu: "50-sourcing/rfq-template.md (v2.1, READY_TO_SEND, GONDERILMEDI)"
+  tur2_degisiklik_ozeti: >-
+    TUR 1.5'te T-902 ile duzeltilen KATMAN ETIKETLERINE DOKUNULMADI.
+    `duyarlilik_sinirlari_KARISIK_KATMAN` blogu, `ihracat_ort_birim_degeri_EUR_per_litre`
+    blogu ve `SENSITIVITY_BOUNDS_ONLY` citi AYNEN DURUYOR.
+    TUR 2'de YALNIZCA EKLEME yapildi:
+    (1) `arastirma_bulgulari.tur2_bulgulari` blogu eklendi;
+    (2) `dogrulanmis_tedarikci_sayisi` 11 -> 26 (aday sayisidir, ALTERNATIF sayisi DEGIL);
+    (3) `fiyat` blogundaki alanlarin HICBIRI degismedi — exw/fob HALA null/UNKNOWN.
+    TUR 2'de bulunan TEK yayinlanmis fiyat (EV-2026-08-10-451) para birimi ve
+    katmani belirsiz oldugu icin `fiyat` blogunu DOLDURAMAZ (T-466).
   tur15_degisiklik_ozeti: >-
     T-902 uyarinca IKI ALANIN KATMAN ETIKETI GERI CEKILDI. HICBIR DEGER DEGISMEDI;
     hicbir yeni sayi eklenmedi. Degisen yalnizca etiketlerdir:
@@ -535,6 +545,190 @@ arastirma_bulgulari:
         Talep zayifligi + stok baskisi var, ancak uretim de dusuk. OIV, dusuk uretimin
         'genis capli kitlik degil, kademeli stok rahatlamasi' yaratmasini bekliyor.
         Bu bir 'distilasyon krizi firsati' DEGILDIR.
+
+  # =========================================================================
+  # TUR 2 BULGULARI (2026-08-10) — SADECE EKLEME.
+  # TUR 1 / TUR 1.5 bloklarindan HICBIRI degistirilmedi.
+  # BU BLOK DA BIR TEKLIF DEGILDIR. Modelde fiyat girdisi olarak KULLANILAMAZ.
+  # =========================================================================
+  tur2_bulgulari:
+
+    havuz_buyuklugu:
+      aday_tedarikci_sayisi:
+        value: 26
+        unit: adet
+        status: FACT
+        evidence_id: "EV-2026-08-10-451 ... EV-2026-08-10-471"
+        notes: >-
+          11 (TUR 1) + 15 (TUR 2). BU BIR ADAY SAYISIDIR.
+          `risk.alternatif_tedarikci_sayisi` HALA 0'dir cunku hicbirinden
+          fiyat/MOQ/vade TEKLIFI alinmamistir. Havuzu buyutmek KANIT uretmedi.
+      oncelik_dagilimi:
+        value: "A=7, B=10, C=9"
+        status: FACT
+        evidence_id: null
+        notes: "Kriterler 50-sourcing/supplier-priority-ranking.md §1'de ONCE tanimlandi, SONRA uygulandi. A = 'RFQ gonderilmeye deger', 'secildi' DEGIL."
+      is_modeli_dagilimi:
+        value: "PRIVATE_LABEL=17, EXISTING_BRAND=7, IKISI=1, UNKNOWN=1"
+        status: FACT
+        evidence_id: null
+        notes: >-
+          Model B'nin agirligi TUR 1'de itiraf edilen ARAMA YANLILIGININ devamidir,
+          modelin ustunlugu DEGIL. TUR 2'de 7 somut Model A markasi bulundu ancak
+          hicbiri ticari sart yayinlamadigi icin B onceligine kaldi (T-464).
+      ulke_dagilimi:
+        value: "ES=5, US=4, PT=3, CL=3, ZA=3, IT=2, FR=2, AU=2, MD=1, NZ=1, AR=0"
+        status: FACT
+        evidence_id: null
+        notes: "Arjantin bu turda da 0 — ELENMEDI, DOGRULANAMADI (EV-2026-08-10-469). NZ charter kapsami DISINDADIR, MOQ referansi olarak tutuluyor."
+
+    private_label_moq_TUR2_GENISLEME:
+      value: "3000 - 6000"
+      unit: sise (SKU basina)
+      status: ESTIMATE
+      tier: T4
+      evidence_id: "EV-2026-08-10-471"
+      conflict_id: "C-462"
+      n: 5
+      medyan: 3600
+      dogrulanmis_degerler:
+        interbrosa_ES: { value: 3000, evidence_id: "EV-2026-08-09-408" }
+        clark_estate_NZ: { value: 3000, evidence_id: "EV-2026-08-10-455" }
+        the_wine_factory_FR: { value: 3600, evidence_id: "EV-2026-08-09-410" }
+        cantina_danese_IT: { value: 6000, evidence_id: "EV-2026-08-10-453" }
+        harland_AU: { value: 6000, evidence_id: "EV-2026-08-10-452" }
+      tur1_ifadesinin_nitelenmesi: >-
+        TUR 1 B-1: "3.000-3.600 sise ... 5.000 siselik pilot hacmiyle UYUMLUDUR."
+        BU IFADE HALA DOGRU AMA ARTIK EKSIKTIR. TUR 2'de eklenen iki uretici
+        6.000 sise istiyor. DOGRU IFADE: 5.000'lik pilot, MOQ'su bilinen bes
+        ureticinin UCUYLE mumkun, IKISIYLE degildir. Havuz ~%40 daraliyor.
+        MOQ bir ULKE veya SEKTOR ozelligi DEGIL, FIRMA ozelligidir.
+      kullanim_kurali: "SENSITIVITY_BOUNDS_ONLY — `siparis_kosullari.moq_sise` alanini DOLDURMAZ (secili tedarikci yok)."
+
+    yayinlanmis_katalog_fiyati_TEK_GOZLEM:
+      value: "2.85+ / 5.00+ / 8.50+"
+      unit: "PARA BIRIMI BILINMIYOR ($ sembolu) / sise"
+      per: "750 ml"
+      status: ESTIMATE
+      tier: T4
+      evidence_id: "EV-2026-08-10-451"
+      conflict_id: "C-461"
+      quote_class: PUBLIC_INDICATIVE
+      katman: null
+      katman_status: UNKNOWN
+      katman_uyarisi: >-
+        BU SAYIYA L0 VEYA L1 DENEMEZ. Kaynak, TAM KONTEYNER siparisinde fiyatin
+        FOB (L1), MOQ siparisinde 'ex factory' (L0) oldugunu soyluyor. Yani TEK
+        YAYINLANMIS SAYI, SIPARIS BUYUKLUGUNE GORE IKI FARKLI KATMANA isaret ediyor.
+        Katman iddiasi YAPILMAMISTIR.
+      neden_estimate: >-
+        (1) PARA BIRIMI kaynakta YAZILI DEGIL — yalnizca "$". Firma Avustralyalidir
+            (AUD muhtemel) ama DOGRULANMADI. AUD/USD farki ~1,5 kattir.
+        (2) Fiyat "+" ile veriliyor ("2.85+") — bir TABAN, bir fiyat degil.
+        (3) ETIKET BASKI MALIYETI HARICTIR (karton dahildir) -> L0'in kapsami eksik.
+        (4) Hasat yili, uzum cesidi, ABV belirtilmemis.
+      kapsam_beyani:
+        dahil: "Bulk Wine, Bottling, Dry Goods, Container Packing, FOB Transport to Port, Export Documentation"
+        haric: "etiket baskisi (label printing)"
+      kullanim_kurali:
+        value: "SENSITIVITY_BOUNDS_ONLY"
+        cit_korundu: true
+        notes: >-
+          `fiyat.exw_per_sise` ve `fiyat.fob_per_sise` alanlarini DOLDURAMAZ ve
+          DOLDURMAMISTIR (T-466, impact CRITICAL). Duyarlilikta kullanilirsa
+          HER CIKTIDA uc uyari birlikte yazilmak ZORUNDADIR:
+          para birimi UNKNOWN · katman belirsiz (L0 veya L1) · etiket haric.
+          Iki para birimi okumasi (AUD / USD) AYRI AYRI gosterilir; ORTALAMA ALINMAZ.
+          Bir yayinlanmis KATALOG fiyati, gercek RFQ cevabi DEGILDIR ve G2 gate'ini ACMAZ.
+
+    odeme_sarti_TEK_GOZLEM:
+      value: "%50 siparis pesin + %50 siseleme sonrasi (tamami sevkiyat ONCESI)"
+      unit: "-"
+      status: FACT
+      tier: T4
+      evidence_id: "EV-2026-08-10-452"
+      n: 1
+      notes: >-
+        Havuzdaki 26 tedarikcinin YALNIZCA BIRI odeme sartini yayinlamistir.
+        Bu tek gozlem `odeme.vade_gun` alanini DOLDURMAZ. Ancak yonu isaret eder:
+        mal Turkiye'ye varmadan tam bedel odenmis olur -> tedarikci vadesi 0,
+        CCC KISALMAZ, `peak_cash_requirement` BUYUR.
+        KKDF sonucu bu ajanin alani DEGILDIR -> T-463 (gumruk-vergi-uzmani).
+      ikinci_yonlu_ipucu: "The Wine Factory (FR) 'odeme sonrasi uretim' diyor (EV-2026-08-09-410) — ayni yonde ama sart olarak dogrulanmadi."
+
+    konteyner_doluluk_TEK_GOZLEM:
+      value: 14112
+      unit: "sise / 20ft DV — PALETSIZ (slipsheet)"
+      status: FACT
+      tier: T4
+      evidence_id: "EV-2026-08-10-452"
+      notes: >-
+        T-402'nin (TUR 1) ILK somut veri noktasi. PALETLI yuklemede kac sise
+        girdigi UNKNOWN'dir ve fark onemlidir (T-461).
+        DOGRULAMA `navlun-lojistik-uzmani` ALANIDIR — bu ajan yorumlamaz.
+      moq_konteyner_iliskisi: >-
+        MOQ 6.000 sise, konteyner 14.112 sise -> MOQ konteynerin ~%42'sidir.
+        Charter pilot hacimleri (5.000 / 10.000 sise) de konteyner ALTIDIR.
+        Bu hacimlerde LCL/groupage veya karisik konteyner kacinilmaz gorunuyor;
+        birim navlun farki `navlun-lojistik-uzmani` alanindadir.
+
+    model_A_somut_marka_adaylari:
+      value: 7
+      unit: marka grubu
+      status: FACT
+      tier: T4
+      evidence_id: "EV-2026-08-10-456, EV-2026-08-10-457, EV-2026-08-10-458, EV-2026-08-10-459, EV-2026-08-10-461, EV-2026-08-10-462, EV-2026-08-09-418"
+      markalar: >-
+        Vina Albali/Los Molinos (Felix Solis, ES); Porta 6 (Vidigal, PT);
+        Colombelle (Plaimont, FR); Quinta da Espiga/Palha-Canas (Casa Santos Lima, PT);
+        Particular (San Valero, ES); Purcari/Bostavan (Purcari Group, MD/RO/BG);
+        Parras markalari (Parras Wines, PT).
+      kritik_acik: >-
+        YEDISININ DE Turkiye'de ithalatci/distributoru olup olmadigi UNKNOWN.
+        Bu, iki yonlu bir kesisimdir ve ikinci yon `turkiye-pazar-kasifi`
+        alanindadir -> T-464 (HIGH).
+        Cevap "hepsinin var" ise Model A fiilen kapanir ve iki modelin ESIT
+        degerlendirilmesi imkansizlasir. Cevap "yok" ise Model A GUCLENIR.
+      tur1_acigina_gore_ilerleme: >-
+        TUR 1 OQ-404: "Turkiye'de temsilcisi olmayan somut f/p markasi bulunamadi."
+        TUR 2 bu acigin YARISINI kapatti (marka listesi var), IKINCI YARISI acik.
+
+    urun_eslesmesi_dogrulanmis:
+      status: FACT
+      tier: T4
+      evidence_id: "EV-2026-08-10-464, EV-2026-08-10-459"
+      notes: >-
+        Gorev tanimindaki urun listesiyle DOGRULANMIS eslesmeler:
+        (a) Corta Hojas (CL) beyaz portfoyu = Sauvignon Blanc + Chardonnay;
+        (b) Plaimont (FR) / IGP Cotes de Gascogne = Colombard-Chardonnay tarzinin
+            yapisal kaynagi (Colombelle markasi).
+        UYARI: (b) icin FIYAT UYUMU DOGRULANMAMISTIR. Fransa'nin Turkiye'ye L2 CIF
+        birim degeri 6,27 USD/l'dir (EV-2026-08-09-405) — segmentin COK USTUNDE.
+        Gascogne'un bu ortalamanin ALTINDA oldugu iddia EDILMEMISTIR.
+
+    negatif_bulgular:
+      status: FACT
+      evidence_id: "EV-2026-08-10-466, EV-2026-08-10-469, EV-2026-08-10-467, EV-2026-08-10-464"
+      notes: >-
+        "Bakilmadi" ile "bakildi, yok" AYNI SEY DEGILDIR. Kaydedilen negatifler:
+        (1) Bronco Wine (US) private label kabiliyeti KURUMSAL SITEDE KANITLANAMADI
+            -> private_label_capable UNKNOWN, YES DEGIL (EV-466);
+        (2) Arjantin'de URETICI seviyesinde private label DOGRULANAMADI (EV-469);
+        (3) Interbrosa sitesi 2026-08-10'da HTTP 503 — `dogrulanmis_en_dusuk` MOQ
+            alaninin TEK KAYNAGI bugun teyit edilemedi (EV-467);
+        (4) Corta Hojas'ta MOQ/fiyat/Incoterm 2026-08-10'da HALA yayinlanmamis (EV-464).
+
+    rfq_ile_ogrenilebilecek_alanlar:
+      value: 21
+      unit: alan
+      status: FACT
+      evidence_id: null
+      notes: >-
+        Acik kaynak arastirmasiyla PRENSIPTE elde edilemeyecek 21 alan
+        alan alan listelendi: 99-ops/_parts/acik-sorular-global-sourcing-kasifi-tur2.md §A.
+        Bu alanlar icin DAHA FAZLA WEB ARASTIRMASI KAYNAK ISRAFIDIR.
+        Model A'ya ozgu 7 ek alan (munhasirlik, hacim taahhudu, markup tavani,
+        pazarlama katkisi, fesih, marka tescili, fiyat revizyonu) ayrica listelidir.
 
   bulk_hipotezi:
     durum: "HYPOTHESIS — NOT INVESTIGATED"

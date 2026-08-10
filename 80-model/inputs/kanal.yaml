@@ -6,34 +6,155 @@
 #        (1) hangi iki katman arasi  (2) brut mu net mi
 #        (3) KDV dahil mi haric mi   (4) margin mi markup mi
 # KURAL: Kanal kosullari genellikle T4/T5'tir — min/base/max ZORUNLU.
-# Bu turda tüm değerler null / UNKNOWN'dır. UYDURMA.
+#
+# TUR 2 NOTU (kanal-marj-uzmani, 2026-08-10):
+#   Bu dosya TUR 2'de ILK KEZ doldurulmustur. Doldurulan alanlarin cogu
+#   ticari kosulun VARLIGINI kanitlar, TUTARINI DEGIL. Tutarlar Turkiye'de
+#   sistematik olarak TICARI SIRDIR (bkz. EV-2026-08-10-610, -611, -612:
+#   Rekabet Kurumu'nun kendi raporlarinda bile oranlar KARARTILMISTIR).
+#   Bu nedenle bircok alan bilerek null + UNKNOWN birakilmistir.
+#   Duyarlilik bantlari AYRI bir blokta (duyarlilik_senaryolari) tutulur ve
+#   modele TEK SAYI olarak GIREMEZ.
+#
+#   Ana dokumanlar:
+#     70-kanal/kanal-marj-yapisi.md      (uc kanal x tum kalemler)
+#     70-kanal/marj-vs-markup.md         (tanim sozlesmesi + ornek hesap)
+#     70-kanal/kendi-dagitim-senaryosu.md (own distribution veri yapisi)
+#     70-kanal/rapor-tur2-kanal-marj.md  (rapor)
 
 meta:
   dosya: kanal.yaml
-  son_guncelleme: 2026-08-09
-  tur: "TUR 0 — kurulum"
-  durum: BOS_ISKELET
+  son_guncelleme: 2026-08-10
+  tur: "TUR 2 — kanal-marj-uzmani ilk dolum"
+  durum: KISMI_DOLU
+  rapor: 70-kanal/rapor-tur2-kanal-marj.md
+  acik_ticketlar: [T-601, T-602, T-603, T-604, T-605]
+  acik_celiskiler: [C-601, C-602]
+  evidence_araligi: "EV-2026-08-10-601 .. EV-2026-08-10-624"
+
+# =====================================================================
+# BAGLAYICI KULLANIM KURALLARI  (M1-M6)
+# BU DOSYADAN OKUMADAN SAYI ALINAMAZ.
+# =====================================================================
+kullanim_kurallari:
+  M1: >
+    Bu dosyadaki hicbir marj rakami dort niteligi (katman cifti, brut/net,
+    KDV dahil/haric, margin/markup) belirtilmeden alintılanamaz. Dordu eksikse
+    sayi GECERSIZDIR ve finans-fizibilite tarafindan REDDEDILMELIDIR.
+  M2: >
+    pazar.yaml katman_kurallari.K2 geregi L7 (retailer purchase price) Metro raf
+    fiyatindan TURETILMEMISTIR. Bu dosyada L7 bagimsiz bir DENKLEMLE kurulmustur:
+    L7_effective = L6 * (1 - d) - f_per_bottle. L7'nin SAYISAL degeri UNKNOWN'dir.
+  M3: >
+    pazar.yaml K5 geregi 599,90 / 649,90 TL bir METRO CASH & CARRY gozlemidir.
+    Bu dosyada hedef fiyat olarak KULLANILMAMISTIR. Ters model calistirilirken
+    hedef L8 en az iki alternatifle (band) birlikte verilmelidir.
+  M4: >
+    IP-2001 / T-205 geregi alkolde reklam-tanitim-gorsel kaldiraclari YOKTUR.
+    Bu bir belirsizlik degil, bu dosyanin BASLANGIC KOSULUDUR. Marka insa
+    harcamasi ATL kalemi olarak MODELLENEMEZ; varsa kanal maliyeti olarak gorunur.
+  M5: >
+    FMCG geneli / sut kategorisi / tum-kategori perakende verisinden saraba
+    yapilan her gecis ESTIMATE'tir. Bu dosyada hicbir yerde sarap verisi gibi
+    sunulmamistir. Kaynak kategorisi her alanda yazilidir.
+  M6: >
+    Vergi orani (KDV/OTV), navlun, ruhsat bedeli ve tedarikci fiyati bu dosyanin
+    KAPSAMI DISINDADIR. Formullerde t_kdv sembolik birakilmistir; degeri
+    vergi.yaml'dan alinir.
+
+# =====================================================================
+# FIYAT MERDIVENI DENKLEMI — MODELIN TASIYICI FORMULU
+# =====================================================================
+merdiven_denklemi:
+  ileri: |
+    L7_effective = L6 * (1 - d) - f_per_bottle
+    L8_kdv_haric = L7_effective / (1 - m_retail)
+    L8_kdv_dahil = L8_kdv_haric * (1 + t_kdv)
+  ters: |
+    L8_kdv_haric = L8_kdv_dahil / (1 + t_kdv)
+    L7_effective = L8_kdv_haric * (1 - m_retail)
+    L6           = (L7_effective + f_per_bottle) / (1 - d)
+  degiskenler:
+    L6: "ithalatci FATURA fiyati, KDV haric"
+    d: "ciroya oranli geri akan bedeller toplami (ciro primi, alan kullanimi, lojistik bedeli, kirik urun bedeli, enerji, CRM/B2B)"
+    f_per_bottle: "sabit bedellerin sise basina payi = listeleme_bedeli / yillik_sise"
+    m_retail: "gross margin ON SELLING PRICE, KDV haric, L7 -> L8"
+    t_kdv: "vergi.yaml alani — bu ajanin degil"
+  cozulebilirlik:
+    value: false
+    status: FACT
+    notes: >
+      Denklem bu turda SAYISAL OLARAK COZULEMEZ. Dort bilinmeyen vardir:
+      L8_CHAIN_RETAIL (pazar.yaml, UNKNOWN, T-603), m_retail (sarap icin UNKNOWN),
+      d (UNKNOWN), f_per_bottle (UNKNOWN). Model bunlari senaryo olarak
+      calistirmalidir; tek sayiya kilitlenmemelidir.
 
 dagitim_modeli:
   secim:
     value: null
     status: UNKNOWN
     evidence_id: null
-    notes: "KENDI_DAGITIMIMIZ | DIS_DISTRIBUTOR | HIBRIT"
+    notes: >
+      KENDI_DAGITIMIMIZ | DIS_DISTRIBUTOR | HIBRIT.
+      YAPISAL BULGU (EV-2026-08-10-613 dipnot 14 + EV-2026-08-10-612):
+      zincir market MERKEZI ALIM yapar ve zaten LOJISTIK BEDELI alir -> zincir
+      kanalinda kendi dagitimin marjinal faydasi DUSUKTUR. Kendi dagitimin degeri
+      GK (48.956 nokta) ve ASN (29.218 nokta) kanallarindadir. Charter'in kanal
+      onceligi (1 zincir) ile kendi dagitimin ekonomik mantigi TERS YONDEDIR.
+      Yani KANAL KARMASI kararı DAGITIM MODELI kararini belirler, tersi degil.
 
   kendi_dagitimimiz:
+    veri_yapisi_dosyasi: 70-kanal/kendi-dagitim-senaryosu.md
+    alan_sayisi:
+      toplam: 58
+      kanitli_dolu: 10
+      unknown: 48
+      status: FACT
+      evidence_id: null
+      notes: "Sayim 70-kanal/kendi-dagitim-senaryosu.md §0 tablosundandir."
+    personel_taban_maliyeti_aylik:
+      value: 40214.03
+      currency: TRY
+      unit: TRY/ay/kisi
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-621
+      notes: >
+        2026 asgari ucretin ISVERENE TOPLAM MALIYETI, imalat DISI sektor
+        (2 puan SGK prim indirimi). Ticaret/dagitim bu gruptadir.
+        BU BIR TABANDIR, BEKLENEN UCRET DEGILDIR. Satis temsilcisi carpani
+        UNKNOWN'dir; yol/yemek/telefon/prim/arac HARICTIR.
     yillik_sabit_maliyet:
       value: null
       currency: null
       status: UNKNOWN
       evidence_id: null
-      notes: "Ekip, arac, depo, sistem"
+      notes: "Turev alan — kendi-dagitim-senaryosu.md 1-7 doldurulunca hesaplanir."
     ekonomik_oldugu_min_hacim_sise:
       value: null
       unit: adet
       status: UNKNOWN
       evidence_id: null
-      notes: "Kirilma noktasi — hesabi finans-fizibilite yapar"
+      formul: "hacim_kritik = yillik_sabit_dagitim_maliyeti / (L6 * distributor_marj_orani)"
+      notes: >
+        COZULEMEZ: pay da payda da UNKNOWN. Hesabi finans-fizibilite yapar.
+        BUYUKLUK MERTEBESI KONTROLU (kanit degil, aritmetik): 5.000 sise/yil =
+        ayda ~417 sise; tek kisinin asgari ucret tabani (40.214,03 TL/ay) bile
+        96,4 TL/sise eder — benchmark bandinin (600-900 TL) %11-16'si, ve bu
+        YALNIZCA bir kisinin tabanidir. 5.000 sise senaryosunda kendi dagitim
+        ekonomik olarak imkansizdir.
+    3pl_yasal_olarak_mumkun_mu:
+      value: true
+      status: FACT
+      tier: T1
+      confidence: HIGH
+      evidence_id: EV-2026-08-09-204
+      notes: >
+        mevzuat-ruhsat-uzmani bulgusu (ipucu L3): kendi deposu zorunlu degildir,
+        'amaca uygun dagitim aglarinin akde baglanmis kullanicisi' olmak kabul
+        edilmektedir. Bu alanin SAHIBI ruhsat.yaml'dir; burada A/B karsilastirmasi
+        icin REFERANS olarak tutulmaktadir.
 
   dis_distributor:
     marj_pct:
@@ -41,130 +162,509 @@ dagitim_modeli:
       base: null
       max: null
       unit: "%"
-      katmanlar: null          # or. "L6 -> L7"
+      katmanlar: null
       brut_mu_net_mi: null
       kdv_dahil_mi: null
       margin_mi_markup_mi: null
       status: UNKNOWN
       evidence_id: null
+      notes: >
+        TUR 2'DE HICBIR KANITLI DEGER BULUNAMAMISTIR ve UYDURULMAMISTIR.
+        Bu, modelin en buyuk tek bosluklarindan biridir: A/B dagitim modeli
+        karsilastirmasi bu sayi olmadan YAPILAMAZ. Yalnizca gercek distributor
+        gorusmesi ile kapanir -> T-604.
     kanal_erisimi:
       value: null
       status: UNKNOWN
       evidence_id: null
+      notes: "Distributorun 'X noktaya ulasiyorum' iddiasi DOGRULANMADAN kabul edilemez."
     bagimlilik_riski:
       value: null
       status: UNKNOWN
       evidence_id: null
+      notes: >
+        Satis Yon. m.16 (mevzuat ajani ipucu K6): uretici/ithalatci/toptanci
+        MUNHASIRLIK ve BAGLI SATIS uygulayamaz. Yani 'munhasir distributorluk'
+        modeli hukuken sorunlu olabilir — bu bir HUKUKI SONUC DEGILDIR,
+        mevzuat-ruhsat-uzmani alanidir.
 
 kanallar:
 
+  # ===================================================================
+  # A) CHAIN RETAIL — zincir market / cash & carry
+  # ===================================================================
   zincir_market:
     oncelik: 1
+    resmi_kanal_adi:
+      value: "MK (organize/modern kanal), KSN'nin alt kanali"
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-613
+    nokta_sayisi:
+      value: null
+      unit: adet
+      status: UNKNOWN
+      evidence_id: EV-2026-08-10-613
+      notes: >
+        TADB kaynakli tabloda MODERN KANAL nokta sayisi KASTEN YOKTUR
+        (merkezi alim nedeniyle disarida birakilmis). GK ve ASN sayilari vardir.
+
     marj_pct:
       min: null
       base: null
       max: null
       unit: "%"
-      katmanlar: null          # or. "L7 -> L8"
-      brut_mu_net_mi: null
-      kdv_dahil_mi: null
-      margin_mi_markup_mi: null
+      katmanlar: "L7 -> L8"
+      brut_mu_net_mi: BRUT
+      kdv_dahil_mi: HARIC
+      margin_mi_markup_mi: MARGIN_ON_SELLING_PRICE
       status: UNKNOWN
       evidence_id: null
+      notes: >
+        SARAP/ALKOL KATEGORISI ICIN UNKNOWN'DIR ve oyle birakilmistir.
+        Gerekce (EV-2026-08-10-611): Rekabet Kurumu'nun bes buyuk zincir icin
+        yaptigi brut marj analizi 'ALKOL VE TUTUN HARIC' tanimlidir ve
+        yayimlanan tum marj oranlari TICARI SIR olarak KARARTILMISTIR.
+        Turkiye'de zincir perakendenin alkol brut marji HICBIR kamu kaynaginda
+        YOKTUR. Duyarlilik bandi icin bkz. duyarlilik_senaryolari.
+
+    tum_kategori_proxy_marj_pct:
+      value: 24.31
+      unit: "%"
+      katmanlar: "L7 -> L8"
+      brut_mu_net_mi: BRUT
+      kdv_dahil_mi: HARIC
+      margin_mi_markup_mi: MARGIN_ON_SELLING_PRICE
+      markup_karsiligi_pct: 32.12
+      status: FACT
+      tier: T4
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-616
+      kaynak_kategorisi: "TUM KATEGORILER (Migros 2025 konsolide) — SARAP DEGILDIR"
+      modele_girme_kurali: PROXY_ONLY
+      notes: >
+        TURETME: (412.756.429 - 312.409.547) / 412.756.429 = 0,2431.
+        UC AYRI HATA KAYNAGI VARDIR ve modelde belirtilmelidir:
+        (1) tum kategori karmasidir, sarap ayrisitirilmamistir;
+        (2) alkol resmi marj analizinin kapsami disidir (EV-...-611);
+        (3) RAPORLANAN BRUT MARJ, TEDARIKCIDEN ALINAN BEDELLERI ICERIR
+            (Rekabet Kurumu metodolojisi satin alim maliyetinden ciro primi +
+            aktivite primi + iade tutari + urun imha bedeli + iskonto
+            faturalarini DUSER) -> tedarikci_toplam_yuku = m_retail + d + f/L6.
+            Bu ucu USTUSTE BINMEZ, TOPLANIR.
+
+    ticari_kosul_kalemleri:
+      value: ["CRM", "B2B (kasa cikisi cirosu)", "alan kullanimi", "kirik urun bedeli",
+              "lojistik bedeli", "sogutucu enerji bedeli"]
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-612
+      notes: >
+        ALKOLLU ICKIYE OZGU, FMCG genellemesi DEGIL. Rekabet Kurulu karari
+        21-51/708-351 para.82: MIGROS, CARREFOUR, OZDILEK, METRO ve TESPO ile
+        BIRER YILLIK satis anlasmasi; icerikte bu kalemler ve GERI ODEME VADESI
+        yazilidir. TUTARLAR KARARTILMISTIR -> tutarlar UNKNOWN.
+        NOT: METRO ile de yillik anlasma imzalanmaktadir; Metro 'tek fiyat listesi'
+        degildir (IP-501/IP-505 ile tutarlidir).
+    fmcg_geneli_bedel_kalemleri:
+      value: ["raf bedeli", "urun listeleme bedeli", "insert bedeli", "enerji bedeli",
+              "teshir bedeli", "yilsonu iskontosu", "kampanya bedeli",
+              "yeni urun tanitim bedeli", "veri paylasim bedeli", "ciro primi"]
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-610
+      kaynak_kategorisi: "FMCG GENELI — sarap degil"
+      notes: >
+        Ankete katilan 20 tedarikcinin TAMAMI ek bedel odedigini ve talebin
+        PERAKENDECIDEN geldigini beyan etmistir. Bedellerin ciroya orani
+        TICARI SIR olarak KARARTILMISTIR. Indirim marketleri (BIM/A101/SOK tipi)
+        ek bedel yerine URUNUN NET FIYATI uzerinden pazarlik yapmayi tercih eder
+        -> ayni toplam, FARKLI SATIRLAR; kanal secimi maliyetin YERINI degistirir.
+
     listeleme_bedeli:
       value: null
       currency: null
-      birim: null              # SKU basina | magaza basina | yillik
+      birim: null
       status: UNKNOWN
       evidence_id: null
+      yasal_cerceve_evidence_id: [EV-2026-08-10-601, EV-2026-08-10-605, EV-2026-08-10-608]
+      notes: >
+        TUTAR UNKNOWN'DIR. Guncel, dogrulanabilir, kamuya acik hicbir tutar yoktur
+        (EV-...-610: resmi sektor raporunda bile oranlar karartilmis).
+        YAPISAL OLARAK BILINENLER (FACT):
+        (a) Bedel YASALDIR ama sozlesmede hizmet TURU + bedelin TUTAR/ORANI
+            yazilmak ZORUNDADIR (EV-...-601) -> gizli kalem olamaz.
+        (b) Bedel karsiligi verilebilecek hizmetler IKI GRUPTUR: tanitim hizmeti
+            VEYA teshir unitelerinde ozel konumlandirma (EV-...-605). ALKOLDE
+            TANITIM FIILEN SATIN ALINAMAZ (IP-2001) -> geriye YALNIZCA fiziksel
+            konumlandirma kalir. Bu, sarapta listeleme pazarliginin FMCG
+            muadilinden YAPISAL OLARAK DAR bir zeminde yurudugu anlamina gelir.
+        (c) 2015 orijinal metnindeki 'prim/bedele konu urunun sozlesme suresince
+            RAFTA SATISA SUNULMASI ZORUNLUDUR' korumasi 2024 metninde AYNEN
+            GORUNMEMEKTEDIR (EV-...-608 vs EV-...-601) -> 'bedeli odedik ama
+            raftan cikarildik' riski -> T-601.
+        (d) OLCEK ASIMETRISI: bedel SABIT, hacim DEGISKENDIR. 5.000 sise/yil'da
+            ayni mutlak bedel, 100.000 sise'ye gore sise basina 20 KAT maliyet
+            uretir. finans-fizibilite bunu hacme bolunen sabit maliyet olarak
+            modellemek ZORUNDADIR.
+
     ciro_primi_pct:
       value: null
       unit: "%"
       status: UNKNOWN
-      evidence_id: null
+      evidence_id: EV-2026-08-10-610
+      notes: >
+        VARLIGI FACT (EV-...-610, EV-...-612), ORANI UNKNOWN (karartilmis).
+        T-506'nin cevabi: IP-502'nin 'sarapta ciro primi calismiyor olabilir'
+        okumasi DOGRULANMAMISTIR. Metro'nun alkolu CEK/SADAKAT kampanyalarindan
+        haric tutmasi (EV-2026-08-09-508) TUKETICI kampanya mekanigidir;
+        TEDARIKCIDEN ALINAN ticari bedellerle ayni sey DEGILDIR ve
+        EV-2026-08-10-612 Metro'nun alkolde yillik anlasma imzaladigini gosterir.
+
     odeme_vadesi_gun:
       value: null
       unit: gun
       status: UNKNOWN
       evidence_id: null
-      notes: "Cash conversion cycle'in KRITIK girdisi."
+      conflict_id: C-601
+      notes: "Tek sayi olarak UNKNOWN. Alt alanlara ve duyarlilik_senaryolari'na bakiniz."
+    odeme_vadesi_yasal_tavan_gun:
+      value: 60
+      unit: gun
+      status: FACT
+      tier: T3
+      confidence: MEDIUM
+      evidence_id: [EV-2026-08-10-602, EV-2026-08-10-604]
+      effective_date: 2024-01-01
+      kosul: >
+        (i) urun 'tarim ve gida urunu' olmali (SARAP ICIN DOGRULANMADI -> T-601),
+        (ii) urun 30 gun icinde bozulabilenler listesinde OLMAMALI (sarap listede
+        yok -> saglanir, EV-...-604), (iii) alacakli kucuk/orta + borclu orta/buyuk
+        olcekli olmali, (iv) taraflar KOBI Vasfi Belgesi degisimi yapmali
+        (EV-2026-08-10-607).
+      yaptirim:
+        value: "ilk 30 gun asimda gunluk binde 5; sonrasinda gunluk %1; tavan = suresinde odenmeyen tutar"
+        status: FACT
+        evidence_id: EV-2026-08-10-603
+      notes: >
+        BU BIR TAVANDIR, BIR GOZLEM DEGILDIR. Tavanin sarabi kapsayip
+        kapsamadigi T-601 ile mevzuat-ruhsat-uzmani'na sorulmustur. Kapsamiyorsa
+        ikinci ve bagimsiz dayanak TTK m.1530'dur (EV-2026-08-10-623, T5, DOGRULANMADI).
+    odeme_vadesi_gozlenen_gun:
+      value: 70
+      unit: gun
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-609
+      kaynak_kategorisi: "SUT URUNLERI, 2020 — SARAP DEGILDIR, TAVAN ONCESI DONEM"
+      conflict_id: C-601
+      modele_girme_kurali: PROXY_ONLY
+      notes: >
+        Rekabet Kurumu On Raporu para.245: 2020'de organize kanal ortalama vade
+        70 gun; distributore gore 21 gun, kucuk perakendeciye gore 23 gun daha
+        uzun; 2011-2020'de 64 -> 70 gun. DIPNOT 69: bildirilen sureler bazi
+        firmalar icin SOZLESMEDEKI STANDART surelerdir ve 'fiili sureler aslinda
+        sozlesmede yer alan surelerden COK DAHA UZUN olabilmektedir'.
+    zincir_dpo_gun:
+      value: 93
+      unit: gun
+      status: ESTIMATE
+      tier: T4
+      confidence: MEDIUM
+      evidence_id: EV-2026-08-10-617
+      conflict_id: C-601
+      modele_girme_kurali: PROXY_ONLY
+      notes: >
+        TURETME ZINCIRI: 79.822.747 / 312.409.547 * 365 = 93,3 gun (Migros 2025).
+        ZAYIFLIK: ticari borclar mal alimi disi kalemleri de icerir; DPO tek bir
+        tedarikcinin vadesi DEGILDIR. DAHA GUCLU VE BAGIMSIZ GOZLEM: ayni
+        finansallarin vade tablosunda ticari borclarin %34,4'u (27.612.023 /
+        80.203.283) 3-12 AY vadelidir -> zincir perakendede 60 gunun UZERINDE
+        vade FIILEN VARDIR.
+    kredi_riski:
+      value: "DUSUK karsi taraf riski / YUKSEK konsantrasyon riski"
+      status: ESTIMATE
+      tier: T2
+      confidence: MEDIUM
+      evidence_id: EV-2026-08-10-609
+      notes: >
+        Rekabet Kurumu On Raporu para.246, AB Komisyonu kararlarina atifla
+        (Rewe/Meinl, Carrefoursa/Promodes): saglayicinin satislarinin %22'sinin
+        TEK BIR perakendeciye bagli olmasi EKONOMIK BAGIMLILIK esigidir.
+        Tek zincirle calisan bir pilot bu esigin COK USTUNDE olacaktir.
+
     iade_kosullari:
-      value: null
-      status: UNKNOWN
-      evidence_id: null
+      value: "TAMAMEN SOZLESMESEL — sarapta yasal sinir YOK"
+      status: FACT
+      tier: T3
+      confidence: MEDIUM
+      evidence_id: EV-2026-08-10-606
+      notes: >
+        Perakende Yonetmelik m.5/3(c): satilamama gerekcesiyle iade yasagi
+        YALNIZCA 30 gun icinde bozulabilen tarim-gida urunleri icindir.
+        m.12/C'deki %5 iade siniri YALNIZCA azami fiyati tarifeyle belirlenen
+        mallar icindir. SARAP HER IKISININ DE DISINDADIR.
+        ASIMETRI: sut/ekmek gibi urunleri koruyan hukumler sarabi KORUMAZ.
+        'Iade riski yoktur' varsayimi YANLISTIR.
     iade_orani_pct:
       value: null
       unit: "%"
       status: UNKNOWN
       evidence_id: null
+      notes: "Yalnizca gercek yillik anlasma ile ogrenilebilir -> TUR 7."
+    kirik_urun_sorumlulugu:
+      value: "SOZLESMEYLE TEDARIKCIYE YANSITILIYOR"
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-612
+      tutar: null
+      tutar_status: UNKNOWN
+      notes: >
+        'Kirik urun bedeli' alkollu icki zincir yillik anlasmasinda 'MUSTERIYE
+        ODENECEK BEDELLER' arasinda ISMEN sayilmistir -> cam sisede kirilma
+        maliyeti sozlesme ile bize donmektedir. TUTAR KARARTILMIS.
+        BIRLESIK ETKI (Ci-15.1, gumruk-vergi-uzmani, EV-2026-08-10-103):
+        KDVK md.30/c uyarinca ZAYI OLAN MALA AIT KDV INDIRILEMEZ ->
+        fire_maliyeti = f * L4_per_sise + f * KDV_per_sise.
+    lojistik_bedeli:
+      value: null
+      status: UNKNOWN
+      evidence_id: EV-2026-08-10-612
+      notes: >
+        VARLIGI FACT (ismen sayili), TUTARI UNKNOWN. MODEL ACISINDAN ONEMLI:
+        zincir kanalinda dagitim maliyetinin bir kismi ZATEN bize fatura
+        edilmektedir -> zincir kanalinda 'kendi dagitim' tasarrufu daha kucuktur.
+
     raf_kampanya_maliyeti:
       gondol_basi:
         value: null
         currency: null
         status: UNKNOWN
-        evidence_id: null
+        evidence_id: EV-2026-08-10-610
+        notes: "'Teshir bedeli' (sepet/kule/gondol/stand/palet) kalem olarak FACT, tutar UNKNOWN."
       katalog_insert:
         value: null
         currency: null
         status: UNKNOWN
-        evidence_id: null
+        evidence_id: EV-2026-08-09-514
+        notes: >
+          YAPISAL OLARAK KAPALI OLABILIR: Metro'nun incelenen 58 sayfalik brosur
+          setinde SIFIR alkollu icki SKU'su vardir (turkiye-pazar-kasifi bulgusu)
+          ve alkolde tanitim kabul edilmis kisittir (IP-2001). Model bu kalemi
+          SIFIR varsaymamali, UNKNOWN birakmalidir.
       fiyat_indirimi_katkisi_pct:
         value: null
         unit: "%"
         status: UNKNOWN
-        evidence_id: null
+        evidence_id: EV-2026-08-10-601
+        notes: >
+          6585 m.6/2(b): kampanya maliyetini kampanyali satis yapmak ISTEMEYEN
+          tarafa yansitmak HER DURUMDA haksiz ticari uygulamadir -> bize
+          zorla yansitilamaz. AMA alkolde promosyon/kampanya/hediye zaten
+          yasaktir (EV-2026-08-09-222) -> kaldirac NAKIT FIYAT INDIRIMI ile
+          sinirlidir. UCLU BIRLESIM (Ci-11, EV-2026-08-09-111): OTV MAKTU ve
+          fiyattan bagimsizdir -> indirim yapilinca odenen OTV DUSMEZ, indirimin
+          TAMAMI marjdan cikar ve indirim DUYURULAMAZ. Sarapta fiyat indirimi
+          FMCG'dekinden YAPISAL OLARAK daha pahalidir.
 
+  # ===================================================================
+  # B) INDEPENDENT RETAIL / TEKEL BAYI
+  # ===================================================================
   tekel_bayi:
     oncelik: 2
+    resmi_kanal_adi:
+      value: "GK (geleneksel kanal), KSN'nin alt kanali: bakkal, market, bufe, kuruyemisci"
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-613
+    nokta_sayisi:
+      value: 48956
+      unit: adet
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-613
+      effective_date: 2020-12-31
+      ttl: 1y
+      notes: >
+        2020, TADB kaynakli (Rekabet Kurulu karari Tablo 5, 'uzay toplam').
+        2026 icin TAZELENMELIDIR. Bu bir EVREN'dir, bizim hedef nokta sayimiz degil.
+
     marj_pct:
       min: null
       base: null
       max: null
       unit: "%"
-      katmanlar: null
+      katmanlar: "L7 -> L8"
       brut_mu_net_mi: null
       kdv_dahil_mi: null
       margin_mi_markup_mi: null
       status: UNKNOWN
-      evidence_id: null
+      evidence_id: EV-2026-08-10-620
+      conflict_id: C-602
+      notes: >
+        UNKNOWN'DIR VE UYDURULMAMISTIR. Aramada yalnizca T5 icerik-ciftligi
+        sayfalari bulunmus, bunlar birbiriyle CELISMISTIR ('alkolde ~%17',
+        'raki %8', 'brut %10-15', 'ciro uzerinden %18-30'). HICBIRI margin/markup
+        ayrimini, KDV/OTV tabanini veya katman ciftini belirtmemektedir ->
+        M1 geregi HEPSI GECERSIZDIR. C-602 ACIK.
     listeleme_bedeli:
-      value: null
-      currency: null
-      status: UNKNOWN
-      evidence_id: null
+      value: 0
+      currency: TRY
+      status: ESTIMATE
+      tier: T3
+      confidence: LOW
+      evidence_id: EV-2026-08-10-601
+      notes: >
+        TURETME: 6585 m.6 'buyuk magaza, zincir magaza, bayi isletme ve ozel
+        yetkili isletmeleri' hedefler. Tek subeli bagimsiz bir tekel bayii
+        'zincir magaza' tanimina (en az 5 sube / en az 10 sube, Yonetmelik
+        m.3/1(u)) girmez -> yapisal olarak listeleme bedeli TALEBI BEKLENMEZ.
+        NEDEN FACT DEGIL: hukumun kimi hedefledigi bir seyi, PRATIKTE bedel
+        istenip istenmedigini KANITLAMAZ. Duyarlilikta 0 disi deger de test edilmeli.
     odeme_vadesi_gun:
       value: null
       unit: gun
       status: UNKNOWN
+      evidence_id: EV-2026-08-10-609
+      notes: >
+        TURETME ADAYI (ESTIMATE, sarap degil): EV-...-609'a gore geleneksel kanal
+        vadesi organize kanaldan 23 gun KISADIR (sut, 2020) -> ~47 gun.
+        Alkolde nakit/kisa vade beklentisi vardir ama DOGRULANMAMISTIR.
+        Band icin bkz. duyarlilik_senaryolari.
+    kredi_riski:
+      value: "YUKSEK ve DAGITIK"
+      status: ASSUMPTION
       evidence_id: null
+      notes: >
+        Binlerce kucuk nokta; tahsilat riski ve tahsilat MALIYETI zincirden
+        yapisal olarak yuksektir. Supheli alacak orani UNKNOWN.
     iade_kosullari:
       value: null
       status: UNKNOWN
-      evidence_id: null
+      evidence_id: EV-2026-08-10-606
+      notes: "Yasal koruma yok; tamamen ticari teamul. Gozlenmedi."
+    ulusal_dagitim_yukumlulugu:
+      value: "NITELENDI — Yonetmelik yukumlulugu 'perakende saticilarin taleplerini zamaninda karsilayacak dagitimi saglamak'tir; 'ulke genelinde yerinde teslim' YALNIZCA KANUNDA gecer"
+      status: FACT
+      tier: T1
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-212
+      notes: >
+        mevzuat-ruhsat-uzmani'nin TUR 1.5 duzeltmesi (X-251). KANAL MODELI
+        ACISINDAN ANLAMI: 'ulusal kilcal dagitim agi zorunludur' varsayimi
+        TUR 1'de sanildigindan DAHA ZAYIF bir zemine oturmaktadir -> kendi
+        dagitim yatirimi bir ZORUNLULUK degil, bir TERCIH olabilir.
+        Bu alanin SAHIBI ruhsat.yaml'dir; burada referans olarak tutulmaktadir.
 
+  # ===================================================================
+  # C) HoReCa — acik satis noktasi / yerinde tuketim
+  # ===================================================================
   horeca:
     oncelik: 3
+    resmi_kanal_adi:
+      value: "ASN (acik satis noktasi) = YT (yerinde tuketim): bar, otel, restoran, kafe"
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-613
+    nokta_sayisi:
+      value: 29218
+      unit: adet
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-613
+      effective_date: 2020-12-31
+      ttl: 1y
+    asn_ksn_fiyat_farki:
+      value: "CIDDI FARKLILIKLAR VARDIR (yon: ASN > KSN)"
+      buyukluk: null
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-613
+      notes: "Kararin lafzi 'ciddi farkliliklar' der; BUYUKLUK VERMEZ -> buyukluk UNKNOWN."
+
     marj_pct:
       min: null
       base: null
       max: null
       unit: "%"
-      katmanlar: null
-      brut_mu_net_mi: null
-      kdv_dahil_mi: null
-      margin_mi_markup_mi: null
+      katmanlar: "L7 -> L8_HORECA (menu fiyati)"
+      brut_mu_net_mi: BRUT
+      kdv_dahil_mi: "menu fiyati KDV DAHIL — marj hesabi icin netlestirilmeli"
+      margin_mi_markup_mi: "HoReCa'da CARPAN (multiplier) olarak konusulur; bkz. fiyat_carpani"
       status: UNKNOWN
-      evidence_id: null
+      evidence_id: EV-2026-08-10-618
+    fiyat_carpani:
+      min: null
+      base: null
+      max: null
+      unit: x
+      status: UNKNOWN
+      evidence_id: EV-2026-08-10-618
+      conflict_id: C-602
+      notes: >
+        TEK KAYNAK T5 VE 14 YILLIKTIR (Milliyet / Murat Bozok, 2012):
+        teamul 'perakende fiyatinin 2 kati YA DA toptan fiyatinin 2,5 kati';
+        gozlenen ust uc 'market fiyatinin 4-5 kat uzeri'. KAYNAGIN KENDISI
+        CARPANI IKI FARKLI KATMANDAN verir (L8 vs L7) -> hangi katmanin kati
+        oldugu her kullanimda YAZILMAK ZORUNDADIR. Band icin bkz.
+        duyarlilik_senaryolari. Base case OLAMAZ -> OQ-603.
     odeme_vadesi_gun:
       value: null
       unit: gun
       status: UNKNOWN
       evidence_id: null
+      notes: "Hicbir kanit bulunamadi. Tahsilat riski uc kanalin EN YUKSEGI (mevsimsellik, isletme devir hizi)."
     aktivasyon_tadim_maliyeti:
       value: null
       currency: null
       status: UNKNOWN
       evidence_id: null
+      notes: >
+        SIFIR VARSAYILMAMALIDIR AMA POZITIF DE VARSAYILAMAZ.
+        Gerekce: tadim/egitim etkinligi 'tanitim' sayilabilir ve alkolde tanitim
+        KABUL EDILMIS KISITTIR (IP-2001). Bu ajan kisitin kapsamini YENIDEN
+        ARASTIRMAMISTIR (kurucu karari) -> alan UNKNOWN birakilmis ve T-604 ile
+        baskana tasinmistir.
+    kanal_yatirim_destegi_var_mi:
+      value: true
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-615
+      tutar: null
+      tutar_status: UNKNOWN
+      notes: >
+        Alkolde satis noktasina 'Yatirim Destek Sozlesmesi' ile NAKIT DESTEK
+        (dukkan/lokanta/bar ici yenileme, raf yaptirma, menu bastirma, etkinlik
+        katkisi, personel maliyeti destegi) YERLESIK bir uygulamadir; odemeler
+        noktanin BELGELENDIRDIGI FATURA TUTARLARI oranindadir.
+        UYARI: bu uygulamalarin bir kismi hakkinda hakim durumdaki tesebbus
+        aleyhine SORUSTURMA acilmistir (ayni karar para.92). Yeni ve hakim
+        durumda olmayan bir ithalatci icin hukuki durum FARKLI olabilir —
+        BU BIR HUKUKI SONUC DEGILDIR ve bu ajan tarafindan URETILMEMISTIR.
+    sarap_alim_sozlesmesi_suresi_yil:
+      value: 5
+      unit: yil
+      status: FACT
+      tier: T2
+      confidence: HIGH
+      evidence_id: EV-2026-08-10-614
+      notes: >
+        GIRIS ENGELI SINYALI. Turkiye'nin en buyuk alkollu icki oyuncusu SARAP
+        kategorisinde satis noktalariyla BES YILLIK mal alim sozlesmesi
+        imzalamaktadir. Ayni karar sarapta MUNHASIRLIK OLMADIGININ beyan
+        edildigini de kaydeder (para.90) -> bu bir munhasirlik iddiasi DEGILDIR.
+        Kac noktanin bagli oldugu UNKNOWN (tablolar karartilmis).
 
 kanal_karmasi:
   zincir_market_pay_pct:
@@ -182,15 +682,204 @@ kanal_karmasi:
     unit: "%"
     status: UNKNOWN
     evidence_id: null
-  notes: "Toplami 100 olmalidir. Kanal karmasi agirlikli ortalama marji belirler."
+  notes: >
+    Toplami 100 olmalidir. HICBIRI DOLDURULAMAMISTIR: sarabin kanal bazinda
+    hacim dagilimi icin kamuya acik veri BULUNAMAMISTIR. Nokta SAYILARI bilinir
+    (GK 48.956, ASN 29.218 — EV-2026-08-10-613) ama nokta sayisi CIRO PAYI
+    DEGILDIR ve oyle kullanilamaz. Modern kanal nokta sayisi zaten yoktur.
+    KANAL KARMASI, AGIRLIKLI ORTALAMA MARJI BELIRLEDIGI ICIN BU BOSLUK
+    KRITIKTIR -> T-603.
 
 kanal_gucu_riski:
   listeden_cikarilma_riski:
-    value: null
-    status: UNKNOWN
-    evidence_id: null
+    value: "YUKSEK — 2015 metnindeki 'sozlesme suresince rafta satisa sunulma zorunlulugu' 2024 metninde aynen gorunmemektedir"
+    status: ESTIMATE
+    tier: T3
+    confidence: LOW
+    evidence_id: [EV-2026-08-10-608, EV-2026-08-10-601]
+    notes: >
+      Listeleme bedeli odenip urunun raftan cikarilmasi riskinin hukuki zemini
+      2024 degisikligi ile DEGISMIS OLABILIR. DOGRULANMADI -> T-601.
+      seytanin-avukati bu alani saldiri vektoru olarak kullanmalidir.
   tek_tarafli_kosul_dayatmasi:
-    value: null
+    value: "SINIRLANMIS AMA ORTADAN KALKMAMIS"
+    status: FACT
+    tier: T3
+    confidence: MEDIUM
+    evidence_id: EV-2026-08-10-601
+    notes: >
+      6585 m.6/2(c): karsi tarafin aleyhine TEK TARAFLI DEGISIKLIK YAPMA YETKISI
+      veren veya vade/iade/kampanya kosullari gibi esasli hususlarda ACIK VE
+      ANLASILIR OLMAYAN hukumlere sozlesmede yer vermek HER DURUMDA haksiz
+      ticari uygulamadir. Yani kosullar YAZILI ve ACIK olmak zorundadir —
+      ama SEVIYESI serbesttir.
+  alici_gucu_esigi_pct:
+    value: 22
+    unit: "%"
+    status: FACT
+    tier: T2
+    confidence: HIGH
+    evidence_id: EV-2026-08-10-609
+    notes: >
+      Rekabet Kurumu On Raporu para.246, AB Komisyonu kararlarina atifla:
+      saglayicinin satislarinin %22'sinin tek bir perakendeciye bagli olmasi
+      EKONOMIK BAGIMLILIK esigi olarak degerlendirilmistir. Tek zincirle
+      calisan bir pilot bu esigin cok ustunde olur.
+
+# =====================================================================
+# DUYARLILIK SENARYOLARI
+# BU BLOKTAKI HICBIR SAYI MODELE TEK SAYI OLARAK GIREMEZ.
+# Hepsi ASSUMPTION'dir ve finans-fizibilite tarafindan LOW/BASE/HIGH olarak
+# AYRI AYRI calistirilmalidir.
+# =====================================================================
+duyarlilik_senaryolari:
+  modele_girme_kurali: SENSITIVITY_ONLY
+  uyari: >
+    Bu bantlarin cogunun KANITLI CAPASI YOKTUR. Kanitli capalari olanlar
+    alanin icinde ayrica isaretlenmistir. Bantlar, bilinmezligi GIZLEMEK icin
+    degil GORUNUR KILMAK icin uretilmistir.
+
+  m_retail_zincir_pct:
+    low: 18
+    base: 25
+    high: 35
+    unit: "%"
+    katmanlar: "L7 -> L8"
+    brut_mu_net_mi: BRUT
+    kdv_dahil_mi: HARIC
+    margin_mi_markup_mi: MARGIN_ON_SELLING_PRICE
+    markup_karsiligi_pct: {low: 21.95, base: 33.33, high: 53.85}
+    status: ASSUMPTION
+    capa_evidence_id: EV-2026-08-10-616
+    gerekce: >
+      Tek kanitli capa Migros 2025 tum-kategori %24,31'dir ve SARAP DEGILDIR.
+      LOW: OTV nedeniyle yuksek birim fiyatli kategorilerde yuzde marj baskilanir;
+      cash & carry formati da asagi ceker. BASE: capanin hemen ustu; sarabin
+      devir hizi gidadan dusuk, raf isgali yuksektir. HIGH: dusuk devirli,
+      kategori uzmanligi gerektiren urunlerde zincirin talep edebilecegi ust uc.
+
+  m_tekel_pct:
+    low: 12
+    base: 18
+    high: 25
+    unit: "%"
+    katmanlar: "L7 -> L8"
+    brut_mu_net_mi: BRUT
+    kdv_dahil_mi: HARIC
+    margin_mi_markup_mi: MARGIN_ON_SELLING_PRICE
+    markup_karsiligi_pct: {low: 13.64, base: 21.95, high: 33.33}
+    status: ASSUMPTION
+    capa_evidence_id: null
+    conflict_id: C-602
+    gerekce: >
+      BANDIN HICBIR NOKTASININ KANITI YOKTUR. Alt uc: OTV nedeniyle cok yuksek
+      birim fiyatli bir uründe bagimsiz perakendecinin yuzde marjinin sikistigi
+      varsayimi. Ust uc: zincir marji duzeyine cikabilecegi varsayimi.
+      Tek gercek bilgi EV-...-613'un ASN ile KSN fiyatlari arasinda 'ciddi
+      farkliliklar' oldugunu soylemesidir — ki bu KSN'nin ASN'den UCUZ oldugunu
+      soyler, MARJINI DEGIL.
+
+  k_horeca_carpan:
+    low: 2.0
+    base: 3.0
+    high: 5.0
+    unit: x
+    katmanlar: "L7 -> L8_HORECA"
+    esdeger_margin_pct: {low: 50.0, base: 66.7, high: 80.0}
+    kdv_dahil_mi: "menu fiyati KDV DAHIL; carpan KDV HARIC L7 uzerine uygulanir"
+    status: ASSUMPTION
+    capa_evidence_id: EV-2026-08-10-618
+    gerekce: >
+      Tek capa T5 ve 14 yillik (2012). Kaynak carpani IKI FARKLI KATMANDAN verir
+      (perakende fiyatinin 2 kati / toptan fiyatinin 2,5 kati) -> burada L7
+      uzerine uygulanmistir. Ust uc kaynagin 'market fiyatinin 4-5 kati'
+      ifadesinden alinmistir.
+
+  d_geri_akan_bedeller_pct:
+    low: 3
+    base: 8
+    high: 18
+    unit: "% fatura cirosu (KDV haric)"
+    kapsam: ["ciro primi", "alan kullanimi", "lojistik bedeli", "kirik urun bedeli",
+             "sogutucu enerji bedeli", "CRM/B2B"]
+    status: ASSUMPTION
+    capa_evidence_id: EV-2026-08-10-612
+    gerekce: >
+      TEK DAYANAK KALEM SAYISIDIR (en az 6 kalem, EV-...-612). Her biri tek
+      basina kucuk olsa bile toplamlari anlamlidir. Ust uc, listeleme bedelinin
+      TAMAMININ orana cevrildigi senaryodur (indirim marketi mantigi,
+      EV-...-610). BU BANDIN SEVIYE KANITI YOKTUR — seytanin-avukati bu bandi
+      hedef almalidir.
+
+  f_listeleme_bedeli_sise_basi:
+    low: null
+    base: null
+    high: null
+    unit: TRY/sise
     status: UNKNOWN
-    evidence_id: null
-  notes: "seytanin-avukati bu alanlari saldiri vektoru olarak kullanacak."
+    capa_evidence_id: EV-2026-08-10-619
+    yapisal_senaryolar:
+      LOW:  "Listeleme bedeli YOK; karsiligi NET FIYAT ISKONTOSUNA gomulu (indirim marketi mantigi) -> f=0 ama d yukari kayar"
+      BASE: "SKU x ZINCIR basina TEK SEFERLIK giris bedeli + yillik anlasma -> f = giris_bedeli / yillik_sise"
+      HIGH: "SKU x MAGAZA basina bedel (magaza sayisina bagli yapi) + yillik yenileme -> f = (bedel x magaza_sayisi) / yillik_sise"
+    gerekce: >
+      SEVIYE UYDURULMAMISTIR. Bulunabilen tek sayisal iz 2004 tarihli T5 bir
+      dergi haberidir (10.000-60.000 USD/urun) ve MODELE GIREMEZ (22 yillik,
+      birim tanimsiz, alkol yok, hukuki cerceve 2015 ve 2024'te tamamen degisti).
+      Bu blok bedelin SEVIYESINI degil YAPISINI verir; seviyeyi TUR 7 kanal
+      gorusmesi verecektir.
+      OLCEK ASIMETRISI ZORUNLU: f SABIT, hacim DEGISKENDIR. 5.000 sise/yil'da
+      ayni mutlak bedel 100.000 sise'ye gore sise basina 20 KAT maliyet uretir.
+
+  odeme_vadesi_gun:
+    zincir_market: {low: 45, base: 60, high: 90, stress: 120}
+    tekel_bayi:    {low: 0,  base: 30, high: 60, stress: 90}
+    horeca:        {low: 15, base: 45, high: 90, stress: 120}
+    unit: gun
+    status: "zincir BASE=ESTIMATE (yasal tavan), digerleri ASSUMPTION"
+    capa_evidence_id: [EV-2026-08-10-602, EV-2026-08-10-609, EV-2026-08-10-617]
+    conflict_id: C-601
+    gerekce: >
+      ZINCIR: BASE = yasal tavan (60, EV-...-602) + yaptirimin varligi (EV-...-603).
+      HIGH = EV-...-609 (70 gun, sut, 2020) ile EV-...-617 (Migros DPO ~93 gun)
+      arasi. STRESS = EV-...-617 vade tablosunda borclarin %34,4'unun 3-12 ay
+      vadeli olmasi + EV-...-609 dipnot 69 ('fiili sureler cok daha uzun olabilir').
+      TEKEL: EV-...-609 turetmesi (organize - 23 gun) + alkolde nakit beklentisi.
+      HORECA: KANITSIZ; uc kanalin en riskli tahsilati.
+    finans_fizibiliteye_uyari: >
+      Vadenin 60'tan 120 gune cikmasi peak_cash_requirement'i YAKLASIK IKIYE
+      KATLAR (alacak devir suresi ikiye katlanir). Bu, tek basina pilot
+      sermayesini asabilecek bir kalemdir ve AYRI bir stres senaryosu olarak
+      calistirilmalidir.
+
+# =====================================================================
+# YALNIZCA GERCEK KANAL GORUSMESIYLE OGRENILEBILECEK ALANLAR
+# (masabasi arastirmayla KAPANMAZ — TUR 7 isi, T-604)
+# =====================================================================
+sadece_gercek_gorusmeyle_kapanir:
+  - "listeleme / giris bedeli TUTARI (EV-2026-08-10-610: resmi raporda bile karartilmis)"
+  - "ciro primi ORANI ve kademeleri"
+  - "alan kullanimi / kirik urun / lojistik / enerji bedeli TUTARLARI (EV-...-612)"
+  - "zincirin SARAP KATEGORISI hedef marji (EV-...-611: alkol resmi analiz kapsami disi)"
+  - "FIILI odeme vadesi (sozlesme suresi != fiili sure, EV-...-609 dipnot 69)"
+  - "iade orani ve iade kosullari (EV-...-606: yasal duzenleme yok)"
+  - "tekel bayii marji ve iskonto yapisi (EV-...-620, C-602)"
+  - "HoReCa carpani ve sarap listesi yerlesim bedeli (EV-...-618: tek kaynak T5, 2012)"
+  - "dis distributor marj orani (hicbir kanit bulunamadi)"
+  - "Metro magaza fiyati vs sevkiyat fiyati farki (IP-501 / T-506)"
+  - "zincirin saraba ayirdigi raf/SKU kotasi"
+  - "minimum siparis, teslimat sikligi, siparis kanali"
+
+# =====================================================================
+# TAZELIK
+# =====================================================================
+tazelik:
+  mevzuat_kartlari_ttl: 180d      # EV-601..607 -> STALE 2027-02-06
+  rekabet_kurumu_kartlari_ttl: 1y # EV-609..615, 624 -> STALE 2027-08-10
+  migros_finansallari_ttl: 1y     # EV-616, 617 -> STALE 2027-08-10
+  asgari_ucret_ttl: 1y            # EV-621 -> STALE 2027-08-10 (fiilen 2026-12-31'de eskir)
+  t5_kartlari_ttl: 0d             # EV-618, 619, 620, 623 -> ZATEN STALE, modele giremez
+  uyari: >
+    EV-2026-08-10-621 (asgari ucret) takvim yili sonunda (2026-12-31) FIILEN
+    eskir; 2027 asgari ucreti Aralik 2026'da aciklanir. ttl 1y olmasina ragmen
+    model hedef tarihi 2027'ye sarkiyorsa bu deger YENIDEN alinmalidir.
