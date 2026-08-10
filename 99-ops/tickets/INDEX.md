@@ -1,18 +1,19 @@
-# TICKET İNDEKSİ — TUR 2 KONSOLİDASYONU SONRASI
+# TICKET İNDEKSİ — TUR 2.5 PRE-FLIGHT SONRASI
 
-> Güncellendi: **2026-08-10, TUR 2 konsolidasyonu** (`yatirim-komitesi-baskani`).
+> Güncellendi: **2026-08-10, TUR 2.5 pre-flight** (`yatirim-komitesi-baskani`).
 > Kaynak: `99-ops/tickets/T-*.md`. Tek doğruluk kaynağı ticket dosyalarının kendisidir.
-> Karar kaydı: `90-karar/tur-2-konsolidasyon.md`
+> Karar kayıtları: `90-karar/tur-2-konsolidasyon.md` → `90-karar/tur-25-preflight.md`
 
-**Toplam: 71 ticket** — impact: CRITICAL 7, HIGH 38, MEDIUM 25, CONSTRAINT 1
+**Toplam: 76 ticket** — impact: CRITICAL 8, HIGH 40, MEDIUM 27, CONSTRAINT 1
 
-**status:** ANSWERED 8, OPEN 59, RESOLVED 4
+**status:** ANSWERED 8, OPEN 64, RESOLVED 4
 
-**Açık CRITICAL: 6**
+**Açık CRITICAL: 7** *(TUR 2 sonu 6 → `T-921` eklendi; hiçbiri kapatılmadı, hiçbirinin impact'i indirilmedi)*
 
 | ticket | status | hedef | konu |
 |---|---|---|---|
-| `T-104` | ANSWERED | `finans-fizibilite` | ÖTV maktu tutarı Yİ-ÜFE ile 6 ayda bir kendiliğinden artar; modelde sabit sayı olamaz. **Veri yapısı ayağı kabul edildi; engine + makro varsayım + `model_hedef_tarihi` eksik** |
+| `T-104` | ANSWERED | `finans-fizibilite` | ÖTV maktu tutarı Yİ-ÜFE ile 6 ayda bir kendiliğinden artar; modelde sabit sayı olamaz. **Veri yapısı ayağı kabul edildi. `model_hedef_tarihi` 2026-08-10'da girildi; engine + makro varsayım ayakları AÇIK → `T-921`** |
+| `T-921` | OPEN | `finans-fizibilite` | **YENİ (TUR 2.5)** — Engine `otv_maktu_zaman_serisi`'ni **hiç okumuyor**; `model_hedef_tarihi` dolduğu için `matrah_sirasi.py:217`'deki **tek uyarı sustu**; ufuk denetimi yok. **Bu ticket kapanmadan hiçbir ÖTV sayısı üretilemez** |
 | `T-301` | OPEN | `mevzuat-ruhsat-uzmani` | Ruhsat/analiz/bandrol nedeniyle gümrükte + antrepoda bekleme süresi. **TUR 2'de kapsamı genişledi: artık konteyner modu (LCL↔FCL) blokeri** |
 | `T-304` | OPEN | `yatirim-komitesi-baskani` | Hiçbir rota için doğrulanmış navlun yok. **LCL ayağı `ANSWERED`; çekirdek (FCL) açık — `C-311`** |
 | `T-466` | OPEN | `finans-fizibilite` | Tek yayınlanmış fiyat modele giremez; `exw`/`fob` `null` kalmalı. **İndirim YAPILMADI** |
@@ -20,7 +21,27 @@
 | `T-912` | OPEN | `finans-fizibilite` | **YENİ** — `makro.yaml → fx` `null`; kur olmadan modelin **her parasal çıktısı** `UNKNOWN` döner. **Projedeki en ucuz CRITICAL bloker** |
 
 > **CLAUDE.md §5:** Kritik açık ticket varken finans modeli `APPROVED` olamaz.
-> **TUR 3 çıktısı en fazla `DRAFT` olabilir.**
+> **TUR 2.5 / TUR 3 çıktısı en fazla `DRAFT` olabilir.**
+>
+> **`T-921` özel bir statüdedir:** diğer altı CRITICAL çıktının **statüsünü**
+> sınırlar (`DRAFT`); `T-921` ise **hesabın kendisini** yasaklar — engine seriyi
+> okumadan basılan her ÖTV değeri **geçersizdir, `DRAFT` bile olamaz.**
+> Bkz. `90-karar/tur-25-preflight.md` §4 kapı **P-1**.
+
+---
+
+## TUR 2.5 PRE-FLIGHT'TA AÇILAN TICKET'LAR (2026-08-10)
+
+| ticket | hedef | impact | konu |
+|---|---|---|---|
+| `T-921` | `finans-fizibilite` | **CRITICAL** | Engine `otv_maktu_zaman_serisi`'ni okumuyor; `model_hedef_tarihi` dolunca `is None` uyarısı sustu; ufuk denetimi yok. **`T-104`'ün birinci ayağı + `T-153`'ü kapsar** |
+| `T-922` | `finans-fizibilite` | HIGH | `TARGET_SHELF_PRICE` merdiveni (599/699/799/899/999 TL, KDV dahil) kaydedildi; ters model kuralları `L1`–`L7`; KDV hariç türetmesi; 5×3×4 çapraz çarpım |
+| `T-923` | `navlun-lojistik-uzmani` | HIGH | **Kayıt düzeltmesi:** "11 LCL kartı" → **10**. `EV-2026-08-10-304` bir LCL kotasyonu değil, **negatif bulgu** kartıdır (`ttl: 14d`, `UNKNOWN`). Yenileme penceresi: **6 gün** |
+| `T-924` | `navlun-lojistik-uzmani` | MEDIUM | `lojistik.yaml → urun_fizik.sise_hacmi_ml` = 750 **`FACT`** + `evidence_id` yok → §1.5/§1.6 ihlali (`vergi.yaml` bunu `T-906(a)` ile düzeltmişti). `dara_kg` bandı yapısal değil |
+| `T-925` | `global-sourcing-kasifi` | MEDIUM | `urun.yaml → urun.hacim_ml` `evidence_id` eksik; kart mevcut (`EV-2026-08-10-116`) |
+
+**TUR 2.5'te statüsü değişen ticket: 0.** Hiçbir CRITICAL kapatılmadı,
+hiçbirinin impact'i indirilmedi.
 
 ---
 
@@ -122,3 +143,8 @@
 | `T-916` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | Italya rotasi test edilen limanlarin TAMAMINDA TIRRENYA'dir; A-oncelikli tedarikci VENETO'dadir. DFDS T |
 | `T-917` | `yatirim-komitesi-baskani` | `turkiye-pazar-kasifi` | **HIGH** | OPEN | TEK FIZIKSEL GOZLEM PAKETI: bir magaza turu T-504 + T-603 + C-551 + C-501/OQ-502'yi AYNI ANDA kapatir |
 | `T-918` | `yatirim-komitesi-baskani` | `global-sourcing-kasifi` | **MEDIUM** | OPEN | rapor-tur2-global-sourcing.md §4, C-401/C-402/C-403'u 'ACIK' raporluyor; gercek: RESOLVED/RESOLVED/UNRE |
+| `T-921` | `yatirim-komitesi-baskani` | `finans-fizibilite` | **CRITICAL** | OPEN | Engine otv_maktu_zaman_serisi blogunu HIC OKUMUYOR; model_hedef_tarihi dolunca matrah_sirasi.py:217'deki tek uyari SUSTU; ufuk denetimi yok |
+| `T-922` | `yatirim-komitesi-baskani` | `finans-fizibilite` | **HIGH** | OPEN | TARGET_SHELF_PRICE merdiveni (599/699/799/899/999 TL, KDV dahil) kaydedildi; ters model kurallari L1-L7; TARGET != OBSERVED (K7) |
+| `T-923` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | KAYIT DUZELTMESI: '11 LCL karti' YANLIS, dogru sayi 10. EV-2026-08-10-304 bir LCL kotasyonu degil, negatif bulgu karti (ttl 14d, UNKNOWN) |
+| `T-924` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | **MEDIUM** | OPEN | lojistik.yaml urun_fizik.sise_hacmi_ml = 750 FACT + evidence_id YOK -> §1.5/§1.6 ihlali; vergi.yaml ayni olguyu T-906(a) ile ASSUMPTION'a duzeltmisti |
+| `T-925` | `yatirim-komitesi-baskani` | `global-sourcing-kasifi` | **MEDIUM** | OPEN | urun.yaml urun.hacim_ml = 750 ASSUMPTION ama evidence_id NULL; kart ZATEN VAR (EV-2026-08-10-116) |
