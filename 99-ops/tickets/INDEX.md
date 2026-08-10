@@ -4,11 +4,21 @@
 > Kaynak: `99-ops/tickets/T-*.md` — dosya sistemi tam sayımı.
 > Önceki derleme: TUR 3A sonu (125 ticket).
 
-**Toplam: 145 ticket** — impact: CRITICAL 15, HIGH 83, MEDIUM 44, LOW 2, CONSTRAINT 1
+**Toplam: 151 ticket** — impact: CRITICAL 15, HIGH 86, MEDIUM 47, LOW 2, CONSTRAINT 1
 
-**status:** ANSWERED 17, OPEN 122, RESOLVED 6
+**status:** ANSWERED 17, OPEN 128, RESOLVED 6
 
 **Açık CRITICAL: 12** *(`OPEN` + `ANSWERED`)*
+
+> ⚠ **BU SAYILAR BİR ANLIK GÖRÜNTÜDÜR — donduruldukları an: 2026-08-10, TUR 3.25 §0 kapanışı.**
+> Derleme sırasında dosya sistemi **üç kez** değişti: **125 → 145 → 148 →
+> 151.** `T-865`…`T-869`, `T-874` bu belge yazılırken `finans-fizibilite`
+> tarafından açıldı. TUR 3.25'te birden fazla ajan **eşzamanlı**
+> çalışmaktadır. Sayılar **okunduğu anda değil, derlendiği an** için
+> doğrudur; bir sonraki derlemede yeniden sayılmalıdır.
+>
+> **Bu, indeksin bir "doğruluk kaydı" değil, bir "son derleme kaydı"
+> olduğunun kabulüdür.** Tek doğruluk kaynağı **dosya sistemidir.**
 
 > ## ⚠ ÜÇÜNCÜ KAYIT HATASI — VE BU SEFER NEDENİ FARKLI
 >
@@ -54,8 +64,9 @@ Kaynak belge: `90-karar/investor-kararlari-tur325.md`
 | `T-601` | OPEN | `mevzuat-ruhsat-uzmani` | "Siselenmis sarap, 6585 s. Perakende Ticaretin Duzenlenmesi Hakki |
 | `T-619` | ANSWERED | `finans-fizibilite` | "T-942'nin onerdigi R8-K assertion'i, BIREBIR KODLANIRSA TERSTEN  |
 | `T-851` | OPEN | `yatirim-komitesi-baskani` | "TARGET BUY PRICE / ACCEPTABLE BUY PRICE / WALK-AWAY PRICE URETIL |
-| `T-852` | OPEN | `yatirim-komitesi-baskani` | "makro.yaml -> fx UC TURDUR `null`'dir ve bu ajan onu DOLDURAMAZ: |
-| `T-912` | OPEN | `finans-fizibilite` | "makro.yaml -> fx (usd_try, eur_try, eur_usd) NULL'dur. Kur TARIH |
+| `T-852` | **ANSWERED** | `yatirim-komitesi-baskani` | "makro.yaml -> fx UC TURDUR `null`'dir ve bu ajan onu DOLDURAMAZ: |
+| **`T-885`** | **OPEN** | `yatirim-komitesi-baskani` | ⚠ **YENİ (TUR 3.25, paralel ajan)** — RFQ paketi hazır, 7 hedef `READY_TO_SEND`, **hiçbir mesaj gönderilmedi**; gönderim `RECIPIENT`+`SUBJECT`+`PREVIEW` onayına bağlı (**`P-6.3`**) |
+| `T-912` | **ANSWERED** | `finans-fizibilite` | "makro.yaml -> fx (usd_try, eur_try, eur_usd) NULL'dur. Kur TARIH |
 | `T-942` | ANSWERED | `finans-fizibilite` | "Ters modelin KANAL BACAGI (R1-R5) icin HICBIR OTOMATIK DOGRULAMA |
 | `T-947` | ANSWERED | `gumruk-vergi-uzmani` | "KDVK md.36 uyarinca cikarilmis ve ALKOLLU ICKIDE ITHALAT KDV'SIN |
 
@@ -149,6 +160,14 @@ Kaynak belge: `90-karar/investor-kararlari-tur325.md`
 | `T-946` | `yatirim-komitesi-baskani` | `seytanin-avukati` | **HIGH** | OPEN | "finans-fizibilite'nin TUR 2.5'te KENDI buldugu R5 duzeltmesi (L5_max = L7_eff - mu x L6)  |
 | `T-951` | `yatirim-komitesi-baskani` | `kanal-marj-uzmani` | **HIGH** | OPEN | "d (geri akan bedeller) ve f (listeleme bedeli) MEKANIZMA olarak nasil akiyor: (a) L6 fatu |
 | `T-953` | `yatirim-komitesi-baskani` | `finans-fizibilite` | **HIGH** | OPEN | "D-02 (asgari katki payi) bugun yatirimciya soruluyor, ama sorunun BLOKE EDEN parcasi bir  |
+| `T-885` | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | **CRITICAL** | OPEN | "TUR 3.25'te 10 tedarikcilik RFQ paketi hazirlandi (2 mail varyanti + response sheet + contact pack). 7 hedef READY_TO_SEND. HICBIR MESAJ GONDERILMEDI. Fiili gonderim, her hedef icin RECIPIENT + SUBJECT + PREVIEW onayina baglidir |
+| `T-865` | `finans-fizibilite` | `finans-fizibilite` | **HIGH** | OPEN | "V2 = 10.000 sise hacim kademesi country-buying-ceilings.csv icinde YOK; bu kademede TARGET CEILING uretilemiyor" *(⚠ `T-963` ile BAGIMSIZ OLARAK AYNI BULGU)* |
+| `T-866` | `finans-fizibilite` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | "FOB(L1) -> CIF(L2) koprusu sise basina ve CIF kapsamli olarak YOK; MAX_FOB yalnizca UST SINIR olarak hesaplanabiliyor, nokta degeri uretilemiyor |
+| `T-867` | `finans-fizibilite` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | "EXW(L0) -> FOB(L1) koprusu YOK; EXW cinsinden gelen bir teklif hicbir eksende degerlendirilemiyor |
+| `T-821` | `navlun-lojistik-uzmani` | `yatirim-komitesi-baskani` | **HIGH** | OPEN | "3 forwarder RFQ paketi (metin + hedef listesi + response sheet) HAZIRDIR ve GONDERILMEMISTIR. T-304'un kapanma kosulu artik arastirma degil, GONDERIM IZNIDIR |
+| `T-822` | `navlun-lojistik-uzmani` | `global-sourcing-kasifi` | **HIGH** | OPEN | "Forwarder RFQ'sundaki kargo parametreleri (koli formati, koli agirligi, palet konfigurasyonu) BIZIM VARSAYIMIMIZDIR; gelecek forwarder teklifleri bu varsayima BAGLI olacaktir |
+| `T-889` | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | **HIGH** | OPEN | "Interbrosa Family Wines (ES) kurumsal sitesi 2026-08-10'da IKI DOMAINDE DE HTTP 503; firmanin faal olup olmadigi UNKNOWN |
+| `T-892` | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | **HIGH** | OPEN | "RFQ paketindeki GONDERICI KIMLIK ve TARIH alanlari BOSTUR (<COMPANY> <NAME> <POSITION> <ADDRESS> <EMAIL> <PHONE> <DEADLINE>) ve RFQ referans numaralandirma semasi tanimsizdir |
 | `T-961` | `yatirim-komitesi-baskani` | `global-sourcing-kasifi` | **HIGH** | OPEN | "Kurucu BES fiyat noktasi belirledi (5.000/10.000/25.000/50.000 + FULL_20FT; 100.000 SORULMAYACAK) ve PRICE-VOLUME CURVE istedi; rfq-template.md TEK yillik hacim ve TEK pilot siparis soruyor. Sablonun YAPISI egriyi tasiyamaz. Ayrica kademelerin BAZI (yillik mi siparis basina mi) BELIRTILMEDI ve <PILOT VOLUME> HALA BOS |
 | `T-962` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | "FULL_20FT bir SISE ADEDI DEGILDIR: 20DV paletli 6.480-7.200, paletsiz 11.800-13.700 (EV-2026-08-09-320, ~2 KAT fark) ve gercek adet tedarikcinin koli/palet konfigurasyonuna (M3/M4) bagli. Ayrica V1=5.000 ve V2=10.000 LCL/FCL kirilma noktasini (~5.900, EV-2026-08-10-330) CAPRAZLIYOR |
 | `T-963` | `yatirim-komitesi-baskani` | `finans-fizibilite` | **HIGH** | OPEN | "V10K artik tedarikciye SORULACAK bir fiyat noktasidir ama ters modelde HIC CALISTIRILMAMISTIR (T-855) — gelen fiyatin karsilastirilacagi model satiri YOK. V100K ise ILK RFQ'dan FIYAT CAPASI ALMAYACAK -> V50K'dan ekstrapolasyon YASAK, NO_RFQ_ANCHOR damgasi |
@@ -196,5 +215,15 @@ Kaynak belge: `90-karar/investor-kararlari-tur325.md`
 | `T-945` | `yatirim-komitesi-baskani` | `gumruk-vergi-uzmani` | **MEDIUM** | OPEN | "C-851 (L3 katman tanimi) baskan tarafindan RESOLVED — TANIM olarak cozulmustur. Cozumun b |
 | `T-948` | `yatirim-komitesi-baskani` | `finans-fizibilite` | **MEDIUM** | OPEN | "P-2 kapisi 'TARGET merdiveninin BES BASAMAGI x UC TARIH x DORT OTV NOKTASI AYRI AYRI cali |
 | `T-952` | `yatirim-komitesi-baskani` | `finans-fizibilite` | **MEDIUM** | OPEN | "D-01 (brut marj) bugun yatirimciya UC AYRI SORU olarak soruluyor: (i) yuzde kac, (ii) han |
+| `T-868` | `finans-fizibilite` | `global-sourcing-kasifi` | **MEDIUM** | OPEN | "Gelen bir tedarikci teklifi icin kanit karti (evidence_id) acma ve semaya yazma SORUMLULUGU TANIMLI DEGIL; evidence_id'siz teklif modele GIREMEZ |
+| `T-869` | `finans-fizibilite` | `global-sourcing-kasifi` | **MEDIUM** | OPEN | "FULL_20FT_CONTAINER kademesinde sise adedi TEDARIKCI BEYANINA baglidir; palet/koli konfigurasyonu ve dolu sise agirligi RFQ'da ACIKCA sorulmali" *(⚠ `T-962` ile BAGIMSIZ OLARAK AYNI BULGU)* |
+| `T-874` | `finans-fizibilite` | `yatirim-komitesi-baskani` | **MEDIUM** | OPEN | "FX ekseninin acikligi (x1,3333) X->Y bandindan (x1,4455) DARDIR; kur hareketi tek basina bir teklifi STRONG'dan ABOVE_CEILING'e ceviremez. Eksen 2027 ufku icin yeterince genis mi?" *(bkz. `T-964`, `T-965`)* |
+| `T-823` | `navlun-lojistik-uzmani` | `yatirim-komitesi-baskani` | **MEDIUM** | OPEN | "T-913 Ayak A'nin cevabi IKI PARCALIDIR: (a) TUR 2 kotasyonlarinin AYNI KAYNAKTAN yeniden CEKILMESI bir OKUMA islemidir, dis temas DEGILDIR; (b) T-304'un istedigi BAGLAYICI YAZILI KOTASYON ise dis temastir |
+| `T-886` | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | **MEDIUM** | OPEN | "The Wine Factory (FR): yayinlanmis e-posta YOK; kanal Google Forms + telefon. RFQ forma sigmaz; iki asamali temas ONAY gerektirir |
+| `T-887` | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | **MEDIUM** | OPEN | "Plaimont (FR): yayinlanmis e-posta YOK; kanal departman secimli web formu. Iki asamali temas ONAY gerektirir |
+| `T-888` | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | **MEDIUM** | OPEN | "Vidigal Wines (PT) icin DOGRULANMIS HICBIR ILETISIM KANALI YOKTUR |
+| `T-890` | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | **MEDIUM** | OPEN | "RFQ v2.2 sablonunda mense belgesinin azami fiyati ~%12 degistirdigi UREITICIYE ACIKCA YAZILIYORDU; TUR 3.25 §6 talimati bu bilginin PAYLASILMAMASINI emretti |
+| `T-891` | `global-sourcing-kasifi` | `gumruk-vergi-uzmani` | **MEDIUM** | OPEN | "Purcari grubu ayni grup icinde MD (%70, tercihli belge YOK) ve RO/BG (%50, EUR.1) tesislerine sahiptir; RFQ'da 'ayni urunu RO/BG tesisinden sevk' sorusunun mevzuat karsiligi dogrulanmalidir |
 | `T-801` | `navlun-lojistik-uzmani` | `yatirim-komitesi-baskani` | **LOW** | OPEN | "TUR 2'nin 6 gunluk LCL kanit seti 11 kart DEGIL, 10 karttir. EV-2026-08-10-304 (Italya) t |
+| `T-893` | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | **LOW** | OPEN | "RFQ response sheet NUMUNE (sample) soruyor: adet, bedel, gonderim suresi, on-uretim numunesi. Numune talebi AYRI bir adimdir ve ayri butce + ayri gumruk/OTV sorusu dogurur |
 | `T-205` | `mevzuat-ruhsat-uzmani` | `kanal-marj-uzmani` | **CONSTRAINT** | RESOLVED | 20/06/2026'da yürürlüğe giren 7584 s.K. m.2 ile alkollü içki marka/logo/ambalaj görselleri |
