@@ -22,15 +22,51 @@ Metro Türkiye, 09.08.2026 — **599,90 TL**
 
 ---
 
+## ⭐ ANA RAPOR — PRE-RFQ INVESTMENT REPORT
+
+> ### 📄 **[`90-karar/PRE-RFQ-INVESTMENT-REPORT-v1.md`](90-karar/PRE-RFQ-INVESTMENT-REPORT-v1.md)**
+>
+> Kurucu/yatırımcı için yazılmış **27 bölümlük ön fizibilite ve GO/NO-GO
+> raporu** (2026-08-10).
+>
+> ```
+> EXECUTIVE VERDICT :  PROCEED TO RFQ   (PRELIMINARY)
+> CONFIDENCE        :  MEDIUM
+> ```
+>
+> **Not:** Bu bir **ön kapı kararıdır.** `IMPORT PILOT` veya `SCALE` kararı
+> **verilmemiştir.** Karar kaydı: `90-karar/karar-gunlugu.md` → **KAYIT #1**.
+
+**Yardımcı tablolar:**
+
+| Dosya | İçerik |
+|---|---|
+| [`90-karar/pre-rfq-scorecard.csv`](90-karar/pre-rfq-scorecard.csv) | 13 boyutlu skorbord (GREEN 1 · YELLOW 8 · RED 4) |
+| [`90-karar/pre-rfq-country-ranking.csv`](90-karar/pre-rfq-country-ranking.csv) | 9 ülke × tarife · lojistik · tedarikçi · TIER |
+| [`90-karar/pre-rfq-sales-targets.csv`](90-karar/pre-rfq-sales-targets.csv) | 5k–100k şişe hacim, ciro ve satış noktası senaryoları |
+| [`90-karar/pre-rfq-buying-ceilings.csv`](90-karar/pre-rfq-buying-ceilings.csv) | `STRUCTURAL CEILING` — TRY/EUR/USD (**supplier target DEĞİLDİR**) |
+| [`90-karar/pre-rfq-risk-register.csv`](90-karar/pre-rfq-risk-register.csv) | En büyük 10 risk · olasılık · etki · azaltma · sıradaki kanıt |
+
+---
+
 ## MEVCUT DURUM
 
 ```
-TUR 0 — KURULUM TAMAMLANDI
+TUR 0      Kurulum                                  ✅ TAMAMLANDI
+TUR 1–2.5  Kesif · capraz kontrol · kanal           ✅ TAMAMLANDI
+TUR 3–3.25 Ters model · sweet-spot · teklif semasi  ✅ TAMAMLANDI (DRAFT)
+PRE-RFQ    On fizibilite ve GO/NO-GO karari         ✅ PROCEED TO RFQ
 ```
 
-Bu turda **bilinçli olarak** hiçbir araştırma yapılmamıştır.
-Hiçbir vergi/navlun/fiyat verisi toplanmamış, model çalıştırılmamış,
-karar verilmemiştir.
+```
+Kanit karti : 321   (T1: 91 · T2: 43 · T3: 33 · T4: 120 · T5: 32)
+Ticket      : 151   —  acik CRITICAL: 12
+Gate        : G0 PASS ·  G1/G2/G2-L/G3 BLOCKED ·  G4/G5 NOT_EVALUATED
+```
+
+> ⚠ **Hiçbir model çıktısı `APPROVED` değildir.** Açık `CRITICAL` ticket varken
+> finans modeli `APPROVED` olamaz (`CLAUDE.md` §5). Tüm parasal çıktılar
+> **`DRAFT` / `UPPER_BOUND`**'dur.
 
 ---
 
@@ -92,15 +128,18 @@ yapmasın diye.
 ## AKIŞ
 
 ```
-TUR 0  Kurulum                                              ✅ TAMAMLANDI
-TUR 1  Paralel keşif (5 ajan)                               ⬜
-TUR 2  Kanal-marj + çapraz kontroller                       ⬜
-TUR 3  Finans modeli                                        ⬜
-TUR 4  Şeytanın avukatı                                     ⬜
-TUR 5  Düzeltmeler                                          ⬜
-TUR 6  Yatırım komitesi — KARAR                             ⬜
-TUR 7  Gerçek RFQ / navlun / kanal doğrulaması              ⬜
-       (yalnızca karar TEST veya IMPORT PILOT ise)
+TUR 0     Kurulum                                           ✅ TAMAMLANDI
+TUR 1     Paralel keşif (5 ajan)                            ✅ TAMAMLANDI
+TUR 2     Kanal-marj + çapraz kontroller                    ✅ TAMAMLANDI
+TUR 2.5   Ters fiyat modeli (reverse target model)          ✅ TAMAMLANDI (DRAFT)
+TUR 3A    Masabaşı kapanışlar + model bütünlüğü             ✅ TAMAMLANDI
+TUR 3.25  Teklif alım şeması + değerlendirme motoru         ✅ TAMAMLANDI (DRAFT)
+PRE-RFQ   Ön fizibilite ve GO/NO-GO                         ✅ PROCEED TO RFQ
+TUR 3B    İleri model (kârlılık)                            ⬜ BLOKE — gerçek FOB yok
+TUR 4     Şeytanın avukatı                                  ⬜
+TUR 5     Düzeltmeler                                       ⬜
+TUR 6     Yatırım komitesi — NİHAİ KARAR                    ⬜
+TUR 7     Gerçek RFQ / navlun / kanal doğrulaması           ⬜ hazır, gönderilmedi
 ```
 
 ---
@@ -186,9 +225,19 @@ bildirir — uydurma yapmaz).
 
 ## SONRAKİ ADIM
 
-1. **Session'ı yeniden başlat** (9 ajanın registry'ye yüklenmesi için)
-2. 9 ajanın registry'de **gerçekten** mevcut olduğunu doğrula
-3. `/tur-1-kesif` çalıştır
+PRE-RFQ kararı **`PROCEED TO RFQ`**'dur. Sıradaki altı iş
+(bkz. `90-karar/PRE-RFQ-INVESTMENT-REPORT-v1.md` §27.9):
+
+1. **Fiziksel mağaza turu** — `T-917`. Tek ziyarette `T-504` + `T-603` +
+   `C-551` + `C-501` + `OQ-001`'i kapatır. **Projedeki en yüksek
+   bilgi/maliyet oranına sahip eylem.**
+2. **`N-3b` cevabı** — *"799 TL hangi rafın fiyatıdır?"* Tek kelime yeterli.
+3. **Hacim kademelerinin bazı** — yıllık mı, sipariş başına mı (`T-961`).
+4. **RFQ ilk dalgası — 5 hedef** (10 değil; `P-6.3` onay yükü gerekçesiyle).
+   Her mesaj için `RECIPIENT` + `SUBJECT` + `PREVIEW` onayı **zorunludur.**
+5. **3 forwarder'a FCL + LCL kotasyon talebi** — paket hazır (`T-821`).
+   ⏰ LCL kanıt seti **2026-08-17'de bayatlıyor.**
+6. **Yatırımcı marj eşiği** — tek sayı (`OQ-901` / `T-851`).
 
 > **Registry 9 ajanı tanımıyorsa:** `general-purpose` veya `Explore`
 > kullanma, başka ajanı vekil atama, ajanların çalıştığını iddia etme.
