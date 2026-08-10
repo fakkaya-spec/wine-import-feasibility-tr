@@ -19,6 +19,22 @@ meta:
       Hicbir mevcut alan silinmemis veya degistirilmemistir.
     ref: 90-karar/tur-25-preflight.md
     acilan_ticketlar: [T-921, T-922, T-923]
+  baskan_mudahalesi_tur325:
+    tarih: 2026-08-10
+    yazan: yatirim-komitesi-baskani
+    kapsam: >-
+      IKI KURUCU KARARI KAYDEDILDI: (a) hedef raf fiyati merdiveninde ROL
+      ATAMASI (799 PRIMARY / 699 SECONDARY / 899 STRETCH / 599 DOWNSIDE-FLOOR
+      TEST / 999 UPPER SEGMENT TEST), (b) RFQ HACIM KADEMELERI
+      (5.000 / 10.000 / 25.000 / 50.000 sise + FULL_20FT ayri fiyat;
+      100.000 ilk RFQ'da SORULMAYACAK).
+      Ucuncu kurucu karari (DIS TEMAS POLITIKASI) bu dosyaya GIRMEZ; karsiligi
+      P-6 kapisi ve T-467 / T-304 / T-884 / T-967 / T-968 ticket'laridir.
+      HICBIRI ARASTIRMA BULGUSU DEGILDIR, HICBIRI FACT DEGILDIR.
+      Hicbir mevcut alan silinmemis, degistirilmemis veya yeniden
+      etiketlenmemistir.
+    ref: 90-karar/investor-kararlari-tur325.md
+    acilan_ticketlar: [T-961, T-962, T-963, T-964, T-965, T-966, T-967, T-968]
 
 # ------------------------------------------------------------
 # HACİM SENARYOLARI — charter'da belirlendi, bunlar ASSUMPTION degil KARARDIR
@@ -58,6 +74,120 @@ hacim_senaryolari:
     moq_uyumlu_mu: null
     konteyner_sayisi: null
     status: UNKNOWN
+
+# ============================================================================
+# RFQ HACİM KADEMELERİ — KURUCU KARARI (TUR 3.25, 2026-08-10)
+# ============================================================================
+# ⛔ BU BLOK `hacim_senaryolari` DEGILDIR VE ONUN YERINE GECMEZ.
+#    `hacim_senaryolari`    = MODEL senaryolari, birimi YILLIK sise (charter).
+#    `rfq_hacim_kademeleri` = TEDARIKCIYE SORULACAK fiyat noktalari.
+#    Ikisinin BAZI ayni olmayabilir (bkz. baz_belirsizligi) — esleme
+#    PROVISIONAL'dir ve T-961 kapanmadan KESINLESMEZ.
+rfq_hacim_kademeleri:
+  status: INVESTOR_DECISION            # FACT DEGIL, ESTIMATE DEGIL, GOZLEM DEGIL
+  evidence_id: null                    # BIR DIS OLGU DEGILDIR -> kanit karti YOKTUR
+  kaynak: "kurucu/yatirimci beyani — TUR 3.25 §0, 2026-08-10"
+  karar_tarihi: 2026-08-10
+  ref: 90-karar/investor-kararlari-tur325.md
+  amac: >-
+    Tedarikcinin PRICE-VOLUME CURVE'unu gormek. TEK BIR hacim icin TEK BIR
+    fiyat ISTENMEYECEKTIR.
+
+  baz_belirsizligi:                    # ⚠ KURUCU BEYANI BUNU SOYLEMEDI — ACIK
+    soru: "Kademeler YILLIK hacim mi, SIPARIS/SEVKIYAT basina mi?"
+    status: UNKNOWN
+    neden: >-
+      rfq-template.md IKI AYRI baz tasimaktadir: "Indicative annual volume:
+      <VOLUME> bottles/year" ve "First (pilot) order: <PILOT VOLUME> bottles".
+      FULL_20FT ise ancak SEVKIYAT BASINA tanimlidir. Kurucu beyani bazi
+      belirtmemistir ve baskan bunu KENDI DOLDURMAZ (CLAUDE.md §1.16).
+    ticket: T-961
+
+  kademeler:
+    - id: V1
+      sise: 5000
+      model_karsiligi: V5K
+      esleme_status: PROVISIONAL
+      notes: >-
+        T-871'e gore 5.000 ILK SIPARIS olarak alinirsa Kart 1 (Harland) ve
+        Kart 2 (Danese) MOQ 6.000 ile UYUMSUZDUR (T-855, C-462). Bu bir FIYAT
+        sorusu degil, bir ELEME sorusudur.
+    - id: V2
+      sise: 10000
+      model_karsiligi: V10K
+      esleme_status: PROVISIONAL
+      notes: >-
+        YENI FIYAT NOKTASI. V10K senaryolar.yaml'da TANIMLIDIR ama ters modelde
+        HIC CALISTIRILMAMISTIR ve lojistik tablolarinda SATIRI YOKTUR (T-855).
+        Kurucu kararindan sonra bu bir bosluk degil, bir EKSIKTIR.
+    - id: V3
+      sise: 25000
+      model_karsiligi: V25K
+      esleme_status: PROVISIONAL
+    - id: V4
+      sise: 50000
+      model_karsiligi: V50K
+      esleme_status: PROVISIONAL
+    - id: FULL_20FT
+      sise: null
+      status: UNKNOWN
+      ayri_fiyat_istenecek: true
+      band_paletli_sise: [6480, 7200]
+      band_paletsiz_sise: [11800, 13700]
+      band_evidence_id: EV-2026-08-09-320
+      band_status: ESTIMATE
+      notes: >-
+        "Dolu bir 20ft konteyner" BIR SISE ADEDI DEGILDIR: adet paletli/paletsiz
+        yukleme bicimine ve TEDARIKCININ koli/palet konfigurasyonuna baglidir
+        (RFQ zorunlu alanlari M3/M4 — T-884). Ayni "full 20ft" fiyati iki
+        tedarikcide FARKLI sise adedi anlamina gelebilir; o durumda SISE BASI
+        fiyat KARSILASTIRILAMAZ. Bu kademenin kiyaslanabilirligi M3/M4
+        cevaplarina BAGLIDIR.
+      ticket: [T-962, T-884]
+
+  sorulmayacak:
+    - id: V100K
+      sise: 100000
+      karar: "ILK RFQ'DA SORULMAYACAK (kurucu karari, TUR 3.25)."
+      model_sonucu: >-
+        V100K bir MODEL senaryosu olarak KALIR (charter tarafindan belirlenmistir,
+        SILINMEZ) — ancak ILK RFQ turundan bir FIYAT CAPASI ALMAYACAKTIR.
+        V50K fiyatindan V100K'ya EKSTRAPOLASYON YASAKTIR. V100K alis fiyati
+        UNKNOWN kalir ve o satirdan turetilen her cikti NO_RFQ_ANCHOR damgasi
+        tasir.
+      ticket: T-963
+
+  lojistik_baglantisi:
+    lcl_fcl_kirilma_merkez_sise: 5900
+    kirilma_evidence_id: EV-2026-08-10-330
+    kirilma_status: ESTIMATE
+    kirilma_confidence: LOW
+    kirilma_band_sise: [2200, 9800]
+    sonuc: >-
+      V1 (5.000) kirilma noktasinin ALTINDA, V2 (10.000) USTUNDEDIR. Kademeler
+      arasinda yalnizca fiyat degil MOD (LCL/FCL) da degisebilir; sise basi
+      lojistik maliyeti kademeler arasinda DOGRUSAL DEGILDIR.
+      KADEMELER ARASI INTERPOLASYON YAPILMAZ.
+    ticket: [T-962, T-855, T-913]
+
+  baglayici_kurallar:
+    - kod: TR325-V1
+      kural: "Tedarikciden TEK hacim fiyati istenmez; HER kademe icin AYRI fiyat istenir."
+    - kod: TR325-V2
+      kural: "Gelen fiyatlar KADEME BAZINDA saklanir; ortalamasi ALINMAZ, tek fiyata indirgenmez."
+    - kod: TR325-V3
+      kural: >-
+        Kademeler arasinda INTERPOLASYON ve kademe disina EKSTRAPOLASYON
+        YAPILMAZ (ayni kural T-855'te 10.000 icin zaten uygulanmisti).
+    - kod: TR325-V4
+      kural: >-
+        Bir kademede MOQ uyumsuzlugu cikarsa bu bir fiyat notu degil bir ELEME
+        kaydidir ve ticket'a baglanir.
+    - kod: TR325-V5
+      kural: >-
+        BU BLOK BIR HACIM TAAHHUDU DEGILDIR. Kademeler tedarikciye sorulacak
+        fiyat noktalaridir; hicbiri bir siparis, bir pilot hacmi veya bir yillik
+        hedef olarak raporlanamaz. Pilot hacmi (D-09 / D-10) HALA SECILMEMISTIR.
 
 # ============================================================================
 # TARİH SENARYOLARI — YATIRIMCI GİRDİSİ (TUR 2.5 PRE-FLIGHT, 2026-08-10)
@@ -183,6 +313,77 @@ hedef_raf_fiyati_merdiveni:
         (INVESTOR_ASSUMPTION) uzerinden hesaplanmistir" etiketiyle basilir.
         Sonuc ASLA FACT olarak raporlanamaz.
 
+  # ==========================================================================
+  # TUR 3.25 — KURUCU ROL ATAMASI (2026-08-10)
+  # ==========================================================================
+  # ⛔ KARARA BAGLANAN SEY MERDIVENIN BASAMAKLARI DEGIL, BASAMAKLARIN ROLUDUR.
+  #    Bes basamagin BESI DE yerinde durmaktadir; hicbiri silinmemis, hicbiri
+  #    "secilmis fiyat" haline gelmemistir.
+  investor_rol_atamasi_tur325:
+    status: INVESTOR_TARGET            # FACT DEGIL, ESTIMATE DEGIL, GOZLEM DEGIL
+    evidence_id: null                  # BIR GOZLEM DEGILDIR -> kanit karti YOKTUR
+    kaynak: "kurucu/yatirimci beyani — TUR 3.25 §0, 2026-08-10"
+    karar_tarihi: 2026-08-10
+    ref: 90-karar/investor-kararlari-tur325.md
+    roller:
+      - basamak_id: TGT_799
+        rol: PRIMARY_TARGET_SHELF_PRICE
+        rfq_strateji_capasi_mi: true
+      - basamak_id: TGT_699
+        rol: SECONDARY_TARGET_SHELF_PRICE
+        rfq_strateji_capasi_mi: false
+      - basamak_id: TGT_899
+        rol: STRETCH_TARGET_SHELF_PRICE
+        rfq_strateji_capasi_mi: false
+      - basamak_id: TGT_599
+        rol: DOWNSIDE_FLOOR_TEST
+        rfq_strateji_capasi_mi: false
+        kural: "ANA RFQ STRATEJISINI BELIRLEMEZ (kurucu beyani, birebir)."
+      - basamak_id: TGT_999
+        rol: UPPER_SEGMENT_TEST
+        rfq_strateji_capasi_mi: false
+        kural: >-
+          ANA RFQ STRATEJISINI BELIRLEMEZ (kurucu beyani, birebir). OUT OF
+          MANDATE etiketi DUSMEZ: manda tavani (segment.fiyat_performans_ust_try
+          = 900, ESTIMATE) degistirilmemistir — T-857 ACIK KALIR.
+    ek_baglayici_kurallar:
+      - kod: TR325-1
+        kural: >-
+          ROL ATAMASI, L3'U YURURLUKTEN KALDIRMAZ. Bes basamak AYRI AYRI
+          calistirilmaya devam eder; ortalamasi ALINMAZ; PRIMARY bir "baz
+          senaryo" / "beklenen sonuc" / "onerilen deger" olarak SUNULAMAZ
+          (P-2 / T-948, P-5.1).
+      - kod: TR325-2
+        kural: >-
+          PRIMARY bir RFQ PAZARLIK CAPASIDIR. Bir fiyat TAHMINI, bir GOZLEM,
+          bir TAAHHUT veya bir pazar bulgusu DEGILDIR ve oyle raporlanamaz.
+      - kod: TR325-3
+        kural: >-
+          L8 ALT KATMANI HALA SECILMEMISTIR (T-859, T-701, T-603). Bu atama
+          T-859'u KAPATMAZ ve G3'u ACMAZ. PRIMARY'den turetilen her parasal
+          sayi "hangi rafin fiyati" sorusuna HALA cevap veremez.
+      - kod: TR325-4
+        kural: >-
+          TARGET_CHANNEL SECILMEMISTIR. rfq-negotiation-cards.md §0.1'in
+          CHAIN_RETAIL capasi bir AJAN VARSAYIMIDIR, kurucu karari DEGILDIR
+          (T-871 soru 2 ACIK; kanal ile L8 alt katmani arasindaki bagin tek
+          secim mi iki secim mi oldugu T-966'da sorulmustur).
+      - kod: TR325-5
+        kural: >-
+          DOWNSIDE_FLOOR_TEST (599) ve UPPER_SEGMENT_TEST (999) satirlari
+          MODELDE CALISMAYA DEVAM EDER. Rol atamasi onlari SILMEZ; yalnizca
+          RFQ strateji capasi OLMADIKLARINI soyler.
+      - kod: TR325-6
+        kural: >-
+          599 (TARGET) ile 599,90 (OBSERVED) ayrimi (L2) ve T-504 (599'un
+          dayandigi tek gozlemin promosyon durumu) BU ATAMAYLA KAPANMAZ.
+      - kod: TR325-7
+        kural: >-
+          Bu atama bir ALIS FIYATI ESIGI DEGILDIR. TARGET_DISCOUNT_FROM_MAX ve
+          REQUIRED_IMPORTER_MARGIN HALA INVESTOR_DECISION_REQUIRED'dir
+          (T-851, CRITICAL, ACIK). Hedef RAF fiyati ile hedef ALIS fiyati ayri
+          nesnelerdir ve biri digerini uretmez.
+
   gozlenen_bantla_tutarlilik_notu: >-
     KAYIT NOTU (yeni arastirma DEGIL, iki mevcut kaydin karsilastirilmasi):
     pazar.yaml -> segment.fiyat_performans_alt_try = 600 ve
@@ -267,6 +468,20 @@ duyarlilik_eksenleri:
     max: null
     status: UNKNOWN
     kaynak_dosya: makro.yaml
+    # ---- TUR 3.25 KAYDI (2026-08-10) — min/base/max HALA `null`, BASKAN DOLDURMAZ ----
+    tur325_notu: >-
+      N-1 (fx) IKI AYRI NESNEYE AYRILMISTIR: (a) GOZLENEN spot kur — bir
+      YATIRIMCI KARARI DEGIL, bir AJAN GOZLEMIDIR (T-852 / T-912) ve TUR
+      3.25'te gumruk-vergi-uzmani tarafindan alinmaktadir; (b) MODEL HEDEF
+      TARIHINDEKI kur — hedef tarihlerin UCU DE 2027'dedir, dolayisiyla bir
+      GOZLEM DEGILDIR. (b) bir duyarlilik ekseni noktasidir.
+    tur325_acik_sorular: [T-964, T-965]
+    tur325_uyari: >-
+      2026-08 tarihli gozlenen spot kurun 2027 hedef tarihlerinde
+      kullanilabilirligi DOGRULANMAMISTIR. Ayni sinif hata OTV'de titizlikle
+      onlenirken bandrolde atlanmisti (T-858(b)); fx icin de sorulmustur
+      (T-965). Ayrica GUMRUK BEYAN KURU serbest piyasa kurundan farkli olabilir
+      (T-911) — gozlem bu ayrimi KAPATMAZ.
 
   - eksen: FREIGHT
     min: null

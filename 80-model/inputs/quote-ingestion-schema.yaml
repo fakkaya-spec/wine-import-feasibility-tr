@@ -1,0 +1,602 @@
+# =====================================================================
+#  QUOTE INGESTION SCHEMA — TEDARIKCI TEKLIFI ALIM SEMASI
+#  TUR 3.25 §12 · sahibi: finans-fizibilite · tarih: 2026-08-10
+# =====================================================================
+#
+#  BU DOSYA BIR TEKLIF DEGILDIR. BU DOSYA BIR SEMADIR.
+#  Icinde HICBIR fiyat, HICBIR kur, HICBIR tedarikci sayisi YOKTUR.
+#  `ornek_bos_teklif` blogundaki tum degerler `null`'dir.
+#
+#  FORMAT GEREKCESI (neden YAML, neden CSV/JSON degil):
+#    1) `80-model/inputs/` altindaki diger sekiz girdi dosyasinin tamami YAML;
+#       ayni yukleyici (`kalem_defteri.guvenli_girdi_yukle`) ve ayni
+#       `TEST_FIXTURE` korumasi bedelsiz devralinir.
+#    2) `quantity` bes kademelidir -> IC ICE yapi gerekir. CSV bunu ancak
+#       satir cogaltarak tasir ve tedarikci-seviyesi alanlari (MOQ, palet,
+#       sertifika) BES KEZ kopyalar -> ilk yazim hatasinda kademeler arasi
+#       sessiz tutarsizlik olusur.
+#    3) Dogrulama kurallari bu dosyada VERI olarak durur (`dogrulama_kurallari`)
+#       ve `engine/teklif_degerlendirme.py` tarafindan CALISTIRILIR.
+#       JSON Schema da olurdu; secilmedi cunku "eksik alan -> sinif dusur"
+#       eylemi JSON Schema'nin ifade gucunun disindadir (o yalniz gecerli/gecersiz
+#       der; bizim ihtiyacimiz DERECELENDIRME'dir).
+#
+#  CIKTI SINIFI: bu semadan uretilen HER degerlendirme `INTERNAL_ONLY`'dir.
+#  Tedarikciye gonderilen hicbir metinde tavan/sonuc gorunemez (bkz. §7).
+# =====================================================================
+
+meta:
+  belge:            quote-ingestion-schema
+  surum:            "1.0"
+  sahibi:           finans-fizibilite
+  tarih:            2026-08-10
+  tur:              "TUR 3.25 §12"
+  durum:            DRAFT               # acik CRITICAL ticket varken APPROVED olamaz
+  cikti_sinifi:     INTERNAL_ONLY
+  havuzdaki_teklif_sayisi: 0            # 2026-08-10 itibariyle SIFIR gercek teklif
+  uretim_girdisi_mi: true               # bu dosya bir SEMA'dir; fixture DEGILDIR
+
+# ---------------------------------------------------------------------
+# 1. YAPI KARARI — TEK SATIR MI, IC ICE MI
+# ---------------------------------------------------------------------
+yapi:
+  sekil: NESTED_TIERS
+  karar: >-
+    Bir teklif belgesi = bir (supplier x product x quote_date) ucgeni.
+    Icinde `kademeler:` listesi bulunur; her kademe kendi fiyatini, kendi
+    odeme sartini, kendi lead time'ini ve KENDI `quote_class`ini tasir.
+  gerekce:
+    - >-
+      Duz (tek satir = tek kademe) yapida `supplier`, `MOQ`, `pallet_configuration`,
+      `certificate_set` gibi kademeden BAGIMSIZ alanlar bes kez tekrarlanir.
+      Tekrarlanan alan er gec ayrisir; ayrisinca hangi satirin dogru oldugu
+      belirlenemez. Bu, `kalem_defteri.py` K6/LEDGER_UNIQUENESS ile ayni hastaliktir.
+    - >-
+      Bir teklif kademeler arasinda EPISTEMIK OLARAK BOLUNEBILIR: uretici
+      25.000 icin baglayici fiyat verip 5.000 icin "yaklasik" diyebilir.
+      O halde `quote_class` KADEME seviyesinde tasinmali; belge seviyesinde
+      tek bir sinif tasimak bu ayrimi silerdi.
+    - >-
+      Degerlendirme yine de DUZ calisir: motor ic ice yapiyi
+      (kademe x fx_ekseni x tavan_bandi) satirlarina acar. Yani ic ice yapi
+      GIRDI tarafinda, duz yapi CIKTI tarafindadir.
+  kademe_anahtari: "supplier|product|quote_date|tier_code"
+  kademe_tekilligi: ZORUNLU        # ayni tier_code iki kez -> KademeCiftKayit
+
+# ---------------------------------------------------------------------
+# 2. HACIM KADEMELERI — TUR 3.25 ile sabitlendi
+# ---------------------------------------------------------------------
+hacim_kademeleri:
+  - tier_code: V1
+    sise: 5000
+    status: SPEC_DECISION
+    notes: "pilot kademe"
+  - tier_code: V2
+    sise: 10000
+    status: SPEC_DECISION
+    notes: "TUR 3.25'te EKLENDI. Onceki turlarda V10K yoktu -> UNKNOWN'di."
+  - tier_code: V3
+    sise: 25000
+    status: SPEC_DECISION
+    notes: "ters modelin Y kosesi bu hacimde tanimlidir"
+  - tier_code: V4
+    sise: 50000
+    status: SPEC_DECISION
+  - tier_code: FULL_20FT_CONTAINER
+    sise: null
+    status: UNKNOWN
+    zorunlu_tedarikci_beyani: true
+    notes: >-
+      SISE ADEDI BIZIM TARAFIMIZDAN DOLDURULAMAZ. lojistik.yaml
+      (EV-2026-08-10-329) 20DV icin paletsiz 11.800-13.700, paletli 6.480-7.200
+      araligi verir -> tek bir sayi YOKTUR ve palet/koli konfigurasyonu
+      TEDARIKCIYE bagimlidir. Bu kademede sise adedini TEDARIKCI beyan eder
+      (`case_configuration` + `pallet_configuration` ile tutarli olmak zorunda).
+      Beyan yoksa kademe `INCOMPLETE`'tir; adet TAHMIN EDILMEZ.
+
+# ---------------------------------------------------------------------
+# 3. METADATA SOZLESMESI — TUR 3A mimarisiyle uyum
+# ---------------------------------------------------------------------
+metadata_sozlesmesi:
+  kaynak: "80-model/engine/kalem_defteri.py :: ZORUNLU_ALANLAR (dokuz alan)"
+  kural: >-
+    Bir teklif kalemi modele girdiginde `kalem_defteri.MaliyetKalemi` olarak
+    temsil edilir ve dokuz zorunlu alani tasimak ZORUNDADIR. Eksikse kalem
+    `0` SAYILMAZ; `BLOCKED_INPUT` damgasi alir ve eksik alan ADIYLA basilir.
+  teklif_kaleminin_sabit_alanlari:
+    payer:              IMPORTER
+    receiver:           SUPPLIER
+    layer:              "L0 (EXW) veya L1 (FOB) — teklifin Incoterm'inden okunur"
+    fixed_or_variable:  VARIABLE
+    per_bottle_or_total: PER_BOTTLE
+    tax_treatment:      "ITHALAT_MATRAHI_ICINDE"   # GV/OTV/KDV matrahinin tabani
+    currency:           "teklifin kendi para birimi — TL'ye CEVRILEREK SAKLANMAZ"
+    evidence_id:        "teklif e-postasi/PDF icin acilan kanit karti"
+    status:             "FACT (gercek teklif) | ESTIMATE | ASSUMPTION | UNKNOWN"
+  damgalar: [OK, BLOCKED_INPUT, EXCLUDED_WITH_REASON]
+  sessiz_eksik_yasagi: >-
+    Eksik alanli bir teklif SESSIZCE gecmez. Motor her kademe icin
+    `eksik_alanlar` listesini uretir; liste bos degilse kademe en fazla
+    `B2B_INDICATIVE` olur ve degerlendirme sonucu `INCOMPLETE`'e ZORLANIR.
+
+# ---------------------------------------------------------------------
+# 4. ALAN SOZLUGU
+#    seviye: QUOTE (belge) | TIER (kademe)
+#    zorunlu: FIRM (FIRM_QUOTE icin sart) | EVAL (degerlendirme icin sart)
+#             | INFO (bilgi; eksikligi sinifi dusurmez ama raporlanir)
+# ---------------------------------------------------------------------
+alanlar:
+
+  supplier:
+    seviye: QUOTE
+    tip: str
+    zorunlu: FIRM
+    notes: "tedarikci_id (SUP-###) ile eslesmeli; eslesmiyorsa BLOCKED_INPUT"
+
+  supplier_id:
+    seviye: QUOTE
+    tip: str
+    zorunlu: EVAL
+    notes: "50-sourcing havuz kimligi"
+
+  quote_date:
+    seviye: QUOTE
+    tip: date
+    zorunlu: FIRM
+
+  quote_valid_until:
+    seviye: QUOTE
+    tip: date
+    zorunlu: FIRM
+    notes: >-
+      GECERLILIK SURESI OLMAYAN BIR FIYAT TEKLIF DEGILDIR. Bu alan bos ise
+      QV-1 kurali sinifi B2B_INDICATIVE'e dusurur. "fiyatlar degisebilir"
+      serbest metni TARIH DEGILDIR ve bu alani DOLDURMAZ.
+
+  product:
+    seviye: QUOTE
+    tip: str
+    zorunlu: FIRM
+
+  vintage:
+    seviye: QUOTE
+    tip: str
+    zorunlu: INFO
+
+  ABV:
+    seviye: QUOTE
+    tip: decimal
+    unit: "% hacim"
+    zorunlu: EVAL
+    notes: >-
+      OTV matrahi ve etiket/TADAB tarafinda belirleyicidir; ayrica >%22
+      esiginin altinda oldugunun teyidi urun tanimina baglidir. Eksikse
+      degerlendirme yapilir ama kademe `eksik_alanlar` listesinde gorunur.
+
+  business_model:
+    seviye: QUOTE
+    tip: enum
+    izinli: [MODEL_A_OWN_BRAND, MODEL_B_PRIVATE_LABEL, HER_IKISI, UNKNOWN]
+    zorunlu: EVAL
+
+  origin_document:
+    seviye: QUOTE
+    tip: enum
+    izinli: [EUR1_TAAHHUT, FATURA_BEYANI_TAAHHUT, DUZENLENEMEZ, UNKNOWN]
+    zorunlu: EVAL
+    notes: >-
+      Bu alan tavan bandini SECER (Grup P / Grup N). Yanlis secim %11,765'lik
+      sistematik hataya yol acar. `UNKNOWN` ise motor KOTUMSER bandi (N) kullanir
+      ve satiri `MENSE_BELGESI_UNKNOWN` bayragiyla damgalar.
+
+  FOB_port:
+    seviye: QUOTE
+    tip: str
+    zorunlu: FIRM
+    notes: "Incoterm'in 'named port'u. 'FOB' tek basina bir Incoterm DEGILDIR."
+
+  EXW_place:
+    seviye: QUOTE
+    tip: str
+    zorunlu: FIRM
+    notes: >-
+      EXW'nin 'named place'i. Iki tesisi olan uretici (or. Bordeaux + Languedoc)
+      icin tesis adi YAZILMADAN gelen fiyat KULLANILAMAZ.
+
+  MOQ:
+    seviye: QUOTE
+    tip: decimal
+    unit: sise
+    zorunlu: EVAL
+
+  MOQ_ikinci_birim:
+    seviye: QUOTE
+    tip: str
+    zorunlu: INFO
+    notes: "sevkiyat basina minimum konteyner — sise cinsinden MOQ'dan AYRI"
+
+  bottle_weight:
+    seviye: QUOTE
+    tip: decimal
+    unit: kg
+    zorunlu: EVAL
+    notes: "dolu sise agirligi; palet/konteyner kapasitesini belirler"
+
+  case_configuration:
+    seviye: QUOTE
+    tip: str
+    zorunlu: EVAL
+    notes: "or. 6x750ml / 12x750ml"
+
+  pallet_configuration:
+    seviye: QUOTE
+    tip: str
+    zorunlu: EVAL
+    notes: "koli/palet ve palet/konteyner — FULL_20FT_CONTAINER kademesinin sarti"
+
+  sample_cost:
+    seviye: QUOTE
+    tip: decimal
+    zorunlu: INFO
+
+  certificate_set:
+    seviye: QUOTE
+    tip: list
+    zorunlu: EVAL
+    notes: "analiz sertifikasi, saglik sertifikasi, V I 1 vb. — ruhsat ajaninin alani"
+
+  Turkey_availability:
+    seviye: QUOTE
+    tip: enum
+    izinli: [ACIK, MUNHASIRLIK_VAR, BOLGE_KAPALI, UNKNOWN]
+    zorunlu: EVAL
+    notes: "Turkiye'de mevcut ithalatci/munhasirlik durumu"
+
+  confidence:
+    seviye: QUOTE
+    tip: enum
+    izinli: [HIGH, MEDIUM, LOW]
+    zorunlu: EVAL
+
+  evidence_id:
+    seviye: QUOTE
+    tip: str
+    zorunlu: EVAL
+    notes: "teklif belgesi icin acilan kanit karti; YOKSA sayi modele GIREMEZ"
+
+  # --- kademe seviyesi ------------------------------------------------
+
+  tier_code:
+    seviye: TIER
+    tip: enum
+    izinli: [V1, V2, V3, V4, FULL_20FT_CONTAINER]
+    zorunlu: FIRM
+
+  quantity:
+    seviye: TIER
+    tip: decimal
+    unit: sise
+    zorunlu: FIRM
+    notes: >-
+      FULL_20FT_CONTAINER kademesinde bu alan TEDARIKCI BEYANIDIR; bizim
+      tarafimizdan doldurulmaz.
+
+  incoterm:
+    seviye: TIER
+    tip: enum
+    izinli: [EXW, FOB]
+    zorunlu: FIRM
+    notes: >-
+      EXW = L0, FOB = L1. IKISI AYNI SAYI DEGILDIR (CLAUDE.md §6).
+      Belirsiz ise (`UNKNOWN`) kademe `INCOMPLETE`'tir — tahmin edilmez.
+
+  incoterm_named_place:
+    seviye: TIER
+    tip: str
+    zorunlu: FIRM
+    notes: "EXW ise tesis, FOB ise liman adi"
+
+  EXW:
+    seviye: TIER
+    tip: decimal
+    unit: "para birimi / sise"
+    zorunlu: "EXW veya FOB'dan EN AZ BIRI (QV-1)"
+
+  FOB:
+    seviye: TIER
+    tip: decimal
+    unit: "para birimi / sise"
+    zorunlu: "EXW veya FOB'dan EN AZ BIRI (QV-1)"
+
+  currency:
+    seviye: TIER
+    tip: enum
+    izinli: [EUR, USD, AUD, CLP, MDL, GBP, TRY]
+    zorunlu: FIRM
+    yasak_degerler: ["$", "DOLAR", "AMBIGUOUS", "UNKNOWN", ""]
+    notes: >-
+      Kaynakta yalnizca "$" gecen bir fiyat (or. AUD/USD ayrimi yapilmamis)
+      GECERSIZDIR ve kademeyi `INCOMPLETE` yapar. Kur belirsizligi tek basina
+      fiyati ~1,5 kat degistirir.
+
+  payment_terms:
+    seviye: TIER
+    tip: str
+    zorunlu: EVAL
+    notes: "pesin / vadeli AYRI fiyat; `peak_cash_requirement` bu alana baglidir"
+
+  lead_time:
+    seviye: TIER
+    tip: decimal
+    unit: gun
+    zorunlu: EVAL
+
+  production_time:
+    seviye: TIER
+    tip: decimal
+    unit: gun
+    zorunlu: EVAL
+    notes: "lead_time'dan AYRI: uretim + siseleme suresi"
+
+  label_cost:
+    seviye: TIER
+    tip: decimal
+    zorunlu: EVAL
+    notes: >-
+      "tasarim ucretsiz" beyani BU ALANI DOLDURMAZ. Klise/kalip/ilk baski
+      hazirligi TEK SEFERLIK, baski TEKRARLAYAN kalemdir; ikisi ayri sorulur.
+
+  label_cost_tek_seferlik:
+    seviye: TIER
+    tip: decimal
+    zorunlu: EVAL
+
+  carton_cost:
+    seviye: TIER
+    tip: decimal
+    zorunlu: EVAL
+    notes: "fiyata dahil mi haric mi — 'Dry Goods dahil' beyani ACIKCA yazilmali"
+
+  quote_class:
+    seviye: TIER
+    tip: enum
+    izinli: [FIRM_QUOTE, B2B_INDICATIVE, PUBLIC_INDICATIVE]
+    zorunlu: FIRM
+    notes: >-
+      Tedarikcinin BEYAN ettigi sinif bir GIRDIDIR, bir SONUC DEGILDIR.
+      Etkin sinif = min(beyan_edilen, hesaplanan) — bkz. QV-2.
+
+# ---------------------------------------------------------------------
+# 5. SINIF HIYERARSISI
+# ---------------------------------------------------------------------
+quote_class_hiyerarsisi:
+  PUBLIC_INDICATIVE: 1     # ureticinin kamuya acik gosterge fiyati — teklif DEGIL
+  B2B_INDICATIVE:    2     # bize gelmis ama acik ticari teklif sartlarini tasimayan cevap
+  FIRM_QUOTE:        3     # acik ticari teklif — QV-1'in DORT unsuru BIRLIKTE
+tanimlar:
+  FIRM_QUOTE: >-
+    Gercek tedarikci e-postasi FIRM_QUOTE olabilmek icin ACIK TICARI TEKLIF
+    icermelidir: FIYAT + GECERLILIK + MIKTAR + INCOTERM (named place ile)
+    DORDU BIRLIKTE ayni kademede bulunmalidir. Dordunden biri eksikse
+    e-posta gercek olsa bile FIRM_QUOTE DEGILDIR.
+  B2B_INDICATIVE: "bize ozel gelmis, ancak dort unsurdan en az biri eksik cevap"
+  PUBLIC_INDICATIVE: "ureticinin kendi kamuya acik kanalinda yayinladigi gosterge"
+
+# ---------------------------------------------------------------------
+# 6. DOGRULAMA KURALLARI — MAKINE OKUNUR
+#    Bunlar yorum satiri DEGILDIR; engine/teklif_degerlendirme.py bu listeyi
+#    okur ve `kural_uygula()` ile CALISTIRIR. Buradan silinen kural
+#    calismaz; buraya eklenen kural kod degistirmeden calisir.
+#    tip: HEPSI_DOLU | EN_AZ_BIRI_DOLU | IZINLI_DEGERLER | YASAK_DEGER
+#         | KOSULLU_ZORUNLU | SINIF_TAVANI
+#    eylem: SINIF_DUSUR | SONUC_ZORLA | DAMGA
+# ---------------------------------------------------------------------
+dogrulama_kurallari:
+
+  - kural_id: QV-1
+    ad: FIRM_QUOTE_DOGRULAMA
+    seviye: TIER
+    tip: HEPSI_DOLU
+    aciklama: >-
+      ACIK TICARI TEKLIF TESTI. Fiyat + gecerlilik + miktar + Incoterm(+yer)
+      BIRLIKTE varsa kademe FIRM_QUOTE olabilir; degilse olamaz.
+    alanlar:
+      - quote.quote_valid_until
+      - tier.quantity
+      - tier.incoterm
+      - tier.incoterm_named_place
+      - tier.currency
+    eylem: SINIF_DUSUR
+    hedef_sinif: B2B_INDICATIVE
+    damga: BLOCKED_INPUT
+
+  - kural_id: QV-1B
+    ad: FIYAT_VARLIGI
+    seviye: TIER
+    tip: EN_AZ_BIRI_DOLU
+    aciklama: "EXW veya FOB'dan en az biri sayisal olmalidir."
+    alanlar: [tier.EXW, tier.FOB]
+    eylem: SINIF_DUSUR
+    hedef_sinif: PUBLIC_INDICATIVE
+    ayrica_sonuc_zorla: INCOMPLETE
+    damga: BLOCKED_INPUT
+
+  - kural_id: QV-1C
+    ad: PARA_BIRIMI_BELIRSIZLIGI
+    seviye: TIER
+    tip: YASAK_DEGER
+    alan: tier.currency
+    yasak: ["$", "DOLAR", "AMBIGUOUS", "UNKNOWN", ""]
+    aciklama: >-
+      Yalnizca "$" gecen fiyat AUD mi USD mi belli degildir; tek basina
+      fiyati ~1,5 kat degistirir. Karsilastirma YAPILMAZ.
+    eylem: SONUC_ZORLA
+    sonuc: INCOMPLETE
+    ayrica_sinif_dusur: PUBLIC_INDICATIVE
+    damga: BLOCKED_INPUT
+
+  - kural_id: QV-1D
+    ad: KATMAN_BELIRSIZLIGI
+    seviye: TIER
+    tip: IZINLI_DEGERLER
+    alan: tier.incoterm
+    izinli: [EXW, FOB]
+    aciklama: >-
+      Ayni sayinin hem 'ex factory' hem 'FOB' olarak sunulmasi (C-461)
+      L0/L1 ayrimini bozar. Katman belirsizse karsilastirma YAPILMAZ.
+    eylem: SONUC_ZORLA
+    sonuc: INCOMPLETE
+    damga: BLOCKED_INPUT
+
+  - kural_id: QV-2
+    ad: SINIF_YUKSELTME_YASAGI
+    seviye: TIER
+    tip: SINIF_TAVANI
+    aciklama: >-
+      Tedarikcinin kendi beyan ettigi sinif etkin sinifi YUKSELTEMEZ.
+      etkin = min(beyan_edilen, hesaplanan).
+    eylem: DAMGA
+    damga: BLOCKED_INPUT
+
+  - kural_id: QV-3
+    ad: KONTEYNER_KADEMESI_ADET_BEYANI
+    seviye: TIER
+    tip: KOSULLU_ZORUNLU
+    kosul_alan: tier.tier_code
+    kosul_degerler: [FULL_20FT_CONTAINER]
+    gerekli_alanlar: [tier.quantity, quote.case_configuration, quote.pallet_configuration]
+    aciklama: >-
+      Konteynere kac sise girdigi TEDARIKCI BEYANIDIR. Biz doldurmayiz.
+    eylem: SONUC_ZORLA
+    sonuc: INCOMPLETE
+    damga: BLOCKED_INPUT
+
+  - kural_id: QV-4
+    ad: EVIDENCE_ZORUNLULUGU
+    seviye: QUOTE
+    tip: HEPSI_DOLU
+    alanlar: [quote.evidence_id]
+    aciklama: >-
+      CLAUDE.md §1.6 — evidence_id'si olmayan sayi modele GIREMEZ.
+      Teklif belgesi icin kanit karti acilmadan degerlendirme yapilmaz.
+    eylem: SONUC_ZORLA
+    sonuc: INCOMPLETE
+    damga: BLOCKED_INPUT
+
+  - kural_id: QV-5
+    ad: GECERLILIK_SURESI_DOLDU
+    seviye: QUOTE
+    tip: TARIH_GECERLILIGI
+    alan: quote.quote_valid_until
+    aciklama: >-
+      Degerlendirme tarihi `quote_valid_until`i gectiyse teklif artik
+      FIRM degildir; sinif B2B_INDICATIVE'e duser. Bu bir RET DEGILDIR.
+    eylem: SINIF_DUSUR
+    hedef_sinif: B2B_INDICATIVE
+    damga: BLOCKED_INPUT
+
+  - kural_id: QV-6
+    ad: METADATA_DOKUZ_ALAN
+    seviye: TIER
+    tip: HEPSI_DOLU
+    alanlar:
+      - quote.supplier
+      - quote.supplier_id
+      - quote.product
+      - quote.quote_date
+      - tier.tier_code
+    aciklama: >-
+      kalem_defteri.ZORUNLU_ALANLAR ile ayni felsefe: eksik alanli kalem
+      SESSIZCE gecmez. Eksik alan ADIYLA raporlanir.
+    eylem: DAMGA
+    damga: BLOCKED_INPUT
+
+# ---------------------------------------------------------------------
+# 7. INTERNAL_ONLY AYRIMI
+# ---------------------------------------------------------------------
+internal_only:
+  kural: >-
+    Bu semadan uretilen HER degerlendirme satiri INTERNAL_ONLY'dir.
+    Tavan (X/Y), sonuc degeri (STRONG/NEGOTIATE/ABOVE_CEILING/INCOMPLETE),
+    MAX_CIF/MAX_FOB/MAX_EXW ve kur eksenleri TEDARIKCIYE GOSTERILMEZ.
+  gerekce: >-
+    Tavanimizi gostermek pazarligi tersine cevirir: tedarikci fiyatini
+    tavana YAKINSATIR. Ayrica tavan `MODEL_DERIVED / UPPER_BOUND / DRAFT`
+    etiketlidir; disariya verilmesi onu bir TAAHHUT gibi gosterir.
+  dosya_ayrimi:
+    internal_cikti_on_eki: "INTERNAL_ONLY-"
+    internal_cikti_dizini: "80-model/outputs/"
+    tedarikciye_giden_metin: >-
+      YALNIZCA eksik alan talebi uretilebilir; icinde hicbir tavan/sonuc/kur
+      bulunamaz. `disari_giden_metin_denetle()` sizinti taramasi ZORUNLUDUR.
+    yazilamaz_dizinler: ["50-sourcing", "10-evidence", "99-ops", "60-pazar", "70-kanal"]
+
+# ---------------------------------------------------------------------
+# 8. RET YASAGI
+# ---------------------------------------------------------------------
+ret_yasagi:
+  kural: "Bu sema ve motoru `REJECTED` (veya esdegeri) bir sonuc URETEMEZ."
+  gerekce: >-
+    Yatirimci nihai marj esigi HENUZ YOKTUR (OQ-901 / T-851, CRITICAL, OPEN).
+    Esik olmadan "kabul edilemez" denemez. `ABOVE_CEILING` bir GOZLEMDIR:
+    "teklif, mevcut DRAFT ust-sinir modelinin Y bandinin ustundedir".
+    Bu, tedarikcinin elenmesi anlamina GELMEZ; pazarlik ve/veya modelin
+    26 BLOCKED_INPUT kaleminin kapanmasi sonucu degistirebilir.
+  izinli_sonuclar: [STRONG, NEGOTIATE, ABOVE_CEILING, INCOMPLETE]
+  yasakli_sonuclar: [REJECTED, REJECT, RED, KILL, NOT_VIABLE, VIABLE, APPROVED, ONAYLANDI]
+  kod_karsiligi: "teklif_degerlendirme.YasakliSonuc istisnasi"
+
+# ---------------------------------------------------------------------
+# 9. ORNEK BOS TEKLIF — TUM DEGERLER null
+# ---------------------------------------------------------------------
+ornek_bos_teklif:
+  quote:
+    supplier: null
+    supplier_id: null
+    quote_date: null
+    quote_valid_until: null
+    product: null
+    vintage: null
+    ABV: null
+    business_model: null
+    origin_document: null
+    FOB_port: null
+    EXW_place: null
+    MOQ: null
+    MOQ_ikinci_birim: null
+    bottle_weight: null
+    case_configuration: null
+    pallet_configuration: null
+    sample_cost: null
+    certificate_set: null
+    Turkey_availability: null
+    confidence: null
+    evidence_id: null
+    kademeler:
+      - tier_code: V1
+        quantity: 5000
+        incoterm: null
+        incoterm_named_place: null
+        EXW: null
+        FOB: null
+        currency: null
+        payment_terms: null
+        lead_time: null
+        production_time: null
+        label_cost: null
+        label_cost_tek_seferlik: null
+        carton_cost: null
+        quote_class: null
+      - tier_code: V2
+        quantity: 10000
+      - tier_code: V3
+        quantity: 25000
+      - tier_code: V4
+        quantity: 50000
+      - tier_code: FULL_20FT_CONTAINER
+        quantity: null
+
+# ---------------------------------------------------------------------
+# 10. HAVUZ
+# ---------------------------------------------------------------------
+teklifler: []      # 2026-08-10: SIFIR gercek teklif. Uydurulmus ornek EKLENMEZ.
