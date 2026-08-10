@@ -426,6 +426,58 @@ kararlaştırmamıştır** — çünkü bu, kur ve matrah alanının uzmanına a
 
 ---
 
+# §5B — EŞZAMANLILIK BULGUSU *(bu belge yazılırken ortaya çıktı)*
+
+Ticket indeksi dosya sistemiyle karşılaştırıldığında **üçüncü bir kayıt
+sapması** çıktı — ama bu sefer nedeni farklı:
+
+```
+TUR 3A indeksi           : 125 ticket
+Dosya sistemi (derleme 1): 145   -> 8'i bu belgenin actigi, 12'si INDEKSTE YOK
+Dosya sistemi (derleme 2): 148   -> +3 (T-865, T-866, T-867) BU BELGE YAZILIRKEN acildi
+```
+
+**Bu bir "unutuldu" hatası değildir.** `T-821`…`T-823` ve `T-885`…`T-893`,
+TUR 3.25'te **paralel çalışan** `navlun-lojistik-uzmani` ve
+`global-sourcing-kasifi` tarafından açılmıştır. TUR 3.25'te birden fazla
+ajan **eşzamanlı** çalışmaktadır; indeks derlendiği anda doğru olup bir saat
+sonra yanlış olabilir. Onbeşi de indekse eklendi.
+
+## 5B.1 — ⚠ AÇIK `CRITICAL` SAYISI DEĞİŞTİ: **11 → 12**
+
+**`T-885`** (`global-sourcing-kasifi` → başkan, **CRITICAL, OPEN**):
+
+> *"10 tedarikçilik RFQ paketi hazırlandı (2 mail varyantı + response sheet +
+> contact pack). 7 hedef `READY_TO_SEND`. **HİÇBİR MESAJ GÖNDERİLMEDİ.**
+> Fiilî gönderim, her hedef için `RECIPIENT` + `SUBJECT` + `PREVIEW`
+> onayına bağlıdır."*
+
+> ### Bu ticket, `P-6.3`'ün ticket karşılığıdır — ve ajan onu **başkan
+> kuralı koymadan önce** açmıştır.
+> Yani `P-6` kapısı bir başkan icadı değil, sahada **zaten uygulanan**
+> davranışın kurala bağlanmasıdır. Bu, kuralın **uygulanabilirliğine** dair
+> ilk kanıttır.
+
+## 5B.2 — Bu turda açtığım iki ticket **kısmen zaten yapılmış**
+
+| Benim ticket'ım | Paralel ajan karşılığı | Sonuç |
+|---|---|---|
+| **`T-967`** *(sourcing `P-6.2` paketi)* | **`T-885`** — paket hazır, 7 hedef `READY_TO_SEND`; ayrıca `T-886`…`T-893` (kanal/kimlik/numune boşlukları) | Kapsamım **daraldı**: geriye `T-467` soru 3 değerlendirmesi + hacim kademelerinin pakete işlenmesi kalır |
+| **`T-968`** *(forwarder `P-6.2` paketi)* | **`T-821`** — 3 forwarder paketi hazır, gönderilmemiş; **`T-823`** — `T-913` Ayak A'yı ikiye ayırıp cevaplamış | Kapsamım **daraldı**: `T-823` zaten *"aynı kaynaktan yeniden çekme bir okuma işlemidir, dış temas değildir"* diyor |
+| **`T-963`** *(V10K satırı)* | **`T-865`** — `finans-fizibilite` **bağımsız olarak aynı bulguyu** yazmış: *"V2 = 10.000 `country-buying-ceilings.csv` içinde YOK"* | **Çapraz doğrulama.** İki ajan aynı boşluğu birbirinden bağımsız buldu |
+
+**Hiçbir ticket silinmedi.** Örtüşen kapsamlar ticket'ların içinde
+**bağlanarak** işaretlendi; mükerrer iş yapılmasını önleyen şey ticket'ın
+kapatılması değil, **atıflandırılmasıdır.**
+
+⚠ Ve bir gözlem kayda geçirilir: **`T-892`** (gönderici kimlik alanları
+`<COMPANY>`/`<NAME>`/`<EMAIL>`/`<DEADLINE>` **boş**) ile **`T-885`**
+birlikte okunduğunda, paket *"`READY_TO_SEND`"* etiketli olmasına rağmen
+**kimin adına gönderileceği tanımsızdır.** Bu, `P-6.3` önizlemesinin
+**ilk kontrol kalemidir.**
+
+---
+
 # §6 — DEĞİŞMEYENLER *(kayıt)*
 
 | Kalem | Durum |
@@ -433,7 +485,7 @@ kararlaştırmamıştır** — çünkü bu, kur ve matrah alanının uzmanına a
 | Reddedilen ajan bulgusu | **0** |
 | `impact` değiştirilen ticket | **0** |
 | `RESOLVED`/`REJECTED` edilen ticket | **0** |
-| Açık `CRITICAL` ticket | **11** — değişmedi |
+| Açık `CRITICAL` ticket | **12** ⚠ *(11 değil — `T-885` paralel ajan tarafından açıldı; bkz. §5B)* |
 | Eşiğe yazılan sayı | **0** |
 | `karar-gunlugu.md` | **dokunulmadı** |
 | Yeni kanıt kartı | **0** *(kurucu beyanı bir dış olgu değildir)* |

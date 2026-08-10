@@ -89,6 +89,16 @@ kararı bir dış olgu değildir.
 | **P-6.6** | Prensip izni **`G2`'yi AÇMAZ.** `G2`'yi açan şey cevaplardır. |
 | **P-6.7** | `T-884` (RFQ eleme kuralı) kararı ilk `P-6.3` onayından **ÖNCE** kayda geçer. |
 
+> ### ⚠ `P-6.3`'ün ticket karşılığı **zaten açılmıştır: `T-885` (CRITICAL, OPEN)**
+> `global-sourcing-kasifi` TUR 3.25'te paralel olarak **10 tedarikçilik RFQ
+> paketini hazırlamış**, 7 hedefi `READY_TO_SEND` yapmış ve **hiçbir mesaj
+> göndermemiştir** — fiilî gönderimi `RECIPIENT`+`SUBJECT`+`PREVIEW` onayına
+> bağlamıştır. Forwarder tarafının karşılığı **`T-821`**'dir.
+>
+> Yani `P-6` bir başkan icadı değil, sahada **zaten uygulanan davranışın**
+> kurala bağlanmasıdır. **Açık `CRITICAL` sayısı bu nedenle 11 değil,
+> 12'dir.**
+
 ## Z.5 — `CAN DECIDE LATER`'da değişen tek satır
 
 | id | Sürüm 2 | Sürüm 3 |
