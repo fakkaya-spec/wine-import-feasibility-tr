@@ -7,8 +7,8 @@
 
 meta:
   dosya: ruhsat.yaml
-  son_guncelleme: 2026-08-09
-  tur: "TUR 1 — mevzuat-ruhsat-uzmani ilk doldurma"
+  son_guncelleme: 2026-08-10
+  tur: "TUR 1 (ilk doldurma) + TUR 1.5 (yalnizca 'esikler' bolumu ve g0_onerisi guncellendi)"
   durum: KISMEN_DOLU
   para_birimi: TRY
   kdv_durumu: "Tum bedeller KDV HARIC. Bandrol fiyat listesi acikca '%20 KDV haric' der."
@@ -21,19 +21,159 @@ meta:
 g0_onerisi:
   value: G0_PASS
   status: ESTIMATE
-  evidence_id: [EV-2026-08-09-201, EV-2026-08-09-203, EV-2026-08-09-206, EV-2026-08-09-210, EV-2026-08-09-212]
+  tier: T2
+  guncelleme_turu: "TUR 1.5"
+  evidence_id: [EV-2026-08-09-201, EV-2026-08-09-203, EV-2026-08-09-206, EV-2026-08-09-210, EV-2026-08-09-212,
+                EV-2026-08-10-201, EV-2026-08-10-202, EV-2026-08-10-204, EV-2026-08-10-205, EV-2026-08-10-206,
+                EV-2026-08-10-207, EV-2026-08-10-208, EV-2026-08-10-215, EV-2026-08-10-216]
   gerekce: >
     Incelenen T1/T2 mevzuatta Turkiye'de sarap ithalatcisi olmayi YASAKLAYAN hukum
     yoktur. Gerekli belgeler tanimli, 2026 bedelleri resmi tebliglerle bilinir ve
     buyuklukleri karsilanabilir duzeydedir (~151-253 bin TL sabit). Depo sarti
     sozlesmeli dagitim agi ile karsilanabilir.
-  kosullu_mu: true
+    TUR 1.5 EKI: G0'i BLOCKED yapan tek gerekce olan T-201/C-201 (1.000.000 litre/yil
+    esigi) cozulmustur - esik bir ITHALAT/DAGITIM/BEDEL esigi DEGIL, 4250 m.1/3
+    metnindeki bir FIYAT BELIRLEME SERBESTISI kosuludur ve bugun uygulanan olcu
+    1.000.000 degil en cok 600.000 litre/yil'dir. Bes hacim senaryosunun tamami
+    (3.750-75.000 litre/yil) olcunun cok altindadir ve senaryolar arasinda ayrim
+    yaratmaz. Detay: 20-mevzuat/1m-litre-esigi.md
+  kosullu_mu: false
+  kosulsuzluk_kapsami: "YALNIZCA T-201/C-201 boyutu icindir."
   blocked_a_cevirecek_bulgular:
-    - "T-201: 4250 s.K. m.1/3 1.000.000 litre/yil esiginin durgun sarap ithalatina bugun de uygulandiginin teyidi"
+    - "C-252 (LOW): 4250 m.1 son fikra muafiyetinin ithal durgun sarabi kapsamadiginin TADAB gorusuyle teyidi VE ayni anda 'Tekel GM eliyle fiyatlandirma' mekanizmasi icin bir halef merci belirlendiginin tespiti (her IKISI birden gerekir; tek basina hicbiri bloke etmez)"
     - "T-202: Dagitim yetki belgesi inceleme suresinin fiilen 6 ayi asmasi"
+  baskana_uyari: >
+    Bu oneri YALNIZCA T-201/C-201 boyutu icindir. C-203 / T-205 (7584 s.K. satis
+    noktasi marka/ambalaj gorseli yasaginin raf kapsami) CRITICAL ve OPEN kalmaya
+    devam etmektedir; TUR 1.5 mandasi geregi bu turda ELE ALINMAMISTIR. Baskan
+    C-203'u G0 kapsaminda sayarsa G0 BASKA BIR GEREKCEYLE BLOCKED kalir.
   notes: >
     Bu bir ONERIDIR. Nihai karar yatirim-komitesi-baskani'na aittir.
     mevzuat-ruhsat-uzmani kendi basina KILL karari VERMEZ.
+
+# ============================================================================
+# ESIKLER — TUR 1.5'te eklendi (T-201 / C-201 mudahalesi)
+# Ana cikti: 20-mevzuat/1m-litre-esigi.md
+# ============================================================================
+esikler:
+  hacim_esigi_turu:
+    value: FIYATLANDIRMA_SERBESTISI_KOSULU
+    status: ESTIMATE
+    tier: T2
+    evidence_id: EV-2026-08-10-216
+    notes: >
+      Ithalat izni esigi DEGIL, dagitim yetkisi esigi DEGIL, teminat/bedel sinifi DEGIL.
+      4250 m.1/3: esigi asan firma 'fiyat belirlemekte serbesttir'; asamayan firmanin
+      urununun fiyatlandirilmasi/satisi/dagitimi 'Tekel Genel Mudurlugu eliyle' yapilir.
+      Bu mekanizma ikincil mevzuata (Yonetmelik 7.5.6203) AKTARILMAMISTIR.
+      HUKUKI TURETMEDIR, idari makam yorumu DEGILDIR.
+  kanun_metnindeki_olcu_litre_yil:
+    value: 1000000
+    unit: litre/yil
+    status: FACT
+    tier: T1
+    evidence_id: EV-2026-08-10-201
+    effective_date: 2001-01-20
+  uygulanan_olcu_litre_yil:
+    value: 600000
+    unit: litre/yil
+    status: FACT
+    tier: T1
+    evidence_id: [EV-2026-08-10-204, EV-2026-08-10-205]
+    effective_date: 2003-06-06
+    notes: >
+      4619 s.K. Gecici m.1 + Yonetmelik Gecici m.6: kademeli indirim 2006 SONUNDA
+      600.000 litre/yil'da sona ermistir. 2007'den itibaren 600.000'de mi kaldigi
+      yoksa kanundaki 1.000.000'a mi dondugu LAFZEN ACIK DEGIL -> C-251.
+      BU BELIRSIZLIK MODEL ICIN MADDI DEGILDIR (her iki olcude de bes senaryo altta).
+  olcuyu_sifira_indiren_karar_var_mi:
+    value: null
+    status: UNKNOWN
+    tier: T2
+    evidence_id: EV-2026-08-10-214
+    notes: >
+      Negatif arama. mevzuat.gov.tr/resmigazete.gov.tr bu oturumda TLS ile erisilemedi.
+      'Yoktur' seklinde FACT YAZILMAMISTIR. YON: varsa proje LEHINEDIR (esik tamamen kalkar).
+  ithalat_izni_esigi_mi:
+    value: false
+    status: FACT
+    tier: T1
+    evidence_id: EV-2026-08-10-207
+    effective_date: 2015-12-31
+  dagitim_yetkisi_esigi_mi:
+    value: false
+    status: FACT
+    tier: T1
+    evidence_id: EV-2026-08-10-207
+    effective_date: 2015-12-31
+  uretim_tesisi_kapasite_sarti_ithalatciya_uygulanir_mi:
+    value: false
+    status: FACT
+    tier: T1
+    evidence_id: [EV-2026-08-10-201, EV-2026-08-10-202]
+    effective_date: 2001-01-20
+    notes: "m.1/3 c.1'deki 1.000.000 L kapasiteli entegre tesis sarti lafzen yalnizca URETICI firmalar icindir."
+  bedel_sinifi_esigi_litre_yil:
+    value: 20000
+    unit: litre/yil
+    status: FACT
+    tier: T1
+    evidence_id: EV-2026-08-09-206
+    effective_date: 2026-01-01
+    notes: "Sarapta dagitim yetki belgesi maktu asgari bedelinin TEK kirilimi budur. 1.000.000/600.000 ile ilgisi YOKTUR."
+  senaryo_litre_yil:
+    value: [3750, 7500, 18750, 37500, 75000]
+    unit: litre/yil
+    sise_senaryolari: [5000, 10000, 25000, 50000, 100000]
+    status: ESTIMATE
+    tier: T2
+    evidence_id: EV-2026-08-10-215
+    notes: "Hesap: sise adedi x 0,75 litre (750 ml, 00-charter/kapsam.md proje tanimi)."
+  senaryolarin_hicbiri_esigi_asiyor_mu:
+    value: false
+    status: ESTIMATE
+    tier: T2
+    evidence_id: EV-2026-08-10-215
+    notes: "En buyuk senaryo (75.000 L) 600.000 L olcusunun %12,5'i, 1.000.000 L olcusunun %7,5'idir."
+  esige_ulasmak_icin_gereken_sise_yil:
+    olcu_600000: 800001
+    olcu_1000000: 1333334
+    unit: sise/yil (750 ml)
+    status: ESTIMATE
+    tier: T2
+    evidence_id: EV-2026-08-10-215
+  hacimden_bagimsiz_canli_yukumluluk:
+    value: "ulke genelinde her saticinin siparisini YERINDE TESLIM (4250 m.1/3 c.1)"
+    status: FACT
+    tier: T1
+    evidence_id: EV-2026-08-10-201
+    effective_date: 2001-01-20
+    notes: >
+      Bu yukumluluk HACIMDEN BAGIMSIZDIR ve bes senaryonun besinde de gecerlidir.
+      Ikincil mevzuattaki karsiligi DAHA DARDIR: Yonetmelik m.9/2 yalnizca
+      'perakende saticilarin taleplerini zamaninda karsilayacak dagitimi saglamak'
+      der; 'ulke genelinde' ve 'yerinde teslim' ifadelerini ICERMEZ (EV-2026-08-10-212).
+      Bu bir ESIK sorunu degil, bir DAGITIM MALIYETI sorunudur -> kanal-marj-uzmani.
+  artik_yaptirim_mekanizmasi:
+    value: "4733 s.K. m.8 artik fikrasi: uyari -> sure -> BELGE IPTALI"
+    status: FACT
+    tier: T1
+    evidence_id: EV-2026-08-10-210
+    effective_date: 2017-12-24
+    notes: >
+      PROJE ALEYHINE BULGU, GIZLENMEMISTIR. 4250 m.7'de m.1 ihlaline bagli idari
+      para cezasi yoktur (EV-2026-08-10-211), ancak 4733 m.8 sayilmayan tum 4250
+      aykiriliklari icin belge iptali yolunu acik tutar.
+  4250_uygulama_mercii:
+    value: "Tarim ve Orman Bakanligi (TADAB) — 4733 s.K. m.4/B(b)"
+    status: FACT
+    tier: T1
+    evidence_id: EV-2026-08-10-208
+    effective_date: 2017-12-24
+    notes: >
+      'Yaptirim mercii Tekel GM ortadan kalkti, hukum uygulanamaz' argumani T1 ile
+      CURUTULMUSTUR. Ancak m.1/3 c.3'teki TICARI islevin (fiilen fiyatlandiran/satan/
+      dagitan merci) halefi AYRICA UNKNOWN'dir (EV-2026-08-10-214).
 
 belgeler:
   ithalat_yetki_belgesi:
@@ -422,10 +562,18 @@ satis_dagitim_reklam_kisitlari:
     status: FACT
     evidence_id: EV-2026-08-09-224
   dagitim_yukumlulugu:
-    value: "ulke genelinde her saticinin siparisini YERINDE TESLIM; perakendecilerin taleplerini zamaninda karsilama zorunlulugu"
+    value: "4250 m.1/3: ulke genelinde her saticinin siparisini YERINDE TESLIM (hacimden bagimsiz). Ticaret Yon. m.9/2 (DAHA DAR): perakende saticilarin taleplerini zamaninda karsilayacak dagitimi saglamak."
     status: FACT
-    evidence_id: [EV-2026-08-09-224, EV-2026-08-09-227]
-    notes: "4250 m.1/3 + Ticaret Yon. m.9/2. Dagitim maliyet modelini dogrudan etkiler -> kanal-marj-uzmani."
+    tier: T1
+    evidence_id: [EV-2026-08-09-224, EV-2026-08-10-201, EV-2026-08-10-212]
+    effective_date: 2001-01-20
+    duzeltme_turu: "TUR 1.5"
+    notes: >
+      TUR 1 DUZELTMESI: Ticaret Yon. m.9/2'nin 4250 m.1/3'teki 'ulke genelinde
+      yerinde teslim' sartini TEYIT ettigi yazilmisti; metin bunu SOYLEMIYOR.
+      'Ulke genelinde' ve 'yerinde teslim' ifadeleri YALNIZCA 4250 m.1/3'te gecer
+      (EV-2026-08-10-212). Iki metnin YUKU FARKLIDIR ve bu fark dagitim maliyeti
+      tahmininde onemlidir -> kanal-marj-uzmani. EV-2026-08-09-227 SUPERSEDED.
   ambalaj_kisiti:
     value: "5 cl'den kucuk ambalaj yasak. 300 cl ustu yasagi ve CAM ambalaj zorunlulugu Danistay kararlariyla YURUTMESI DURDURULMUS."
     status: FACT

@@ -1,0 +1,591 @@
+# PAZAR GİRDİLERİ
+# Sahibi: turkiye-pazar-kasifi
+#
+# KURAL: evidence_id'si olmayan sayı modele GİREMEZ.
+# KURAL: Bu dosya YALNIZCA gözlem içerir. Marj, kanal iskontosu, ithalatçı
+#        maliyeti ve fiyat merdiveni HESABI bu dosyanın kapsamı DIŞINDADIR
+#        (kanal-marj-uzmani / finans-fizibilite alanı).
+#
+# TUR 1.5 NOTU:
+#   Bu dosya T-903 (yatirim-komitesi-baskani) ile talep edilmiştir. İçeriği
+#   60-pazar/rapor-tur1-turkiye-pazar.md §5 tablosudur; TUR 1.5'te YENİ pazar
+#   araştırması YAPILMAMIŞTIR. Yalnızca iki kanıt kartı düzeltilmiş
+#   (EV-509/510 -> EV-2026-08-10-501/502) ve promosyon sorusu için negatif
+#   arama kaydı eklenmiştir (EV-2026-08-10-504).
+
+meta:
+  dosya: pazar.yaml
+  son_guncelleme: 2026-08-10
+  tur: "TUR 1.5 — turkiye-pazar-kasifi ilk dolum (T-903 düzeltmesi)"
+  durum: KISMI_DOLU
+  rapor: 60-pazar/rapor-tur15-turkiye-pazar.md
+  tur1_raporu: 60-pazar/rapor-tur1-turkiye-pazar.md
+  oq_001: 60-pazar/oq-001-benchmark-dogrulama.md
+  gozlem_tablosu: 60-pazar/raf-fiyat-gozlemleri.csv
+  acik_ticketlar: [T-501, T-502, T-503, T-504, T-505, T-506, T-551]
+  acik_celiskiler: [C-501, C-502, C-503, C-551]
+
+# =====================================================================
+# BAĞLAYICI KATMAN KURALLARI
+# (başkan onayı: 90-karar/tur-1-kanit-kalitesi-denetimi.md §2.4 + T-903)
+# BU KURALLAR MODELİ BAĞLAR. Okumadan bu dosyadan sayı alınamaz.
+# =====================================================================
+katman_kurallari:
+  K1: >
+    L8_METRO_CASH_CARRY != L8_CHAIN_RETAIL. İkisi hiçbir hesapta birbirinin
+    yerine geçemez. L8_CHAIN_RETAIL ayrı bir alandır ve null + UNKNOWN durur.
+  K2: >
+    L8_METRO_CASH_CARRY L7 OLARAK DA KULLANILAMAZ. Gerçek L7
+    (retailer purchase price) ithalatçı-perakendeci pazarlığından doğar;
+    Metro rafından okunan bir sayı L7 proxy'si olarak modele giremez.
+    L7'yi kanal-marj-uzmani kendi kanıtıyla kuracaktır.
+  K3: >
+    Ters model (target shelf price -> max EXW/FOB) hedefini
+    L8_METRO_CASH_CARRY'ye kurarsa, bunun DAHA AGRESİF bir hedef olduğu
+    model çıktısında AÇIKÇA yazılır. Cash & carry formatı yapısı gereği
+    zincir perakendeden ucuzdur.
+  K4: >
+    Bu dosyadaki hiçbir sayı bir MARJ değildir ve marj türetmek için
+    kullanılamaz. Metro 599,90 ile uzman perakende 875 TL arasındaki fark
+    bu ajan tarafından KASTEN hesaplanmamıştır (kanal marjı mı, segment
+    farkı mı bilinmiyor) -> T-506.
+
+# =====================================================================
+# GÖZLEM HAVUZUNUN YAPISI — MODELE OKUNMADAN GİRİLMEZ
+# =====================================================================
+gozlem_havuzu:
+  toplam_gozlem:
+    value: 52
+    unit: adet
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: null
+    notes: "Sayım kaynağı 60-pazar/raf-fiyat-gozlemleri.csv (bu ajanın kendi tablosu). Kanıt kartı gerekmez; kartlar tekil gözlemlerdedir."
+
+  tek_kanal_yogunlasmasi_uyarisi:
+    value: "52 gözlemin 45'i (%86,5) TEK bir online uzman perakendeciden (iyisarap.plus) gelmektedir. Kalan 7 gözlem Metro Türkiye'dir; bunların 2'si mağaza fotoğrafı, 5'i T5 üçüncü taraf içeriktir ve 5'i MODELE GİREMEZ."
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: [EV-2026-08-10-501, EV-2026-08-10-502, EV-2026-08-09-512]
+    notes: >
+      BU EN ÖNEMLİ YAPISAL UYARIDIR. Segment bantları ve "400-800 TL'de ithal
+      şarap yok" bulgusu TEK BİR TİCARİ SİTENİN fiyatlama politikasına
+      dayanmaktadır. Bu, "Türkiye pazarı" değildir. Ayrıca o sitenin online
+      alkol satış yasağı karşısındaki hukuki statüsü UNKNOWN'dır (T-502) —
+      yasal değilse fiyatları pazar temsilcisi sayılamaz.
+      Fiziksel mağaza turu yapılmadan bu dosyanın hiçbir bandı
+      "pazar fiyatıdır" diye okunamaz (OQ-502).
+
+  kanal_dagilimi:
+    value: {"iyisarap.plus (ONLINE)": 45, "Metro Turkiye (CASH_CARRY)": 7}
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: null
+
+  kdv_durumu_bilinen_gozlem_sayisi:
+    value: 2
+    unit: adet
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: null
+    notes: "52 gözlemin yalnızca 2'sinde kdv_durumu KDV_DAHIL (iki benchmark). Kalan 50'de UNKNOWN. Online kanalda sitede KDV ibaresi yoktur."
+
+  online_vs_raf_uyarisi:
+    value: "Online fiyat ile mağaza rafı fiyatı AYNI DEĞİLDİR ve bu dosyada ayrı işaretlenmiştir."
+    status: FACT
+    evidence_id: null
+
+# =====================================================================
+# BENCHMARK 1 — Gold Country California Colombard-Chardonnay 2023
+# =====================================================================
+benchmark_1:
+  sku_adi:
+    value: "Gold Country California Colombard-Chardonnay 2023"
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-501
+
+  marka:
+    value: "Gold Country"
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-501
+
+  mensei:
+    value: "ABD / California"
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-501
+
+  uzum_blend:
+    value: "Colombard-Chardonnay"
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-501
+
+  vintage:
+    value: 2023
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-501
+
+  hacim_ml:
+    value: 750
+    unit: ml
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-501
+
+  abv_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Fotoğrafta okunamadı. gumruk-vergi-uzmani için GTİP alt kırılımı açısından önemli olabilir."
+
+  raf_fiyati_try:
+    value: 599.90
+    unit: TRY
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-501
+    gozlem_tarihi: 2026-08-09
+    ttl: 30d
+    stale_tarihi: 2026-09-08
+    notes: "Fotoğraftan okunmuştur = FACT_FROM_PHOTO. Sayının KDV/katman/promosyon niteliği bu kartla KANITLANMAZ; aşağıdaki ayrı alanlara bakınız."
+
+  katman:
+    value: L8_METRO_CASH_CARRY
+    status: ESTIMATE
+    tier: T4
+    confidence: HIGH
+    evidence_id: [EV-2026-08-09-505, EV-2026-08-09-507]
+    notes: >
+      TÜRETME ZİNCİRİ: (1) EV-505 — Metro Türkiye SSS'si bireysel müşterinin
+      ücretsiz günlük kartla alışveriş yapabildiğini söyler, dolayısıyla bu
+      fiyat fiilen bir tüketici fiyatıdır (L8). (2) EV-507 — Metro broşür
+      künyesi "fiyatlar sevkiyat hizmeti alan müşterilerimiz için geçerli
+      değildir" der, dolayısıyla Metro içinde EN AZ İKİ fiyat rejimi vardır
+      ve bu gözlem MAĞAZA rejimindendir. Sonuç: L8, ama Metro cash & carry
+      L8'i. K1/K2/K3 kuralları uygulanır.
+
+  kdv_durumu:
+    value: KDV_DAHIL
+    status: ESTIMATE
+    tier: T4
+    confidence: HIGH
+    evidence_id: [EV-2026-08-09-503, EV-2026-08-09-504, EV-2026-08-09-505, EV-2026-08-09-506]
+    conflict_id: C-551
+    notes: >
+      TÜRETME ZİNCİRİ: Metro Türkiye'nin 2026 tarihli künyeli broşürlerinde
+      (58 sayfa) HER fiyatın yanında küçük puntoyla "KDV'li" yazar ve tek bir
+      "KDV hariç" ibaresi yoktur (EV-503, EV-504); Metro son tüketiciye
+      açıktır (EV-505); Fiyat Etiketi Yönetmeliği toptan+perakende birlikte
+      yapılan yerlerde perakende hükümlerini uygular (EV-506).
+      NEDEN FACT DEĞİL, ESTIMATE: dayanak BROŞÜRDÜR; şarap reyonundaki
+      FİZİKSEL etiket görülmemiştir ve incelenen broşürlerde SIFIR alkol
+      SKU'su vardır (EV-2026-08-09-514).
+      AÇIK RİSK (C-551, T-551): Metro Türkiye'nin 2008/2009/2010 arşiv ŞARAP
+      kataloglarında fiyatlar "KDV Hariç ve KDV'li" olarak ÇİFTLİ
+      gösterilmiştir (EV-2026-08-10-503). Bu, TUR 1'in "çiftli gösterim
+      yoktur" tespitini SARAP KATEGORİSİ için niteler. Tarih kuralı gereği
+      2026 kanıtı 2010 kanıtını geçer ve bu alan DEĞİŞTİRİLMEMİŞTİR; karar
+      başkanındır. BM_B (KDV hariç) senaryosu ELENMEMELİDİR.
+
+  promosyon_durumu:
+    value: null
+    status: UNKNOWN
+    tier: null
+    confidence: null
+    evidence_id: EV-2026-08-10-504
+    ticket: T-504
+    notes: >
+      KAPANMADI. TUR 1.5'te 8 ayrı masabaşı yolu denenmiş, hepsi kapalı
+      çıkmıştır (EV-2026-08-10-504). Bu SKU'nun 09.08.2026 dışında ikinci
+      bir tarihli fiyat izi hiçbir erişilebilir kaynakta yoktur.
+      MODEL KURALI: benchmark tek sayı olarak kullanılamaz; BM_C
+      ("599,90 TL promosyonlu fiyattır, normal fiyat daha yüksektir")
+      senaryosu çalıştırılmalıdır. T-504 CRITICAL ve OPEN'dır.
+
+  kanal:
+    value: "Metro Turkiye"
+    kanal_tipi: CASH_CARRY
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-501
+
+  magaza:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  sehir:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  ithalatci_distributor:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Şişe arka etiketi görülmedi. OQ-503 / T-405."
+  foto_url:
+    value: PHOTO
+    status: FACT
+    evidence_id: EV-2026-08-09-501
+    notes: "Fotoğraf kullanıcıda; repoda snapshot YOKTUR. Bu bir kanıt zayıflığıdır."
+
+# =====================================================================
+# BENCHMARK 2 — Central Creek (Avustralya)
+# =====================================================================
+benchmark_2:
+  sku_adi:
+    value: "Central Creek"
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-502
+  mensei:
+    value: "Avustralya"
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-502
+  hacim_ml:
+    value: null
+    unit: ml
+    status: UNKNOWN
+    evidence_id: EV-2026-08-09-502
+    notes: "750 ml DOĞRULANMADI. Charter '750 ml civarı' der; bu bir gözlem değildir."
+  vintage:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  abv_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+  raf_fiyati_try:
+    value: 649.90
+    unit: TRY
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-502
+    gozlem_tarihi: 2026-08-09
+    ttl: 30d
+    stale_tarihi: 2026-09-08
+  katman:
+    value: L8_METRO_CASH_CARRY
+    status: ESTIMATE
+    tier: T4
+    confidence: HIGH
+    evidence_id: [EV-2026-08-09-505, EV-2026-08-09-507]
+  kdv_durumu:
+    value: KDV_DAHIL
+    status: ESTIMATE
+    tier: T4
+    confidence: HIGH
+    evidence_id: [EV-2026-08-09-503, EV-2026-08-09-504]
+    conflict_id: C-551
+  promosyon_durumu:
+    value: null
+    status: UNKNOWN
+    evidence_id: EV-2026-08-10-504
+    ticket: T-504
+  kanal:
+    value: "Metro Turkiye"
+    kanal_tipi: CASH_CARRY
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-502
+
+# =====================================================================
+# DİĞER FİYAT KATMANLARI — AYRI TUTULUR (K1)
+# =====================================================================
+l8_chain_retail:
+  deger_try:
+    value: null
+    unit: TRY
+    status: UNKNOWN
+    tier: null
+    confidence: null
+    evidence_id: EV-2026-08-09-511
+    notes: >
+      ZİNCİR MARKET (Migros / Macrocenter / CarrefourSA) TÜKETİCİ RAF FİYATI
+      HİÇ GÖZLEMLENEMEDİ. Nedeni: Türkiye'de alkol tüketiciye internetten
+      satılamaz, dolayısıyla zincirlerin online kanalında şarap fiyatı yoktur.
+      K1 gereği bu alan benchmark_1.raf_fiyati_try ile EŞİTLENEMEZ.
+      BEKLENEN YÖN (ESTIMATE, kanıt DEĞİL): cash & carry formatı yapısı gereği
+      zincir perakendeden ucuz olma eğilimindedir -> gerçek zincir L8'i
+      599,90'ın ÜSTÜNDE olabilir. Bu doğrulanmamıştır. OQ-502.
+
+l7_retailer_purchase_price:
+  deger_try:
+    value: null
+    unit: TRY
+    status: UNKNOWN
+    evidence_id: null
+    notes: >
+      K2: Bu alan bu ajan tarafından DOLDURULAMAZ ve Metro raf fiyatından
+      TÜRETİLEMEZ. kanal-marj-uzmani kendi kanıtıyla kuracaktır.
+
+horeca:
+  fiyat_carpani:
+    value: null
+    unit: x
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Restoran şarap listesi örneklemi alınamadı. TUR 2 işi."
+  hacim_payi_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: null
+  metro_magaza_vs_sevkiyat_fiyat_rejimi:
+    value: "FARKLI — Metro broşür/mağaza fiyatları sevkiyat hizmeti alan müşterilere uygulanmaz"
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-507
+    notes: "FARK ÖLÇÜLMEDİ ve bu ajan tarafından ÖLÇÜLEMEZ (T-506, kanal-marj-uzmani)."
+
+# =====================================================================
+# SEGMENT BANTLARI — TAMAMI ESTIMATE
+# =====================================================================
+segment:
+  fiyat_performans_alt_try:
+    value: 600
+    unit: TRY
+    status: ESTIMATE
+    tier: T4
+    confidence: MEDIUM
+    evidence_id: [EV-2026-08-10-501, EV-2026-08-10-502]
+    notes: >
+      TÜRETME ZİNCİRİ: (1) EV-...-502 (yerli, stokta n=394): 400-600 TL
+      bandında yalnızca 1 SKU, 600-800 TL bandında 25 SKU vardır -> rekabetin
+      fiilen başladığı yer 600 TL'dir. (2) EV-...-501 (ithal, stokta n=80):
+      0-800 TL bandında SIFIR SKU vardır. (3) Benchmark 599,90 TL bu sınırın
+      tam üstünde oturur. Alt sınır bu üç gözlemin kesişiminden seçilmiştir.
+      NEDEN FACT DEĞİL: bant bir GÖZLEM değil, gözlemlerden çekilen bir
+      SINIRDIR ve tek kanala dayanır (bkz. gozlem_havuzu).
+
+  fiyat_performans_ust_try:
+    value: 900
+    unit: TRY
+    status: ESTIMATE
+    tier: T4
+    confidence: MEDIUM
+    evidence_id: [EV-2026-08-10-501, EV-2026-08-10-502]
+    notes: >
+      TÜRETME ZİNCİRİ: (1) EV-...-501: stokta en ucuz ithal şarap 875 TL'dir;
+      800-1000 TL bandında yalnızca 2 ithal SKU vardır -> ithal rekabet ancak
+      ~875 TL'den itibaren başlar. (2) EV-...-502: yerli tarafta 800-1000 TL
+      bandında 43 SKU ile yoğunluk hâlâ yüksektir, 1000 TL üstünde 325 SKU ile
+      açıkça başka bir segmente geçilir. Üst sınır 900 TL, "ithal rekabetin
+      başladığı nokta" ile "yerli yoğunluğun kırıldığı nokta" arasına
+      yerleştirilmiştir.
+      DUYARLILIK: alt/üst sınırların ikisi de tek kanala dayanır; C-501 açıktır.
+
+  benchmark_bandinda_baskin_rakip:
+    value: "YERLİ ÜRETİCİ (ithal değil)"
+    status: FACT
+    tier: T4
+    confidence: MEDIUM
+    evidence_id: [EV-2026-08-10-501, EV-2026-08-10-502]
+    notes: >
+      600-800 TL bandında incelenen kanalda 25 yerli SKU, 0 ithal SKU vardır
+      (Asmadan 649, KA Winery 655, Lermonos 655, Umurbey 659, Nif Bağları 670,
+      Vinkara 710-780, Turasan 758, Çamlıbağ 760-800, Diren 790, Büyülübağ 792).
+      MODEL AÇISINDAN ANLAMI: ithal edilecek ürün, bu bantta ÖTV/gümrük
+      yapısı FARKLI olan yerli üreticiyle yarışır. Bu bir vergi sonucu
+      DEĞİLDİR — vergi farkının büyüklüğü gumruk-vergi-uzmani'nın alanıdır.
+
+  ithal_min_stokta_uzman_kanal_try:
+    value: 875.00
+    unit: TRY
+    status: FACT
+    tier: T4
+    confidence: MEDIUM
+    evidence_id: EV-2026-08-10-501
+    katman: L8_ONLINE_UZMAN_PERAKENDE
+    notes: "AYRI KATMAN: online uzman perakende fiyatıdır; Metro cash & carry ile aynı katman DEĞİLDİR ve karşılaştırılırken bu belirtilmelidir."
+
+  ithal_sku_400_800_uzman_kanal:
+    value: 0
+    unit: adet
+    status: FACT
+    tier: T4
+    confidence: MEDIUM
+    evidence_id: EV-2026-08-10-501
+    conflict_id: C-501
+    notes: "C-501 AÇIK: bulgu tamamen available=true filtresine dayanır. Filtre yanlışsa bu sayı 0 değildir."
+
+  yerli_rakip_sku_600_800:
+    value: 25
+    unit: adet
+    status: FACT
+    tier: T4
+    confidence: MEDIUM
+    evidence_id: EV-2026-08-10-502
+
+  yerli_min_stokta_uzman_kanal_try:
+    value: 460.00
+    unit: TRY
+    status: FACT
+    tier: T4
+    confidence: MEDIUM
+    evidence_id: EV-2026-08-10-502
+    katman: L8_ONLINE_UZMAN_PERAKENDE
+
+# =====================================================================
+# PAZAR HACMİ / YAPISI
+# =====================================================================
+pazar_hacmi:
+  ithalat_hacmi_litre:
+    value: null
+    unit: litre
+    status: UNKNOWN
+    tier: null
+    confidence: null
+    evidence_id: EV-2026-08-09-515
+    notes: >
+      RESMÎ KAYNAKTAN DOĞRULANAMADI. TADAB'ın Resmî İstatistikler sayfası
+      2011-2026 arası yalnızca yakıt biyoetanolü raporu yayınlıyor; Ticaret
+      Bakanlığı sektör PDF'i, TÜİK ve mevzuat.gov.tr HTTP 503 döndü.
+      TUR 1'in EN BÜYÜK UNKNOWN'ı. T-505.
+      MODEL ETKİSİ: pazar büyüklüğü bilinmeden SCALE hedefi doğrulanamaz.
+
+  ithalat_degeri_usd:
+    value: null
+    unit: USD
+    status: UNKNOWN
+    evidence_id: EV-2026-08-09-515
+
+  ithal_pay_pct:
+    value: null
+    unit: "%"
+    status: UNKNOWN
+    evidence_id: EV-2026-08-09-515
+
+  mensei_kirilimi:
+    value: null
+    status: UNKNOWN
+    evidence_id: EV-2026-08-09-515
+
+  trend:
+    value: null
+    status: UNKNOWN
+    evidence_id: EV-2026-08-09-515
+
+# =====================================================================
+# İTHALATÇI / DİSTRİBÜTÖR HARİTASI
+# =====================================================================
+ithalatci_haritasi:
+  konsolidasyon_derecesi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Kamuya açık ithalatçı listesi bulunamadı. T-505."
+
+  dogrulanmis_ithalatci_sayisi:
+    value: 1
+    unit: adet
+    status: FACT
+    tier: T4
+    confidence: MEDIUM
+    evidence_id: EV-2026-08-09-513
+    notes: "Yalnızca Diageo Türkiye doğrulandı (ithal şarap markaları: Cielo, Ruffino, Chateau Bel Air). 1 doğrulanmış ithalatçı bir HARİTA DEĞİLDİR."
+
+  benchmark_sku_ithalatcisi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+    notes: "Gold Country / Central Creek ithalatçısı hiçbir kaynakta bulunamadı. Şişe arka etiketi gerekiyor. OQ-503 / T-405."
+
+# =====================================================================
+# KANAL YAPISI — GÖZLEM
+# =====================================================================
+kanal_yapisi:
+  alkol_online_tuketiciye_satilabilir_mi:
+    value: false
+    status: FACT
+    tier: T4
+    confidence: MEDIUM
+    evidence_id: EV-2026-08-09-511
+    notes: >
+      PAZAR GÖZLEMİ olarak kaydedilmiştir (zincir marketlerin online
+      kanalında şarap fiyatı YOKTUR). HUKUKİ dayanağı bu ajanın alanı
+      DEĞİLDİR -> T-502 (mevzuat-ruhsat-uzmani).
+
+  metro_brosurunde_alkol_sku_sayisi:
+    value: 0
+    unit: adet
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-514
+    notes: "58 sayfalık broşür seti (48 sayfalık 'İçecek Trendleri' katalogu dahil) tarandı: 0 alkollü içki. Alkolde broşür/online fiyat keşfi YAPISAL OLARAK KAPALI."
+
+  alkol_metro_kampanyalarinin_disinda_mi:
+    value: true
+    status: FACT
+    tier: T4
+    confidence: HIGH
+    evidence_id: EV-2026-08-09-508
+    notes: "Ciro primi / çek mekaniği şarapta çalışmayabilir -> T-506 (kanal-marj-uzmani)."
+
+  tekel_bayii_fiyatlari:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  bim_a101_sok_sarap_var_mi:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  bizim_toptan_fiyatlari:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+  duty_free:
+    value: null
+    status: UNKNOWN
+    evidence_id: null
+
+# =====================================================================
+# MODELE GİREMEYECEK KAYITLAR (KARA LİSTE)
+# =====================================================================
+modele_giremez:
+  - evidence_id: EV-2026-08-09-512
+    neden: >
+      T5 içerik çiftliği tablosu (Metro alkol fiyat listesi). Üç site aynı
+      tabloyu kopyalamış, birincil kaynak yok, tarih Ocak 2026.
+      C-503 başkan tarafından RESOLVED yapılmıştır: kayıt kapanır ve bu
+      veri MODELE GİREMEZ. Yalnızca bant işaretidir.
+  - evidence_id: EV-2026-08-09-509
+    neden: "SUPERSEDED — yerine EV-2026-08-10-501 kullanılır."
+  - evidence_id: EV-2026-08-09-510
+    neden: "SUPERSEDED — yerine EV-2026-08-10-502 kullanılır."
+
+# =====================================================================
+# TAZELİK
+# =====================================================================
+tazelik:
+  tum_raf_gozlemleri_stale_tarihi: 2026-09-08
+  metro_brosur_fiili_eskime: "7 gün (broşür dönemi 5-11 Ağustos 2026) — EV-503 / EV-507 pratikte 2026-08-11'de eskimiştir"
+  uyari: >
+    Raf fiyatları hızlı değişir. 2026-09-08 sonrasında bu dosyadaki hiçbir
+    fiyat 99-ops/veri-tazeligi.md üzerinden yeniden doğrulanmadan model
+    çıktısını DRAFT'tan yukarı taşıyamaz.

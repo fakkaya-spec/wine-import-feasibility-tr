@@ -243,3 +243,152 @@ kalan_ticketlar:    T-501 (mevzuat dogrulamasi), T-503 (reklam yasagi), T-504 (i
 **Şarap reyonundaki etiketin, küçük puntolu satırı da okunabilecek şekilde çekilmiş
 ikinci bir fotoğrafı + 2–4 hafta sonra aynı SKU'nun ikinci fiyat gözlemi.**
 Bu ikisi olmadan OQ-001 `RESOLVED` yapılamaz.
+
+---
+---
+
+# EK — TUR 1.5 (2026-08-10): PROMOSYON AYAĞININ SONUCU
+
+```yaml
+tur:              TUR 1.5 (T-903 / T-504 blocker remediation)
+ajan:             turkiye-pazar-kasifi
+tarih:            2026-08-10
+kapsam:           YALNIZCA §5/§6 (promosyon / normal fiyat) ayagi
+```
+
+> **Yukarıdaki TUR 1 içeriği DEĞİŞTİRİLMEMİŞTİR.** Bu bölüm yalnızca ekleme yapar.
+> §1–§4 ve §7–§8'de kapatılmış olan ayaklar (KDV dahil / cash&carry / birim fiyat /
+> `L8_METRO_CASH_CARRY`) TUR 1.5'te **yeniden araştırılmamış ve
+> tartışılmamıştır** — korunmuştur.
+
+---
+
+## E.1 SORU 5/6 — PROMOSYON MU, NORMAL FİYAT MI?
+
+### **CEVAP: `UNKNOWN`. KAPANMADI.**
+
+Tek soru soruldu: `Gold Country California Colombard-Chardonnay 2023, 750 ml —
+599,90 TL` (Metro Türkiye, 09.08.2026)
+
+- normal raf fiyatı mı?
+- promosyon fiyatı mı?
+- kampanya / geçici indirim fiyatı mı?
+
+**Masabaşı kaynaklarla cevaplanamadı. Tahminle kapatılmadı.**
+
+Tam kayıt: `EV-2026-08-10-504` (status: `UNKNOWN`).
+
+---
+
+## E.2 DENENEN 8 YOL VE SONUÇLARI
+
+| # | Yol | Sonuç |
+|---|-----|-------|
+| 1 | Metro dijital fiyat izi — `www.metro-tr.com` (UA değiştirilerek de) | **HTTP 403** |
+| 2 | Metro ürün/fiyat sayfası — `guncelfiyatlar.metro-tr.com` | 301 → `/shop`; **JS SPA kabuğu (3.204 byte)**, sunucu tarafında fiyat render edilmiyor, giriş istiyor |
+| 3 | Metro'nun **açık fiyat API'si** (`/api/bmpl/productlist/products?...&searchText=`) — arşivden tespit edildi | Bugün **404 "not found"**; `horeca` / `metromarkalari` / `olmazsaolmaz` kampanya URL'leri de 404 → endpoint emekliye ayrılmış |
+| 4 | Metro kategori fiyat listeleri `/UrunListeleri/{kampanya}?CategoryNo=NN` | **404** |
+| 5 | Arşivlenmiş fiyat izi — Web Archive, `guncelfiyatlar` `/shop/category/...`, **2026-07-02** snapshot | Yalnızca SPA kabuğu, **fiyat yok** |
+| 6 | Geçmiş kataloglar — Web Archive'da `metro-tr.com` alan adında **20.000 URL** tarandı | Tek şarap fiyat kaynağı: **2008 / 2009 / 2010 şarap katalogları**. Üçünde de `Gold Country` = **0**, `Central Creek` = **0** |
+| 7 | Aynı SKU'nun başka kanaldaki fiyatı — `cimri.com`, `akakce.com` | **HTTP 403** |
+| 8 | Aynı SKU'nun farklı tarihli görünümü — web araması | Yalnızca T5 içerik çiftliği tabloları (`EV-2026-08-09-512`; `C-503` ile kapatıldı, **modele giremez**). Benchmark SKU'ları o tablolarda da **yok** |
+
+### Yapısal sonuç
+
+Benchmark SKU'larının **09.08.2026 dışında ikinci bir tarihli fiyat izi
+hiçbir erişilebilir kaynakta yoktur.** Promosyon/normal ayrımı **tanım gereği
+en az iki tarihli gözlem** veya **etiketin promosyon işaretleri** gerektirir.
+Türkiye'de alkolün broşür/online fiyat iletişimi yapısal olarak kapalı olduğu
+için (`EV-2026-08-09-514`, `EV-2026-08-09-508`) bu veri **hiçbir zaman**
+masabaşı kanallardan gelmeyecektir.
+
+---
+
+## E.3 YAN BULGU — PROMOSYON İHTİMALİNİ ELEMEYEN, ARTIRAN BİR İZ
+
+`EV-2026-08-10-503`: Metro'nun 2008/2009/2010 **şarap kataloglarının** künyesi:
+
+> *"Bu Metropost'taki fiyatlar **03 Aralık – 31 Aralık 2009 tarihleri arasında**
+> tüm Metro Grosmarketler için **geçerlidir ve stoklarla sınırlıdır**"*
+
+Yani Metro'nun **tarihsel** şarap fiyat iletişimi **dönemsel fiyattır**,
+süresiz bir raf fiyatı değildir. Bu, *"Metro şarap rafında kendiliğinden bir
+normal fiyat vardır"* varsayımını **zayıflatır**.
+
+**AMA:** Bu 16–18 yıllık bir kayıttır, 2026 için **kanıt değildir** ve
+promosyon sorusunu **çözmez**. Yalnızca "normal fiyat" kavramının bu kanalda
+otomatik olarak var sayılamayacağını gösterir.
+
+---
+
+## E.4 TUR 1.5'TE ORTAYA ÇIKAN YENİ ÇELİŞKİ — `C-551` (KDV ayağını NİTELER)
+
+Bu tur KDV sonucunu **yeniden araştırmadı**. Ancak `T-504` peşinde bulunan
+şarap katalogları, TUR 1'in **gerekçesine** dokunan bir kayıt içeriyor:
+
+Üç şarap kataloğunun da künyesi:
+> *"Bu Metropost'taki fiyatlar **KDV Hariç ve KDV'li** olarak verilmiştir"*
+
+ve fiyat kutuları fiilen **çifttir**: `131,36 / 155,00 KDV'li`,
+`262,71 / 310,00 KDV'li`, `11,86 / 13,99 KDV'li`, `32,20 / 37,99 KDV'li`
+(oran 1,18 = dönemin KDV oranı).
+
+**Bu, §7'deki *"OQ-001'in temel hipotezi ÇÜRÜDÜ"* tespitini şöyle niteler:**
+Çiftli gösterim, Metro Türkiye'nin **şarap kategorisinde fiilen uyguladığı**
+bir formattı. 2026 genel broşürlerinde yoktur — ama o broşürlerde **hiç alkol
+yoktur**.
+
+**Sonuç DEĞİŞTİRİLMEDİ.** `pazar.yaml`'da `kdv_durumu` hâlâ `KDV_DAHIL`'dir;
+yalnızca `conflict_id: C-551` işareti kondu. Karar başkanındır → **`T-551`**.
+
+**Neden sonuç yine de ayakta (bu ajanın görüşü):**
+gözlenen **her** Metro çiftinde "pazarlama-yuvarlak" sayı **KDV'li** olandır
+(155,00 / 310,00 / 13,99 / 37,99); KDV hariç olan türetilmiş ondalıklıdır.
+`599,90` ve `649,90` pazarlama-yuvarlak sayılardır → KDV'li tarafla
+tutarlıdır. *(599,90 KDV hariç olsaydı brütü 719,88 olurdu — Metro'nun hiçbir
+dönemde kullanmadığı bir bitiş deseni.)* Bu bir **ESTIMATE**'tir, kanıt değil.
+
+---
+
+## E.5 OQ-001 DURUM KAYDI — GÜNCEL (2026-08-10)
+
+```yaml
+durum:              PARTIALLY_RESOLVED     # DEGISMEDI — KAPANMADI
+son_guncelleme:     2026-08-10
+guncelleyen_ajan:   turkiye-pazar-kasifi
+
+kapanan_kisimlar:
+  - soru_1_2_KDV:   "KDV DAHIL"                       # KORUNDU; C-551 ile NITELENDI
+  - soru_3:         "EVET, son tuketiciye acik"       # DEGISMEDI
+  - soru_4:         "EVET, ayni anda cash&carry"      # DEGISMEDI
+  - soru_7:         "Etiketteki ikinci sayi BIRIM (litre) FIYATIDIR"  # KORUNDU
+  - soru_8:         "L8_METRO_CASH_CARRY"             # baskan onayli (denetim §2.4)
+
+acik_kalan_kisimlar:
+  - soru_5_6:       "Promosyon mu normal mi -> UNKNOWN"   # TUR 1.5'te 8 yol denendi, hepsi kapali
+  - soru_8_kismi:   "Zincir market L8'i -> UNKNOWN"       # bu turda arastirilmadi
+  - etiket_bazli_dogrulama: "Sarap reyonunda fiziksel etiket goruntusu YOK"
+
+yeni_kayitlar_tur15:
+  - EV-2026-08-10-503   # 2008/2009/2010 Metro sarap kataloglari - ciftli KDV gosterimi
+  - EV-2026-08-10-504   # promosyon sorusu negatif arama kaydi
+  - C-551               # OPEN  - KDV ayagini niteler
+  - T-551               # OPEN  - baskana tasindi
+
+kapanis_tarihi:     null
+kapatan_ajan:       null
+kalan_ticketlar:    T-501, T-503, T-504 (CRITICAL), T-551
+```
+
+---
+
+## E.6 OQ-001'İ TAM KAPATMAK İÇİN GEREKEN — DEĞİŞMEDİ
+
+**Şarap reyonundaki etiketin küçük puntolu satırları da okunacak şekilde
+çekilmiş fotoğrafı (mağaza + şehir bilgisiyle) + 2–4 hafta sonra aynı SKU'nun
+ikinci fiyat gözlemi + mümkünse kasa fişi.**
+
+TUR 1.5 bu listeye **hiçbir kısayol ekleyememiştir**; aksine, masabaşı
+kanalların tamamının kapalı olduğunu **kanıtlamıştır** (`EV-2026-08-10-504`).
+Bu, kötü bir haber değildir: OQ-001'in kalan maliyeti **~600 TL ve bir mağaza
+ziyaretidir**, yeni bir araştırma turu değil.
