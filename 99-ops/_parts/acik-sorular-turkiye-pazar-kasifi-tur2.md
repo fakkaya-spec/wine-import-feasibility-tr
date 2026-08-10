@@ -81,14 +81,21 @@ evidence:    EV-2026-08-10-553
 ticket:      T-562
 ```
 
-**Soru:** 11 tedarikçinin hiçbirinin ürünü Türkiye'de bulunamadı. Ama private label
+**Soru:** 26 tedarikçinin 25'inin ürünü Türkiye'de bulunamadı. Ama private label
 üreticileri için bu **beklenen** sonuçtur. Doğru soru: *"Türkiye'ye daha önce
 ihracat yaptınız mı, kime, ne zaman, ne hacimde?"*
 
-`tedarikci-havuzu.csv → exported_to_turkey_before` alanı **11/11 satırda UNKNOWN**.
+`tedarikci-havuzu.csv → exported_to_turkey_before` alanı **11/11 satırda UNKNOWN**;
+`supplier-shortlist-v2.csv → turkey_export_experience` alanı da **26/26 satırda
+UNKNOWN** (bir satırda "ABD-TR hattı fiilen yok" notu var, ama tedarikçi düzeyinde
+cevap değil).
 
-**Nasıl kapanır:** RFQ (`global-sourcing-kasifi`). Masabaşından kapanmaz: ticari
-veri sağlayıcıları (volza, exportgenius) bu oturumda **403** döndü.
+**TUR 2'nin somut katkısı:** `SUP-452` Cantina Danese için cevap artık kısmen
+biliniyor — **Türkiye'de kendi markasıyla listelidir** (`EV-2026-08-10-564`).
+Yani en az bir tedarikçide `turkey_export_experience` `UNKNOWN` olmamalıdır.
+
+**Nasıl kapanır:** RFQ (`global-sourcing-kasifi`, `T-562` + `T-565`). Masabaşından
+kapanmaz: ticari veri sağlayıcıları (volza, exportgenius) bu oturumda **403** döndü.
 
 ---
 

@@ -21,9 +21,11 @@
 
 | # | İpucu | evidence | Neden önemli |
 |---|---|---|---|
-| İP-566 | Kısa listedeki **11/11** tedarikçinin Türkiye'de mevcut ithalatçısı **bulunamadı** | `EV-2026-08-10-553` | Distribütörlük müzakeresi için **temiz sayfa** (lehte) ama **pazar validasyonu yok** (aleyhte) |
-| İP-567 | Kısa listenin menşe dağılımı Türkiye kanalının menşe dağılımıyla **örtüşmüyor**: ABD ve Avustralya koleksiyonu **hiç yok**, Portekiz 5/0, Güney Afrika 2/0; buna karşılık Fransa 150 ve İtalya 176 listeleme | `EV-2026-08-10-563` | 11 tedarikçiden 7'si kanalın **sıfıra yakın** menşelerinde. Fırsat mı, talep yokluğu mu — seçim yapılmadı |
-| İP-568 | `tedarikci-havuzu.csv`'de `exported_to_turkey_before` **11/11 satırda UNKNOWN**'dır | — | RFQ'da tarihli/hacimli sorulmalı → `T-562` |
+| İP-566 | Kısa listedeki **25/26** tedarikçinin Türkiye'de mevcut ithalatçısı **bulunamadı** (TUR 1 havuzu 11 + v2'nin 15 yenisi) | `EV-2026-08-10-553`, `EV-2026-08-10-564` | Distribütörlük müzakeresi için **temiz sayfa** (lehte) ama **pazar validasyonu yok** (aleyhte) |
+| **İP-566b** | **`SUP-452` Cantina Danese (RFQ hedefi #2, Model B) Türkiye'de KENDİ MARKASIYLA listeli ve bir ithalatçıya bağlı** (`Midas` kodu, kimlik UNKNOWN) | `EV-2026-08-10-564` | Private label modelinin "tedarikçinin TR'de markası yok" varsayımı bu tedarikçide **yanlış** → münhasırlık / kanal çakışması riski → `T-565` |
+| İP-566c | `T-464`'ün 7 Model A markasının **hiçbiri** bulunamadı (Viña Albali, Mucho Mas, Porta 6, Colombelle, Quinta da Espiga, Particular, Purcari, Parras) | `EV-2026-08-10-564` | Model A hedefleri listeden **düşmez**; ama "markanın TR'deki değeri hazır gelir" argümanı bu 7 marka için **kanıtsızdır** |
+| İP-567 | Kısa listenin menşe dağılımı Türkiye kanalının menşe dağılımıyla **örtüşmüyor**: ABD ve Avustralya koleksiyonu **hiç yok**, Portekiz 5/0, Güney Afrika 2/0; buna karşılık Fransa 150 ve İtalya 176 listeleme | `EV-2026-08-10-563` | Kısa listenin büyük kısmı kanalın **sıfıra yakın** menşelerinde (v2'de ABD 3, PT 2, AU 1, ZA 1, NZ 1, MD 1). Fırsat mı, talep yokluğu mu — seçim yapılmadı |
+| İP-568 | `tedarikci-havuzu.csv → exported_to_turkey_before` **11/11 UNKNOWN**; `supplier-shortlist-v2.csv → turkey_export_experience` **26/26 UNKNOWN** | — | RFQ'da tarihli/hacimli sorulmalı → `T-562`. `SUP-452` için artık kısmen biliniyor (`EV-...-564`) |
 | İP-569 | **Tormentoso ≠ Origin Wine.** Tormentoso MAN Vintners'ındır ve Türkiye'de Kavaklıdere portföyündedir | `EV-2026-08-10-561` | Yanlış eşleşme riskini kapatır |
 | İP-570 | Türkiye'de zaten satılan **giriş-segment ithal markalar** (potansiyel rakip seti): J.P. Chenet, Gato Negro, Santa Helena, Alpaca, Baron de Lestac, Moncigale, La Vieille Ferme, Freschello, Gran Passione, Botter, Luccarelli, Fantini, Mateus, Hans Baer, Chemin des Papes, Imperial Vin, Radacini | `EV-2026-08-10-552`, `-554`, `-557` | Rakip ürünün **menşe ve stil** profili: Fransa/İtalya/Şili/Moldova. Kaynak ülke seçiminde referans |
 
@@ -53,4 +55,5 @@
 |---|---|---|---|
 | İP-575 | `pazar.yaml → ithalatci_haritasi.dogrulanmis_ithalatci_sayisi = 1` artık **eskimiştir**; TUR 2'de 4 doğrulanmış grup var. **Bu ajan dosyayı değiştirmedi** (talimat: pazar.yaml'a dokunma) | `EV-2026-08-10-554/555/556` | Merge kararı senin |
 | İP-576 | `pazar.yaml → kanal_yapisi.bim_a101_sok_sarap_var_mi` **UNKNOWN kalmalıdır**; ŞOK online 0 sonucu mağaza rafını kanıtlamaz | `EV-2026-08-10-558` | Yanlış kapatma riski |
-| İP-577 | `raf-fiyat-gozlemleri.csv`'ye eklenen 62 satır **raf fiyatı değildir** (`ONLINE_LISTING_STOKTA_YOK`, `status=UNKNOWN`). Toplam gözlem sayısı 52 → 116 oldu ama **model girdisi sayısı artmadı** | `EV-2026-08-10-552` | `gozlem_havuzu.toplam_gozlem` merge edilirken bu ayrım korunmalı |
+| İP-577 | `raf-fiyat-gozlemleri.csv`'ye eklenen 65 satırın **63'ü raf fiyatı değildir** (`ONLINE_LISTING_STOKTA_YOK`, `status=UNKNOWN`). Toplam gözlem 52 → 117 oldu ama **model girdisi sayısı artmadı** | `EV-2026-08-10-552`, `EV-2026-08-10-564` | `gozlem_havuzu.toplam_gozlem` merge edilirken bu ayrım korunmalı |
+| İP-578 | `T-464` **ANSWERED** (global-sourcing → bu ajan). Cevap `99-ops/tickets/T-464.md` içindedir; başkan onayı bekliyor | `EV-2026-08-10-564` | Gate takibi |
