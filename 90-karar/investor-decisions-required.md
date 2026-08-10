@@ -1,12 +1,23 @@
 # INVESTOR DECISIONS REQUIRED BEFORE TUR 3B
 
+> ## SÜRÜM 2 — **SADELEŞTİRİLMİŞ** (TUR 3A, 2026-08-10)
+> Sürüm 1 (TUR 2.5) yatırımcıya **16 eşik + 8 girdi = 24 kalemlik** bir liste
+> sunuyordu. **Bu bir anketti, bir karar talebi değil.**
+> Sürüm 2 listeyi **`MUST DECIDE NOW` = 3 kaleme** indirir.
+> **Sürüm 1'in tamamı silinmemiştir** — `EK-A` … `EK-E` olarak korunmuştur ve
+> `CAN DECIDE LATER` bölümü oraya işaret eder.
+
 ```yaml
 belge:                  investor-decisions-required
+surum:                  2
 yazan:                  yatirim-komitesi-baskani
 tarih:                  2026-08-10
-tur:                    TUR 2.5 KAPANIS
-kapsam:                 "OQ-901'in gorunur hale getirilmesi — yatirimcidan gereken
-                         ESIKLERIN ve ESIK DISI GIRDILERIN TAM LISTESI"
+tur:                    TUR 3A  (surum 1: TUR 2.5 KAPANIS)
+kapsam:                 "OQ-901'in CEVAPLANABILIR hale getirilmesi —
+                         MUST DECIDE NOW / CAN DECIDE LATER ayrimi"
+onceki_kapsam:          "16 esik + 8 esik disi girdi (TUR 2.5) — EK'te KORUNDU"
+must_decide_now:        3
+can_decide_later:       21    # 15,5 esik + 5,5 girdi (D-14 ikiye bolundu)
 karar_iceriyor_mu:      false      # YATIRIM karari icermez
 esik_degeri_yazildi_mi: false      # HICBIR ESIGE SAYI YAZILMADI
 arastirma_yapildi_mi:   false      # CLAUDE.md §1.16
@@ -15,7 +26,9 @@ ajan_cagrildi_mi:       false
 yeni_kanit_uretildi_mi: false
 karar_gunlugune_dokunuldu_mu: false
 iliskili_oq:            OQ-901
-iliskili_ticket:        [T-851, T-852, T-912, T-104, T-604, T-857, T-859, T-467, T-304]
+iliskili_ticket:        [T-851, T-852, T-912, T-104, T-604, T-857, T-859, T-467,
+                         T-304, T-871, T-944, T-951, T-952, T-953, T-954]
+yeni_kapi:              P-5   # POST-OUTPUT THRESHOLD damgasi — T-954
 ```
 
 > ## BU BELGE BİR KARAR DEĞİL, BİR **KARAR TALEBİDİR**

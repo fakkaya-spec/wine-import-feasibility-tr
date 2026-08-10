@@ -1,18 +1,29 @@
 # RFQ TEMPLATE — Request for Quotation
 
 > **Sahibi:** `global-sourcing-kasifi`
-> **Sürüm:** v2.1 — TUR 1.5 alan kontrolü (25 zorunlu alan) sonrası tamamlandı
+> **Sürüm:** v2.2 — TUR 3A: **8 teknik alan zorunlu cevap alanına çevrildi (M1…M8)**
 > **Durum:** `READY_TO_SEND` (içerik olarak). **BU TURDA GÖNDERİLMEDİ VE GÖNDERİLMEZ.**
 > Fiili gönderim yalnızca karar `TEST` veya `IMPORT PILOT` ise, TUR 7'de yapılır.
 >
 > `<>` içindeki alanlar gönderim öncesi doldurulur. Doldurulmadan gönderilirse RFQ geçersizdir.
 >
+> **v2.2'de değişen:** 8 teknik alan — **ABV · şişe ağırlığı · koli konfigürasyonu ·
+> palet konfigürasyonu · etiket gereksinimleri · menşe belgesi · sertifika seti ·
+> Türkiye ihracat geçmişi** — cevapsız bırakılabilir sorular olmaktan çıkarılıp
+> **`[MANDATORY]` boş bırakılamaz alan** hâline getirildi. Bunlar **yeni soru
+> değildir**; mevcut soruların kabul edilebilir cevap formatı tanımlandı ve
+> cevapsızlığın teklife ne yaptığı üreticiye **önceden yazılı olarak** bildirildi.
+> SUMMARY SHEET **S1–S27**'ye çıktı (S26 ve S27 eklendi; ikinci bir paralel liste
+> **yaratılmadı**).
+> Gerekçe, kabul formatı ve cevapsızlık kuralı: **`50-sourcing/rfq-zorunlu-alanlar.md`**.
+>
 > **v2.1'de eklenen/genişletilen alanlar:** boş ve dolu şişe ağırlığı (1.14, 1.15),
 > Incoterms® 2020 kabiliyeti (3.16), lead time'ın üretim/evrak/gemi kırılımı (3.17),
 > kuru malzeme birim maliyet kırılımı — **karton/koli ve etiket dahil** (3.18, 3.19),
 > private label etiket maliyeti tek seferlik + tekrarlayan (4.13), ve cevabın CSV'ye
-> birebir oturmasını sağlayan **SUMMARY SHEET (S1–S25)**.
-> Alan alan denetim: `50-sourcing/rfq-alan-kontrolu.md`.
+> birebir oturmasını sağlayan **SUMMARY SHEET**.
+> Alan alan denetim (v2.1 dönemi, S1–S25 numaralandırmasına göre yazılmıştır):
+> `50-sourcing/rfq-alan-kontrolu.md`.
 
 ---
 
@@ -42,6 +53,20 @@
 12. **Üretim süresi ile toplam lead time ayrı alanlardır** (3.17a vs 3.11). TUR 1'de
     gözlenen 28–42 gün **yalnızca üretim** süresidir; navlun hariçtir. İkisi
     karıştırılırsa `peak_cash_requirement` yanlış hesaplanır.
+13. **`[MANDATORY]` işaretli 8 alan (M1…M8) boş bırakılamaz.** Bunlar SUMMARY
+    SHEET'in **S5, S7, S8, S9, S23, S24, S26, S27** satırlarıdır. Kabul edilebilir
+    format, reddedilen cevap kalıpları ve **cevapsızlık kuralı** tek yerde
+    tanımlıdır: **`50-sourcing/rfq-zorunlu-alanlar.md`**. Bu dosya bu şablonun
+    ayrılmaz parçasıdır; şablon onsuz değerlendirilemez.
+14. **Cevapsızlık kuralı gönderimden ÖNCE başkan onayı gerektirir** (`T-884`).
+    Kural, bugünkü doluluk oranıyla (M2 şişe ağırlığı: 26/26 `UNKNOWN`) uygulanırsa
+    **kısa listenin tamamını değerlendirme dışı bırakabilir.** Bu bir tasarım
+    tercihidir, ama bedeli olan bir tercihtir ve tek başına bu ajanın kararı değildir.
+15. **Eleme kuralı 8 alanın hepsinde aynı değildir.** M2/M3/M4 cevapsızsa teklif
+    **karşılaştırılamaz** (EXW/FOB → CIF köprüsü kurulamaz). M6 cevapsızsa teklif
+    elenmez, **`DOC_FAIL` varsayımıyla cezalı** değerlendirilir. M1/M5/M7/M8
+    cevapsızsa teklif karşılaştırmaya girer, **etiketlenir**. Ayrıntı:
+    `rfq-zorunlu-alanlar.md` §4.2.
 
 ### Soru → CSV kolonu / YAML alanı eşlemesi (denetim için)
 
@@ -55,15 +80,18 @@ modele yalnızca **seçili tedarikçi** belirlendikten sonra taşınır).
 | 1.1 | `product_type`, `brand_name` | — |
 | 1.2 | `grape_blend` | — |
 | 1.3 | `vintage` | — |
-| 1.4 | `abv_pct` | — |
+| **1.4 · `[MANDATORY]` M1** | `abv_pct` | `urun.yaml → urun.abv_pct` |
 | 1.7 | `volume_ml` | — |
-| **1.14** | `empty_bottle_weight_g` *(yeni kolon)* | — |
-| **1.15** | `filled_bottle_weight_g` *(yeni kolon)* | — |
-| 2.1 | `bottles_per_case` | — |
-| 2.2 | `case_gross_weight_kg` | — |
-| 2.3 | `case_dims_cm` | — |
-| 2.5 | `cases_per_pallet` | — |
-| 2.7 | `pallet_gross_weight_kg` | — |
+| **1.14 · `[MANDATORY]` M2** | `empty_bottle_weight_g` *(yeni kolon)* | `urun.yaml → sise_spesifikasyonu.bos_sise_agirligi_g` |
+| **1.15 · `[MANDATORY]` M2** | `filled_bottle_weight_g` *(yeni kolon)* | `urun.yaml → sise_spesifikasyonu.dolu_sise_brut_agirligi_g` |
+| **1.17 · `[MANDATORY]` M2** | `bottle_form_dims` *(yeni kolon)* | `lojistik.yaml → urun_fizik.paketli_sise_hacim_m3` (girdi) |
+| **2.1 · `[MANDATORY]` M3** | `bottles_per_case` | `lojistik.yaml → urun_fizik.koli_formati` |
+| **2.2 · `[MANDATORY]` M3** | `case_gross_weight_kg` | `lojistik.yaml → urun_fizik.koli_brut_agirlik_kg` |
+| **2.3 · `[MANDATORY]` M3** | `case_dims_cm` | `lojistik.yaml → urun_fizik.paketli_sise_hacim_m3` |
+| **2.5 · `[MANDATORY]` M4** | `cases_per_pallet` | `lojistik.yaml → urun_fizik.palet_basina_sise.*` |
+| **2.6 · `[MANDATORY]` M4** | `pallet_type_ispm15` *(yeni kolon)* | `lojistik.yaml → konteyner.palet_sayisi.*` (hangi senaryo) |
+| **2.7 · `[MANDATORY]` M4** | `pallet_gross_weight_kg` | `lojistik.yaml → urun_fizik.yuklu_palet_brut_kg.*`, `.yuklu_palet_yukseklik_mm` |
+| **2.8 · `[MANDATORY]` M4** | — (konteyner başına koli) | `lojistik.yaml → konteyner.sise_kapasitesi_*` çapraz kontrol |
 | 2.10 | `loading_port` *(yeni kolon)* | `fiyat.fob_per_sise.yukleme_limani` |
 | 3.1 | `price_value` + `price_currency`, `price_unit` (incoterm = **EXW**) | `fiyat.exw_per_sise` (**L0**) |
 | 3.2 | `price_value` + `price_currency`, `price_unit` (incoterm = **FOB**) | `fiyat.fob_per_sise` (**L1**) |
@@ -81,21 +109,43 @@ modele yalnızca **seçili tedarikçi** belirlendikten sonra taşınır).
 | **3.18** | `carton_cost_per_bottle`, `label_cost_per_bottle` *(yeni kolonlar)* | — |
 | **3.19** | — (koli konfigürasyonu değişikliğinin fiyat etkisi) | — |
 | 4.1 / 4.2 | `private_label_capable` | `private_label.mumkun_mu`, `.min_siparis_sise` |
-| 4.4 / 4.5 / 4.6 | `label_customization` | `private_label.turkce_arka_etiket_menside_uygulanabilir_mi` (4.6) |
+| 4.4 / 4.5 | `label_customization` | — |
+| **4.6 · `[MANDATORY]` M5** | `label_customization` | `private_label.turkce_arka_etiket_menside_uygulanabilir_mi` |
 | **4.7 / 4.13** | `label_cost_per_bottle` *(yeni kolon)* | `private_label.etiket_tasarim_maliyeti` |
 | 4.11 | — | `private_label.ek_lead_time_gun` |
-| 6.1 | `origin_proof_doc` | `belgeler.mense_ispat_belgesi` |
-| 6.2 / 6.3 | `analysis_certificates` | `belgeler.analiz_sertifikasi` |
-| 6.6 | `exported_to_turkey_before` | `risk.turkiyeye_ihracat_gecmisi` |
+| **6.1 · `[MANDATORY]` M6** | `origin_proof_doc` | `belgeler.mense_ispat_belgesi` |
+| **6.13 · `[MANDATORY]` M6** | `origin_commitment` *(yeni kolon)* | `belgeler.mense_ispat_belgesi` (taahhüt bacağı) |
+| 6.2 | `origin_proof_doc` (tercihsiz) | — |
+| **6.3 / 6.4 / 6.5 / 6.10 / 6.11 · `[MANDATORY]` M7** | `analysis_certificates` | `belgeler.analiz_sertifikasi`; `ruhsat.yaml → analiz_laboratuvar.*` |
+| **6.6 · `[MANDATORY]` M8** | `exported_to_turkey_before` | `risk.turkiyeye_ihracat_gecmisi` |
 | 6.7 | `export_markets` | — |
+| **6.8 / 6.9 · `[MANDATORY]` M5** | `label_customization` | `ruhsat.yaml → urun_uygunlugu.*`; `lojistik.yaml → bandrolleme_operasyonu.*` |
 | 7.1 | `sample_sent` | — |
 | 8.1 / 8.7 | `supplier_name`, `contact_channel`, `country`, `region` | `secili_tedarikci.supplier_name`, `.ulke` |
 | 8.3 | `annual_capacity_bottles` (çapraz kontrol: 3.12 ile aynı olmalı) | `siparis_kosullari.yillik_kapasite_sise` |
 
 > **Yeni CSV kolonları:** `empty_bottle_weight_g`, `filled_bottle_weight_g`,
-> `loading_port`, `production_time_days`, `carton_cost_per_bottle`,
-> `label_cost_per_bottle`. Bu kolonlar **teklif geldiğinde** `tedarikci-havuzu.csv`'ye
-> eklenir; teklif yokken tüm satırlar `UNKNOWN` olacağı için bu turda eklenmemiştir.
+> `bottle_form_dims`, `pallet_type_ispm15`, `origin_commitment`, `loading_port`,
+> `production_time_days`, `carton_cost_per_bottle`, `label_cost_per_bottle`.
+> Bu kolonlar **teklif geldiğinde** `tedarikci-havuzu.csv`'ye eklenir; teklif
+> yokken tüm satırlar `UNKNOWN` olacağı için bu turda eklenmemiştir.
+
+### Zorunlu alan haritası — M1…M8 (özet)
+
+| Kod | Alan | SUMMARY SHEET | Detay soru | Cevapsızlık sonucu |
+|---|---|---|---|---|
+| **M1** | ABV | **S5** | 1.4 | `PRODUCT_SPEC_UNVERIFIED` (elenmez) |
+| **M2** | Şişe ağırlığı (boş + dolu + form/ölçü) | **S7** | 1.14, 1.15, 1.17 | **DEĞERLENDİRME DIŞI** |
+| **M3** | Koli konfigürasyonu | **S8** | 2.1–2.4 | **DEĞERLENDİRME DIŞI** |
+| **M4** | Palet konfigürasyonu | **S9** | 2.5–2.9 | **DEĞERLENDİRME DIŞI** |
+| **M5** | Etiket gereksinimleri (uyarlama kabiliyeti) | **S26** | 4.6, 6.8, 6.9 | `LABEL_PATH_UNVERIFIED`; L5 kalemi `UNKNOWN` taşınır |
+| **M6** | Menşe ispat belgesi **taahhüdü** | **S27** | 6.1, 6.13 | **CEZALI** — `DOC_FAIL` varsayımı (**−%11,765 tavan**) |
+| **M7** | Sertifika seti | **S23** | 6.3–6.5, 6.10, 6.11 | `PILOT_INELIGIBLE` (elenmez) |
+| **M8** | Türkiye ihracat geçmişi | **S24** | 6.6, 5.2, 5.3 | `EXECUTION_RISK_UNVERIFIED` (elenmez) |
+
+> **M8 hiçbir hesabı `UNKNOWN` döndürmez** — sayısal model girdisi beslemez,
+> yürütme riski göstergesidir. Bu bilinçli olarak yazılmıştır: her alana aynı
+> ağırlığı vermek, gerçekten hesap kıran alanların (M2/M3/M4/M6) ağırlığını yok eder.
 
 ---
 
