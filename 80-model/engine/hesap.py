@@ -247,6 +247,10 @@ def ters_model(
     veri: dict[str, Any],
     hedef_raf_fiyati: Decimal | None = None,
     benchmark_senaryo: str | None = None,
+    kanal: "Any | None" = None,
+    country: str | None = None,
+    l5_kalemleri: "list[Any] | None" = None,
+    **kw: Any,
 ) -> ModelSonucu:
     """
     PROJENİN ASIL SORUSU:
@@ -259,8 +263,61 @@ def ters_model(
     çalıştırılamaz; BM_A (KDV dahil) ve BM_B (KDV hariç) senaryoları
     AYRI AYRI çalıştırılır ve fark raporlanır.
 
-    TUR 0 DAVRANIŞI: hesap yapmaz.
+    TUR 2.5 DAVRANIŞI:
+    `hedef_raf_fiyati` + `kanal` + `country` + `l5_kalemleri` verilirse GERÇEK
+    ters zincir `ters_model.ters_zincir()` üzerinden çalıştırılır (R1..R11).
+    Aksi hâlde eski iskelet davranışı korunur ve UNKNOWN döner.
     """
+    if hedef_raf_fiyati is not None and kanal is not None and country is not None:
+        from ters_model import ters_zincir  # yerel import — döngüsel bağımlılık yok
+
+        ts = ters_zincir(
+            veri.get("vergi.yaml") or {},
+            l8_kdv_dahil=hedef_raf_fiyati,
+            kanal=kanal,
+            country=country,
+            l5_kalemleri=l5_kalemleri or [],
+            **kw,
+        )
+        sonuc = ModelSonucu(
+            hesaplandi=ts.hesaplandi,
+            status=Status.UNKNOWN if not ts.hesaplandi else Status.ESTIMATE,
+            yon="REVERSE",
+            senaryo_id=benchmark_senaryo,
+        )
+        for katman in KATMAN_SIRASI:
+            sonuc.katmanlar[katman] = KatmanDegeri(katman=katman, status=Status.UNKNOWN)
+        eslesme = {
+            Katman.L2_CIF: ts.cif_try_max_upper_bound,
+            Katman.L3_PRE_TAX_LANDED: ts.l3_pre_tax_landed_max,
+            Katman.L4_POST_TAX_LANDED: ts.l4_econ_max,   # l4_econ — l4_cash AYRI
+            Katman.L5_IMPORTER_COST: ts.l5_max,
+            Katman.L6_IMPORTER_SELLING_PRICE: ts.l6,
+            Katman.L7_RETAILER_PURCHASE_PRICE: ts.l7_eff,
+            Katman.L8_CONSUMER_SHELF_PRICE: ts.l8_kdv_dahil,
+        }
+        for k, val in eslesme.items():
+            sonuc.katmanlar[k] = KatmanDegeri(
+                katman=k, value=val, currency="TRY",
+                status=Status.ESTIMATE if val is not None else Status.UNKNOWN,
+            )
+        sonuc.katmanlar[Katman.L4_POST_TAX_LANDED].notlar.append(
+            f"l4_econ (KDV HARIC). l4_cash = {ts.l4_cash_max} AYRI ALANDIR, "
+            f"TOPLANMAZ (R7-K3 / RC3)."
+        )
+        sonuc.kdv = KdvPerspektifi(
+            indirilebilir_mi=True,
+            ekonomik_maliyete_giren_tutar=Decimal("0"),
+            odeme_ani="gumrukte, beyanname tescilinde",
+            nakit_cikisi_tutari=ts.kdv_ithal_nakit,
+            status=Status.FACT,
+            evidence_ids=["EV-2026-08-10-101", "EV-2026-08-10-102", "EV-2026-08-10-103"],
+        )
+        sonuc.eksik_girdiler.extend(ts.eksik_girdiler)
+        sonuc.uyarilar.extend(ts.uyarilar + ts.etiketler)
+        sonuc.kullanilan_evidence_ids.extend(ts.kullanilan_evidence_ids)
+        return sonuc
+
     sonuc = ModelSonucu(
         hesaplandi=False,
         status=Status.UNKNOWN,

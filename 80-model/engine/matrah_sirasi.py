@@ -26,6 +26,8 @@ from decimal import Decimal
 from enum import Enum
 from typing import Any
 
+from otv_zaman_serisi import OtvOkumasi, otv_maktu  # noqa: E402
+
 
 # ---------------------------------------------------------------------------
 # Statü etiketleri — CLAUDE.md §3
@@ -127,6 +129,8 @@ class MatrahSonucu:
     kullanilan_evidence_ids: list[str] = field(default_factory=list)
     eksik_girdiler: list[str] = field(default_factory=list)
     uyarilar: list[str] = field(default_factory=list)
+    # T-921: OTV zaman serisi okumasi AYRI bir alan olarak tasinir
+    otv_okumasi: OtvOkumasi | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -185,6 +189,8 @@ def _dec(v: Any) -> Decimal | None:
 def hesapla_vergi_zinciri(
     cif_degeri: Decimal | None,
     vergi_yaml: dict[str, Any],
+    otv_senaryo: str | None = None,
+    lambda_katsayisi: Decimal | None = None,
 ) -> MatrahSonucu:
     """
     CIF (L2) girdisinden başlayarak vergi zincirini hesaplar.
@@ -218,6 +224,37 @@ def hesapla_vergi_zinciri(
         sonuc.eksik_girdiler.append(
             "vergi.yaml/meta.model_hedef_tarihi = null "
             "-> Hangi tarihte gecerli oranlarin kullanilacagi belirsiz."
+        )
+
+    # -----------------------------------------------------------------------
+    # T-921 (CRITICAL) — UFUK DENETIMI
+    # -----------------------------------------------------------------------
+    # ONCEKI DAVRANIS: yukaridaki `is None` kontrolu TEK tarih denetimiydi ve
+    # model_hedef_tarihi doldurulunca SUSUYORDU. Engine `otv_maktu_zaman_serisi`
+    # blogunu HIC OKUMUYORDU. Asagidaki blok o bosluğu kapatir:
+    #   - `otv_maktu(t)` fonksiyonu seriden okur (engine_okuma_kurali),
+    #   - t > son_gozlem_gecerlilik_ufku ve acik senaryo bayragi yoksa UNKNOWN,
+    #   - model_hedef_tarihi_status != FACT ise cikti etiketlenir.
+    otv_okumasi = otv_maktu(vergi_yaml, otv_senaryo=otv_senaryo,
+                            lambda_katsayisi=lambda_katsayisi)
+    sonuc.otv_okumasi = otv_okumasi
+    sonuc.eksik_girdiler.extend(otv_okumasi.eksik_girdiler)
+    sonuc.uyarilar.extend(otv_okumasi.uyarilar)
+    sonuc.uyarilar.extend(otv_okumasi.etiketler)
+    if otv_okumasi.ufuk_asildi_mi and not otv_okumasi.hesaplandi:
+        sonuc.uyarilar.append(
+            "T-921 KAPISI: model_hedef_tarihi ufuk otesindedir ve acik bir OTV "
+            "senaryo bayragi verilmemistir -> OTV UNKNOWN. Bu bir ariza degil, "
+            "CLAUDE.md §12 kilididir."
+        )
+
+    mht_status = meta.get("model_hedef_tarihi_status")
+    if meta.get("model_hedef_tarihi") is not None and mht_status != "FACT":
+        sonuc.uyarilar.append(
+            f"model_hedef_tarihi={meta.get('model_hedef_tarihi')} "
+            f"status={mht_status or 'YOK'} -> cikti "
+            f"'{mht_status or 'BILINMEYEN'} uzerinden' etiketiyle raporlanir "
+            f"(T-921 kabul kriteri #4, T-153)."
         )
 
     if cif_degeri is None:
