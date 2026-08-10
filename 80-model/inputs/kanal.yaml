@@ -124,7 +124,310 @@ merdiven_denklemi:
       d (UNKNOWN), f_per_bottle (UNKNOWN). Model bunlari senaryo olarak
       calistirmalidir; tek sayiya kilitlenmemelidir.
 
+  # -------------------------------------------------------------------
+  # TUR 3A DUZELTMESI — merdiven_denklemi.ileri/ters YETERSIZDIR.
+  # Tam kapali formul seti: 70-kanal/kanal-katman-matrah-haritasi.md §9
+  # -------------------------------------------------------------------
+  tur3a_duzeltilmis_ileri: |
+    K1  L8_net       = L8_gross / (1 + v)          [KDV: ZINCIRDEKI TEK BOLME]
+    K2  L7_eff       = L8_net * (1 - m)            [CHAIN/TEKEL: margin on selling price]
+        L7_eff       = L8_net / k                  [HORECA: carpan, matrah L7_eff]
+    K3  f_per_bottle = F_total / Q_ithal           [<-- TUREVDIR, GIRDI DEGILDIR]
+    K4  L6           = (L7_eff + f_per_bottle + D_fix/Q_ithal) / (1 - d_var)
+    K5  L5_max       = L7_eff - mu_kesintisi - m_dist_kesintisi - iade_kaybi
+    K6  L6_gross     = L6 * (1 + v)                [ALACAK TUTARI — vade/peak_cash]
+  tur3a_r8k_assertion: |
+    # T-942'nin onerdigi hali DEGIL — bkz. T-619
+    K1' L7_eff_geri = L5_max + mu_kesintisi + m_dist_kesintisi + iade_kaybi
+    K2' L8_net_geri = L7_eff_geri / (1 - m)        [HORECA: * k]
+    K3' L8_geri     = L8_net_geri * (1 + v)
+    assert | L8_geri - L8_gross | < 0,01 TL
+    # L6 BU ZINCIRDE HIC KULLANILMAZ.
+  tur3a_r8k_uyarisi:
+    status: CRITICAL
+    ticket: T-619
+    notes: >
+      T-942'nin onerdigi 'adim K1: L6_geri = (L5_max + mu*L6)' satirinda ETIKET
+      YANLISTIR. L5_max + mu*L6 ifadesi L6'ya DEGIL L7_eff'e esittir; L6
+      etiketiyle devam edilince K2'de *(1-d)-f IKINCI KEZ uygulanir ve assertion
+      TERSINE DONER: DOGRU formul 735,08 TL uretip REDDEDILIR, NAIF formul
+      799,00 TL uretip KABUL EDILIR. Yani birebir kodlanirsa R5 duzeltmesini
+      GERI ALIR. T-942'nin TESHISI DOGRUDUR; hatali olan yalnizca K1 etiketidir.
+
+# =====================================================================
+# TUR 3A — KALEM x KATMAN x MATRAH HARITASI (METADATA; DEGER ICERMEZ)
+# Tam belge: 70-kanal/kanal-katman-matrah-haritasi.md
+# Her kalem ON alanla tanimlidir (M7). Degerler ilgili kanal bloklarindadir.
+# =====================================================================
+kalem_katman_matrah_haritasi:
+  belge: 70-kanal/kanal-katman-matrah-haritasi.md
+  hata_listesi: 70-kanal/kanal-bacagi-hata-listesi.md
+
+  margin_basis:
+    payer: "tuketici (raf fiyatina gomulu; NAKIT CIKISI degil, FIYAT FARKI)"
+    receiver: "perakendeci / HoReCa noktasi"
+    layer: "L7 -> L8 (katman KOPRUSU)"
+    basis: L8_net                     # MARGIN ON SELLING PRICE
+    currency: TRY
+    fixed_or_variable: VARIABLE
+    per_bottle_or_total: PER_BOTTLE
+    tax_treatment: "Kendisi KDV'ye tabi bir kalem DEGILDIR (fatura edilmez). Iki bacak da KDV HARIC olmak ZORUNDA."
+    evidence_id: EV-2026-08-10-616
+    status: ASSUMPTION
+    engine_dogrulama: "ters_model.py:277 l7 = l8_net*(1-m) -> DOGRU (K2 hatasi YAPILMAMIS)"
+
+  markup_basis:
+    payer: "margin_basis ile ayni"
+    receiver: "margin_basis ile ayni"
+    layer: "L7 -> L8"
+    basis: L7_eff                     # MARKUP ON PURCHASE PRICE
+    currency: TRY
+    fixed_or_variable: VARIABLE
+    per_bottle_or_total: PER_BOTTLE
+    tax_treatment: "margin_basis ile ayni"
+    evidence_id: "EV-2026-08-10-616 (turetme: k = m/(1-m))"
+    status: DERIVED
+    modele_girme_kurali: ENGINE_OKUMAZ
+    notes: >
+      m ve k AYNI gercegin iki ifadesidir; IKISI BIRDEN dusulurse CIFT SAYIMDIR.
+      markup_karsiligi_pct alanlari YALNIZCA MUZAKERE TERCUMESI icindir.
+      MUZAKERE UYARISI: perakendeci "marjim %X" derken m'yi (L8_net matrahi),
+      tedarikci/distributor "ustune %X koyuyorum" derken k'yi (L7_eff matrahi)
+      kasteder. Matrah yazilmadan gorusme notuna sayi KAYDEDILEMEZ.
+
+  kdv_v1_raf_menu:
+    payer: tuketici
+    receiver: "Hazine (perakendeci uzerinden)"
+    layer: L8
+    basis: L8_net
+    currency: TRY
+    fixed_or_variable: VARIABLE
+    per_bottle_or_total: PER_BOTTLE
+    tax_treatment: "zincirdeki TEK KDV bolmesi (R1)"
+    evidence_id: EV-2026-08-09-118
+    status: FACT
+    horeca_uyarisi:
+      status: BLOCKED
+      ticket: T-612
+      notes: >
+        HoReCa'da L8 bir MENU FIYATIDIR ve menu KDV'si YIYECEK-ICECEK HIZMETI
+        KDV'sidir. Urun KDV oraniyla AYNI OLUP OLMADIGI DOGRULANMAMISTIR.
+        marj-vs-markup.md §2.3 bu riski TUR 2'de YAZMIS, model KULLANMAMISTIR.
+        reverse-price-model.md §3.2'nin 15 HoReCa hucresinin 15'i bu
+        dogrulanmamis orandan geciyor -> HoReCa sutunu BLOCKED.
+
+  kdv_v2_mal_faturasi:
+    payer: "perakendeci (bize oder)"
+    receiver: "Hazine (biz beyan eder ve odiyoruz)"
+    layer: "L6 uzerine EKLENIR -> L6_gross"
+    basis: L6
+    currency: TRY
+    fixed_or_variable: VARIABLE
+    per_bottle_or_total: PER_BOTTLE
+    tax_treatment: >
+      Ekonomik maliyet DEGILDIR (tahsil edilip beyan edilir). AMA NAKITTE IKI
+      AYRI ZAMAN VARDIR: tahsilat = fatura + kanal vadesi; beyan = fatura
+      tarihini izleyen donem. ARADAKI FARK BIZIM FINANSMAN MALIYETIMIZDIR.
+    evidence_id: EV-2026-08-09-118
+    status: STRUCTURAL_FACT
+    ticket: T-614
+    notes: >
+      ALACAK TUTARI L6 DEGIL L6_gross = L6*(1+v)'DIR. peak_cash alacak bacagi
+      L6 uzerinden kurulursa %20 EKSIK cikar.
+
+  kdv_v3_hizmet_faturasi:
+    payer: "ITHALATCI (biz)"
+    receiver: "Hazine (perakendeci uzerinden)"
+    layer: "L6 -> L7 koprusu"
+    basis: "(d * L6) + f"
+    currency: TRY
+    fixed_or_variable: VARIABLE
+    per_bottle_or_total: PER_BOTTLE
+    tax_treatment: "BLOCKED — indirilebilir mi? ciro primi iskonto mu hizmet mi? VERGI SORUSU"
+    evidence_id: EV-2026-08-10-610
+    status: BLOCKED
+    ticket: T-611
+    notes: >
+      Model bugun SESSIZCE 'indirilebilir' varsayiyor (f ve d'yi NET tutariyla
+      dusuyor) ama bunu YAZMIYOR. Indirilemiyorsa ekonomik maliyet 1,20 KATIDIR.
+      HER HALUKARDA BIR NAKIT CIKISIDIR ve peak_cash'e girer.
+
+  listing_fee_f:
+    payer: "ITHALATCI (biz)"
+    receiver: "zincir perakendeci"
+    layer: "L6 -> L7 koprusu. L6'yi DEGISTIRMEZ, L7_eff'i DUSURUR. L8'de GORUNMEZ."
+    basis: "BIR ORAN DEGILDIR — BIR TUTARDIR: (SKU) x (zincir VEYA magaza) x (donem)"
+    currency: TRY
+    fixed_or_variable: FIXED
+    per_bottle_or_total: TOTAL
+    tax_treatment: "hizmet faturasi -> KDV'ye tabi (EV-2026-08-10-610); indirilebilirlik BLOCKED (T-611)"
+    evidence_id: "yasal cerceve: EV-2026-08-10-601/-605/-608 ; TUTAR: EV-2026-08-10-619 (2004, T5) MODELE GIREMEZ"
+    status: "UNKNOWN (tutar) + BLOCKED (birim: SKU x zincir mi SKU x magaza mi)"
+    engine_kurali:
+      f_per_bottle_girdi_olarak_kabul_edilemez: true
+      formul: "f_per_bottle = F_total / Q_ithal"
+      assertion: "f_per_bottle(Q1)*Q1 == f_per_bottle(Q2)*Q2"
+      ticket: T-613
+      notes: >
+        f HACME BAGLI bir sayidir ve HIPERBOLIKTIR, dogrusal degil. f'yi sise
+        basi sabit tasimak (K7) hacim riskini modelden TAMAMEN SILER ve
+        ozellikle PILOT (5.000 sise) hucresinde projenin LEHINE calisir.
+
+  turnover_rebate_d:
+    payer: "ITHALATCI (biz)"
+    receiver: "zincir perakendeci"
+    layer: "L6 -> L7 koprusu"
+    basis: L6                          # KDV HARIC FATURA CIROSU
+    basis_gerekcesi: >
+      (1) Ciro primi TEDARIKCININ kestigi faturalar uzerinden hesaplanir
+      (EV-2026-08-10-610: bedeller TEDARIKCIDEN talep edilir ve TEDARIKCININ
+      cirosuna oranlanir). (2) EV-2026-08-10-612'deki kalemler 'MUSTERIYE
+      ODENECEK BEDELLER' basligi altindadir -> referans buyukluk ithalatcinin
+      faturasidir. (3) d'nin L8 uzerinden hesaplandigi bir dunyada perakendeci
+      KENDI FIYATLAMA KARARIYLA bizim primimizi yukseltebilirdi — bu 6585
+      m.6/2(c) 'tek tarafli degisiklik yetkisi' yasagiyla celisirdi
+      (EV-2026-08-10-601).
+    currency: TRY
+    fixed_or_variable: "KARISIK — SEPETIN TAMAMI ORANSAL DEGILDIR"
+    per_bottle_or_total: "oransal bilesenler PER_BOTTLE; sabit bilesenler TOTAL"
+    tax_treatment: "hizmet faturasi -> KDV'ye tabi; indirilebilirlik BLOCKED (T-611)"
+    evidence_id: [EV-2026-08-10-612, EV-2026-08-10-610]
+    status: "varlik FACT · oran UNKNOWN · SEPETIN YAPISI BLOCKED"
+    ticket: T-613
+    sepet_ayristirmasi:
+      status: BLOCKED
+      istenen_formul: "L7_eff = L6*(1 - d_var) - f_per_bottle - D_fix/Q_ithal"
+      kalemler:
+        ciro_primi_yilsonu_iskontosu:  {muhtemel_matrah: L6, tip: VARIABLE, status: "matrah TUTARLI"}
+        lojistik_bedeli:               {muhtemel_matrah: "L6 VEYA palet/sevkiyat basi", tip: BLOCKED, ticket: T-613}
+        alan_kullanimi_teshir:         {muhtemel_matrah: "magaza x donem (TL)", tip: FIXED,  status: BLOCKED}
+        kirik_urun_bedeli:             {muhtemel_matrah: "KIRILAN ADET (ciro DEGIL)", tip: "VARIABLE ama BASKA HACME", status: BLOCKED}
+        sogutucu_enerji_bedeli:        {muhtemel_matrah: "sogutucu x donem (TL)", tip: FIXED, status: BLOCKED}
+        crm_b2b_kasa_cikisi_cirosu:    {muhtemel_matrah: "L8 (kasa cikisi!) OLABILIR", tip: BLOCKED, status: BLOCKED}
+      notes: >
+        ALTI KALEMIN EN AZ UCU SABIT TUTARLIDIR ve model altisini da ORANSAL
+        sayiyor. Sonuc: f'deki olcek asimetrisi d'nin ICINE GIZLENIYOR.
+        CRM/B2B'nin adi bile matrahinin 'kasa cikisi' yani L8 olabilecegini
+        soyluyor; oyleyse L6 matrahiyla yazmak SISTEMATIK EKSIK SAYIMDIR
+        (L8 > L6). Bu tek basina d'nin matrahini BLOCKED yapmaya yeter.
+    kademeli_prim_mi:
+      value: null
+      status: UNKNOWN
+      notes: "Kademeliyse d HACME BAGLIDIR ve sabit oran olarak tasinamaz. HIC SORULMAMIS -> OQ-614, T-604."
+
+  payment_term:
+    payer: "— (bir BEDEL degil, bir SUREDIR)"
+    receiver: "— (degeri ZAMAN DEGERI olarak perakendeciye gecer)"
+    layer: "L6 faturasi uzerinde islem gorur"
+    basis: L6_gross                    # L6 * (1+v) — KDV DAHIL FATURA TOPLAMI
+    currency: TRY
+    fixed_or_variable: VARIABLE
+    per_bottle_or_total: TOTAL
+    tax_treatment: >
+      Vadenin KENDISI KDV'ye tabi degildir. ANCAK KDV beyani TAHSILATA BAGLI
+      DEGILDIR -> vade uzadikca KDV'yi TAHSIL ETMEDEN beyan etme durumu dogar.
+      BU BIR VERGI SORUSUDUR -> T-611 ile birlikte gumruk-vergi-uzmani'na.
+    evidence_id: [EV-2026-08-10-602, EV-2026-08-10-603, EV-2026-08-10-604,
+                  EV-2026-08-10-607, EV-2026-08-10-609, EV-2026-08-10-617]
+    status: "BASE=ESTIMATE (yasal tavan) · C-601 ACIK"
+    ticket: T-614
+    modelde_eksik:
+      finansman_maliyeti_satiri: null
+      status: "SIFIR ALINDI — HICBIR SATIR YOK"
+      yon: "MAX_CIF'i YUKARI saptirir (projenin LEHINE)"
+      cift_sayim_uyarisi: >
+        Finansman maliyeti YA ayri bir L5 satiri olur YA DA d icinde erken
+        odeme iskontosu olarak gorunur. IKISI BIRDEN olursa CIFT SAYIMDIR (K6b).
+
+  return_iade:
+    payer: "ITHALATCI (biz)"
+    receiver: "perakendeci (iade/alacak faturasi ile)"
+    layer: "L6 faturasinin TERSINE CEVRILMESI"
+    basis: "iade_adet * (L6 - geri_kazanilabilir_deger)"
+    currency: TRY
+    fixed_or_variable: VARIABLE
+    per_bottle_or_total: PER_BOTTLE
+    tax_treatment: >
+      Iade faturasi KDV'lidir (matrah duzeltmesi). AYRICA ZAYI OLAN MALA AIT
+      KDV INDIRILEMEZ (KDVK md.30/c — Ci-15.1, EV-2026-08-10-103).
+    evidence_id: [EV-2026-08-10-606, EV-2026-08-10-612]
+    status: "yapisal FACT · ORAN UNKNOWN · geri_kazanilabilir_deger BLOCKED"
+    ticket: T-615
+    notes: >
+      IADENIN BEDELI L5 DEGIL L6'DIR: fatura fiyati geri doner, malin degeri
+      en iyi halde L5, en kotu halde SIFIRDIR (kirik / SKT / bandrol hasari).
+      IKINCI VE DAHA BUYUK HATA (K11): sabit maliyetler ITHAL EDILEN adede
+      bolunuyor ama hasilat ureten adet Q*(1-r)'dir. r=%5'te MAX_CIF etkisi
+      -19,38 TL/sise — R5 hatasiyla (28,95) AYNI SINIFTA ve bugun r=0.
+
+  logistics_deduction:
+    payer: "ITHALATCI (biz)"
+    receiver: "zincir perakendeci"
+    layer: "L6 -> L7 koprusu (d sepetinin bir bileseni)"
+    basis: "BLOCKED — L6 cirosu mu, palet/sevkiyat/magaza basi mi"
+    currency: TRY
+    fixed_or_variable: BLOCKED
+    per_bottle_or_total: BLOCKED
+    tax_treatment: "hizmet faturasi -> KDV'ye tabi; indirilebilirlik BLOCKED (T-611)"
+    evidence_id: EV-2026-08-10-612
+    status: BLOCKED
+    ticket: T-618
+    cift_sayim_riski:
+      karsi_kalem: "L5'teki TR-ici lojistik (EV-2026-08-10-329, 5.000 sisede 3,99 TL/sise)"
+      notes: >
+        Zincir MERKEZI ALIM yapar (EV-2026-08-10-613 dipnot 14). Bizim bacagimiz
+        antrepo -> zincirin MERKEZ DEPOSU; zincirin bedeli merkez depo -> magaza.
+        YAPISAL OLARAK ORTUSMEMELERI beklenir AMA EV-2026-08-10-329'un TESLIM
+        NOKTASI TANIMI HICBIR YERDE YAZILI DEGILDIR -> T-618 (navlun-lojistik).
+
 dagitim_modeli:
+
+  # ---- TUR 3A: T-944 / T-616 — mu'nun MATRAHI ----
+  importer_katki_matrahi:
+    value: null
+    secenekler: [L6, L7_EFF, L5_MARKUP]
+    varsayilan_bugunku_engine_davranisi: L6
+    status: INVESTOR_DECISION_REQUIRED
+    oq: OQ-620
+    ticket: [T-616, T-944, T-851]
+    engine_kurali: >
+      BU ALAN ENGINE TARAFINDAN OKUNMALIDIR (serbest metin DEGIL). null ise
+      engine UNKNOWN donmeli, VARSAYILANA DUSMEMELIDIR.
+    formuller:
+      L6:        "L5_max = L7_eff - mu * L6"
+      L7_EFF:    "L5_max = L7_eff * (1 - mu)"
+      L5_MARKUP: "L5_max = L7_eff / (1 + mu)"
+    olculen_fark_TGT799_CHAIN_BASE_5000_g050:
+      # MAX_CIF TRY/sise. (a) sutunu reverse-price-model.md §9.2 gridiyle BIREBIR AYNIDIR.
+      mu_10: {L6: 236.64, L7_EFF: 239.54, L5_MARKUP: 242.63, yayilim: 5.92}
+      mu_20: {L6: 200.46, L7_EFF: 206.25, L5_MARKUP: 217.34, yayilim: 16.89}
+      mu_30: {L6: 164.27, L7_EFF: 172.96, L5_MARKUP: 196.00, yayilim: 31.73}
+      mu_50: {L6:  91.90, L7_EFF: 106.37, L5_MARKUP: 161.86, yayilim: 69.96}
+      kapali_form:
+        b_eksi_a: "mu * (L6 - L7_eff) = mu * (d*L6 + f)"
+        c_eksi_b: "L7_eff * [ 1/(1+mu) - (1-mu) ]   <- KLASIK MARGIN/MARKUP FARKI"
+    notes: >
+      UC SONUC: (1) Mevcut secim (L6) UCUNUN EN MUHAFAZAKARIDIR -> tanimsizlik
+      modeli projenin ALEYHINE saptiriyor (R5'in TERSI yonde). (2) Yatirimci
+      'maliyetin ustune %30' kastediyorsa model talebini %19,3 DAHA AGIR
+      uygular -> kapanabilecek proje modelde kapanmaz. (3) Farkin BUYUK KISMI
+      matrahtan DEGIL, MARGIN/MARKUP ayrimindan gelir (mu=%30'da 8,69 vs 23,05)
+      — yani marj-vs-markup.md sozlesmesi mu icin HIC UYGULANMAMIS.
+      DEGER YATIRIMCI KARARIDIR; bu ajan matrah SECMEMISTIR.
+
+  mu_ile_distributor_marji_ayni_matrah_mi:
+    value: false
+    status: SPEC_DECISION
+    karar_veren: kanal-marj-uzmani
+    ticket: T-617
+    conflict_id: C-611
+    gerekce: >
+      reverse-price-model.md §7.1 ikisinin 'SAYISAL OLARAK OZDES' oldugunu ve
+      'AYNI ANDA UYGULANIRSA TOPLANDIKLARINI' yazar. BU REDDEDILMISTIR:
+      (A) Distributor marji UCUNCU TARAFA ODEMEDIR (nakit cikisi VAR, matrah
+      L6/ciro DOGRU). (B) Ithalatci katki payi BIZIM ARTIGIMIZDIR (nakit cikisi
+      YOK, matrahi bir PAZAR OLGUSU degil bir YATIRIMCI TANIMIDIR).
+      IKISI FARKLI EKONOMIK NESNEDIR.
   secim:
     value: null
     status: UNKNOWN
@@ -208,6 +511,43 @@ dagitim_modeli:
         Bu, modelin en buyuk tek bosluklarindan biridir: A/B dagitim modeli
         karsilastirmasi bu sayi olmadan YAPILAMAZ. Yalnizca gercek distributor
         gorusmesi ile kapanir -> T-604.
+    marj_matrahi:
+      value: L6
+      status: SPEC_DECISION
+      karar_veren: kanal-marj-uzmani
+      tur: "TUR 3A"
+      gerekce: >
+        Distributor marji bir CIRO KOMISYONUDUR ve pratikte kendi urettigi
+        ciro uzerinden konusulur -> matrah L6 DOGRUDUR. (Bu, mu'nun matrahi
+        sorusundan AYRIDIR — bkz. dagitim_modeli.importer_katki_matrahi ve
+        mu_ile_distributor_marji_ayni_matrah_mi.)
+      uyari: >
+        Model, distributor icin AYRI BIR KATMAN TASIMAMAKTADIR. Gercek zincirde
+        ithalatci -> distributor -> perakendeci iki ayri fatura fiyati uretir;
+        model bunu TEK L6'ya cokertmistir. Cokertme savunulabilir AMA
+        YAZILMAK ZORUNDADIR -> C-611.
+    d_kimde:
+      value: null
+      secenekler: [BIZDE, DISTRIBUTORDE]
+      status: BLOCKED
+      ticket: T-617
+      conflict_id: C-611
+      engine_kurali: >
+        MODEL A (dis distributor) calistirilirken bu alan BOS ise engine
+        UNKNOWN donmelidir. Iki alt senaryo AYRI AYRI kosulmalidir:
+          A1 : d ve f BIZDE          + m_dist   (modelin bugunku davranisi)
+          A2 : d ve f DISTRIBUTORDE  + m_dist   (m_dist buyur, d ve f sifirlanir)
+      notes: >
+        reverse-price-model.md §7.1 distributor gridini CHAIN RETAIL BASE
+        (d=%8) uzerinde kosturuyor -> ayni anda hem distributore m_dist*L6 hem
+        zincire d*L6+f odedigimiz varsayiliyor. Dis distributor modelinde
+        zincirle yillik anlasmayi (EV-2026-08-10-612) GENELLIKLE DISTRIBUTOR
+        imzalar ve bedelleri O oder; marji zaten bunu icerir. kanal-marj-yapisi.md
+        §6 da 'distributor marji L6 ile L7 ARASINA GIRER' der — yani zincir
+        bedellerinin YERINE gecer, USTUNE binmez.
+        BUYUKLUK: d*L6 = 43,42 TL/sise -> MAX_CIF'te 28,95 TL/sise (g=0,50).
+        R5 hatasiyla AYNI BUYUKLUK, TERS YON (bu kez projenin ALEYHINE).
+        HICBIR KANIT YOKTUR -> secim YAPILMAMISTIR.
     kanal_erisimi:
       value: null
       status: UNKNOWN
@@ -549,6 +889,21 @@ kanallar:
         'raki %8', 'brut %10-15', 'ciro uzerinden %18-30'). HICBIRI margin/markup
         ayrimini, KDV/OTV tabanini veya katman ciftini belirtmemektedir ->
         M1 geregi HEPSI GECERSIZDIR. C-602 ACIK.
+        TUR 3A EKLEMESI: C-602 yalnizca bir SEVIYE celiskisi degil, bir MATRAH
+        celiskisidir de. margin_mi_markup_mi alani NULL'dir -> model bugun
+        MARGIN_ON_SELLING_PRICE varsayiyor ve BUNU GEREKCELENDIRMIYOR.
+        Uc konusma bicimi vardir, ikisi ayni ucuncu FARKLI sonuc verir
+        (L8_net=665,83, oran %18 illustratif):
+          "marjim %18"                      -> matrah L8_net -> L7_eff = 546,00
+          "tavsiye fiyattan %18 iskonto"     -> matrah L8_net -> L7_eff = 546,00
+          "maliyetin ustune %18 koyarim"     -> matrah L7_eff -> L7_eff = 564,27
+        MAX_CIF farki +12,19 TL/sise (g=0,50). -> BLOCKED, B-10.
+    marj_tipi_matrahi:
+      value: null
+      secenekler: [MARGIN_ON_SELLING_PRICE, ISKONTO_OFF_L8, MARKUP_ON_PURCHASE_PRICE]
+      status: BLOCKED
+      conflict_id: C-602
+      oq: OQ-621
     listeleme_bedeli:
       value: 0
       currency: TRY
@@ -580,6 +935,41 @@ kanallar:
       notes: >
         Binlerce kucuk nokta; tahsilat riski ve tahsilat MALIYETI zincirden
         yapisal olarak yuksektir. Supheli alacak orani UNKNOWN.
+
+    # ---- TUR 3A: T-856'YA CEVAP — BIR SIFIR DEGIL, UC SIFIR ----
+    t856_cevabi:
+      status: SPEC_ANSWER
+      karar_veren: kanal-marj-uzmani
+      iddia_dogru_mu: true
+      duzeltme_yolu: "d icin bir sayi bulmak DEGIL"
+      gerekce: >
+        Tekelde d'nin HUKUKI KARSILIGI GERCEKTEN YOKTUR (6585 m.6 zincir/buyuk
+        magazayi hedefler — EV-2026-08-10-601). Kanalin yuku BASKA SATIRLARA
+        duser ve O SATIRLAR DA MODELDE SIFIRDIR:
+          (1) d  -> yerine NET FIYAT ISKONTOSU gecer (EV-2026-08-10-610: indirim
+              marketleri ek bedel yerine URUNUN NET FIYATI uzerinden pazarlik
+              yapar -> AYNI TOPLAM, FARKLI SATIR)                       = 0
+          (2) zincirin lojistik bedeli -> yerine BIZIM KILCAL DAGITIM
+              MALIYETIMIZ gecer (48.956 nokta, EV-2026-08-10-613)       = 0
+          (3) zincirin dusuk karsi taraf riski -> yerine SUPHELI ALACAK
+              KARSILIGI + TAHSILAT MALIYETI gecer                        = 0
+        Tekel icin bir d bandi URETMEK bu artefakti DUZELTMEZ, yalnizca YERINI
+        DEGISTIRIR. Bu ajan tekel icin d bandi URETMEMISTIR — uretmek, OLMAYAN
+        BIR MEKANIZMAYA SAHTE BIR SAYI VERMEK olurdu.
+      istenen_engine_davranisi:
+        kontrol: ZERO_PARITY
+        kural: >
+          Iki kanalin MAX_CIF'i karsilastirilmadan ONCE engine, her kanalda
+          UNKNOWN->0 alinan kalem sayisini saymali; esit degilse cikti
+          KANALLAR_KARSILASTIRILAMAZ bayragi tasimalidir.
+        sayim: {CHAIN_RETAIL: 1, INDEPENDENT_TEKEL: 3, HORECA: 4}
+        test: TVK-N5
+    supheli_alacak_karsiligi_pct:
+      value: null
+      basis: L6_gross
+      status: UNKNOWN
+      evidence_id: null
+      notes: "MODELDE 0 ALINMISTIR. Tekel kanalinin UC SIFIRINDAN biri (t856_cevabi)."
     iade_kosullari:
       value: null
       status: UNKNOWN
@@ -724,6 +1114,105 @@ kanal_karmasi:
     DEGILDIR ve oyle kullanilamaz. Modern kanal nokta sayisi zaten yoktur.
     KANAL KARMASI, AGIRLIKLI ORTALAMA MARJI BELIRLEDIGI ICIN BU BOSLUK
     KRITIKTIR -> T-603.
+  engine_kurali:
+    kural: >
+      TUR 3A. kanal_karmasi toplami 100 DEGILSE veya herhangi biri null ise
+      engine BIRLESIK (blended) CIKTI URETMEMELI, yalnizca kanal bazinda cikti
+      vermeli ve KARMA_UNKNOWN bayragi basmalidir.
+    assertion: "sum(paylar) == 100"
+    test: TVK-N7
+    buyukluk_uyarisi: >
+      TGT_799 BASE'te uc kanalin tavani 272,83 / 303,90 / 87,88 TL/sise'dir —
+      karma varsayimi TEK BASINA birlesik tavani ~3,5 KAT oynatabilir ve
+      tornadonun HICBIR EKSENINDE YOKTUR (K9c).
+
+# =====================================================================
+# TUR 3A — HACIM AYRIMI (K11)
+# =====================================================================
+hacim_ayrimi:
+  Q_ithal:
+    tanim: "ithal edilen sise adedi — SABIT MALIYETLER BUNA BOLUNUR"
+    status: SENARYO_EKSENI
+  Q_satilan:
+    tanim: "hasilat ureten sise adedi = Q_ithal * (1 - r)"
+    value: null
+    status: UNKNOWN
+  iade_fire_orani_r:
+    value: null
+    status: "UNKNOWN — MODELDE 0 ALINDI (RC5 acigi)"
+    evidence_id: null
+    ticket: [T-615, T-314]
+  geri_kazanilabilir_deger:
+    value: null
+    status: BLOCKED
+    notes: "En iyi halde L5, en kotu halde 0 (kirik / SKT / bandrol hasari). Cam sisede BLOCKED."
+  engine_kurali: >
+    Sabit maliyet bolmesinde Q_ithal, hasilat hesabinda Q_satilan kullanilmalidir.
+    r = 0 girildiginde cikti FIRE_SIFIR_VARSAYILDI uyarisi basmalidir. Test: TVK-P5.
+  buyukluk_TGT799_CHAIN_BASE_5000:
+    r_02: {L5_etkisi: -0.75,  iade_kaybi: -10.86, MAX_CIF: -7.74}
+    r_05: {L5_etkisi: -1.93,  iade_kaybi: -27.14, MAX_CIF: -19.38}
+    r_10: {L5_etkisi: -4.07,  iade_kaybi: -54.28, MAX_CIF: -38.90}
+    notes: >
+      geri_kazanilabilir_deger = 0 ile, yani UST SINIR. r=%5'te MAX_CIF etkisi
+      -19,38 TL/sise — R5 hatasiyla (28,95) AYNI SINIFTA ve bugun TAMAMEN 0.
+
+# =====================================================================
+# TUR 3A — KANAL BACAGI HATA LISTESI (ozet; tam belge 70-kanal'da)
+# =====================================================================
+kanal_bacagi_hata_listesi:
+  belge: 70-kanal/kanal-bacagi-hata-listesi.md
+  ticket: T-943
+  illustratif_taban: "TGT_799 · ES · CHAIN RETAIL · BASE · 5.000 sise · g=0,50 · lambda=1"
+  donusum_sabiti: "L5'te her ±1 TL/sise -> MAX_CIF'te ∓0,6667 TL (g=0,50) / ∓0,5882 TL (g=0,70)"
+  hatalar:
+    K1:  {ad: "L6'yi net hasilat sanmak",                gozlendi: true,  yon: LEHE,   buyukluk_TL: 28.95, test: "R8-K / TVK-N1"}
+    K2:  {ad: "margin <-> markup",                       gozlendi: "mu icin ACIK", yon: LEHE, buyukluk_TL: 23.05, test: "TVK-N2, TVK-P1-3"}
+    K3:  {ad: "UNKNOWN->0 kanal asimetrisi",             gozlendi: true,  yon: LEHE,   buyukluk_TL: null,  test: "ZERO_PARITY / TVK-N5"}
+    K4:  {ad: "carpanin yanlis katmani",                 gozlendi: false, yon: null,   buyukluk_TL: null,  test: "katmanlar zorunlu alan"}
+    K5:  {ad: "mu matrahi tanimsiz",                     gozlendi: true,  yon: ALEYHE, buyukluk_TL: 31.73, test: "TVK-P1/P2/P3"}
+    K6:  {ad: "cift sayim (4 kanal: a/b/c/d)",           gozlendi: "TARANMADI", yon: ALEYHE, buyukluk_TL: 28.95, test: "LEDGER_UNIQUENESS / TVK-N6"}
+    K7:  {ad: "f sabit oldugu halde degisken tasinmasi", gozlendi: "TARANMADI", yon: LEHE, buyukluk_TL: 38.00, test: "SCALE_MONOTONICITY / TVK-P4"}
+    K8:  {ad: "d homojen sanilmasi",                     gozlendi: YENI,  yon: LEHE,   buyukluk_TL: 14.47, test: "d_var + D_fix ayrimi"}
+    K9:  {ad: "kanallar karsilastirilamaz / karma yok",  gozlendi: YENI,  yon: "CIFT YONLU", buyukluk_TL: null, test: "KARMA_UNKNOWN / TVK-N7"}
+    K10: {ad: "KDV tabani (mutlak kalemler)",            gozlendi: YENI,  yon: "CIFT YONLU", buyukluk_TL: 13.79, test: "kdv_dahil_mi zorunlu / TVK-N3"}
+    K11: {ad: "satilan sise != ithal sise",              gozlendi: YENI,  yon: LEHE,   buyukluk_TL: 19.38, test: "Q_ithal != Q_satilan / TVK-P5"}
+    K12: {ad: "vade: matrah + hic yok",                  gozlendi: YENI,  yon: LEHE,   buyukluk_TL: 27.55, test: "L6_gross assertion / TVK-P6"}
+  okuma:
+    yon_dagilimi: >
+      12 hatanin 6'si projenin LEHINE calisiyor (K1, K3, K7, K8, K11, K12).
+      Bu, vergi bacagi H1-H6'nin TERSIDIR (orada cogu muhafazakar gorunuyordu).
+      LEHE CALISAN HATA, ALEYHE CALISANDAN DAHA UZUN YASAR.
+    mertebe: >
+      Bugun 0 alinan kanal kalemleri: K7 (38,00) + K11 (19,38) + K12 (27,55)
+      ~= 85 TL/sise = TGT_799 CHAIN BASE tavaninin (272,83) %31'i.
+      Hicbiri kanitli degildir ve hicbiri modele konmamistir. KONMAMASI BIR
+      SECIMDIR VE BU SECIM PROJENIN LEHINEDIR.
+
+# =====================================================================
+# TUR 3A — BLOCKED ENVANTERI
+# BLOCKED != UNKNOWN. Bunlarin hicbiri modele SESSIZCE 0 olarak GIREMEZ.
+# =====================================================================
+blocked_envanteri:
+  B-1:  {kalem: "f ve d KDV'sinin indirilebilirligi",         yon: ASAGI,   sahibi: gumruk-vergi-uzmani, ticket: T-611}
+  B-2:  {kalem: "HoReCa menu KDV orani",                      yon: "CIFT",  sahibi: gumruk-vergi-uzmani, ticket: T-612}
+  B-3:  {kalem: "d sepetinin oransal/sabit ayrismasi",        yon: ASAGI,   sahibi: kanal-marj-uzmani,   ticket: T-613}
+  B-4:  {kalem: "ciro priminin KADEMELI olup olmadigi",       yon: "CIFT",  sahibi: TUR7,                ticket: T-604}
+  B-5:  {kalem: "lojistik bedelinin matrahi",                 yon: ASAGI,   sahibi: TUR7,                ticket: T-604}
+  B-6:  {kalem: "alan kullanimi / teshir bedelinin birimi",   yon: ASAGI,   sahibi: TUR7,                ticket: T-604}
+  B-7:  {kalem: "kirik urun bedelinin matrahi",               yon: ASAGI,   sahibi: TUR7,                ticket: T-604}
+  B-8:  {kalem: "CRM/B2B matrahi — L8 (kasa cikisi) olabilir",yon: ASAGI,   sahibi: TUR7,                ticket: T-613}
+  B-9:  {kalem: "f'nin birimi: SKU x zincir mi magaza mi",    yon: ASAGI,   sahibi: TUR7,                ticket: T-604}
+  B-10: {kalem: "tekel marj tipi (margin/iskonto/markup)",    yon: "CIFT",  sahibi: TUR7,                conflict_id: C-602}
+  B-11: {kalem: "iade orani + geri kazanilabilir deger",      yon: ASAGI,   sahibi: TUR7,                ticket: T-615}
+  B-12: {kalem: "HoReCa yatirim destegi fixed/variable karmasi", yon: ASAGI, sahibi: TUR7,               ticket: T-604}
+  B-13: {kalem: "TR-ici lojistigin TESLIM NOKTASI",           yon: "CIFT",  sahibi: navlun-lojistik-uzmani, ticket: T-618}
+  B-14: {kalem: "mu matrahi",                                 yon: "CIFT",  sahibi: yatirimci,           ticket: T-616}
+  B-15: {kalem: "MODEL A'da d+f'i kimin odedigi",             yon: YUKARI,  sahibi: TUR7,                conflict_id: C-611}
+  uyari: >
+    15 BLOCKED kalemin 15'i de bugun modelde ya 0 ya bir VARSAYILAN DAVRANISLA
+    gecmektedir. Hicbiri icin 'yok' KANITI yoktur.
+    0 BIR DEGER DEGILDIR — 0 BIR VARSAYIMDIR ve bu tura kadar YAZILMAMISTI.
 
 kanal_gucu_riski:
   listeden_cikarilma_riski:
