@@ -734,6 +734,17 @@ impact:       CRITICAL
 bloke_ettigi: TUR 6 (nihai karar)
 ```
 
+> ## ⚠ GÜNCELLEME — 2026-08-10 (TUR 2.5 KAPANIŞ)
+>
+> **`durum: OPEN` → `OPEN — SPECIFIED`.** **KAPATILMAMIŞTIR.**
+> Aşağıdaki orijinal metin **aynen korunmuştur**; kapsam **genişlemiştir**:
+>
+> - **6 eşik → 16 eşik** (`D-01`…`D-16`) **+ 8 eşik dışı yatırımcı girdisi** (`I-1`…`I-8`)
+> - Tam liste: **`90-karar/investor-decisions-required.md`**
+> - Ayrıca `bloke_ettigi` genişledi: **TUR 3B (ileri model)** + TUR 6
+>
+> Ayrıntı için bu dosyanın **sonundaki** *"TUR 2.5 KAPANIŞ"* bölümüne bakınız.
+
 ### Soru
 
 `00-charter/karar-esikleri.md` içindeki **altı finansal eşiğin tamamı `TBD`**'dir:
@@ -1697,3 +1708,337 @@ tekrar işaretlenir:
 | **`OQ-G08`** | `OPEN` | **`OPEN` — DEĞİŞMEDİ** | Sorunun kendisi *"hedef tarihte hangi ÖTV tutarı geçerli olacak"*tır. Tarih girildi, **tutar hâlâ `UNKNOWN`**. Bu soru tarih girilerek kapanmaz |
 | **`OQ-912`** | `OPEN` | **`OPEN` — KISMEN CEVAPLANDI** | Model çalıştırma tarihi: **2026-08-16'dan önce**. Gerekçe: 10 canlı LCL kotasyonu o gün STALE olur (**6 gün kaldı**). Kart sayısı düzeltmesi: 11 değil **10** → `T-923` |
 | **`OQ-901`** | `OPEN` | **`OPEN` — DEĞİŞMEDİ** | Karar eşikleri `TBD`; TUR 6 blokeri. Bu turda **ele alınmadı** |
+
+---
+---
+
+# TUR 2.5 KAPANIŞ — AÇIK SORU DURUMU (2026-08-10)
+
+```yaml
+yazan:  yatirim-komitesi-baskani
+tarih:  2026-08-10
+belge:  90-karar/tur-25-konsolidasyon.md
+not:    "Hicbir orijinal soru metni silinmemis veya degistirilmemistir."
+```
+
+## OQ-901 — **`OPEN — SPECIFIED`** (KAPATILMADI)
+
+```yaml
+oq_id:              OQ-901
+onceki_durum:       OPEN
+yeni_durum:         OPEN — SPECIFIED       # KAPATILMADI
+guncelleme:         2026-08-10 (TUR 2.5 kapanis)
+sahibi:             YATIRIMCI              # degismedi — hicbir ajan kapatamaz
+impact:             CRITICAL               # degismedi
+ana_belge:          90-karar/investor-decisions-required.md
+kapsam_degisikligi: "6 finansal esik -> 16 esik (D-01...D-16)
+                     + 8 esik disi yatirimci girdisi (I-1...I-8)"
+bloke_ettigi:       "TUR 3B (ileri model)  +  TUR 6 (nihai karar)"
+ilgili_ticket:      [T-851, T-852, T-912, T-604, T-857, T-859, T-944, T-467, T-304]
+```
+
+### Neden kapatılmadı
+
+`OQ-901` bir **soru**dur, bir belge değil. `investor-decisions-required.md`
+soruyu **görünür ve cevaplanabilir** hâle getirir; **cevaplamaz.**
+**Hiçbir ajan — başkan dahil — `OQ-901`'i kapatamaz.**
+
+### Bu turda ne değişti
+
+| # | Değişiklik |
+|---|---|
+| **1** | Eşikler **6'dan 16'ya** çıktı. Yeni 10 eşiğin hiçbiri başkanın icadı değildir; hepsi ajan raporlarında **modelin duraksadığı noktalar** olarak zaten kayıtlıdır |
+| **2** | Her eşik için **hangi katmanlar arasında** tanımlanması gerektiği yazıldı. `00-charter/karar-esikleri.md`'nin açık bıraktığı *"L5→L6 mı, L5→L8 mi?"* sorusu, verinin gösterdiği **üçüncü seçenekle** (`L5 → L7_eff`) birlikte kayda geçti |
+| **3** | **Eşik dışı yatırımcı girdileri ayrı bölümde toplandı** (`I-1`…`I-8`): `fx`, `model_hedef_tarihi`, ÖTV `λ` varsayımı, **dış temas izni**, antrepo/bandrolleme tesisi yeri, finansman maliyeti, iş modeli önceliği, çalıştırma tarihi |
+| **4** | **`fx` bir eşik DEĞİLDİR** — bir kayıttır ve üç turdur bekliyor (`T-852`, `T-912`) |
+| **5** | **Dış temas izni (`T-467`, `T-304`) bir VERİ EKSİKLİĞİ DEĞİLDİR** — bir izin ve zamanlama sorunudur. `G2` ve `G2-L`, *"tedarik kaynağı yok"* diye değil, **"henüz sorulmadı"** diye kapalıdır |
+| **6** | **`bloke_ettigi` genişledi:** artık yalnız TUR 6'yı değil, **TUR 3B'yi** (ileri model) de bloke ediyor. Sebep: modelin **en büyük iki belirsizlik ekseni** bir veri değil, bir **karar** eksikliğidir (her biri 0→%30 aralığında **−108,56 TL/şişe**) |
+| **7** | `finans-fizibilite`'nin `TARGET`/`ACCEPTABLE`/`WALK-AWAY` fiyatlarını **üretmeme** kararı **onaylandı** — keyfî yüzdelerle üretmek *"modelin en sinsi uydurma noktası"* olurdu |
+
+### Kapanış koşulu
+
+`investor-decisions-required.md` §6'daki **MİNİMUM AÇILIŞ SETİ**'nin
+cevaplanması **VEYA** her eşik için *"belirlemiyorum"* beyanı **ve** o
+beyanın sonucunun kabulü.
+
+Minimum set: **`I-1` (fx)** · **`D-03` (μ + matrahı)** · **`D-01` (brüt marj +
+katman çifti)** · **`D-05` (sermaye tavanı)** · **`I-4` (dış temas izni)** ·
+**`D-14` (PRIMARY basamak)**
+
+### Kayıtlı tuzak — değişmedi ve güçlendi
+
+Charter eşiklerin **TUR 3 sonrası** belirlenmesini önerir; bu **sonuca göre
+eşik ayarlama (hedef kaydırma)** riski taşır. `investor-decisions-required.md`
+tam da bu riski azaltmak için eşiklerin **ileri model çıktısından önce**
+yazılmasını mümkün kılar.
+
+> **Ama bu bir ödünleşmedir, bir üstünlük değildir:** önce yazılan eşik
+> **bilgisiz** olabilir ve gerçekçi olmayan bir tabanı sabitleyerek projeyi
+> **haksız yere öldürebilir.** Hangisinin seçildiği `karar-gunlugu.md`'ye
+> yazılmalı ve `seytanin-avukati` TUR 4'te bunu bir saldırı vektörü olarak
+> kullanmalıdır.
+
+---
+
+## DİĞER AÇIK SORULARIN TUR 2.5 KAPANIŞ DURUMU
+
+| id | Önce | **Sonra** | Not |
+|---|---|---|---|
+| **`OQ-001`** | `PARTIALLY_RESOLVED` | **DEĞİŞMEDİ** | Promosyon ayağı (`T-504`) açık → **`G3` geçilemez.** TUR 2.5'te `OBSERVED_BENCHMARK` **hiç kullanılmadı**; `TARGET` merdiveni onun **yerine geçmez** (`K7`) |
+| **`OQ-002`** | `INPUT_RECORDED` | **DEĞİŞMEDİ** | Kapanış iki koşula bağlıydı: `T-921` `RESOLVED` **VE** tarihin `t0-takvimi`nden doğrulanması. **Birincisi bu turda gerçekleşti** (`T-921` → `RESOLVED`); **ikincisi olmadı** (`T-202`/`C-202` açık) → **`OQ-002` AÇIK KALIR** |
+| **`OQ-G08`** | `OPEN` | **DEĞİŞMEDİ** | *"Hedef tarihte hangi ÖTV tutarı geçerli olacak"* — üç hedef tarihin üçü de `2026-12-31` ufkunun ötesinde. `T-921` kapandı ama **tutar hâlâ `FUTURE_UNKNOWN`**. Bu soru tarih girilerek veya engine düzeltilerek **kapanmaz** |
+| **`OQ-G10`** | `OPEN` | ⚠ **YÜKSELTİLDİ — `T-947` (CRITICAL) açıldı** | KDVK md.36 CB kararı **üç turdur aranmamıştır.** Varsa ters modelin **TÜM sayıları ~%22,7 düşer.** **TUR 3A'nın birinci işi.** Etki değerlendirmesi başkanın değil, **`finans-fizibilite`'nin** türetmesidir |
+| **`OQ-502`** | `OPEN` | **DEĞİŞMEDİ** | Fiziksel mağaza gözlemi — `C-501`, `C-551`, `T-504`, `T-603` ile birlikte **tek eylemle** kapanır (`T-917`). **Üç turdur yapılmadı** |
+| **`OQ-902`** | `OPEN` | **DEĞİŞMEDİ** *(→ `I-7`)* | İki iş modeli eşit derinlikte araştırılamadı. Yatırımcının bu önceliği koruyup korumadığı **`investor-decisions-required.md` `I-7`**'de kayıtlı |
+| **`OQ-911`** | `OPEN` | **DEĞİŞMEDİ** *(→ `I-5`)* | Antrepo/bandrolleme tesisinin yeri. TRY bacağının **en büyük tek kalemini** belirsiz bırakıyor |
+| **`OQ-912`** | `OPEN — KISMEN CEVAPLANDI` | ✅ **TUR 2.5 İÇİN CEVAPLANDI** | Model **2026-08-10'da** koşuldu → `P-3` **sağlandı**, LCL bacağı çalıştırma anında **kanıtlıydı**. ⚠ **Ama soru TUR 3A/3B için YENİDEN AÇILIR:** yeni bir **`P-3b`** kapısı konmuştur (`tur-25-konsolidasyon.md` §5) — **2026-08-16'dan sonra** çalıştırılırsa ya `T-913` ile kotasyonlar yenilenir, ya da lojistik bacağı bilinçli olarak `ESTIMATE/LOW`'a düşürülüp **çıktıda açıkça yazılır.** Sessizce bayat veriyle koşmak **yasaktır** |
+
+---
+
+# TUR 2.5 AÇIK SORULARI
+
+> Ajanların `99-ops/_parts/*-tur25.md` fragment'lerinden değiştirilmeden aktarıldı.
+
+## gumruk-vergi-uzmani (TUR 2.5)
+
+> Bu tur **sınırlı bir model destek turudur**; yeni genel araştırma yapılmamıştır.
+> Aşağıdakiler ters modelin vergi bacağı kurulurken **açık kalan** veya
+> **yeni görünür hâle gelen** sorulardır. Devralınan açık sorular
+> (`…-tur15.md`, `…-tur2.md`) burada tekrarlanmamıştır.
+
+---
+
+### OQ-G25-01 — `λ` (2027 ÖTV artış katsayısı) kim tarafından, nerede tanımlanacak?
+
+**Kritiklik:** HIGH · **Bloke ettiği:** üç hedef tarih senaryosunun birbirinden
+ayrışması
+
+ÖTV, ÖTVK md.12/3 uyarınca Ocak ve Temmuz'da Yİ-ÜFE ile **kendiliğinden**
+yeniden belirlenir (`EV-2026-08-09-114`). Üç hedef tarihin (2027-01-01 /
+2027-04-01 / 2027-07-01) **üçü de** en az bir ayarlamanın ötesindedir.
+
+`vergi.yaml → BASE_DATE_kurali` gelecek değer yazılmasını **yasaklar** ve bu
+doğrudur. Ancak sonuç şudur: **üç senaryo da `λ=1` ile çalışacağı için ÖTV
+açısından birbirinden ayrışmayacaktır.** Hedef tarih seçiminin ÖTV etkisi model
+çıktısında **görünmeyecektir.**
+
+**Kim cevaplamalı:** `yatirim-komitesi-baskani` (karar) + `finans-fizibilite`
+(`makro.yaml`'da Yİ-ÜFE `ASSUMPTION`'ı, `senaryolar.yaml`'da duyarlılık ekseni).
+**`gumruk-vergi-uzmani` bu sayıyı vermez ve veremez.**
+
+---
+
+### OQ-G25-02 — `g` (gümrük vergisi oranı) için neden ÖTV ile aynı titizlik uygulanmıyor?
+
+**Kritiklik:** HIGH · **Tip:** metodolojik asimetri itirafı
+
+`g = 0,50 / 0,70` değerleri **2026 İthalat Rejimi Kararı**'na aittir
+(`effective_date: 2026-01-01`, `ttl: 90d`). Karar **her yıl 1 Ocak'ta
+yenilenir.** Üç hedef tarihin üçü de **2027'dedir.**
+
+Yani `g`, ÖTV ile **tamamen aynı yapısal durumdadır** ama:
+- ÖTV için `otv_maktu_zaman_serisi` + `gelecek_deger_kurali` + `son_gozlem_gecerlilik_ufku` var,
+- `g` için **hiçbiri yok** — model `0,50`'yi 2027'de de geçerli sayacak.
+
+Bu bir çelişki değil, **kabul edilmiş bir tutarsızlıktır** ve gizlenmemiştir
+(`ters-model-vergi-bacagi.md` §13.1, `rapor-tur25` §4).
+
+**Neden bu turda kapatılmadı:** 2027 Kararı henüz **yayımlanmamıştır**
+(2026 Aralık'ta beklenir). Yani `g` için doğrulanmış bir 2027 değeri **fiziksel
+olarak mevcut değildir**. Yapılabilecek tek şey `g`'ye de bir
+`gecerlilik_ufku: 2026-12-31` alanı eklemektir.
+
+**Öneri (karar başkanındır):** `mense_tarife_eslemesi` bloğuna
+`son_gozlem_gecerlilik_ufku: 2026-12-31` eklenmesi ve engine'in
+`t > 2026-12-31` iken `g`'yi de `UPPER_BOUND`/`ANCHOR` etiketiyle raporlaması.
+**Tarihsel yön ipucu yok:** oranların 2027'de artacağını da azalacağını da
+gösteren bir kanıt bulunmamaktadır → yön bile `UNKNOWN`'dır.
+
+---
+
+### OQ-G25-03 — `X_pre` gerçekten sıfır mı? (damga vergisi ve md.21/c'nin idari yorumu)
+
+**Kritiklik:** LOW (tutar) / MEDIUM (yöntem) · **Ticket:** `T-151`
+
+Ters modelin R7 adımı `X_pre = 0` varsayar. Türetme: tescile kadarki tüm yurt
+içi kalemler KDV'ye tabidir → md.21/c'nin "vergilendirilmeyenler" şartını
+sağlamazlar (`EV-2026-08-10-108`).
+
+**İki açık nokta:**
+1. **Gümrük beyannamesi damga vergisi** md.21/b uyarınca KDV matrahına **girer**;
+   tutarı `UNKNOWN`'dır (beyanname başına maktu → şişe başına ihmal edilebilir).
+2. md.21/c'nin **idari yorumu (KDVGUT III/A)** okunmamıştır (`T-151`).
+
+**En ucuz kapanış:** tek bir gerçekleşmiş gümrük beyannamesinde KDV matrahı
+satırının `CIF + GV + ÖTV` toplamına **eşit** olup olmadığının gözlenmesi.
+Bu, `master-commercial-input-table.md` §7'nin işaret ettiği yolla **aynı**dır.
+
+---
+
+### OQ-G25-04 — `T-911` (gümrük kuru) bu turda kapatılmadı
+
+**Kritiklik:** HIGH · **Ticket:** `T-911` (OPEN, target: bu ajan)
+
+Ters model `CIF_TRY_max` ve `FOB_TRY_max` üretebilir ama **döviz cinsinden
+azami satın alma fiyatını üretemez.** Bunun için iki ayrı şey gerekir:
+- `makro.yaml → fx` (`T-912`, `finans-fizibilite`/başkan),
+- **gümrük beyanında hangi kurun, hangi tarihte esas alınacağı** (`T-911`, bu ajan).
+
+`T-911` bu turda **bilinçli olarak kapsam dışı bırakılmıştır** (TUR 2.5 görev
+tanımı: "yeni genel araştırma yapma"). **Bu, bir eksiklik olarak kayda geçmiştir**
+ve ters modelin R11 adımını bloke eder.
+
+> ⚠️ **T-911, ters modelin "segment matematiksel olarak mümkün mü" sorusunu
+> cevaplamasının önündeki SON vergi engelidir.** `CIF_TRY_max` hesaplandıktan
+> sonra onu gözlenen menşe CIF birim değerleriyle (USD/lt) karşılaştırmak
+> için kur kuralı gerekir.
+
+---
+
+### OQ-G25-05 — ÖTV nispi oranının %0 olduğu tekrar doğrulanmalı mı?
+
+**Kritiklik:** MEDIUM · **Tip:** tek nokta bağımlılığı
+
+Ters formülün **tamamı** `nispi ÖTV = %0` üzerine kuruludur
+(`EV-2026-08-09-110`, `effective_date: 2026-07-03`). Oran > 0 olsaydı denklem
+parçalı-doğrusal olur ve tek bölmeyle çözülemezdi.
+
+Bu tek kanıt, ters modelin **en yüksek kaldıraçlı tek girdisidir** — yanlışsa
+sadece bir sayı değil, **formülün yapısı** yanlış olur.
+
+**Öneri:** `EV-2026-08-09-110`'a `ttl: 30d` ve **yüksek öncelikli yeniden
+doğrulama** etiketi. (Kanıt kartları immutable'dır; yeniden doğrulama yeni bir
+kart ile yapılır.)
+
+---
+
+### OQ-G25-06 — Gözetim eşiği `null` iken ters modelin çıktısı ne kadar güvenilir?
+
+**Kritiklik:** MEDIUM · **Ticket:** yok (TUR 1'den devir, `EV-2026-08-09-125`)
+
+Ters model bir **üst sınır** üretir. Gözetim bir **alt sınır** dayatır. İkisi
+kesişmezse proje **fiyat pazarlığıyla kurtarılamaz** (`ters-model-vergi-bacagi.md` §11).
+
+Eşik `UNKNOWN` olduğu için ters modelin çıktısı **alt sınırla test
+edilmemiştir.** Model bu uyarıyı basmak zorundadır, ama uyarı bir çözüm
+değildir. **Bu, bir gümrük müşavirine sorulacak ilk üç sorudan biridir.**
+
+---
+
+## navlun-lojistik-uzmani (TUR 2.5)
+
+```yaml
+ajan:   navlun-lojistik-uzmani
+tur:    TUR 2.5
+tarih:  2026-08-10
+not:    "99-ops/acik-sorular.md bu turda DOKUNMA listesindedir."
+```
+
+> Bu turda **yeni araştırma yapılmadı**; aşağıdakiler TUR 2'nin açık
+> sorularının **daralmış / keskinleşmiş** hâlidir. Yeni soru numaraları
+> yalnızca bu dosya içindedir.
+
+| # | Soru | Neden bu turda cevaplanamadı | Kritiklik | Bağlı ticket |
+|---|---|---|---|---|
+| **OQ-2501** | LCL kotasyonundaki fiyat **CFS'i içeriyor mu?** | Kotasyon metni "hariç" diyor ama tutar vermiyor; forwarder'a sorulmadan bilinemez (dış temas yasak) | **HIGH** — LCL BASE'imi ±%15 kaydırır | `T-304` |
+| **OQ-2502** | FCL kotasyonu **hangi kanaldan** alınabilir? Marketplace'ler Türkiye varışını hiç fiyatlamıyor | 14 lane test edildi, 0 sonuç (`EV-2026-08-10-312`); yeni tarama bu turda yasaktı | **CRITICAL** | `T-304` |
+| **OQ-2503** | LCL birim fiyatı 50+ CBM'de **kademeli olarak düşüyor mu?** | 5 CBM kotasyonu doğrusal uzatıldı; kademe yapısı bilinmiyor | HIGH — §5.1 üst sınır iddiasının dayanağı | `T-802` |
+| **OQ-2504** | 25.000+ şişede LCL **iç nakliyesi** gerçekte kaça mal olur? | Senaryoda "küçük araç" (5.000–10.000 TL) varsayımı kullanıldı; büyük hacimde tam kamyona yakınsaması beklenir → **LCL TRY bacağım bu hacimlerde İYİMSER** | MEDIUM | `T-304` |
+| **OQ-2505** | Bir sevkiyattaki çoklu konteyner **tek beyannamede** birleşiyor mu? | Tarifede İTH-14 ("ek konteyner") kalemi var, bu birleşmeyi ima ediyor ama teyit edilmedi | MEDIUM — 8 konteynerde 6.020×8 mi 6.020+7×1.350 mi (fark ~33.000 TL) | `T-304` |
+| **OQ-2506** | 2026-08-16'dan sonra aynı kaynak **aynı fiyatları** verecek mi? | Yeniden doğrulama bu turda yapılmadı (görev tanımı gereği) | **HIGH** | `T-802` |
+
+---
+
+## turkiye-pazar-kasifi (TUR 2.5)
+
+> Bu dosya `99-ops/acik-sorular.md`'ye **merge edilmek üzere** hazırlanmıştır.
+> Ana dosyaya bu ajan tarafından **dokunulmamıştır**.
+
+---
+
+### OQ-701 — Zincir market / tekel bayii rafında giriş segmenti şarap fiyatı nedir?
+
+```yaml
+soru_id:      OQ-701
+acan:         turkiye-pazar-kasifi
+tarih:        2026-08-10
+durum:        OPEN
+oncelik:      HIGH
+ilgili:       T-701, OQ-502, EV-2026-08-10-703, EV-2026-08-09-511
+```
+
+**Soru:** Migros / Macrocenter / CarrefourSA ve tekel bayii rafında, 2026'da
+750 ml giriş segmenti şarabın (yerli ve ithal) tüketici raf fiyatı nedir?
+
+**Neden açık:** Türkiye'de alkol tüketiciye internetten satılamadığı için bu
+katmanda **hiç gözlem yoktur** (`EV-2026-08-09-511`). Projenin
+`l8_chain_retail.deger_try` alanı **null / UNKNOWN**'dır.
+
+**Neden şimdi kritik oldu:** TUR 2.5'te üretilen hedef raf fiyatı merdiveni
+(599–999 TL) tam da bu katmanı hedeflemektedir. Merdivenin **göreli** sıralaması
+yapılabilmiş, **mutlak** konumu doğrulanamamıştır.
+
+**Elimizdeki tek (ZAYIF) sinyal:** `EV-2026-08-10-703` — T5 içerik çiftlikleri
+"Migros ve tekelde 75 cl şarap ortalama 450–650 TL" demektedir.
+**DOĞRULANMAMIŞTIR, MODELE GİREMEZ** (`C-503` ile aynı kaynak sınıfı).
+Ama **yönü önemlidir**: doğruysa, gözlenen online uzman kanalın
+(stokta yerli medyan **1.410 TL**, `EV-2026-08-10-702`) **tersini** söyler ve
+hedef merdivenin üst basamaklarını (899 / 999 TL) çok daha zor bir rekabet
+konumuna düşürür.
+
+**Nasıl kapanır:** Fiziksel mağaza turu — `T-504` / `OQ-502` / `OQ-552` ile
+**aynı ziyarette**, ek maliyetsiz.
+
+---
+
+### OQ-702 — Gözlenen online uzman kanal, giriş segmentini hiç taşımıyor mu, yoksa şu an mı stoksuz?
+
+```yaml
+soru_id:      OQ-702
+acan:         turkiye-pazar-kasifi
+tarih:        2026-08-10
+durum:        OPEN
+oncelik:      MEDIUM
+ilgili:       C-501, C-561, T-561, EV-2026-08-10-702
+```
+
+**Soru:** iyisarap.plus'ın tüm stokta katalogunda (471 SKU) 600 TL altında
+**yalnızca 1** SKU vardır ve stokta yerli medyan **1.410 TL**'dir. Bu, kanalın
+**kalıcı assortman politikası** mıdır, yoksa **geçici bir stok durumu** mudur?
+
+**Neden önemli:** Eğer kalıcı politikaysa, "500–1.000 TL bandında ithal şarap
+yok" bulgusunun **büyük kısmı kanal artefaktıdır** ve pazar boşluğu olarak
+okunamaz. Bu, `C-501` ve `C-561`'in **her ikisini de** yeniden çerçeveler.
+
+**Nasıl kapanır:** Aynı kanalın 2–3 farklı tarihte (örn. +30 gün, +60 gün)
+ölçülmesi; veya kanalın kendi "en ucuz şaraplar" koleksiyonunun incelenmesi.
+Bu ajan tarafından yapılabilir, ek kaynak gerektirmez.
+
+---
+
+### OQ-703 — 599 TL hedefi bir pazar fiyatı mı, yoksa tek bir promosyonun izdüşümü mü?
+
+```yaml
+soru_id:      OQ-703
+acan:         turkiye-pazar-kasifi
+tarih:        2026-08-10
+durum:        OPEN
+oncelik:      HIGH
+ilgili:       T-504 (CRITICAL, OPEN), OQ-001
+```
+
+**Soru:** `TARGET_SHELF_PRICE = 599 TL` basamağının **tek** destekleyici gözlemi
+`OBSERVED_BENCHMARK = 599,90 TL`'dir. O gözlemin promosyon durumu `UNKNOWN`'dır.
+Promosyonluysa 599 TL hedefinin **hiçbir** gözlemsel dayanağı kalmaz.
+
+**Durum:** Bu, `T-504`'ün (CRITICAL, OPEN) hedef tarafındaki sonucudur.
+**Yeni bir araştırma açılmamıştır** — TUR 2.5 kapsamı gereği Gold Country
+promosyon araştırmasına dönülmemiştir. Burada yalnızca **hedef merdivene olan
+bağı** kayda geçirilmektedir.
+
+**Etkisi:** `T-504` "promosyonlu" diye kapanırsa
+`60-pazar/target-shelf-price-analysis.md` §3.1'deki `AGGRESSIVE` etiketi
+**`TOO_LOW`**'a döner ve PRIMARY/SECONDARY önerisi **yukarı** kaymaz — ama
+599 TL downside senaryosu **elenir**.
+
+---

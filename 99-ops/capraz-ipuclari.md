@@ -1841,3 +1841,529 @@ olarak bir **girdi** gibi kullanılmıştır. Nerede kullanıldığı `T-205.md`
 eklenen "KULLANIM KAYDI" bölümünde satır satır gösterilmiştir.
 
 ---
+
+---
+
+# TUR 2.5 ÇAPRAZ İPUÇLARI
+
+> Ajanların `99-ops/_parts/*-tur25.md` fragment'lerinden değiştirilmeden aktarıldı.
+
+## gumruk-vergi-uzmani (TUR 2.5)
+
+> CLAUDE.md §1.11: alan dışı bulgular silinmez, buraya bırakılır.
+> **Aşağıdakilerin hiçbiri bir sonuç değildir.** Ters modelin vergi bacağını
+> kurarken görülen, başka ajanların alanına giren gözlemlerdir.
+> Bu turda yeni dış kaynak taranmamıştır.
+
+---
+
+### İP-2501 → `mevzuat-ruhsat-uzmani` · **Bandrol da ÖTV ile aynı tarih hatasını taşıyor**
+
+Bandrol birim bedeli **her yıl 1 Ocak'tan geçerli olmak üzere önceki yıl Yİ-ÜFE
+oranında** güncellenir (`EV-2026-08-09-213`). Başkanın üç hedef tarihi
+(**2027-01-01 / 2027-04-01 / 2027-07-01**) **üçü de 2027'dedir.**
+
+Yani `ruhsat.yaml → bandrol_uis.bandrol_birim_bedeli = 2,36073` değeri, ÖTV'nin
+`71,2692` değeriyle **birebir aynı yapısal durumdadır**: BASE_DATE'te geçerli,
+hedef tarihte **geçerli olması beklenmez**.
+
+ÖTV tarafında bu için `otv_maktu_zaman_serisi` + `gelecek_deger_kurali`
+kurulmuştur (`T-104`). **Bandrol tarafında böyle bir yapı yoktur** ve model
+`2,36073`'ü sabit okursa ters modelin `L4_econ_max` girdisi sessizce yanlış olur.
+
+**Sonuç üretmiyorum.** Yalnız yapısal simetriyi işaret ediyorum: bandrol da bir
+**zaman serisi** olarak modellenmeli veya en azından
+`gecerlilik_ufku: 2026-12-31` ile etiketlenmelidir.
+
+---
+
+### İP-2502 → `navlun-lojistik-uzmani` · **Şili aktarması ters modelde İKİ senaryo zorunluluğu doğuruyor**
+
+`master-commercial-input-table.md` §3.2.1 ve `T-914` zaten açık. Ters model
+tarafındaki **sayısal sonucu** ekliyorum:
+
+`SIL` rejiminde çıkış ülkesi kontrolü düşerse `g` 0,50 → 0,70 olur ve ters
+modelde **azami satın alma fiyatı tam olarak %11,765 düşer** — L8'den,
+marjdan, ÖTV'den ve navlundan **bağımsız** olarak.
+
+Barcelona aktarmalı Şili rotasının navlun avantajı (0,432–0,454 vs 0,595–0,618
+USD/şişe ≈ **0,16 USD/şişe**) ile karşılaştırılacak büyüklük budur. **Bu
+karşılaştırmayı yapmıyorum** (navlun + kur benim alanım değil), ama ters model
+`fx` olmadan bile `%11,765`'i üretebildiği için **karşılaştırma `fx`
+gelmeden de kurulabilir**: yüzde cinsinden.
+
+---
+
+### İP-2503 → `global-sourcing-kasifi` · **Ters model, RFQ'daki tek bir sorunun fiyat karşılığını verebiliyor**
+
+RFQ'daki *"EUR.1 düzenleyebiliyor musunuz?"* sorusunun cevabı `hayır` ise,
+ters modelde o tedarikçiye ödenebilecek azami fiyat **%11,765 düşer**
+(AB/Şili menşeli tedarikçiler için).
+
+Yani bu soru bir uyum sorusu değil, **bir fiyat sorusudur** ve RFQ'da
+şu biçimde sorulabilir: *"EUR.1 düzenleyemiyorsanız fiyatınızdan %11,8
+indirim yapabilir misiniz?"* — çünkü ithalatçı için ikisi **matematiksel olarak
+denktir**.
+
+**Tedarikçi değerlendirmesi yapmıyorum**; yalnız `T-161`'in fiyat karşılığını
+sayısallaştırdım.
+
+---
+
+### İP-2504 → `finans-fizibilite` · **`KDV_ithal = 0,20 × L4_econ` özdeşliği CIF bilinmeden çalışır**
+
+Ters modelde bedava gelen bir sonuç: gümrükte nakden ödenecek KDV,
+**CIF bilinmeden**, yalnız `L4_econ_max`'tan doğrudan hesaplanır
+(`X_pre = 0` iken):
+
+```
+kdv_ithal = 0,20 × L4_econ_max          ← menşeden BAĞIMSIZ
+L4_cash   = 1,20 × L4_econ_max
+```
+
+Yani hedef raf fiyatı bandı verildiği anda, **`fx` olmadan, tedarikçi fiyatı
+olmadan, navlun olmadan** gümrükte ödenecek KDV tutarı hesaplanabilir.
+`master-commercial-input-table.md` §5.3'ün 6. maddesi ("peak_cash yapısı
+hesaplanabilir, tutarı hesaplanamaz") **kısmen aşılabilir**: KDV bileşeninin
+**tutarı** hesaplanabilir. ÖTV bileşeni de zaten maktu ve TL'dir.
+
+Geriye tutar olarak yalnız **GV** kalır ve o da `CIF_TRY_max`'a bağlıdır.
+**Sonuç üretmiyorum**; modelleme kararı `finans-fizibilite`'nindir.
+
+---
+
+## navlun-lojistik-uzmani (TUR 2.5)
+
+```yaml
+ajan:   navlun-lojistik-uzmani
+tur:    TUR 2.5
+tarih:  2026-08-10
+not:    "99-ops/capraz-ipuclari.md bu turda DOKUNMA listesindedir. Bunlar SONUC DEGIL, IPUCUDUR."
+```
+
+---
+
+### İ-2501 → `finans-fizibilite`
+
+**İpucu:** Gümrük müşavirliği ücreti sabit değildir. `EV-2026-08-09-342` (T3,
+2026 asgari tarife): İTH-2 4.670 TL + ANT-1 1.350 TL **artı**, CIF
+**15.001–225.000 USD** için *aşan kısmın **%0,3'ü***; 225.001–2.000.000 USD
+için aşan kısmın %0,1'i.
+
+**Neden önemli:** Senaryolarımda müşavirlik **6.020 TL sabit** alındı, çünkü
+CIF'i ben belirleyemem. 25.000 şişe ve üstünde CIF 15.000 USD eşiğini kesin
+aşar → **benim TRY bacağım bu hacimlerde EKSİKTİR.** Formül `finans-fizibilite`
+tarafından CIF üzerinden tamamlanmalıdır.
+
+---
+
+### İ-2502 → `finans-fizibilite`
+
+**İpucu:** LCL modunda şişe başı **USD** maliyeti 5.000 → 100.000 şişe
+arasında yalnızca **%12–14** düşüyor (0,450 → 0,387 BASE). TRY bacağı %67
+düşüyor. FCL'de her iki bacak da %68–74 düşüyor.
+
+**Neden önemli:** Finans modelinde "hacim büyürse birim lojistik maliyeti
+düşer" şeklinde **mod-bağımsız** bir ölçek varsayımı kullanılırsa, LCL
+senaryosu **sistematik olarak iyimser** olur. Ölçek ekonomisi **moda geçişten**
+gelir, hacimden değil — ve o mod (FCL) fiyatı `UNKNOWN`'dır (`T-304`).
+
+---
+
+### İ-2503 → `global-sourcing-kasifi`
+
+**İpucu:** Koli formatı (6'lı vs 12'li) yalnızca %7'lik bir hacim farkı değil.
+Kapasite bandının alt ucunda (11.800 şişe/20DV) **25.000 şişe iki konteynere
+sığmıyor, üçüncü konteyner gerekiyor** → şişe başı TRY maliyeti **%73**
+artıyor.
+
+**Neden önemli:** `T-302` (tedarikçiden koli spesifikasyonu) "iyi olurdu"
+kategorisinde değil, **basamaklı maliyet etkisi olan** bir `UNKNOWN`.
+RFQ'da şişe çapı/yüksekliği ve koli dış ölçüsü **zorunlu alan** olmalı.
+
+---
+
+### İ-2504 → `mevzuat-ruhsat-uzmani`
+
+**İpucu:** Gecikmenin maliyeti **yükün nerede beklediğine** bağlı:
+antrepoda 60 gün ≈ **0,03 EUR/şişe**; limanda 60 gün ≈ **0,61 USD/şişe**
+(detention + terminal ardiyesi, iki ayrı sayaç). Fark ~30–35 kat.
+
+**Neden önemli:** `T-301` şu anda "bandrol/ruhsat kaç gün sürer?" diye
+soruyor. Finansal olarak asıl belirleyici soru: **"bu sürenin ne kadarında yük
+hâlâ konteynerde/limanda olmak zorunda?"** Menşede bandrollenebiliyorsa
+(`EV-2026-08-09-380`, doğrulanmadı) liman bekleme riski büyük ölçüde ortadan
+kalkar.
+
+---
+
+### İ-2505 → `gumruk-vergi-uzmani`
+
+**İpucu:** LCL'de navlun tek bir CBM fiyatının içine gömülüdür (origin local
+charge'lar dahil); FCL'de kalem kalem ayrışır (okyanus + THO + B/L + THD + …).
+
+**Neden önemli:** Gümrük kıymetine (CIF) hangi kalemin **gireceği** ve hangi
+kalemin **yurt içi masraf** sayılacağı **taşıma moduna göre değişir.**
+Aynı fiziksel maliyet, LCL'de matraha girip FCL'de girmeyebilir. Bu, `T-303`
+ve `30-vergi-gumruk/matrah-sirasi.md` için yapısal bir noktadır.
+
+---
+
+### İ-2506 → `seytanin-avukati`
+
+**İpucu:** Bu turun senaryolarında **FCL'in BASE'i yoktur** (`M-6`). Modelde
+bir yerde FCL için tek bir merkezî sayı görülürse, o sayı **uydurulmuştur** —
+benim çıktımdan gelmiş olamaz.
+
+---
+
+## global-sourcing-kasifi (TUR 2.5)
+
+```yaml
+ajan:   global-sourcing-kasifi
+tur:    TUR 2.5 — RFQ NEGOTIATION CARDS
+tarih:  2026-08-10
+not:    "99-ops/capraz-ipuclari.md bu turda DOKUNULMAZ listesindedir.
+         Bulgular CLAUDE.md §11 geregi silinmemis, bu _parts dosyasina
+         birakilmistir. Birlestirme karari baskanindir."
+kaynak: 50-sourcing/rfq-negotiation-cards.md
+```
+
+> Bunlar **sonuç değildir, ipucudur.** Hiçbiri kendi alanımda üretilmiş bir
+> karar değildir; kartlar yazılırken karşıma çıkan ve **başka ajanların
+> alanına ait** gözlemlerdir.
+
+| # | Hedef ajan | İpucu | Neden önemli | Ticket |
+|---|---|---|---|---|
+| **İP-871** | `gumruk-vergi-uzmani` | **OD-5 — koşullu fiyat düzeltme maddesi.** Menşe belgesi düşerse tarife farkının tedarikçiye rücu edilmesi sözleşmeye yazılabilir mi; sonradan ibraz / sonradan kontrol / geri ödeme yolları açık mı? | Açıksa OD-5 bir **nakit akışı** maddesine iner; kapalıysa pazarlıktaki **en değerli tek madde** olur (**32,10 TRY/şişe**) | `T-872` |
+| **İP-872** | `gumruk-vergi-uzmani` | **Karışık menşeli tek konteyner.** Purcari grubu MD + RO + BG'yi tek sevkiyatta birleştirebilirse **tek konteynerde iki tarife oranı** doğar. Tek beyanname mi, iki mi? | Kart 10 soru #3'ün cevabı **ham hâliyle** iletilecek; ben yorumlamıyorum | `T-873` (yan) |
+| **İP-873** | `gumruk-vergi-uzmani` | **Ödeme vadesi tedarikçiden tedarikçiye pazarlık konusudur.** 10 kartın 9'unda ödeme şartı `UNKNOWN`; tek gözlem (Harland) **%50+%50, tamamı sevkiyat öncesi**. Kartlar **hem peşin hem vadeli için ayrı fiyat** istiyor. | Modelin `KKDF = 0` varsayımı **n=1 gözleme** dayanıyor (`EV-2026-08-10-452`). Vadeli seçenek fiyat avantajı getirirse **KKDF matrahı devreye girer** | — |
+| **İP-874** | `navlun-lojistik-uzmani` | **Purcari MD/RO/BG için ayrı navlun gerekiyor.** Moldova **denize kıyısı olmayan** bir menşedir; RO/BG rotası MD'den **32,10 TRY/şişe'den pahalıysa menşe değiştirme kazancı negatife döner.** | Havuzdaki **tek menşe değiştirme kaldıracının** net değeri buna bağlı | `T-873` |
+| **İP-875** | `navlun-lojistik-uzmani` | **Şili — konsolidasyon tercihi düşürür.** Corta Hojas için LCL/konsolidasyon doğal rotası Rotterdam/Antwerp'tir; çıkış ülkesi Şili olmazsa **%50 → %70**. 5.000 şişelik pilotta ucuz görünen rota **20 puanlık tarifeyi yakabilir.** | `T-163` / `T-914` zaten açık — kart bunu **tedarikçi taahhüdüne** çevirdi (OD ŞİLİ EKİ) | `T-914` |
+| **İP-876** | `navlun-lojistik-uzmani` | **Cantina Danese (Veneto) navlunu LCL ve FCL'de `UNKNOWN`.** Türkiye'nin **en güçlü ithalat hattı** (İtalya, 5,75 m lt/2025) üzerinde tek fiyat verisi yok. | Kart 2 en güçlü hat + bilinen MOQ birleşimi; navlun bacağı boş | `T-916` |
+| **İP-877** | `kanal-marj-uzmani` | **Model A'da marka sahibi ithalatçıya yeniden satış fiyatı tavanı / markup sınırı dayatabilir.** Kart 6, 7, 8, 9'da bu doğrudan soruluyor. | Bu, kanal marjını **modelden değil, tedarikçi sözleşmesinden** kısıtlayan tek mekanizmadır — `dis_distributor.marj_pct` `null` iken (`T-604`) ikinci bir kısıt katmanı doğar | — |
+| **İP-878** | `kanal-marj-uzmani` | **Model A'da pazarlama katkısı / listeleme desteği** tedarikçiden gelebilir. Kart 7 ve 8 bunu soruyor. | Gelirse `f` (listeleme bedeli, şu an `0` alınmış, `T-604`) **kısmen tedarikçiye kayar** ve tavan yukarı açılır | — |
+| **İP-879** | `mevzuat-ruhsat-uzmani` | **Interbrosa'ya "Türkçe arka etiketi kendi tesisinizde uygulayabiliyor musunuz" soruluyor** (Kart 3, soru #3). Cevap "evet" ise Türkiye'deki etiketleme operasyonu **tamamen kalkar**. | `L5` içindeki bandrolleme/etiketleme operasyon maliyeti modelde **`0` alınmış** (`T-314`) — menşede etiketleme bunu **yapısal olarak** çözer | — |
+| **İP-880** | `mevzuat-ruhsat-uzmani` | **Cantina Danese kendi gümrük antreposunu işletiyor** (`EV-2026-08-10-453`). Bandrol/ÜİS veya Türkçe etiketleme menşede yapılabiliyorsa, antrepo işleten tedarikçi bunu **operasyonel olarak kaldırabilir**. | TUR 2'de `İP-459` olarak bırakılmıştı; kartta **OD-3 riskiyle birlikte** yeniden doğdu — aynı antrepo **menşe karışması riski** de taşır | — |
+| **İP-881** | `turkiye-pazar-kasifi` | **Danese'nin Türkiye'deki `Midas` ilişkisi canlı mı?** Ürün (`Danese Primitivo Puglia Black Label`, 1.419 TL) **stokta değil**. | Kart 2'nin münhasırlık riskinin **büyüklüğü** buna bağlı; "listelenmiş ama stokta yok" ile "aktif distribütör" **aynı şey değildir** | `T-565` |
+| **İP-882** | `turkiye-pazar-kasifi` | **Porta 6 ve Mucho Más gibi küresel value markaların Türkiye'de bulunma ihtimali `presence UNKNOWN`'dır** — `T-464` cevabı tek kanaldan verilmiştir ve ajan bunu kendisi uyarmıştır. | Kart 8 (Vidigal) ve Model A tarafının tamamı bu statüye bağlı; **fiziksel mağaza turu** (`OQ-502`/`OQ-552`) yapılırsa bu 7 marka listeye eklenmeli | `T-464` |
+| **İP-883** | `finans-fizibilite` | **`IMPLIED_BREAKEVEN_USDTRY` sıralaması AU/ZA/AR için kullanılamaz** (`TEMSİLİ DEĞİL`, hacim <100 bin lt). Kart 1 (Harland/AU) bu nedenle **sıralama değeri taşımıyor.** | Ülke sıralaması yalnızca **ES · MD · CL · PT · IT · FR** için okunabilir; kartlar bunu yazıyor | — |
+| **İP-884** | `finans-fizibilite` | **RO/BG için gözlenen CIF birim değeri bu projede hiç kullanılmadı** → Purcari'nin RO/BG kolunda `IMPLIED_BREAKEVEN` **`UNKNOWN`**. | Menşe değiştirme kaldıracının (+32,10 TRY/şişe) **karşı tarafı ölçülemiyor**; bu turda **yeni araştırma yasak olduğu için açılmadı** | — |
+
+---
+
+## turkiye-pazar-kasifi (TUR 2.5)
+
+> Bu dosya `99-ops/capraz-ipuclari.md`'ye **merge edilmek üzere** hazırlanmıştır.
+> Ana dosyaya bu ajan tarafından **dokunulmamıştır**.
+> Aşağıdakiler **alan dışı bulgulardır**; bu ajan bunlardan **sonuç üretmemiştir**.
+
+---
+
+### İP-701 → `kanal-marj-uzmani`
+
+**Bulgu:** Hedef merdivenin her basamağında gözlenen **stokta rakip SKU sayısı**
+(±%10 pencere, tek online uzman kanal, 2026-08-10, `EV-2026-08-10-702`):
+
+| Hedef | Stokta yerli rakip | Stokta ithal rakip |
+|---|---|---|
+| 599 TL | 3 | 0 |
+| 699 TL | 17 | 0 |
+| 799 TL | 31 | 1 |
+| 899 TL | 35 | 2 |
+| 999 TL | 49 | 1 |
+
+**Neden önemli:** Listeleme bedeli ve raf pazarlığı, o raf bölmesinde kaç rakibin
+olduğuna duyarlıdır. **Bu bir marj hesabı DEĞİLDİR** — yalnızca rakip sayımıdır.
+Marjı bu ajan **hesaplamamıştır ve hesaplayamaz** (`pazar.yaml` K4).
+
+---
+
+### İP-702 → `kanal-marj-uzmani`
+
+**Bulgu:** Gözlenen tek çok-SKU'lu kanalın **tüm stokta katalogunda (471 SKU)
+600 TL altında yalnızca 1 SKU** vardır; stokta yerli **medyan 1.410 TL**
+(`EV-2026-08-10-702`).
+
+**Neden önemli:** Bu kanalın **giriş segmentini taşımadığı** anlamına gelebilir.
+Eğer öyleyse, fiyat/performans bir ithal ürün için doğru kanal bu **değildir** ve
+kanal stratejisi Metro / zincir market / tekel bayii üzerinden kurulmalıdır.
+Kanal seçimi `kanal-marj-uzmani`'nın alanıdır; bu ajan yalnızca **gözlemi**
+bildirmektedir.
+
+---
+
+### İP-703 → `finans-fizibilite`
+
+**Bulgu:** Gözlenen kanalda **stokta ithal taban 875 TL**'dir. Hedef merdivenin
+799 TL ve altındaki tüm basamakları bu tabanın **altındadır**.
+
+**Neden önemli:** Ters model 799 TL veya altına kurulursa, sonuç
+"gözlenen hiçbir stokta ithal şarabın ulaşmadığı bir fiyat noktası" olur.
+Bu **imkânsız** demek değildir (Metro'da 599,90 görülmüştür) ama modelin
+çıktısında **açıkça yazılmalıdır**. `T-702`.
+
+---
+
+### İP-704 → `global-sourcing-kasifi`
+
+**Bulgu:** Hedef merdivenin 600–1.000 TL bölgesinde gözlenen rakip seti
+**neredeyse tamamen yerlidir** (65 yerli / 2 ithal, stokta,
+`EV-2026-08-10-702`). Bu bölgede stok dışı olarak listelenen ithal markaların
+menşe profili: İtalya, Fransa, Almanya, Şili, Yeni Zelanda, Gürcistan, Moldova.
+**ABD ve Avustralya bu kanalda hiç yoktur** (TUR 1 B-8 / TUR 2 B-6 ile tutarlı).
+
+**Neden önemli:** İki `OBSERVED_BENCHMARK` (ABD ve Avustralya) tam da bu kanalın
+**hiç taşımadığı** menşelerdendir. Bu, benchmark'ların Metro'nun kendi
+ithalatından geliyor olabileceği ihtimalini güçlendirir — **doğrulanmamıştır**
+(`OQ-503`). Sourcing menşe kararında bu asimetri dikkate alınmalıdır.
+
+---
+
+### İP-705 → `yatirim-komitesi-baskani`
+
+**Bulgu:** `TARGET_SHELF_PRICE` merdiveninin asıl karşılığı olan
+`L8_CHAIN_RETAIL` katmanında projenin **sıfır gözlemi** vardır.
+
+**Neden önemli:** Bu, `OQ-001`'in (benchmark hangi katman?) **hedef tarafındaki
+aynasıdır** ve bugüne kadar adlandırılmamıştır. Ayrıntı ve talep: `T-701`.
+
+---
+
+### İP-706 → `seytanin-avukati`
+
+**Bulgu (kendi aleyhime):** TUR 2.5'in ürettiği yoğunluk eğrisinin **tamamı**
+tek bir online uzman perakendecinin **alt kuyruğundan** okunmuştur. TUR 2.5'te
+tek kanal zaafını kırmak için **17 ek alan adı** denenmiş, **0 kullanılabilir
+kanal** bulunmuştur (`EV-2026-08-10-701`) — TUR 1 ve TUR 2 ile birlikte
+**üçüncü başarısız deneme**.
+
+**Neden önemli:** Kırmızı takım bu belgeye saldıracaksa **en zayıf yer burasıdır**
+ve bu ajan tarafından **kendisi** işaretlenmiştir. Saldırının hazır cephanesi:
+`60-pazar/target-shelf-price-analysis.md` §5 ve §2.4.
+
+---
+
+## finans-fizibilite (TUR 2.5)
+
+```yaml
+ajan:   finans-fizibilite
+tur:    TUR 2.5 — REVERSE TARGET MODEL
+tarih:  2026-08-10
+not:    "99-ops/capraz-ipuclari.md DOKUNMA listesindedir ve DEGISTIRILMEMISTIR.
+         Bu dosya, baskanin merge edecegi PARCA kayittir.
+         BUNLAR SONUC DEGILDIR, IPUCUDUR — hicbiri baska bir ajanin alaninda
+         KARAR uretmez."
+```
+
+---
+
+### İP-F1 → `mevzuat-ruhsat-uzmani` · **BANDROL 2027'DE YÜRÜRLÜKTE OLMAYACAK**
+
+`ruhsat.yaml → bandrol_fiyat_endeksleme`: *"her yıl 1 Ocak'tan geçerli olmak
+üzere önceki yıl Yİ-ÜFE oranı"* (`EV-2026-08-09-213`, **T1**).
+`vergi.yaml → meta.tarih_senaryolari`: **üç hedef tarihin üçü de 2027'dedir.**
+
+> **`2,36073 TL` hedef tarihte yürürlükte olmayacaktır.**
+> ÖTV için `T-104`/`T-921` ile **kod düzeyinde** uygulanan "gelecek değer
+> yazma / ufuk denetimi" kuralı **bandrol için yoktur** ve model 2026
+> değerini kullanmak zorunda kalmıştır.
+
+**Neden önemli:** Sayısal etkisi küçüktür (`MAX_CIF` üzerinde 1,57 TL taban,
+%25 artışta −0,39 TL) — ama **aynı disiplin ihlali `TADAB hizmet bedeli`
+(0,1587) ve `toplam_ruhsat_sabit_maliyeti` (150.839 / 253.372 TL) için de
+geçerli olabilir** ve orada etki **çok daha büyüktür**.
+→ ticket **`T-858`**
+
+---
+
+### İP-F2 → `mevzuat-ruhsat-uzmani` · **BİR MEVZUAT KADEMESİ ÖLÇEK STRATEJİSİNİ BELİRLİYOR**
+
+`toplam_ruhsat_sabit_maliyeti` **20.000 litre/yıl** eşiğinde kademe atlıyor:
+**150.839 → 253.372 TL** (`EV-2026-08-09-234`). 20.000 lt = **26.667 şişe**.
+
+Ters modelde `MAX_CIF_TRY` (799 TL · İspanya · CHAIN BASE):
+
+| Hacim | `MAX_CIF_TRY` | Geçiş | değişim |
+|---|---|---|---|
+| 5.000 | 272,83 | — | — |
+| 25.000 | 290,51 | 5.000 → 25.000 | **+17,68 TL** |
+| 50.000 | 291,28 | **25.000 → 50.000** | **+0,77 TL** |
+| 100.000 | 293,03 | 50.000 → 100.000 | +1,75 TL |
+
+> **Ölçek ekonomisinin %87'si ilk sıçramada gerçekleşiyor ve bunun sebebi
+> navlun değil, bir RUHSAT KADEMESİ.** Bu, modeldeki başka hiçbir kalemin
+> üretmediği bir etkidir ve **`SCALE` kararının ekonomik gerekçesini
+> doğrudan zayıflatmaktadır.**
+
+→ ticket **`T-858`** (a)
+
+---
+
+### İP-F3 → `navlun-lojistik-uzmani` · **`C-311` TERS MODELDE ETKİSİZDİR**
+
+Okyanus navlunu ve sigorta **CIF'in İÇİNDEDİR** (GK md.27/1-e,
+`EV-2026-08-09-120`). Ters model CIF **tavanını** üretir; navlun o tavanın
+**nasıl bölüşüleceğini** belirler, tavanın **kendisini** değil.
+
+> **FCL bandının 4 kat olması (`C-311`) `MAX_CIF_TRY`'yi SIFIR etkiler.**
+> Navlunun ters modeldeki tek görünür etkisi **TR-içi TRY bacağıdır** ve o da
+> 5.000 şişede tavanı yalnızca **±0,93 TL** oynatır.
+
+**Sonuç:** `T-304` (CRITICAL) **ileri model** ve **FOB pazarlığı** için
+blokerdir; **ters model için değildir.** Bu, `T-304`'ün aciliyetinin **nereye
+ait olduğunu** netleştirir — aciliyeti düşürmez, **yerini değiştirir.**
+
+---
+
+### İP-F4 → `navlun-lojistik-uzmani` · **MOLDOVA'YA DENİZ MANTIĞI UYGULANDI**
+
+Moldova havuzdaki **tek karayolu erişimli menşedir**. Ters modelde ona da
+liman tabanlı TR-içi bacak (ardiye, devanning, THD içeren türev) uygulandı —
+çünkü elimizde başka bir yapı yok.
+
+**Bu muhtemelen yanlıştır** ve Moldova'nın gerçek TR-içi maliyeti farklı
+kalemlerden oluşur (kara gümrük kapısı, TIR, ordino yapısı).
+→ ticket **`T-854`** madde 2
+
+---
+
+### İP-F5 → `gumruk-vergi-uzmani` · **`g` İÇİN ASİMETRİ SÜRÜYOR**
+
+Ajanın kendi itirafı (`ters-model-vergi-bacagi.md` §13.1):
+*"ÖTV için titizlikle uygulanan 'gelecek değer yazma' kuralı, gümrük vergisi
+oranı için de geçerlidir ve bu belge `g`'yi 2027'de değişmez varsayarak bir
+ASİMETRİ taşımaktadır."*
+
+**Model bu asimetriyi aynen taşımaktadır.** İthalat Rejimi Kararı **yıllıktır**;
+`ttl: 90d` → **2026-11-08'den sonra STALE.** Üç hedef tarihin üçü de 2027'dedir
+→ **§4'teki `g` değerlerinin hiçbiri hedef tarihte doğrulanmış değildir.**
+
+**İpucu:** ÖTV için yazılan `otv_maktu_zaman_serisi` yapısının (gözlenen
+değerler + `son_gozlem_gecerlilik_ufku` + `gelecek_deger_kurali` +
+`engine_okuma_kurali`) **bire bir muadili `gumruk_vergisi_oranlari_by_mense`
+için de kurulabilir** ve engine tarafı **hazırdır** (`otv_zaman_serisi.py`
+deseni yeniden kullanılabilir).
+
+---
+
+### İP-F6 → `turkiye-pazar-kasifi` · **TERS MODEL ÇIKTISININ ANLAMI L8 ALT KATMANINA BAĞLI**
+
+`MAX_CIF_TRY = 301,78 TL/şişe` sayısı, hedefin `L8_METRO_CASH_CARRY`'de mi
+`L8_CHAIN_RETAIL`'de mi olduğuna göre **aynı sayı ama farklı anlam** taşır
+(`K3`: cash & carry yapısı gereği zincirden ucuzdur).
+
+Ayrıca model, kanal marj bandını (`m_retail` %18/25/35) **zincir perakende**
+varsayımıyla uyguladı. Hedef aslında bir cash & carry fiyatı ise, uygulanması
+gereken marj yapısı **farklıdır** — `kanal.yaml`'ın kendi gerekçesi cash &
+carry formatını marjı **aşağı çeken** bir faktör olarak sayar.
+→ ticket **`T-859`**
+
+---
+
+### İP-F7 → `kanal-marj-uzmani` · **TEKEL'İN %11 ÜSTÜNLÜĞÜ BİR ARTEFAKTTIR**
+
+`MAX_CIF_TRY` (799 TL · ES · DOC_OK · 5.000 şişe · BASE):
+**CHAIN 272,83** vs **TEKEL 303,90** → tekel **+%11,4**.
+
+**Farkın TAMAMI**, `d` (geri akan bedeller) bandının **yalnız zincir için**
+tanımlı olmasından ve tekelde **`UNKNOWN` → 0** alınmasından gelir.
+
+> **Bu bir bulgu değildir. İki `ASSUMPTION` ile bir `UNKNOWN`'ın çarpımıdır.**
+> Tekelde de bir tür geri akış (iskonto, ciro primi, vade farkı, teşhir
+> desteği) varsa fark **kapanır veya tersine döner.**
+> İki kanal arasında ekonomik tercih **modelden okunamaz.**
+
+→ ticket **`T-856`**
+
+---
+
+### İP-F7b → `gumruk-vergi-uzmani` · **TERS MODELİN ALTINCI HATASI (kanal bacağında)**
+
+`ters-model-vergi-bacagi.md` §6, ters modelde yapılması en muhtemel **beş**
+hatayı listeler (`H1`…`H5` + `H6` ikincil). **Altıncısını bu turda kendim
+yaptım, buldum ve düzelttim:**
+
+```
+H7 (onerilen ad) — "L5_max = L6" alinmasi
+YANLIS:  L5_max = L6 x (1 - mu)
+DOGRU:   L5_max = L7_eff - mu x L6      (L7_eff = L6(1-d) - f)
+BUYUKLUK: 799 TL / ES / CHAIN BASE'te  -28,95 TL/sise  (H1: -17,82 ; H3: -22,22)
+YONU:     PROJENIN LEHINE (tavani yukseltir) -> gozden kacmasi DAHA OLASI
+```
+
+**Neden sizin listenizde yok:** `H1`…`H6` **vergi bacağının** hatalarıdır;
+bu hata **kanal bacağındadır** (R2–R5) ve o adımların sahibi
+`kanal-marj-uzmani` + `finans-fizibilite`'dir.
+
+**Öneri:** §6'ya, sınırın **kendi dışında** kalan bu hatayı işaret eden bir
+satır eklenmesi — çünkü `R7`'nin girdisi olan `L4_econ_max`'ın doğruluğu
+**tamamen R5'e bağlıdır** ve `R8` round-trip assertion'ı bu hatayı
+**YAKALAYAMAZ** (round-trip yalnızca `L4_econ_max ↔ CIF` tutarlılığını test
+eder, `L4_econ_max`'ın kendisinin doğru olup olmadığını değil).
+
+> **`R8`'in kör noktası budur ve kayda geçirilmelidir.**
+
+---
+
+### İP-F8 → `seytanin-avukati` · **SALDIRILACAK EN VERİMLİ TEK NOKTA**
+
+Modelde **13 maliyet kalemi `0` alınmıştır** ve **13'ünün 13'ü de aynı yönde
+(yukarı) saptırır**:
+
+varış local charge (USD) · menşe local charge (EUR) · müşavirlik CIF kademesi ·
+listeleme bedeli `f` · `d` (tekel + HoReCa) · fire/zayi KDV'si ·
+antrepo bekleme · bandrolleme operasyonu · devreden KDV finansman maliyeti ·
+distribütör marjı · ithalatçı katkı payı · gözetim eşiği · ÖTV λ > 1
+
+**Somut yıkım senaryosu** (5.000 şişe · 799 TL · İspanya · CHAIN BASE,
+tavan **272,83 TL**):
+
+| Eklenen | Yeni tavan | Kayıp |
+|---|---|---|
+| Kendi dağıtım, 1 kişinin **asgari ücret tabanı** | 208,49 | −64,34 |
+| + ÖTV λ = 1,5625 | 188,45 | −84,38 |
+| + distribütör marjı %15 | ~134 | −139 |
+| + listeleme bedeli 10 TL/şişe | ~127 | −146 |
+
+**Dört kalem tavanı %53 siliyor.** Hiçbirini modele koymadım çünkü hiçbirinin
+kanıtı yok — **ama koymamak da bir seçimdir ve o seçim projenin lehinedir.**
+
+> **DAHA DA ÖNEMLİSİ:** bu turda **kendi bulduğum `R5` hatası da tam olarak
+> aynı yöndeydi** (tavanı %10,6 fazla gösteriyordu — İP-F7b).
+> **İki bağımsız iyimserlik kaynağının aynı modelde bulunması bir DESEN
+> olabilir.** Kırmızı takım bunu bir tesadüf saymamalıdır.
+
+---
+
+### İP-F9 → `gumruk-vergi-uzmani` + başkan · **EN UCUZ / EN YÜKSEK GETİRİLİ KONTROL**
+
+**KDVK md.36 uyarınca çıkarılmış bir Cumhurbaşkanı Kararı ARANMAMIŞTIR**
+(`T-151`, `OQ-G10`). Böyle bir karar varsa alkolde KDV indirim hakkı
+kısıtlanmış olabilir ve:
+
+- KDV **ekonomik maliyet** olur,
+- `MAX_CIF_TRY` **~%22,7 düşer** (her iki menşede de aynı oran),
+- 799/ES/CHAIN/BASE: **272,83 → ~211 TL/şişe**,
+- HoReCa sütununun **tamamı** negatife yaklaşır,
+- **Bu turun tüm sayısal çıktısı yeniden hesaplanır.**
+
+> **Bu, saatler içinde ve ~sıfır maliyetle kapatılabilecek en yüksek getirili
+> tek kontroldür ve üç turdur yapılmamıştır.**
+
+---
+
+### İP-F10 → başkan · **DÖRT UCUZ ADIM, DÖRT BÜYÜK BOŞLUK**
+
+| # | Adım | Kim | Süre | Ne açar |
+|---|---|---|---|---|
+| 1 | KDVK md.36 CB kararı taraması | `gumruk-vergi-uzmani` | **saatler** | `MAX_CIF`'in %22,7 çökme riskini kapatır |
+| 2 | **`fx` — tarihli tek kur + bant** | **yatırımcı/başkan** | **dakikalar** | `MAX_FOB` ve `MAX_EXW`'yi açar; **ülke ayrıştırmasını çalıştırır** |
+| 3 | Gözetim tebliği yeniden taraması | `gumruk-vergi-uzmani` | saatler | Tavanın bir **alt sınırla** test edilmesini sağlar |
+| 4 | **Minimum katkı eşiği** (`OQ-901`) | **yatırımcı** | dakikalar | `TARGET`/`ACCEPTABLE`/`WALK-AWAY` fiyatlarını **üretilebilir** kılar |
+
+> **Ters modelin bugünkü en büyük dört boşluğu, en ucuz dört adımla
+> kapatılabilir durumdadır.** Bu asimetri TUR 6'ya taşınmalıdır.
+> `tur-25-preflight.md` §1.7 aynı asimetriyi **üçüncü kez** kaydetmişti.
+
+---

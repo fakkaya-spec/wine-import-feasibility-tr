@@ -296,7 +296,13 @@ TUR 2.5 ters modeli üç şeyi aynı anda gösterdi:
 | **Katman — AÇIK `UNKNOWN`** | Hedefin **hangi `L8` alt katmanı** olduğu tanımsızdır (`T-859`, HIGH): `L8_CHAIN_RETAIL` mi, `L8_METRO_CASH_CARRY` mi, `L8_ONLINE_UZMAN_PERAKENDE` mi? Elimizdeki 473 gözlemin **`L8_CHAIN_RETAIL`'deki sayısı SIFIRDIR.** Aynı sayı farklı alt katmanda **farklı zorluktadır.** |
 | **Belirlenmezse** | İleri model **beş basamağı da** taşımak zorunda kalır; senaryo sayısı beşe katlanır ve *"bu iş tutuyor mu"* sorusu beş ayrı cevap üretir. |
 | **Seçenek yapısı** | (i) tek basamak mı bant mı, (ii) **hangi `L8` alt katmanı**, (iii) launch fiyatı ile steady-state fiyatı aynı mı |
-| **Bağlı ticket** | `T-859`, `T-701`, `T-603`, **`T-504`** *(599 sınıflandırmasının tek dayanağı olan gözlemin promosyon durumu `UNKNOWN`)* |
+| **Bağlı ticket** | `T-859`, `T-701`, `T-603`, **`T-504`** *(599 sınıflandırmasının tek dayanağı olan gözlemin promosyon durumu `UNKNOWN`)*, **`T-871`** |
+
+> ⚠ **`T-871` (HIGH, `global-sourcing-kasifi` → başkan) bu kararı DOĞRUDAN
+> beklemektedir:** *"RFQ pazarlık çapası olarak HANGİ hedef raf fiyatı
+> basamağı ve HANGİ kanal esas alınacak?"* — yani `D-14` cevaplanmadan
+> **RFQ metni yazılamaz**, `I-4` izni verilse bile.
+> **`D-14` + `D-03` birlikte, RFQ'nun ön koşuludur.**
 
 ---
 

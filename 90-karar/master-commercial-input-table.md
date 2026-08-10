@@ -357,6 +357,34 @@ Bunu gizlemeden, kaldıraç sıralaması:
 >
 > Yani: **`fx` olmadan bile ters model `CIF_TRY`'ye kadar çalışır.**
 
+> ## ⚠ NİTELEME — 2026-08-10 (TUR 2.5, `C-852` çözümü)
+>
+> **Yukarıdaki hüküm FAZLA KESİNDİR ve nitelenmiştir.** Metin bilinçli olarak
+> silinmemiştir; düzeltme burada durur.
+>
+> `finans-fizibilite` TUR 2.5'te şunu tespit etmiştir: §5.3'ün türetmesi,
+> `L5 → L4` geçişinde düşülmesi gereken kalemlerin **hepsinin TL cinsinden
+> olduğunu** varsayar. **Gerçekte varış tarafı masraflarının büyük kısmı USD
+> cinsindendir** — varış THD, devanning, CFS, terminal ardiye, drop-off, LCL
+> varış sabit masrafı, dokümantasyon ve **müşavirlik CIF kademesi**
+> (`EV-2026-08-10-315`…`-319`, `EV-2026-08-09-324`). Bunlar `fx` `null` iken
+> **düşülemez** ve `0` alınırlar; hepsi pozitif olduğu için tavanı
+> **yükseltirler**.
+>
+> ### DÜZELTİLMİŞ HÜKÜM (bağlayıcı)
+>
+> > ***"`fx` olmadan ters model `CIF_TRY`'nin bir ÜST SINIRINA
+> > (`cif_try_max_UPPER_BOUND`) kadar çalışır. `L2` ile `L5` arasındaki döviz
+> > cinsli kalemler düşülemediği için gerçek tavan bundan DÜŞÜKTÜR."***
+>
+> **Bu bir ajan bulgusunun reddi değil, başkanın kendi hükmünün
+> düzeltilmesidir.** `C-852` → **`RESOLVED — TANIM`**
+> (`99-ops/celiskiler.md`, `90-karar/tur-25-konsolidasyon.md` §4.2).
+>
+> `finans-fizibilite`'nin çıktı adlandırması **onaylanır**:
+> **`cif_try_max_UPPER_BOUND`** (`cif_try_max` **değil**).
+> Kalan iş bir çelişki değil, bir **veri eksikliğidir**: `T-852` (`fx`).
+
 | # | Hesaplanabilir | Neden | Ön koşul |
 |---|---|---|---|
 | **1** | **Vergi merdiveninin tamamı, bir `CIF` fonksiyonu olarak** — `GV(%50/%70) → ÖTV(maktu) → KDV(%20)`, matrah sırası ve sırası T1 ile doğrulanmış | `matrah_sirasi` bloğunun tamamı `FACT` | yok |
