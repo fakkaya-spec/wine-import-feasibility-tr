@@ -1,13 +1,27 @@
-# TICKET İNDEKSİ — TUR 3A SONU
+# TICKET İNDEKSİ — TUR 3.25 §0 SONU
 
-> Otomatik üretildi (başkan tur sonu derlemesi, 2026-08-10).
+> Başkan tur sonu derlemesi, **2026-08-10 (TUR 3.25 §0)**.
 > Kaynak: `99-ops/tickets/T-*.md` — dosya sistemi tam sayımı.
+> Önceki derleme: TUR 3A sonu (125 ticket).
 
-**Toplam: 125 ticket** — impact: CRITICAL 14, HIGH 71, MEDIUM 38, LOW 1, CONSTRAINT 1
+**Toplam: 133 ticket** — impact: CRITICAL 14, HIGH 79, MEDIUM 38, LOW 1, CONSTRAINT 1
 
-**status:** ANSWERED 14, OPEN 105, RESOLVED 6
+**status:** ANSWERED 15, OPEN 112, RESOLVED 6
 
-**Açık CRITICAL: 11**
+**Açık CRITICAL: 11** *(değişmedi — TUR 3.25'te açılan 8 ticket'ın hiçbiri `CRITICAL` değildir)*
+
+## TUR 3.25 §0 DEĞİŞİKLİKLERİ *(2026-08-10)*
+
+| ticket | değişiklik |
+|---|---|
+| `T-467` | `OPEN` → **`ANSWERED`** — dış temas prensip izni **VERİLDİ (koşullu)**, `P-6` kapısı tanımlandı |
+| `T-304` | **değişmedi** (`OPEN`, `CRITICAL`) — izin ayağı kapandı, **veri ayağı açık**; *"izin bir veri değildir"* |
+| `T-871` | **değişmedi** (`OPEN`, `HIGH`) — **kısmen** cevaplandı: basamak (799) kapandı, **kanal açık**, `<PILOT VOLUME>` boş |
+| `T-884` | **değişmedi** (`OPEN`, `HIGH`) — **onaylanmadı**; `P-6.7` ile **kritik yola** alındı |
+| `T-857` | **değişmedi** (`OPEN`, `HIGH`) — 999 `UPPER_SEGMENT_TEST` oldu ama **manda tavanı değişmedi** |
+| **`T-961` … `T-968`** | **YENİ** — 8 ticket, tamamı `HIGH` |
+
+Kaynak belge: `90-karar/investor-kararlari-tur325.md`
 
 | ticket | status | hedef | konu |
 |---|---|---|---|
@@ -63,7 +77,7 @@
 | `T-461` | `global-sourcing-kasifi` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | "Bir uretici 20ft konteynere PALETSIZ (slipsheet) 14.112 sise girdigini ilan ediyor; PALET |
 | `T-462` | `global-sourcing-kasifi` | `gumruk-vergi-uzmani` | **HIGH** | ANSWERED | "TUR 2 havuzuna giren YENI menseler (Moldova, Romanya, Bulgaristan ayni grup icinde; Yeni  |
 | `T-464` | `global-sourcing-kasifi` | `turkiye-pazar-kasifi` | **HIGH** | ANSWERED | "TUR 2'de bulunan 7 somut MODEL A markasinin Turkiye'de halihazirda ithalatcisi/distributo |
-| `T-467` | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | **HIGH** | OPEN | "G2 gate'i 'gercek RFQ cevabi (>=5 tedarikci)' ile aciliyor; RFQ gonderimi ise DIS ILETISI |
+| `T-467` | `global-sourcing-kasifi` | `yatirim-komitesi-baskani` | **HIGH** | **ANSWERED** | "G2 gate'i 'gercek RFQ cevabi (>=5 tedarikci)' ile aciliyor; RFQ gonderimi ise DIS ILETISI |
 | `T-501` | `turkiye-pazar-kasifi` | `mevzuat-ruhsat-uzmani` | **HIGH** | OPEN | "Fiyat Etiketi Yonetmeligi (RG 28.06.2014/29044) uyarinca perakende satisa arz edilen mali |
 | `T-504` | `turkiye-pazar-kasifi` | `yatirim-komitesi-baskani` | **HIGH** | OPEN | "OQ-001'in promosyon ayagi (Soru 5/6) kapatilamadi. Ayni SKU icin ikinci bir Metro magaza  |
 | `T-505` | `turkiye-pazar-kasifi` | `mevzuat-ruhsat-uzmani` | **HIGH** | OPEN | "TADAB'in yayinladigi 'ithalat/dagitim uygunluk belgesi' sahipleri listesi veya alkollu ic |
@@ -113,6 +127,14 @@
 | `T-946` | `yatirim-komitesi-baskani` | `seytanin-avukati` | **HIGH** | OPEN | "finans-fizibilite'nin TUR 2.5'te KENDI buldugu R5 duzeltmesi (L5_max = L7_eff - mu x L6)  |
 | `T-951` | `yatirim-komitesi-baskani` | `kanal-marj-uzmani` | **HIGH** | OPEN | "d (geri akan bedeller) ve f (listeleme bedeli) MEKANIZMA olarak nasil akiyor: (a) L6 fatu |
 | `T-953` | `yatirim-komitesi-baskani` | `finans-fizibilite` | **HIGH** | OPEN | "D-02 (asgari katki payi) bugun yatirimciya soruluyor, ama sorunun BLOKE EDEN parcasi bir  |
+| `T-961` | `yatirim-komitesi-baskani` | `global-sourcing-kasifi` | **HIGH** | OPEN | "Kurucu BES fiyat noktasi belirledi (5.000/10.000/25.000/50.000 + FULL_20FT; 100.000 SORULMAYACAK) ve PRICE-VOLUME CURVE istedi; rfq-template.md TEK yillik hacim ve TEK pilot siparis soruyor. Sablonun YAPISI egriyi tasiyamaz. Ayrica kademelerin BAZI (yillik mi siparis basina mi) BELIRTILMEDI ve <PILOT VOLUME> HALA BOS |
+| `T-962` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | "FULL_20FT bir SISE ADEDI DEGILDIR: 20DV paletli 6.480-7.200, paletsiz 11.800-13.700 (EV-2026-08-09-320, ~2 KAT fark) ve gercek adet tedarikcinin koli/palet konfigurasyonuna (M3/M4) bagli. Ayrica V1=5.000 ve V2=10.000 LCL/FCL kirilma noktasini (~5.900, EV-2026-08-10-330) CAPRAZLIYOR |
+| `T-963` | `yatirim-komitesi-baskani` | `finans-fizibilite` | **HIGH** | OPEN | "V10K artik tedarikciye SORULACAK bir fiyat noktasidir ama ters modelde HIC CALISTIRILMAMISTIR (T-855) — gelen fiyatin karsilastirilacagi model satiri YOK. V100K ise ILK RFQ'dan FIYAT CAPASI ALMAYACAK -> V50K'dan ekstrapolasyon YASAK, NO_RFQ_ANCHOR damgasi |
+| `T-964` | `yatirim-komitesi-baskani` | `finans-fizibilite` | **HIGH** | OPEN | "N-1'in ERTELENEMEZ gerekcesi '9 ulke fx olmadan ayrisamaz' idi. Gozlenen tek tarihli spot kur bu turda aliniyor. SORU: ulke ayristirmasi TEK gozlenen kurla yapilabilir mi, yoksa FX ekseninde ayrica NOKTA SECIMI mi gerekli — cevap fx'in MUST kalip kalmayacagini belirler |
+| `T-965` | `yatirim-komitesi-baskani` | `gumruk-vergi-uzmani` | **HIGH** | OPEN | "OTV icin baglayici olan 'bugunku dogrulanmis deger 2027 hedef tarihlerinde KULLANILAMAZ' kurali FX ICIN YAZILMAMISTIR; ayni sinif hata T-858(b)'de bandrol icin zaten yapilmisti. Ayrica GUMRUK BEYAN KURU serbest piyasa kurundan farkli olabilir (T-911) — gozlem bunu KAPATMAZ |
+| `T-966` | `yatirim-komitesi-baskani` | `kanal-marj-uzmani` | **HIGH** | OPEN | "Kurucu 799'u PRIMARY yapti ama L8 ALT KATMANINI (N-3b, T-859) ve TARGET_CHANNEL'i (T-871 soru 2) SOYLEMEDI. SORU: bu ikisi TEK bir cevaptan mi turer yoksa IKI AYRI secim midir — yatirimciya bir soru mu iki soru mu sorulacagini belirler |
+| `T-967` | `yatirim-komitesi-baskani` | `global-sourcing-kasifi` | **HIGH** | OPEN | "P-6.2 GONDERIM PAKETI: alici listesi + her alici icin RECIPIENT/SUBJECT/MESSAGE PREVIEW final hale getirilecek (GONDERIM YOK). Ayrica T-467 soru 3'un cevabi (T-462/T-464 cevaplari RFQ 6.1'i daraltmaya YETIYOR MU) BASKANIN degil BU AJANIN teknik degerlendirmesidir |
+| `T-968` | `yatirim-komitesi-baskani` | `navlun-lojistik-uzmani` | **HIGH** | OPEN | "P-6.2 FORWARDER PAKETI (3 forwarder) final hale getirilecek; FCL ve LCL AYNI ANDA fiyatlanacak, included/excluded charges tek tek listelenecek (T-304'un kabul edilmis 4. ve 5. maddeleri). T-913 Ayak A ile birlestirilip birlestirilmeyecegi BU AJANIN kararidir |
 | `T-954` | `yatirim-komitesi-baskani` | `finans-fizibilite` | **HIGH** | OPEN | "TUR 3A'da 16 esikten 15,5'i ERTELENDI (CAN DECIDE LATER) cunku model onlari duyarlilik EK |
 | `T-105` | `gumruk-vergi-uzmani` | `gumruk-vergi-uzmani` | **MEDIUM** | OPEN | KKDF oranı (%6) ve tetikleyici ödeme şekilleri T1 ile doğrulandı; ancak KKDF MATRAHININ ta |
 | `T-151` | `gumruk-vergi-uzmani` | `gumruk-vergi-uzmani` | **MEDIUM** | ANSWERED | "Ithalat KDV'sinin indirilebilirligi KDVK md.29/1-b, md.34/1 ve md.30 TAM METNI ile T1 sev |
